@@ -1,5 +1,7 @@
 <template>
   <div id="app">
+    <button @click="loadData">Load Data</button>
+    <button @click="clearData">Clear Data</button>
     <demo-nodes :nodes="nodes" />
   </div>
 </template>
@@ -13,16 +15,22 @@ export default {
   components: {
     DemoNodes
   },
-  async mounted () {
-    const nodes = await restRequest({
-      url: 'multinet/vertices',
-      data: {
-        db: 'skyways',
-        collection: 'airports'
-      },
-    });
+  methods: {
+    async loadData () {
+      const nodes = await restRequest({
+        url: 'multinet/vertices',
+        data: {
+          db: 'skyways',
+          collection: 'airports'
+        },
+      });
 
-    this.nodes = nodes;
+      this.nodes = nodes;
+    },
+
+    clearData () {
+      this.nodes = [];
+    }
   },
   data () {
     return {
