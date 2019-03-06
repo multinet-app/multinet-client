@@ -1,17 +1,33 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <demo-nodes :nodes="nodes" />
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import DemoNodes from './components/DemoNodes.vue'
+import { restRequest } from '@girder/core/rest';
 
 export default {
   name: 'app',
   components: {
-    HelloWorld
+    DemoNodes
+  },
+  async mounted () {
+    const nodes = await restRequest({
+      url: 'multinet/vertices',
+      data: {
+        db: 'skyways',
+        collection: 'airports'
+      },
+    });
+
+    this.nodes = nodes;
+  },
+  data () {
+    return {
+      nodes: [],
+    };
   }
 }
 </script>
