@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@girder/core": "^3.0.0-alpha.0.2",
+    "axios": "^0.18.0",
     "vue": "^2.6.6"
   },
   "devDependencies": {

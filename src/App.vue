@@ -8,7 +8,7 @@
 
 <script>
 import DemoNodes from './components/DemoNodes.vue'
-import { restRequest } from '@girder/core/rest';
+import api from './api'
 
 export default {
   name: 'app',
@@ -17,15 +17,22 @@ export default {
   },
   methods: {
     async loadData () {
-      const nodes = await restRequest({
-        url: 'multinet/vertices',
-        data: {
-          db: 'skyways',
-          collection: 'airports'
-        },
+      const response = await api().post('multinet/graphql', {query: `query {
+        nodes(graph: "skyways/skyways", type: "airports") {
+          attributes(source: "airports", keys: ["_key", "name", "city", "state", "country", "lat", "long", "vip"]) {
+            key
+            value
+          }
+        }
+      }`})
+      const nodes = response.data.data.nodes
+      this.nodes = nodes.map(node => {
+        let n = {}
+        node.attributes.forEach(attr => {
+          n[attr.key] = attr.value
+        })
+        return n
       });
-
-      this.nodes = nodes;
     },
 
     clearData () {
