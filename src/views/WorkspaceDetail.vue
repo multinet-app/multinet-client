@@ -46,16 +46,26 @@ export default {
       graphs: []
     }
   },
+  methods: {
+    update () {
+      api().post('multinet/graphql', {query: `query {
+        workspaces (name: "${this.workspace}") {
+          tables { name }
+          graphs { name }
+        }
+      }`}).then(response => {
+        this.tables = response.data.data.workspaces[0].tables.map(table => table.name)
+        this.graphs = response.data.data.workspaces[0].graphs.map(graph => graph.name)
+      })
+    }
+  },
+  watch: {
+    workspace () {
+      this.update()
+    }
+  },
   created () {
-    api().post('multinet/graphql', {query: `query {
-      workspaces (name: "${this.workspace}") {
-        tables { name }
-        graphs { name }
-      }
-    }`}).then(response => {
-      this.tables = response.data.data.workspaces[0].tables.map(table => table.name)
-      this.graphs = response.data.data.workspaces[0].graphs.map(graph => graph.name)
-    })
+    this.update()
   }
 }
 </script>

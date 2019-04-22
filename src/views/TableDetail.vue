@@ -18,14 +18,27 @@ export default {
       fields: []
     }
   },
+  methods: {
+    update () {
+      api().post('multinet/graphql', {query: `query {
+        tables (workspace: "${this.workspace}", name: "${this.table}") {
+          fields
+        }
+      }`}).then(response => {
+        this.fields = response.data.data.tables[0].fields
+      })
+    }
+  },
+  watch: {
+    workspace () {
+      this.update()
+    },
+    table () {
+      this.update()
+    }
+  },
   created () {
-    api().post('multinet/graphql', {query: `query {
-      tables (workspace: "${this.workspace}", name: "${this.table}") {
-        fields
-      }
-    }`}).then(response => {
-      this.fields = response.data.data.tables[0].fields
-    })
+    this.update()
   }
 }
 </script>

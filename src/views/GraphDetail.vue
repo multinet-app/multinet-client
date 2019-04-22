@@ -99,10 +99,15 @@ export default {
       this.offset = 0
     }
   },
-  created () {
-    this.update()
+  watch: {
+    workspace () {
+      this.update()
+    },
+    graph () {
+      this.update()
+    }
   },
-  updated () {
+  created () {
     this.update()
   }
 }

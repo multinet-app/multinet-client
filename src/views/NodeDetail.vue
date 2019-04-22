@@ -134,10 +134,21 @@ export default {
       }
     }
   },
-  created () {
-    this.update()
+  watch: {
+    workspace () {
+      this.update()
+    },
+    graph () {
+      this.update()
+    },
+    type () {
+      this.update()
+    },
+    node () {
+      this.update()
+    }
   },
-  updated () {
+  created () {
     this.update()
   }
 }
