@@ -22,7 +22,7 @@
           <div v-if="nextIncoming" v-on:click="lastPage('incoming')">last</div>
         </div>
         <ul>
-          <li v-for="edge, index in incoming" :key="index">
+          <li v-for="(edge, index) in incoming" :key="index">
             <router-link :to="`/${workspace}/graph/${graph}/node/${edge.airport}`">{{edge.airport}}</router-link>
           </li>
         </ul>
@@ -38,7 +38,7 @@
           <div v-if="nextOutgoing" v-on:click="lastPage('outgoing')">last</div>
         </div>
         <ul>
-          <li v-for="edge, index in outgoing" :key="index">
+          <li v-for="(edge, index) in outgoing" :key="index">
             <router-link :to="`/${workspace}/graph/${graph}/node/${edge.airport}`">{{edge.airport}}</router-link>
           </li>
         </ul>
