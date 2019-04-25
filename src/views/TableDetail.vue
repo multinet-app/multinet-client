@@ -19,14 +19,14 @@ export default {
     }
   },
   methods: {
-    update () {
-      api().post('multinet/graphql', {query: `query {
+    async update () {
+      const response = await api().post('multinet/graphql', {query: `query {
         tables (workspace: "${this.workspace}", name: "${this.table}") {
           fields
         }
-      }`}).then(response => {
-        this.fields = response.data.data.tables[0].fields
-      })
+      }`});
+
+      this.fields = response.data.data.tables[0].fields;
     }
   },
   watch: {

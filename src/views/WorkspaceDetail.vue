@@ -47,16 +47,16 @@ export default {
     }
   },
   methods: {
-    update () {
-      api().post('multinet/graphql', {query: `query {
+    async update () {
+      const response = await api().post('multinet/graphql', {query: `query {
         workspaces (name: "${this.workspace}") {
           tables { name }
           graphs { name }
         }
-      }`}).then(response => {
-        this.tables = response.data.data.workspaces[0].tables.map(table => table.name)
-        this.graphs = response.data.data.workspaces[0].graphs.map(graph => graph.name)
-      })
+      }`});
+
+      this.tables = response.data.data.workspaces[0].tables.map(table => table.name);
+      this.graphs = response.data.data.workspaces[0].graphs.map(graph => graph.name);
     }
   },
   watch: {

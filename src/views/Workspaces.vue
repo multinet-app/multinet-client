@@ -23,24 +23,24 @@ export default {
     }
   },
   methods: {
-    create () {
+    async create () {
       if (this.newWorkspace) {
-        api().post('multinet/graphql', {query: `mutation {
+        const response = await api().post('multinet/graphql', {query: `mutation {
           workspace (name: "${this.newWorkspace}" )
-        }`}).then(response => {
-          if (response.data.data) {
-            this.$router.push(`/${this.newWorkspace}`)
-          }
-        })
+        }`});
+
+        if (response.data.data) {
+          this.$router.push(`/${this.newWorkspace}`);
+        }
       }
     }
   },
-  created () {
-    api().post('multinet/graphql', {query: `query {
+  async created () {
+    const response = await api().post('multinet/graphql', {query: `query {
       workspaces { name }
-    }`}).then(response => {
-      this.workspaces = response.data.data.workspaces.map(space => space.name)
-    })
+    }`});
+
+    this.workspaces = response.data.data.workspaces.map(space => space.name);
   }
 }
 </script>

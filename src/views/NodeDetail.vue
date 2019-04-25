@@ -94,8 +94,8 @@ export default {
     }
   },
   methods: {
-    update () {
-      api().post('multinet/graphql', {query: `query {
+    async update () {
+      const response = await api().post('multinet/graphql', {query: `query {
         nodes (workspace: "${this.workspace}", graph: "${this.graph}", nodeType: "${this.type}" key: "${this.node}") {
           nodes {
             key
@@ -104,13 +104,13 @@ export default {
             properties { key value }
           }
         }
-      }`}).then(response => {
-        this.attributes = response.data.data.nodes.nodes[0].properties
-        this.incoming = response.data.data.nodes.nodes[0].incoming.edges.map(edge => ({id: edge.key, airport: edge.source.key}))
-        this.outgoing = response.data.data.nodes.nodes[0].outgoing.edges.map(edge => ({id: edge.key, airport: edge.target.key}))
-        this.totalIncoming = response.data.data.nodes.nodes[0].incoming.total
-        this.totalOutgoing = response.data.data.nodes.nodes[0].outgoing.total
-      })
+      }`});
+
+      this.attributes = response.data.data.nodes.nodes[0].properties;
+      this.incoming = response.data.data.nodes.nodes[0].incoming.edges.map(edge => ({id: edge.key, airport: edge.source.key}));
+      this.outgoing = response.data.data.nodes.nodes[0].outgoing.edges.map(edge => ({id: edge.key, airport: edge.target.key}));
+      this.totalIncoming = response.data.data.nodes.nodes[0].incoming.total;
+      this.totalOutgoing = response.data.data.nodes.nodes[0].outgoing.total;
     },
     turnPage (edgeType, forward) {
       if (edgeType === 'incoming') {
