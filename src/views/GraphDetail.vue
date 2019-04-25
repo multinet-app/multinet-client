@@ -70,8 +70,8 @@ export default {
     }
   },
   methods: {
-    update () {
-      api().post('multinet/graphql', {query: `query {
+    async update () {
+      const response = await api().post('multinet/graphql', {query: `query {
         graphs (workspace: "${this.workspace}", name: "${this.graph}") {
           nodeTypes
           edgeTypes
@@ -82,12 +82,12 @@ export default {
             }
           }
         }
-      }`}).then(response => {
-        this.nodeTypes = response.data.data.graphs[0].nodeTypes
-        this.edgeTypes = response.data.data.graphs[0].edgeTypes
-        this.nodes = response.data.data.graphs[0].nodes.nodes.map(node => node.key)
-        this.total = response.data.data.graphs[0].nodes.total
-      })
+      }`});
+
+      this.nodeTypes = response.data.data.graphs[0].nodeTypes;
+      this.edgeTypes = response.data.data.graphs[0].edgeTypes;
+      this.nodes = response.data.data.graphs[0].nodes.nodes.map(node => node.key);
+      this.total = response.data.data.graphs[0].nodes.total;
     },
     turnPage (forward) {
       this.offset += forward ? this.limit : -this.limit
@@ -99,10 +99,15 @@ export default {
       this.offset = 0
     }
   },
-  created () {
-    this.update()
+  watch: {
+    workspace () {
+      this.update()
+    },
+    graph () {
+      this.update()
+    }
   },
-  updated () {
+  created () {
     this.update()
   }
 }
