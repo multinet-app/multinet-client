@@ -32,13 +32,13 @@ export default {
   methods: {
     handleFileInput(){
       this.selectedType = this.fileType(this.$refs.file.files[0])
-     // this.$emit("handleFileInput", this.$refs.file.files, this.selectedType)
+      this.$emit("handle-file-input", [this.$refs.file.files, this.selectedType])
     },
     fileType(file){
       let fileName = file.name.split('.')
       let extension = fileName[fileName.length - 1]
-      for(let type in types){
-        if(types[type].includes(extension)){
+      for(let type in this.$props.types){
+        if(this.$props.types[type].includes(extension)){
           return type
         }
       }
@@ -47,8 +47,8 @@ export default {
   },
   watch: {
     selectedType(){
-       //this.$emit("handleFileInput", this.$refs.file.files, this.selectedType)
-       this.$emit("handleFileInput", this.$refs.file.files)
+       this.$emit("handle-file-input", [this.$refs.file.files, this.selectedType])
+       //this.$emit("handleFileInput", this.$refs.file.files)
     }
   }
 }

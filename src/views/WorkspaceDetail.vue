@@ -4,8 +4,6 @@
     <div id="workspace-details">
       <div>
         <label>Tables</label>
-        <br/>
-        <br/>
         <div class="row">
           <input type="text" v-model="newTable" placeholder="new table name">
         </div>
@@ -18,12 +16,8 @@
         <!---  Adding the file iput -->
           <div class="file-upload">
             <div >
-              <label>File
-
                 <!-- <input type="file" id="file" ref="file" placeholder="Upload File" v-on:change="handleFileInput"/> -->
-                <file-input @handleFileInput="handleFileInput" v-bind:types="fileTypes"/>
-
-              </label>
+                <file-input @handle-file-input="handleFileInput" v-bind:types="fileTypes"/>
                 <button v-on:click="loadFile" >Submit</button>
             </div>
           </div>
@@ -32,8 +26,6 @@
       </div>
       <div>
         <label>Graphs</label>
-        <br/>
-        <br/>
         <div>
           <input type="text" v-model="newGraph" placeholder="new graph name">
         </div>
@@ -67,7 +59,8 @@ export default {
       fileTypes: {
         csv: ['csv'],
         newick: ['phy']
-      }
+      },
+      selectedType: null,
     }
   },
   methods: {
@@ -81,11 +74,13 @@ export default {
 
       this.tables = response.data.data.workspaces[0].tables.map(table => table.name);
       this.graphs = response.data.data.workspaces[0].graphs.map(graph => graph.name);
+
+      console.log('tables', this.tables)
     },
 
     async create() {
 
-      /*
+      
       const response = await api().post('multinet/graphql', {query: `mutation {
         table (workspace: "${this.workspace}", name: "${this.newTable}", fields: []) {
           name
@@ -93,13 +88,13 @@ export default {
       }`});
 
       let tableName = response.data.data.table.name;
-      this.$router
-      */
+      //this.$router
+      
     },
     async loadFile(){
-      console.log(this.fileTypes)
+      console.log(this.selectedType)
       console.log(this.fileList)
-      const response = await api().post(`multinet/tree/${this.workspace}/${this.newTable}`,
+      const response = await api().post(`multinet/batch/${this.workspace}/${this.newTable}`,
       this.fileList[0], 
       {
         headers: {
@@ -107,11 +102,10 @@ export default {
         },
       }
       )
-     
     },
     handleFileInput(newFiles){
-      this.fileList = newFiles
-   
+      this.fileList = newFiles[0]
+      this.selectedType = newFiles[1]
     }
   },
   watch: {
