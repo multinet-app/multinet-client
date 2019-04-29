@@ -3,7 +3,7 @@
     <h1>Workspaces</h1>
     <div id="workspace-create">
       <input type="text" v-model="newWorkspace">
-      <div id="create-button" v-on:click="create">Create</div>
+      <div class="create-button" v-on:click="create">Create</div>
     </div>
     <div v-for="space in workspaces" :key="space">
       <router-link :to="`/${space}`">{{space}}</router-link>
@@ -52,7 +52,7 @@ export default {
   justify-content: center;
 }
 
-#create-button {
+.create-button {
   border-style: solid;
   width: 100px;
   height: 20px;
