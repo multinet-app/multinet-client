@@ -7,11 +7,7 @@
         <div class="row">
           <input type="text" v-model="newTable" placeholder="name your table.." class="text-input">
         </div>
-        <ul>
-          <li v-for="table in tables" :key="table">
-            <router-link :to="`/${workspace}/table/${table}`">{{table}}</router-link>
-          </li>
-        </ul>
+       
 
         <!---  Adding the file iput -->
           <div class="file-upload">
@@ -23,6 +19,11 @@
           </div>
         <!---  end file input addition -->
          <!---<v-button :onClick="create">create table</v-button> -->
+          <ul>
+          <li v-for="table in tables" :key="table">
+            <router-link :to="`/${workspace}/table/${table}`">{{table}}</router-link>
+          </li>
+        </ul>
       </div>
       <div>
         <label>Graphs</label>
