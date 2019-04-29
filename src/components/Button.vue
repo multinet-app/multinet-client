@@ -1,36 +1,50 @@
 <template>
-  <div>
-   <button v-on:click="loadFile">{{buttonAction}}</button>
-   </div>
+<button @click="onClick" class="Button">
+  <slot>Button</slot>
+</button>
 </template>
+​
 <script>
-
 export default {
-  name:"Button",
-
-  data(){
-    return {
-      buttonAction: null
+  props: {
+    onClick: {
+      type: Function,
+      required: true
     }
-  },
-
-  methods: {
-  
   }
- 
 }
 </script>
 
 <style scoped>
-.button {
-  border-style: solid;
-  width: 100px;
-  height: 20px;
-  background-color: green;
-  color: white;
-  border-color: black;
-  border-radius: 5px;
-  margin: 5px;
+
+
+.Button {
+   color:#648189;
+  text-decoration:none;
+  -webkit-transition:0.3s all ease;
+  transition:0.3s all ease;
   cursor: pointer;
+  font-size:13px;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  display:inline-block;
+  text-align:center;
+  font-weight:bold;
+  padding:10px 6px;
+  border:1.5px solid #648189;
+  border-radius:2px;
+  position:relative;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06), 0 3px 6px rgba(0,0,0,0.01);
+  margin:2px;
 }
+.Button:hover {
+    color:#FFF;
+     -webkit-transition:0.5s all ease;
+    transition:0.5s all ease;
+    background-color:#648189
+  }
+.Button:focus {
+    color:#FFF;
+    background-color:#648189;
+  }
 </style>
