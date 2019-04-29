@@ -27,7 +27,7 @@
       <div>
         <label>Graphs</label>
         <div>
-          <input type="text" v-model="newGraph" placeholder="new graph name">
+          <input type="text" v-model="newGraph" placeholder="name your graph.." class="text-input">
         </div>
         <ul>
           <li v-for="graph in graphs" :key="graph">
@@ -126,9 +126,8 @@ ul {
   justify-content: space-around;
 }
 .text-input{
-  padding:3px;
+  padding:5px;
   border: .5px solid #648189;
-  letter-spacing:1px;
   width: 200px;
 
 }
