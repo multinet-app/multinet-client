@@ -84,12 +84,16 @@ export default {
           name
         }
       }`});
+      console.log("response", response)
       let tableName = response.data.data.table.name;
     },
     async loadFile(){
-      console.log(this.selectedType)
-      console.log(this.fileList)
-      const response = await api().post(`multinet/batch/${this.workspace}/${this.newTable}`,
+
+      let queryType = this.selectType === "newick" ? "batch" : "tree";
+      console.log("workspace",this.workspace)
+      console.log("newTable",this.newTable)
+      console.log("queryType",queryType)
+      const response = await api().post(`multinet/${queryType}/${this.workspace}/${this.newTable}`,
       this.fileList[0], 
       {
         headers: {
