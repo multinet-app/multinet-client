@@ -3,19 +3,26 @@
     <h1>Workspaces</h1>
     <div id="workspace-create">
       <input type="text" v-model="newWorkspace">
-      <div class="create-button" v-on:click="create">Create</div>
+      <v-button :onClick="create">New Workspace</v-button>
     </div>
-    <div v-for="space in workspaces" :key="space">
-      <router-link :to="`/${space}`">{{space}}</router-link>
+    <div class="workspace-wrapper">
+      <h2>Your Workspaces:</h2>
+      <div v-for="space in workspaces" :key="space" class="workspace">
+        <router-link :to="`/${space}`">{{space}}</router-link>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import api from '@/api'
+import Button from '@/components/Button'
 
 export default {
   name: 'Workspaces',
+  components: {
+    'v-button':Button,
+  },
   data () {
     return {
       newWorkspace: '',
@@ -45,22 +52,38 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 #workspace-create {
   display: flex;
   flex-flow: row nowrap;
   justify-content: center;
 }
+.workspace-wrapper{
+  margin: auto;
+  padding: 10px 0 0 0;
+  width:220px;
+}
+.workspace{
+padding: 5px;
+margin:3px;
+-webkit-transition:0.3s all ease;
+transition:0.3s all ease;
+}
+.workspace:hover{
+background-color: #bccace;
+-webkit-transition:0.3s all ease;
+transition:0.3s all ease;
 
-.create-button {
-  border-style: solid;
-  width: 100px;
-  height: 20px;
-  background-color: green;
-  color: white;
-  border-color: black;
-  border-radius: 5px;
-  margin: 5px;
-  cursor: pointer;
+}
+.workspace:hover a{
+  color:#fff;
+}
+.workspace a{
+  text-decoration: none;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  font-weight:bold;
+  color:#7f9ba4;
+  
 }
 </style>

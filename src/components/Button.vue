@@ -31,7 +31,7 @@ export default {
   text-align:center;
   font-weight:bold;
   padding:10px 6px;
-  border:1.5px solid #648189;
+  border:1.5px solid #d9e1e4;
   border-radius:2px;
   position:relative;
   box-shadow: 0 2px 10px rgba(0,0,0,0.06), 0 3px 6px rgba(0,0,0,0.01);
