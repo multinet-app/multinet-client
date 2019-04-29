@@ -37,8 +37,8 @@ export default {
     fileType(file){
       let fileName = file.name.split('.')
       let extension = fileName[fileName.length - 1]
-      for(let type in this.$props.types){
-        if(this.$props.types[type].includes(extension)){
+      for(let type in this.types){
+        if(this.types[type].includes(extension)){
           return type
         }
       }

@@ -18,11 +18,11 @@
             <div >
                 <!-- <input type="file" id="file" ref="file" placeholder="Upload File" v-on:change="handleFileInput"/> -->
                 <file-input @handle-file-input="handleFileInput" v-bind:types="fileTypes"/>
-                <v-button :onClick="loadFile">Submit</v-button>
+                <v-button :onClick="loadFile">create table</v-button>
             </div>
           </div>
         <!---  end file input addition -->
-         <v-button :onClick="create">create table</v-button>
+         <!---<v-button :onClick="create">create table</v-button> -->
       </div>
       <div>
         <label>Graphs</label>
@@ -76,23 +76,20 @@ export default {
       }`});
       this.tables = response.data.data.workspaces[0].tables.map(table => table.name);
       this.graphs = response.data.data.workspaces[0].graphs.map(graph => graph.name);
-      console.log('tables', this.tables)
     },
+    //Commented out create becuase we are currently not using this
+    /*
     async create() {
       const response = await api().post('multinet/graphql', {query: `mutation {
         table (workspace: "${this.workspace}", name: "${this.newTable}", fields: []) {
           name
         }
       }`});
-      console.log("response", response)
-      let tableName = response.data.data.table.name;
-    },
-    async loadFile(){
 
+      let tableName = response.data.data.table.name;
+    },*/
+    async loadFile(){
       let queryType = this.selectType === "newick" ? "batch" : "tree";
-      console.log("workspace",this.workspace)
-      console.log("newTable",this.newTable)
-      console.log("queryType",queryType)
       const response = await api().post(`multinet/${queryType}/${this.workspace}/${this.newTable}`,
       this.fileList[0], 
       {
@@ -101,6 +98,7 @@ export default {
         },
       }
       )
+      this.update()
     },
     handleFileInput(newFiles){
       this.fileList = newFiles[0]
@@ -115,6 +113,7 @@ export default {
   created () {
     this.update()
   }
+
 }
 </script>
 
