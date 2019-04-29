@@ -146,7 +146,16 @@ export default {
     },
     node () {
       this.update()
-    }
+    },
+    offsetIncoming () {
+      this.update()
+    },
+    offsetOutgoing () {
+      this.update()
+    },
+    pageCount () {
+      this.update()
+    },
   },
   created () {
     this.update()
