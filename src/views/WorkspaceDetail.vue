@@ -90,7 +90,7 @@ export default {
       let tableName = response.data.data.table.name;
     },*/
     async loadFile(){
-      let queryType = this.selectType === "newick" ? "batch" : "tree";
+      let queryType = this.selectType === "newick" ? "bulk" : "tree";
       const response = await api().post(`multinet/${queryType}/${this.workspace}/${this.newTable}`,
       this.fileList[0], 
       {
