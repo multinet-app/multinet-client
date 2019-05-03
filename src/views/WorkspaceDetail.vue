@@ -8,8 +8,6 @@
           <input type="text" v-model="newTable" placeholder="name your table.." class="text-input">
         </div>
        
-
-        <!---  Adding the file iput -->
           <div class="file-upload">
             <div >
                 <!-- <input type="file" id="file" ref="file" placeholder="Upload File" v-on:change="handleFileInput"/> -->
@@ -17,7 +15,7 @@
                 <v-button :onClick="loadFile">create table</v-button>
             </div>
           </div>
-        <!---  end file input addition -->
+
          <!---<v-button :onClick="create">create table</v-button> -->
           <ul>
           <li v-for="table in tables" :key="table">
@@ -60,8 +58,8 @@ export default {
       graphs: [],
       fileList : null,
       fileTypes: {
-        csv: ['csv'],
-        newick: ['phy']
+        csv: {extension: ['csv'], queryCall: 'bulk'},
+        newick: {extension: ['phy'], queryCall: 'tree'}
       },
       selectedType: null,
     }
@@ -90,7 +88,7 @@ export default {
       let tableName = response.data.data.table.name;
     },*/
     async loadFile(){
-      let queryType = this.selectType === "newick" ? "batch" : "tree";
+      let queryType = this.fileTypes[this.selectedType].queryCall;
       const response = await api().post(`multinet/${queryType}/${this.workspace}/${this.newTable}`,
       this.fileList[0], 
       {

@@ -38,7 +38,7 @@ export default {
       let fileName = file.name.split('.')
       let extension = fileName[fileName.length - 1]
       for(let type in this.types){
-        if(this.types[type].includes(extension)){
+        if(this.types[type].extension.includes(extension)){
           return type
         }
       }
