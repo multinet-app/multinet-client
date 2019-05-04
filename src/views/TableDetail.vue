@@ -1,17 +1,23 @@
 <template>
-  <div>
-    <h1>Table: {{`${this.workspace}/${this.table}`}}</h1>
+<div>
+<h1>Table: {{`${this.workspace}/${this.table}`}}</h1>
+  <table>
+  <thead>
+    <tr >
+    <th v-for="col in rowKeys[0]" :key="col.key" class="head">
+      {{col.key}}
+    </th>
+    </tr>
+  </thead>
+  <tbody v-for="row in rowKeys" :key="row[0].value" class="row-wrap">
+    <tr class="row">
+      <td v-for="col in row" :key="col.key" class="col">
+      {{col.value}}
+    </td>
+    </tr>
+  </tbody>
 
-<!-- 
-    <ul>
-     <li v-for="field in fields" :key="field">{{field}}</li> 
-       <li v-for="row in rowKeys" :key="row[0].value">{{row[0].value}}</li>
-    </ul>
--->
-  <div v-for="row in rowKeys" :key="row[0].value" class="row">
-    {{row[0].value}}
-  </div>
-
+  </table>
   </div>
 </template>
 
@@ -23,7 +29,6 @@ export default {
   props: ['workspace', 'table'],
   data () {
     return {
-      //fields: []
       rowKeys:[]
     }
   },
@@ -44,7 +49,10 @@ export default {
           },
         }
       }`});
-      this.rowKeys = response.data.data.tables[0].rows.rows.map(r=> r.columns)
+  
+      let table = response.data.data.tables[0];
+      this.rowKeys = table.rows.rows.map(r=> r.columns.filter(c=> c.key != "_rev"))
+     
     }
   },
   watch: {
@@ -62,11 +70,15 @@ export default {
 </script>
 
 <style scoped>
-div.row {
-  padding: 10px 10px;
-  text-align: left;
+th.head{
+text-transform: uppercase;
+}
+tr.row {
   background-color: #F3F6F6;
-  margin:2px;
-  font-weight:bold;
+  margin:3px;
+  padding: 10px 10px;
+}
+td.col{
+margin:5px;
 }
 </style>
