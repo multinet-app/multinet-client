@@ -12,8 +12,8 @@
     <tbody v-for="(row, index) in rowKeys" :key="row[0].value" class="row-wrap">
       <tr :class="rowClassName(index)">
         <td v-for="col in row" :key="col.key" class="col">
-        {{col.value}}
-      </td>
+          {{col.value}}
+        </td>
       </tr>
     </tbody>
   </table>
