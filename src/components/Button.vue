@@ -15,11 +15,11 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 
 
 .Button {
-   color:#648189;
+  color:#648189;
   text-decoration:none;
   -webkit-transition:0.3s all ease;
   transition:0.3s all ease;

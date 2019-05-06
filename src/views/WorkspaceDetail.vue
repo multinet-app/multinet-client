@@ -62,7 +62,6 @@ export default {
     }
   },
   methods: {
- 
     async update () {
       const response = await api().post('multinet/graphql', {query: `query {
         workspaces (name: "${this.workspace}") {
