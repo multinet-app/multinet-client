@@ -70,6 +70,9 @@ export default {
 </script>
 
 <style scoped>
+table{
+  margin:auto;
+}
 th.head{
 text-transform: uppercase;
 }
@@ -80,5 +83,6 @@ tr.row {
 }
 td.col{
 margin:5px;
+padding:5px 25px;
 }
 </style>
