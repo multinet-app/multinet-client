@@ -2,27 +2,23 @@
 <div>
 <h1>Table: {{`${this.workspace}/${this.table}`}}</h1>
   <table>
-  <thead>
-    <tr >
-    <th v-for="head in this.headers" :key="head" class="head">
-      {{head}}
-    </th>
-    </tr>
-  </thead>
-  <tbody v-for="(row, index) in rowKeys" :key="row[0].value" class="row-wrap">
-
-    <tr :class="classNameByIndex(index)">
-      <td v-for="col in row" :key="col.key" class="col">
-      {{col.value}}
-    </td>
-    </tr>
-
-  </tbody>
-
+    <thead>
+      <tr >
+      <th v-for="head in this.headers" :key="head" class="head">
+        {{head}}
+      </th>
+      </tr>
+    </thead>
+    <tbody v-for="(row, index) in rowKeys" :key="row[0].value" class="row-wrap">
+      <tr :class="rowClassName(index)">
+        <td v-for="col in row" :key="col.key" class="col">
+        {{col.value}}
+      </td>
+      </tr>
+    </tbody>
   </table>
   </div>
 </template>
-
 <script>
 import api from '@/api'
 
@@ -36,7 +32,7 @@ export default {
     }
   },
   methods: {
-    classNameByIndex(index) {
+    rowClassName(index) {
       return index % 2 == 0 ? 'even-row' : 'odd-row';
     },
     async update () {
@@ -55,10 +51,9 @@ export default {
           },
         }
       }`});
-  
       let table = response.data.data.tables[0];
       this.rowKeys = table.rows.rows.map(r=> r.columns.filter(c=> c.key != "_rev"))
-      this.headers = this.rowKeys[0].map(k=> k.key.startsWith("_") ? k.key.split("_")[1] : k.key);
+      this.headers = this.rowKeys[0].map(k=> k.key.startsWith("_") ? k.key.slice(1) : k.key);
     }
   },
   watch: {
@@ -91,7 +86,6 @@ tr.even-row {
   padding: 10px 10px;
 }
 tr.odd-row {
-  
   margin:3px;
   padding: 10px 10px;
 }
