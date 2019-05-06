@@ -4,17 +4,19 @@
   <table>
   <thead>
     <tr >
-    <th v-for="col in rowKeys[0]" :key="col.key" class="head">
-      {{col.key}}
+    <th v-for="head in this.headers" :key="head" class="head">
+      {{head}}
     </th>
     </tr>
   </thead>
-  <tbody v-for="row in rowKeys" :key="row[0].value" class="row-wrap">
-    <tr class="row">
+  <tbody v-for="(row, index) in rowKeys" :key="row[0].value" class="row-wrap">
+
+    <tr :class="classNameByIndex(index)">
       <td v-for="col in row" :key="col.key" class="col">
       {{col.value}}
     </td>
     </tr>
+
   </tbody>
 
   </table>
@@ -29,10 +31,17 @@ export default {
   props: ['workspace', 'table'],
   data () {
     return {
-      rowKeys:[]
+      rowKeys:[],
+      headers:[]
     }
   },
+  computed: {    
+    
+  },
   methods: {
+    classNameByIndex(index) {
+      return index % 2 == 0 ? 'even-row' : 'odd-row';
+    },
     async update () {
       const response = await api().post('multinet/graphql', {query: `query {
         tables (workspace: "${this.workspace}", name: "${this.table}") {
@@ -52,7 +61,7 @@ export default {
   
       let table = response.data.data.tables[0];
       this.rowKeys = table.rows.rows.map(r=> r.columns.filter(c=> c.key != "_rev"))
-     
+      this.headers = this.rowKeys[0].map(k=> k.key.startsWith("_") ? k.key.split("_")[1] : k.key);
     }
   },
   watch: {
@@ -75,9 +84,17 @@ table{
 }
 th.head{
 text-transform: uppercase;
+ background-color: #55B8CD;
+ color:#fff;
+ padding: 15px 25px;
+ letter-spacing:1.5px;
 }
-tr.row {
+tr.even-row {
   background-color: #F3F6F6;
+  padding: 10px 10px;
+}
+tr.odd-row {
+  
   margin:3px;
   padding: 10px 10px;
 }
