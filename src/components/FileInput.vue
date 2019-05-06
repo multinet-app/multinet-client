@@ -49,12 +49,11 @@ export default {
   watch: {
     selectedType(){
        this.$emit("handle-file-input", [this.$refs.file.files, this.selectedType])
-       //this.$emit("handleFileInput", this.$refs.file.files)
     }
   }
 }
 </script>
 
 <style scoped>
-h1{ color:brown }
+
 </style>
