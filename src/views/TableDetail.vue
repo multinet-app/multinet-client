@@ -35,9 +35,6 @@ export default {
       headers:[]
     }
   },
-  computed: {    
-    
-  },
   methods: {
     classNameByIndex(index) {
       return index % 2 == 0 ? 'even-row' : 'odd-row';
