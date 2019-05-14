@@ -8,17 +8,12 @@
           <input type="text" v-model="newTable" placeholder="name your table.." class="text-input">
         </div>
        
-
-        <!---  Adding the file iput -->
           <div class="file-upload">
             <div >
-                <!-- <input type="file" id="file" ref="file" placeholder="Upload File" v-on:change="handleFileInput"/> -->
                 <file-input @handle-file-input="handleFileInput" v-bind:types="fileTypes"/>
                 <v-button :onClick="loadFile">create table</v-button>
             </div>
           </div>
-        <!---  end file input addition -->
-         <!---<v-button :onClick="create">create table</v-button> -->
           <ul>
           <li v-for="table in tables" :key="table">
             <router-link :to="`/${workspace}/table/${table}`">{{table}}</router-link>
@@ -60,14 +55,13 @@ export default {
       graphs: [],
       fileList : null,
       fileTypes: {
-        csv: ['csv'],
-        newick: ['phy']
+        csv: {extension: ['csv'], queryCall: 'bulk'},
+        newick: {extension: ['phy'], queryCall: 'newick'}
       },
       selectedType: null,
     }
   },
   methods: {
- 
     async update () {
       const response = await api().post('multinet/graphql', {query: `query {
         workspaces (name: "${this.workspace}") {
@@ -78,19 +72,9 @@ export default {
       this.tables = response.data.data.workspaces[0].tables.map(table => table.name);
       this.graphs = response.data.data.workspaces[0].graphs.map(graph => graph.name);
     },
-    //Commented out create becuase we are currently not using this
-    /*
-    async create() {
-      const response = await api().post('multinet/graphql', {query: `mutation {
-        table (workspace: "${this.workspace}", name: "${this.newTable}", fields: []) {
-          name
-        }
-      }`});
 
-      let tableName = response.data.data.table.name;
-    },*/
     async loadFile(){
-      let queryType = this.selectType === "newick" ? "csv" : "newick";
+      let queryType = this.fileTypes[this.selectedType].queryCall;
       const response = await api().post(`multinet/${queryType}/${this.workspace}/${this.newTable}`,
       this.fileList[0], 
       {
