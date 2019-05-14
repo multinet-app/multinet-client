@@ -14,11 +14,11 @@
                 <v-button :onClick="loadFile">create table</v-button>
             </div>
           </div>
-          <ul>
-          <li v-for="table in tables" :key="table">
-            <router-link :to="`/${workspace}/table/${table}`">{{table}}</router-link>
-          </li>
-        </ul>
+          <div class = "table-link-wrap">
+          <div v-for="table in tables" :key="table.name" class="table-link">
+            <router-link :to="`/${workspace}/table/${table.name}`">{{table.display}}</router-link>
+          </div>
+        </div>
       </div>
       <div>
         <label>Graphs</label>
@@ -69,7 +69,11 @@ export default {
           graphs { name }
         }
       }`});
-      this.tables = response.data.data.workspaces[0].tables.map(table => table.name);
+      this.tables = response.data.data.workspaces[0].tables.map(table => {
+        let name = table.name;
+        let displayName = name.includes("_") ? name.replace(/_/g, " ") : name;
+        return {name: table.name, display:displayName }
+      });
       this.graphs = response.data.data.workspaces[0].graphs.map(graph => graph.name);
     },
 
@@ -117,6 +121,34 @@ ul {
   padding:5px;
   border: .5px solid #648189;
   width: 200px;
+}
+.table-link-wrap{
+  text-align: left;
+  padding:50px 0 0 0;
+  
+}
 
+.table-link{
+padding: 5px;
+margin:3px 50px;
+-webkit-transition:0.3s all ease;
+transition:0.3s all ease;
+}
+.table-link:hover{
+background-color: #bccace;
+-webkit-transition:0.3s all ease;
+transition:0.3s all ease;
+
+}
+.table-link:hover a{
+  color:#fff;
+}
+.table-link a{
+  text-decoration: none;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  font-weight:bold;
+  color:#7f9ba4;
+  
 }
 </style>
