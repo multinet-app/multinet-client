@@ -23,7 +23,7 @@
         </div>
         <ul>
           <li v-for="(edge, index) in incoming" :key="index">
-            <router-link :to="`/${workspace}/graph/${graph}/node/${edge.airport}`">{{edge.airport}}</router-link>
+            <router-link :to="`/workspaces/${workspace}/graph/${graph}/node/${edge.airport}`">{{edge.airport}}</router-link>
           </li>
         </ul>
       </div>
@@ -39,7 +39,7 @@
         </div>
         <ul>
           <li v-for="(edge, index) in outgoing" :key="index">
-            <router-link :to="`/${workspace}/graph/${graph}/node/${edge.airport}`">{{edge.airport}}</router-link>
+            <router-link :to="`/workspaces/${workspace}/graph/${graph}/node/${edge.airport}`">{{edge.airport}}</router-link>
           </li>
         </ul>
       </div>

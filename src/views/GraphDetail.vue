@@ -6,7 +6,7 @@
         <label>Node Types</label>
         <ul>
           <li v-for="table in nodeTypes" :key="table">
-            <router-link :to="`/${workspace}/table/${table}`">{{table}}</router-link>
+            <router-link :to="`/workspaces/${workspace}/table/${table}`">{{table}}</router-link>
           </li>
         </ul>
       </div>
@@ -31,7 +31,7 @@
       </div>
       <ul>
         <li v-for="node in nodes" :key="node">
-          <router-link :to="`/${workspace}/graph/${graph}/node/${node}`">{{node}}</router-link>
+          <router-link :to="`/workspaces/${workspace}/graph/${graph}/node/${node}`">{{node}}</router-link>
         </li>
       </ul>
     </div>

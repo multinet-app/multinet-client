@@ -8,7 +8,7 @@
     <div class="workspace-wrapper">
       <h2>Your Workspaces:</h2>
       <div v-for="space in workspaces" :key="space" class="workspace">
-        <router-link :to="`/${space}`">{{space}}</router-link>
+        <router-link :to="`/workspaces/${space}`">{{space}}</router-link>
       </div>
     </div>
   </div>

@@ -18,22 +18,22 @@ const routes = [
     component: Workspaces
   },
   {
-    path: '/:workspace',
+    path: '/workspaces/:workspace',
     component: WorkspaceDetail,
     props: true
   },
   {
-    path: '/:workspace/table/:table',
+    path: '/workspaces/:workspace/table/:table',
     component: TableDetail,
     props: true
   },
   {
-    path: '/:workspace/graph/:graph',
+    path: '/workspaces/:workspace/graph/:graph',
     component: GraphDetail,
     props: true
   },
   {
-    path: '/:workspace/graph/:graph/node/:type/:node',
+    path: '/workspaces/:workspace/graph/:graph/node/:type/:node',
     component: NodeDetail,
     props: true
   }

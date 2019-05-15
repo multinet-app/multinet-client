@@ -16,7 +16,7 @@
           </div>
           <ul>
           <li v-for="table in tables" :key="table">
-            <router-link :to="`/${workspace}/table/${table}`">{{table}}</router-link>
+            <router-link :to="`/workspaces/${workspace}/table/${table}`">{{table}}</router-link>
           </li>
         </ul>
       </div>
@@ -27,7 +27,7 @@
         </div>
         <ul>
           <li v-for="graph in graphs" :key="graph">
-            <router-link :to="`/${workspace}/graph/${graph}`">{{graph}}</router-link>
+            <router-link :to="`/workspaces/${workspace}/graph/${graph}`">{{graph}}</router-link>
           </li>
         </ul>
       </div>
