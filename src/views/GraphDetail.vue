@@ -14,7 +14,15 @@
         <label>Edge Types</label>
         <ul>
           <li v-for="table in edgeTypes" :key="table">
-            <router-link :to="`/${workspace}/table/${table}`">{{table}}</router-link>
+            <router-link :to="`/workspaces/${workspace}/table/${table}`">{{table}}</router-link>
+          </li>
+        </ul>
+      </div>
+      <div style="border-style: solid; width: 100%">
+        <label>Apps</label>
+        <ul>
+          <li v-for="app in apps" :key="app">
+            <a :href="`${app.url}/?workspace=${workspace}&graph=${graph}`" target="_blank">{{app.name}}</a>
           </li>
         </ul>
       </div>
@@ -43,7 +51,12 @@ import api from '@/api'
 
 export default {
   name: 'GraphDetail',
-  props: ['workspace', 'graph'],
+  filters: {
+    appendArgs (url) {
+      return `${url}/?workspace=${this.workspace}&graph=${this.graph}`;
+    },
+  },
+  props: ['workspace', 'graph', 'apps'],
   data () {
     return {
       nodeTypes: [],
