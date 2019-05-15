@@ -14,9 +14,9 @@
                 <v-button :onClick="loadFile">create table</v-button>
             </div>
           </div>
-          <div class = "table-link-wrap">
-          <div v-for="table in tables" :key="table.name" class="table-link">
-            <router-link :to="`/${workspace}/table/${table.name}`">{{table.display}}</router-link>
+          <div class = "list-link-wrap">
+          <div v-for="table in tables" :key="table" class="list-link">
+            <router-link :to="`/${workspace}/table/${table}`">{{table}}</router-link>
           </div>
         </div>
       </div>
@@ -25,11 +25,11 @@
         <div>
           <input type="text" v-model="newGraph" placeholder="name your graph.." class="text-input">
         </div>
-        <ul>
-          <li v-for="graph in graphs" :key="graph">
+        <div class = "list-link-wrap">
+          <div v-for="graph in graphs" :key="graph" class="list-link">
             <router-link :to="`/${workspace}/graph/${graph}`">{{graph}}</router-link>
-          </li>
-        </ul>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -69,11 +69,7 @@ export default {
           graphs { name }
         }
       }`});
-      this.tables = response.data.data.workspaces[0].tables.map(table => {
-        let name = table.name;
-        let displayName = name.includes("_") ? name.replace(/_/g, " ") : name;
-        return {name: table.name, display:displayName }
-      });
+      this.tables = response.data.data.workspaces[0].tables.map(table => table.name);
       this.graphs = response.data.data.workspaces[0].graphs.map(graph => graph.name);
     },
 
@@ -122,28 +118,28 @@ ul {
   border: .5px solid #648189;
   width: 200px;
 }
-.table-link-wrap{
+.list-link-wrap{
   text-align: left;
   padding:50px 0 0 0;
   
 }
 
-.table-link{
+.list-link{
 padding: 5px;
 margin:3px 50px;
 -webkit-transition:0.3s all ease;
 transition:0.3s all ease;
 }
-.table-link:hover{
+.list-link:hover{
 background-color: #bccace;
 -webkit-transition:0.3s all ease;
 transition:0.3s all ease;
 
 }
-.table-link:hover a{
+.list-link:hover a{
   color:#fff;
 }
-.table-link a{
+.list-link a{
   text-decoration: none;
   letter-spacing:1px;
   text-transform:uppercase;
