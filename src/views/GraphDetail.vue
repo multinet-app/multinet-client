@@ -14,15 +14,15 @@
         <label>Edge Types</label>
         <ul>
           <li v-for="table in edgeTypes" :key="table">
-            <router-link :to="`/${workspace}/table/${table}`">{{table}}</router-link>
+            <router-link :to="`/workspaces/${workspace}/table/${table}`">{{table}}</router-link>
           </li>
         </ul>
       </div>
       <div style="border-style: solid; width: 100%">
         <label>Apps</label>
         <ul>
-          <li v-for="(url, app) in apps" :key="app">
-            <a :href="`${url}/?workspace=${workspace}&graph=${graph}`" target="_blank">{{app}}</a>
+          <li v-for="app in apps" :key="app">
+            <a :href="`${app.url}/?workspace=${workspace}&graph=${graph}`" target="_blank">{{app.name}}</a>
           </li>
         </ul>
       </div>
@@ -56,7 +56,7 @@ export default {
       return `${url}/?workspace=${this.workspace}&graph=${this.graph}`;
     },
   },
-  props: ['workspace', 'graph', 'appregistry'],
+  props: ['workspace', 'graph', 'apps'],
   data () {
     return {
       nodeTypes: [],
@@ -68,9 +68,6 @@ export default {
     }
   },
   computed: {
-    apps () {
-      return JSON.parse(this.appregistry);
-    },
     highestOffset () {
       return (
         this.total % this.limit

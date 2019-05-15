@@ -1,12 +1,20 @@
 <template>
   <div id="app">
-    <router-view appregistry='{"nodelink": "http://localhost:8081/"}' />
+    <router-view :apps='apps' />
   </div>
 </template>
 
 <script>
 export default {
-  name: 'app'
+  name: 'app',
+  data () {
+    return {
+      apps: [],
+    };
+  },
+  created () {
+    this.apps = require('./appregistry.json');
+  },
 }
 </script>
 
