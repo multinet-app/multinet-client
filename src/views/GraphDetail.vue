@@ -18,6 +18,14 @@
           </li>
         </ul>
       </div>
+      <div style="border-style: solid; width: 100%">
+        <label>Apps</label>
+        <ul>
+          <li v-for="(url, app) in apps" :key="app">
+            <a :href="`${url}/?workspace=${workspace}&graph=${graph}`" target="_blank">{{app}}</a>
+          </li>
+        </ul>
+      </div>
     </div>
     <div style="border-style: solid;">
       <label>Nodes</label>
@@ -43,7 +51,12 @@ import api from '@/api'
 
 export default {
   name: 'GraphDetail',
-  props: ['workspace', 'graph'],
+  filters: {
+    appendArgs (url) {
+      return `${url}/?workspace=${this.workspace}&graph=${this.graph}`;
+    },
+  },
+  props: ['workspace', 'graph', 'appregistry'],
   data () {
     return {
       nodeTypes: [],
@@ -55,6 +68,9 @@ export default {
     }
   },
   computed: {
+    apps () {
+      return JSON.parse(this.appregistry);
+    },
     highestOffset () {
       return (
         this.total % this.limit

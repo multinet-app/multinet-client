@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <router-view/>
+    <router-view appregistry='{"nodelink": "http://localhost:8081/"}' />
   </div>
 </template>
 
