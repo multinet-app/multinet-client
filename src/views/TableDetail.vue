@@ -28,13 +28,9 @@
 </template>
 <script>
 import api from '@/api'
-import Button from '@/components/Button'
 
 export default {
   name: 'TableDetail',
-  components: {
-    'v-button':Button,
-  },
   props: ['workspace', 'table'],
   data () {
     return {
