@@ -14,22 +14,22 @@
                 <v-button :onClick="loadFile">create table</v-button>
             </div>
           </div>
-          <ul>
-          <li v-for="table in tables" :key="table">
+          <div class = "list-link-wrap">
+          <div v-for="table in tables" :key="table" class="list-link">
             <router-link :to="`/workspaces/${workspace}/table/${table}`">{{table}}</router-link>
-          </li>
-        </ul>
+          </div>
+        </div>
       </div>
       <div>
         <label>Graphs</label>
         <div>
           <input type="text" v-model="newGraph" placeholder="name your graph.." class="text-input">
         </div>
-        <ul>
-          <li v-for="graph in graphs" :key="graph">
+        <div class = "list-link-wrap">
+          <div v-for="graph in graphs" :key="graph" class="list-link">
             <router-link :to="`/workspaces/${workspace}/graph/${graph}`">{{graph}}</router-link>
-          </li>
-        </ul>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -75,8 +75,8 @@ export default {
 
     async loadFile(){
       let queryType = this.fileTypes[this.selectedType].queryCall;
-      const response = await api().post(`multinet/${queryType}/${this.workspace}/${this.newTable}`,
-      this.fileList[0], 
+      await api().post(`multinet/${queryType}/${this.workspace}/${this.newTable}`,
+      this.fileList[0],
       {
         headers: {
         'Content-Type': 'text/plain'
@@ -117,6 +117,34 @@ ul {
   padding:5px;
   border: .5px solid #648189;
   width: 200px;
+}
+.list-link-wrap{
+  text-align: left;
+  padding:50px 0 0 0;
+  
+}
 
+.list-link{
+padding: 5px;
+margin:3px 50px;
+-webkit-transition:0.3s all ease;
+transition:0.3s all ease;
+}
+.list-link:hover{
+background-color: #bccace;
+-webkit-transition:0.3s all ease;
+transition:0.3s all ease;
+
+}
+.list-link:hover a{
+  color:#fff;
+}
+.list-link a{
+  text-decoration: none;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  font-weight:bold;
+  color:#7f9ba4;
+  
 }
 </style>
