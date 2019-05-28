@@ -56,7 +56,7 @@ export default {
       fileList : null,
       fileTypes: {
         csv: {extension: ['csv'], queryCall: 'bulk'},
-        newick: {extension: ['phy'], queryCall: 'newick'}
+        newick: {extension: ['phy', 'tree'], queryCall: 'newick'}
       },
       selectedType: null,
     }
