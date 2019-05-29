@@ -37,7 +37,7 @@ export default {
         }`});
 
         if (response.data.data) {
-          this.$router.push(`/${this.newWorkspace}`);
+          this.$router.push(`workspaces/${this.newWorkspace}`);
         }
       }
     }
