@@ -43,12 +43,12 @@ export default {
       return index % 2 == 0 ? 'even-row' : 'odd-row';
     },
     async update () {
-      const response = await api().post('multinet/graphql', {query: `query {
+        const response = await api().post('multinet/graphql', {query: `query {
         tables (workspace: "${this.workspace}", name: "${this.table}") {
           name,
           rows{
             total,
-            rows(offset: 0, limit: 30){
+            data(offset: 0, limit: 30){
               key,
               columns{
                 key,
@@ -59,7 +59,7 @@ export default {
         }
       }`});
       let table = response.data.data.tables[0];
-      this.rowKeys = table.rows.rows.map(r=> r.columns.filter(c=> c.key != "_rev"))
+      this.rowKeys = table.rows.data.map(r=> r.columns.filter(c=> c.key != "_rev"))
       this.headers = this.rowKeys[0].map(k=> k.key.startsWith("_") ? k.key.slice(1) : k.key);
     }
   },
