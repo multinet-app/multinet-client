@@ -75,8 +75,6 @@ export default {
 
     async loadFile(){
       let queryType = this.fileTypes[this.selectedType].queryCall;
-      console.log("queryType", queryType)
-      console.log(this.fileList)
       await api().post(`multinet/${queryType}/${this.workspace}/${this.newTable}`,
       this.fileList[0],
       {
