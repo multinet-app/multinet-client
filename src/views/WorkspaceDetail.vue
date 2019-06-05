@@ -55,7 +55,7 @@ export default {
       graphs: [],
       fileList : null,
       fileTypes: {
-        csv: {extension: ['csv'], queryCall: 'bulk'},
+        csv: {extension: ['csv'], queryCall: 'csv'},
         newick: {extension: ['phy', 'tree'], queryCall: 'newick'}
       },
       selectedType: null,
