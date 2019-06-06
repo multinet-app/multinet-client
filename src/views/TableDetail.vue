@@ -2,7 +2,7 @@
 <div>
   <div class="nav">
     <div class="return-nav">
-      <router-link :to="`/workspaces/${workspace}/`" class="Button"><i class="fas fa-home"></i> to main table view</router-link>
+      <v-btn :to="`/workspaces/${workspace}/`"><i class="fas fa-home"></i>&nbsp;to main table view</v-btn>
     </div>
   </div>
   <div class="wrapper">

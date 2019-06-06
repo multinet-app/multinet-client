@@ -1,10 +1,14 @@
 <template>
   <div>
     <h1>Workspaces</h1>
-    <div id="workspace-create">
-      <input type="text" v-model="newWorkspace">
-      <v-button :onClick="create">New Workspace</v-button>
-    </div>
+    <v-container grid-list-md justify-center id="workspace-create">
+      <v-layout row wrap>
+        <v-flex md4 offset-md3>
+          <v-text-field v-model="newWorkspace" solo />
+        </v-flex>
+        <v-btn @click="create">New Workspace</v-btn>
+      </v-layout>
+    </v-container>
     <div class="workspace-wrapper">
       <h2>Your Workspaces:</h2>
       <div v-for="space in workspaces" :key="space" class="workspace">
@@ -16,13 +20,9 @@
 
 <script>
 import api from '@/api'
-import Button from '@/components/Button'
 
 export default {
   name: 'Workspaces',
-  components: {
-    'v-button':Button,
-  },
   data () {
     return {
       newWorkspace: '',
@@ -84,6 +84,5 @@ transition:0.3s all ease;
   text-transform:uppercase;
   font-weight:bold;
   color:#7f9ba4;
-  
 }
 </style>

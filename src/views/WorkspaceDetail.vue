@@ -7,11 +7,10 @@
         <div class="row">
           <input type="text" v-model="newTable" placeholder="name your table.." class="text-input">
         </div>
-       
           <div class="file-upload">
             <div >
                 <file-input @handle-file-input="handleFileInput" v-bind:types="fileTypes"/>
-                <v-button :onClick="loadFile">create table</v-button>
+                <v-btn @click="loadFile">create table</v-btn>
             </div>
           </div>
           <div class = "list-link-wrap">
@@ -38,13 +37,11 @@
 <script>
 import api from '@/api';
 import FileInput from '@/components/FileInput'
-import Button from '@/components/Button'
 
 export default {
   name: 'WorkspaceDetail',
   components: {
     'file-input': FileInput,
-    'v-button':Button,
   },
   props: ['workspace'],
   data () {

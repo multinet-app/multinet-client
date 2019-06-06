@@ -10,8 +10,10 @@
   "dependencies": {
     "@girder/core": "^3.0.0-alpha.0.2",
     "axios": "^0.18.0",
+    "material-design-icons-iconfont": "^5.0.1",
     "vue": "^2.6.6",
-    "vue-router": "^3.0.2"
+    "vue-router": "^3.0.2",
+    "vuetify": "^1.5.14"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.4.0",
