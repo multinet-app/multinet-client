@@ -1,37 +1,73 @@
 <template>
-  <div>
-    <h1>Workspace: {{this.workspace}}</h1>
-    <div id="workspace-details">
-      <div>
-        <label>Tables</label>
-        <div class="row">
-          <input type="text" v-model="newTable" placeholder="name your table.." class="text-input">
-        </div>
-          <div class="file-upload">
-            <div >
-                <file-input @handle-file-input="handleFileInput" v-bind:types="fileTypes"/>
-                <v-btn @click="loadFile">create table</v-btn>
-            </div>
-          </div>
-          <div class = "list-link-wrap">
+  <v-container>
+    <h1 class="text-md-center">Workspace: {{this.workspace}}</h1>
+
+    <v-layout row wrap>
+      <v-flex>
+        <h2 class="text-md-center">Tables</h2>
+
+        <v-layout justify-center row wrap>
+          <v-flex md6>
+            <v-text-field v-model="newTable" placeholder="name your table" solo />
+          </v-flex>
+        </v-layout>
+
+        <v-layout justify-center row wrap>
+          <v-flex md6>
+            <file-input @handle-file-input="handleFileInput" v-bind:types="fileTypes"/>
+          </v-flex>
+        </v-layout>
+
+        <v-layout row wrap>
+          <v-flex class="text-md-center">
+            <v-btn @click="loadFile">create table</v-btn>
+          </v-flex>
+        </v-layout>
+
+        <div class="text-md-center">
           <div v-for="table in tables" :key="table" class="list-link">
             <router-link :to="`/workspaces/${workspace}/table/${table}`">{{table}}</router-link>
           </div>
         </div>
-      </div>
-      <div>
-        <label>Graphs</label>
-        <div>
-          <input type="text" v-model="newGraph" placeholder="name your graph.." class="text-input">
-        </div>
-        <div class = "list-link-wrap">
+      </v-flex>
+
+      <v-flex>
+        <h2 class="text-md-center">Graphs</h2>
+
+        <v-layout justify-center row wrap>
+          <v-flex md6>
+            <v-text-field v-model="newGraph" placeholder="name your graph" solo />
+          </v-flex>
+        </v-layout>
+
+        <v-layout justify-center row wrap>
+          <v-flex md6>
+            <v-select
+              :model="nodeTables"
+              :items="tables"
+              chips
+              deletable-chips
+              clearable
+              solo
+              multiple
+            />
+          </v-flex>
+        </v-layout>
+
+        <v-layout justify-center row wrap>
+          <v-flex class="text-md-center">
+            <v-btn @click="createGraph">create graph</v-btn>
+          </v-flex>
+        </v-layout>
+
+        <div class = "text-md-center">
           <div v-for="graph in graphs" :key="graph" class="list-link">
             <router-link :to="`/workspaces/${workspace}/graph/${graph}`">{{graph}}</router-link>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
+      </v-flex>
+    </v-layout>
+  </v-container>
 </template>
 
 <script>
@@ -50,6 +86,7 @@ export default {
       newGraph: '',
       tables: [],
       graphs: [],
+      nodeTables: [],
       fileList : null,
       fileTypes: {
         csv: {extension: ['csv'], queryCall: 'csv'},
@@ -82,6 +119,13 @@ export default {
       )
       this.update()
     },
+    createGraph () {
+      if (!this.newGraph) {
+        return;
+      }
+
+      console.log(this.newGraph);
+    },
     handleFileInput(newFiles){
       this.fileList = newFiles[0]
       this.selectedType = newFiles[1]
@@ -100,48 +144,11 @@ export default {
 </script>
 
 <style scoped>
-ul {
-  padding: 0px;
-  list-style-type: none;
-  text-align: left;
-}
-#workspace-details, .row {
- display: flex;
-  flex-flow: row nowrap;
-  justify-content: space-around;
-}
-.text-input{
-  padding:5px;
-  border: .5px solid #648189;
-  width: 200px;
-}
-.list-link-wrap{
-  text-align: left;
-  padding:50px 0 0 0;
-  
-}
-
-.list-link{
-padding: 5px;
-margin:3px 50px;
--webkit-transition:0.3s all ease;
-transition:0.3s all ease;
-}
-.list-link:hover{
-background-color: #bccace;
--webkit-transition:0.3s all ease;
-transition:0.3s all ease;
-
-}
-.list-link:hover a{
-  color:#fff;
-}
 .list-link a{
   text-decoration: none;
   letter-spacing:1px;
   text-transform:uppercase;
   font-weight:bold;
   color:#7f9ba4;
-  
 }
 </style>

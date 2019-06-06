@@ -1,14 +1,15 @@
 <template>
   <div>
     <input type="file" id="file" ref="file" placeholder="Upload File" v-on:change="handleFileInput"/>
-    <select v-if="typeList.length" v-model="selectedType">
-      <option :value="null"></option>
-      <option v-for="type in typeList" :key ="type" :value="type">{{type}}</option>
-    </select>
+    <v-select
+      v-if="typeList.length"
+      v-model="selectedType"
+      :items="typeList"
+    />
    </div>
 </template>
-<script>
 
+<script>
 export default {
   name:"FileInput",
   props: {
