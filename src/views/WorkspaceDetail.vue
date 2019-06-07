@@ -103,6 +103,11 @@ export default {
       return this.fileList.length == 0 || !this.selectedType || !this.newTable;
     },
   },
+  watch: {
+    workspace () {
+      this.update()
+    }
+  },
   methods: {
     async update () {
       const response = await api().post('multinet/graphql', {query: `query {
@@ -137,11 +142,6 @@ export default {
     handleFileInput(newFiles){
       this.fileList = newFiles[0]
       this.selectedType = newFiles[1]
-    }
-  },
-  watch: {
-    workspace () {
-      this.update()
     }
   },
   created () {
