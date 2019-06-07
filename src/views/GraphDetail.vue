@@ -5,23 +5,23 @@
       <div style="border-style: solid; width: 100%;">
         <label>Node Types</label>
         <ul>
-          <li v-for="table in nodeTypes" :key="table">
-            <router-link :to="`/workspaces/${workspace}/table/${table}`">{{table}}</router-link>
+          <li v-for="table in nodeTypes" :key="table.name">
+            <router-link :to="`/workspaces/${workspace}/table/${table.name}`">{{table.name}}</router-link>
           </li>
         </ul>
       </div>
       <div style="border-style: solid; width: 100%">
         <label>Edge Types</label>
         <ul>
-          <li v-for="table in edgeTypes" :key="table">
-            <router-link :to="`/workspaces/${workspace}/table/${table}`">{{table}}</router-link>
+          <li v-for="table in edgeTypes" :key="table.name">
+            <router-link :to="`/workspaces/${workspace}/table/${table.name}`">{{table.name}}</router-link>
           </li>
         </ul>
       </div>
       <div style="border-style: solid; width: 100%">
         <label>Apps</label>
         <ul>
-          <li v-for="app in apps" :key="app">
+          <li v-for="app in apps" :key="app.name">
             <a :href="`${app.url}/?workspace=${workspace}&graph=${graph}`" target="_blank">{{app.name}}</a>
           </li>
         </ul>
