@@ -123,8 +123,6 @@ export default {
       if (!this.newGraph) {
         return;
       }
-
-      console.log(this.newGraph);
     },
     handleFileInput(newFiles){
       this.fileList = newFiles[0]
