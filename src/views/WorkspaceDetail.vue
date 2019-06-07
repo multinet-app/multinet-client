@@ -41,15 +41,23 @@
         </v-layout>
 
         <v-layout justify-center row wrap>
-          <v-flex md6>
+          <v-flex md3>
             <v-select
-              v-model="nodeTables"
-              :items="tables"
+              v-model="graphNodeTables"
+              :items="nodeTables"
               chips
               deletable-chips
               clearable
               solo
               multiple
+            />
+          </v-flex>
+
+          <v-flex md3>
+            <v-select
+              v-model="graphEdgeTable"
+              :items="edgeTables"
+              solo
             />
           </v-flex>
         </v-layout>
@@ -85,19 +93,22 @@ export default {
       newTable: '',
       newGraph: '',
       tables: [],
-      graphs: [],
       nodeTables: [],
+      edgeTables: [],
+      graphs: [],
       fileList: [],
       fileTypes: {
         csv: {extension: ['csv'], queryCall: 'csv'},
         newick: {extension: ['phy', 'tree'], queryCall: 'newick'}
       },
       selectedType: null,
+      graphNodeTables: [],
+      graphEdgeTable: null,
     }
   },
   computed: {
     graphCreateDisabled () {
-      return this.nodeTables.length == 0 || !this.newGraph;
+      return this.graphNodeTables.length == 0 || !this.graphEdgeTable || !this.newGraph;
     },
     tableCreateDisabled () {
       return this.fileList.length == 0 || !this.selectedType || !this.newTable;
@@ -106,18 +117,34 @@ export default {
   watch: {
     workspace () {
       this.update()
-    }
+    },
   },
   methods: {
     async update () {
       const response = await api().post('multinet/graphql', {query: `query {
         workspaces (name: "${this.workspace}") {
-          tables { name }
+          tables {
+            name
+            fields
+          }
           graphs { name }
         }
       }`});
-      this.tables = response.data.data.workspaces[0].tables.map(table => table.name);
-      this.graphs = response.data.data.workspaces[0].graphs.map(graph => graph.name);
+      const workspace = response.data.data.workspaces[0];
+
+      const getName = (obj) => obj.name;
+
+      this.tables = workspace.tables.map(getName);
+
+      this.nodeTables = workspace.tables
+        .filter(table => table.fields.indexOf('_from') === -1 || table.fields.indexOf('_to') === -1)
+        .map(getName);
+
+      this.edgeTables = workspace.tables
+        .filter(table => table.fields.indexOf('_from') > -1 && table.fields.indexOf('_to') > -1)
+        .map(getName);
+
+      this.graphs = workspace.graphs.map(getName);
     },
 
     async createTable(){
@@ -132,13 +159,13 @@ export default {
       )
       this.update()
     },
-    createGraph () {
-      if (!this.newGraph) {
-        return;
-      }
 
+    createGraph () {
       console.log(this.newGraph);
+      console.log(this.graphNodeTables);
+      console.log(this.graphEdgeTable);
     },
+
     handleFileInput(newFiles){
       this.fileList = newFiles[0]
       this.selectedType = newFiles[1]
