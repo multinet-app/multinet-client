@@ -43,7 +43,7 @@
         <v-layout justify-center row wrap>
           <v-flex md6>
             <v-select
-              :model="nodeTables"
+              v-model="nodeTables"
               :items="tables"
               chips
               deletable-chips
@@ -56,7 +56,7 @@
 
         <v-layout justify-center row wrap>
           <v-flex class="text-md-center">
-            <v-btn @click="createGraph">create graph</v-btn>
+            <v-btn :disabled="graphCreateDisabled" @click="createGraph">create graph</v-btn>
           </v-flex>
         </v-layout>
 
@@ -94,6 +94,11 @@ export default {
       },
       selectedType: null,
     }
+  },
+  computed: {
+    graphCreateDisabled () {
+      return this.nodeTables.length == 0 || !this.newGraph;
+    },
   },
   methods: {
     async update () {
