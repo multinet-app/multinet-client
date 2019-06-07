@@ -20,7 +20,7 @@
 
         <v-layout row wrap>
           <v-flex class="text-md-center">
-            <v-btn @click="loadFile">create table</v-btn>
+            <v-btn :disabled="tableCreateDisabled" @click="loadFile">create table</v-btn>
           </v-flex>
         </v-layout>
 
@@ -87,7 +87,7 @@ export default {
       tables: [],
       graphs: [],
       nodeTables: [],
-      fileList : null,
+      fileList: [],
       fileTypes: {
         csv: {extension: ['csv'], queryCall: 'csv'},
         newick: {extension: ['phy', 'tree'], queryCall: 'newick'}
@@ -98,6 +98,9 @@ export default {
   computed: {
     graphCreateDisabled () {
       return this.nodeTables.length == 0 || !this.newGraph;
+    },
+    tableCreateDisabled () {
+      return this.fileList.length == 0 || !this.selectedType || !this.newTable;
     },
   },
   methods: {

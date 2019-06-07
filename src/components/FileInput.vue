@@ -36,6 +36,10 @@ export default {
       this.$emit("handle-file-input", [this.$refs.file.files, this.selectedType])
     },
     fileType(file){
+      if (!file) {
+        return null
+      }
+
       let fileName = file.name.split('.')
       let extension = fileName[fileName.length - 1]
 
