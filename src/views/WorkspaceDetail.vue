@@ -168,13 +168,11 @@ export default {
       }`});
 
       if (response.data.errors.length > 0) {
-        console.error(response.data.errors);
-        return;
+        throw new Error(response.data.errors);
       }
 
       if (!response.data.data.graph) {
-        console.error(`Graph "${this.newGraph}" already exists.`);
-        return;
+        throw new Error(`Graph "${this.newGraph}" already exists.`);
       }
 
       this.update();
