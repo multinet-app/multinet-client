@@ -86,11 +86,15 @@ export default {
     async update () {
       const response = await api().post('multinet/graphql', {query: `query {
         graphs (workspace: "${this.workspace}", name: "${this.graph}") {
-          nodeTypes
-          edgeTypes
+          nodeTypes {
+            name
+          }
+          edgeTypes {
+            name
+          }
           nodes {
             total
-            nodes (offset: ${this.offset} limit: ${this.limit}) {
+            data (offset: ${this.offset} limit: ${this.limit}) {
               key
             }
           }
@@ -99,7 +103,7 @@ export default {
 
       this.nodeTypes = response.data.data.graphs[0].nodeTypes;
       this.edgeTypes = response.data.data.graphs[0].edgeTypes;
-      this.nodes = response.data.data.graphs[0].nodes.nodes.map(node => node.key);
+      this.nodes = response.data.data.graphs[0].nodes.data.map(node => node.key);
       this.total = response.data.data.graphs[0].nodes.total;
     },
     turnPage (forward) {

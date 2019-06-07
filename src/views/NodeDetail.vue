@@ -96,21 +96,25 @@ export default {
   methods: {
     async update () {
       const response = await api().post('multinet/graphql', {query: `query {
-        nodes (workspace: "${this.workspace}", graph: "${this.graph}", nodeType: "${this.type}" key: "${this.node}") {
-          nodes {
-            key
-            incoming { total edges (offset: ${this.offsetIncoming}, limit: ${this.pageCount}) { key source {key} } }
-            outgoing { total edges (offset: ${this.offsetOutgoing}, limit: ${this.pageCount}) { key target {key} } }
-            properties { key value }
+        graph (workspace: "${this.workspace}", name: "${this.graph}") {
+          nodes(nodeType: "${this.type}" key: "${this.node}") {
+            data {
+              key
+              incoming { total data (offset: ${this.offsetIncoming}, limit: ${this.pageCount}) { key source {key} } }
+              outgoing { total data (offset: ${this.offsetOutgoing}, limit: ${this.pageCount}) { key target {key} } }
+              properties { key value }
+            }
           }
         }
       }`});
 
-      this.attributes = response.data.data.nodes.nodes[0].properties;
-      this.incoming = response.data.data.nodes.nodes[0].incoming.edges.map(edge => ({id: edge.key, airport: edge.source.key}));
-      this.outgoing = response.data.data.nodes.nodes[0].outgoing.edges.map(edge => ({id: edge.key, airport: edge.target.key}));
-      this.totalIncoming = response.data.data.nodes.nodes[0].incoming.total;
-      this.totalOutgoing = response.data.data.nodes.nodes[0].outgoing.total;
+      const nodeData = response.data.data.graph.nodes.data[0];
+
+      this.attributes = nodeData.properties;
+      this.incoming = nodeData.incoming.data.map(edge => ({id: edge.key, airport: edge.source.key}));
+      this.outgoing = nodeData.outgoing.data.map(edge => ({id: edge.key, airport: edge.target.key}));
+      this.totalIncoming = nodeData.incoming.total;
+      this.totalOutgoing = nodeData.outgoing.total;
     },
     turnPage (edgeType, forward) {
       if (edgeType === 'incoming') {
