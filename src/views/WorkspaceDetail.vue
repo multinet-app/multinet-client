@@ -160,10 +160,24 @@ export default {
       this.update()
     },
 
-    createGraph () {
-      console.log(this.newGraph);
-      console.log(this.graphNodeTables);
-      console.log(this.graphEdgeTable);
+    async createGraph () {
+      const response = await api().post('multinet/graphql', {query: `mutation {
+        graph (workspace: "${this.workspace}", name: "${this.newGraph}", node_tables: ${JSON.stringify(this.graphNodeTables)}, edge_table: "${this.graphEdgeTable}") {
+          name
+        }
+      }`});
+
+      if (response.data.errors.length > 0) {
+        console.error(response.data.errors);
+        return;
+      }
+
+      if (!response.data.data.graph) {
+        console.error(`Graph "${this.newGraph}" already exists.`);
+        return;
+      }
+
+      this.update();
     },
 
     handleFileInput(newFiles){
