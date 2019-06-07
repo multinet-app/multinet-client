@@ -20,7 +20,7 @@
 
         <v-layout row wrap>
           <v-flex class="text-md-center">
-            <v-btn :disabled="tableCreateDisabled" @click="loadFile">create table</v-btn>
+            <v-btn :disabled="tableCreateDisabled" @click="createTable">create table</v-btn>
           </v-flex>
         </v-layout>
 
@@ -115,7 +115,7 @@ export default {
       this.graphs = response.data.data.workspaces[0].graphs.map(graph => graph.name);
     },
 
-    async loadFile(){
+    async createTable(){
       let queryType = this.fileTypes[this.selectedType].queryCall;
       await api().post(`multinet/${queryType}/${this.workspace}/${this.newTable}`,
       this.fileList[0],
