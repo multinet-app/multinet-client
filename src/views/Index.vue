@@ -37,7 +37,7 @@ export default {
   align-items: flex-start;
   display: flex;
   justify-content: center;
-  margin: 0 auto;
+  margin: 0 auto 100px;
   max-width: 600px;
 }
 
