@@ -1,53 +1,58 @@
 <template>
-  <div>
-    <h1>Graph: {{`${this.workspace}/${this.graph}`}}</h1>
-    <div id="graph-details">
-      <div style="border-style: solid; width: 100%;">
-        <label>Node Types</label>
+  <v-container fluid>
+    <sidebar />
+
+    <v-content>
+      <h1>Graph: {{`${this.workspace}/${this.graph}`}}</h1>
+      <div id="graph-details">
+        <div style="border-style: solid; width: 100%;">
+          <label>Node Types</label>
+          <ul>
+            <li v-for="table in nodeTypes" :key="table.name">
+              <router-link :to="`/workspaces/${workspace}/table/${table.name}`">{{table.name}}</router-link>
+            </li>
+          </ul>
+        </div>
+        <div style="border-style: solid; width: 100%">
+          <label>Edge Types</label>
+          <ul>
+            <li v-for="table in edgeTypes" :key="table.name">
+              <router-link :to="`/workspaces/${workspace}/table/${table.name}`">{{table.name}}</router-link>
+            </li>
+          </ul>
+        </div>
+        <div style="border-style: solid; width: 100%">
+          <label>Apps</label>
+          <ul>
+            <li v-for="app in apps" :key="app.name">
+              <a :href="`${app.url}/?workspace=${workspace}&graph=${graph}`" target="_blank">{{app.name}}</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div style="border-style: solid;">
+        <label>Nodes</label>
+        <br/>
+        <br/>
+        <div style="display: flex; flex-flow: row nowrap; justify-content: space-around">
+          <div v-if="prev" v-on:click="firstPage()">first</div>
+          <div v-if="prev" v-on:click="turnPage(false)">previous</div>
+          <div v-if="next" v-on:click="turnPage(true)">next</div>
+          <div v-if="next" v-on:click="lastPage()">last</div>
+        </div>
         <ul>
-          <li v-for="table in nodeTypes" :key="table.name">
-            <router-link :to="`/workspaces/${workspace}/table/${table.name}`">{{table.name}}</router-link>
+          <li v-for="node in nodes" :key="node">
+            <router-link :to="`/workspaces/${workspace}/graph/${graph}/node/${node}`">{{node}}</router-link>
           </li>
         </ul>
       </div>
-      <div style="border-style: solid; width: 100%">
-        <label>Edge Types</label>
-        <ul>
-          <li v-for="table in edgeTypes" :key="table.name">
-            <router-link :to="`/workspaces/${workspace}/table/${table.name}`">{{table.name}}</router-link>
-          </li>
-        </ul>
-      </div>
-      <div style="border-style: solid; width: 100%">
-        <label>Apps</label>
-        <ul>
-          <li v-for="app in apps" :key="app.name">
-            <a :href="`${app.url}/?workspace=${workspace}&graph=${graph}`" target="_blank">{{app.name}}</a>
-          </li>
-        </ul>
-      </div>
-    </div>
-    <div style="border-style: solid;">
-      <label>Nodes</label>
-      <br/>
-      <br/>
-      <div style="display: flex; flex-flow: row nowrap; justify-content: space-around">
-        <div v-if="prev" v-on:click="firstPage()">first</div>
-        <div v-if="prev" v-on:click="turnPage(false)">previous</div>
-        <div v-if="next" v-on:click="turnPage(true)">next</div>
-        <div v-if="next" v-on:click="lastPage()">last</div>
-      </div>
-      <ul>
-        <li v-for="node in nodes" :key="node">
-          <router-link :to="`/workspaces/${workspace}/graph/${graph}/node/${node}`">{{node}}</router-link>
-        </li>
-      </ul>
-    </div>
-  </div>
+    </v-content>
+  </v-container>
 </template>
 
 <script>
 import api from '@/api'
+import Sidebar from '@/components/Sidebar'
 
 export default {
   name: 'GraphDetail',
@@ -55,6 +60,9 @@ export default {
     appendArgs (url) {
       return `${url}/?workspace=${this.workspace}&graph=${this.graph}`;
     },
+  },
+  components: {
+    Sidebar
   },
   props: ['workspace', 'graph', 'apps'],
   data () {

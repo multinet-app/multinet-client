@@ -1,36 +1,44 @@
 <template>
-<div>
-  <div class="nav">
-    <div class="return-nav">
-      <v-btn :to="`/workspaces/${workspace}/`"><i class="fas fa-home"></i>&nbsp;to main table view</v-btn>
-    </div>
-  </div>
-  <div class="wrapper">
-      <h1>Table: {{`${this.workspace}/${this.table}`}}</h1>
-      <table>
-        <thead>
-          <tr >
-            <th v-for="head in this.headers" :key="head" class="head">
-              {{head}}
-            </th>
-          </tr>
-        </thead>
-        <tbody class="row-wrap">
-          <tr v-for="(row, index) in rowKeys" :key="row.value" :class="rowClassName(index)">
-            <td v-for="col in row" :key="col.key" class="col">
-              {{col.value}}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-  </div>
-  </div>
+  <v-container fluid>
+    <sidebar />
+
+    <v-content>
+      <div class="nav">
+        <div class="return-nav">
+          <v-btn :to="`/workspaces/${workspace}/`"><i class="fas fa-home"></i>&nbsp;to main table view</v-btn>
+        </div>
+      </div>
+      <div class="wrapper">
+        <h1>Table: {{`${this.workspace}/${this.table}`}}</h1>
+        <table>
+          <thead>
+            <tr >
+              <th v-for="head in this.headers" :key="head" class="head">
+                {{head}}
+              </th>
+            </tr>
+          </thead>
+          <tbody class="row-wrap">
+            <tr v-for="(row, index) in rowKeys" :key="row.value" :class="rowClassName(index)">
+              <td v-for="col in row" :key="col.key" class="col">
+                {{col.value}}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </v-content>
+  </v-container>
 </template>
 <script>
 import api from '@/api'
+import Sidebar from '@/components/Sidebar'
 
 export default {
   name: 'TableDetail',
+  components: {
+    Sidebar
+  },
   props: ['workspace', 'table'],
   data () {
     return {

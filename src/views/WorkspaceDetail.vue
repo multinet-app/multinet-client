@@ -1,91 +1,97 @@
 <template>
-  <v-container>
-    <h1 class="text-md-center">Workspace: {{this.workspace}}</h1>
+  <v-container fluid>
+    <sidebar />
 
-    <v-layout row wrap>
-      <v-flex>
-        <h2 class="text-md-center">Tables</h2>
+    <v-content>
+      <h1 class="text-md-center">Workspace: {{this.workspace}}</h1>
 
-        <v-layout justify-center row wrap>
-          <v-flex md6>
-            <v-text-field v-model="newTable" placeholder="name your table" solo />
-          </v-flex>
-        </v-layout>
+      <v-layout row wrap>
+        <v-flex>
+          <h2 class="text-md-center">Tables</h2>
 
-        <v-layout justify-center row wrap>
-          <v-flex md6>
-            <file-input @handle-file-input="handleFileInput" v-bind:types="fileTypes"/>
-          </v-flex>
-        </v-layout>
+          <v-layout justify-center row wrap>
+            <v-flex md6>
+              <v-text-field v-model="newTable" placeholder="name your table" solo />
+            </v-flex>
+          </v-layout>
 
-        <v-layout row wrap>
-          <v-flex class="text-md-center">
-            <v-btn :disabled="tableCreateDisabled" @click="createTable">create table</v-btn>
-          </v-flex>
-        </v-layout>
+          <v-layout justify-center row wrap>
+            <v-flex md6>
+              <file-input @handle-file-input="handleFileInput" v-bind:types="fileTypes"/>
+            </v-flex>
+          </v-layout>
 
-        <div class="text-md-center">
-          <div v-for="table in tables" :key="table" class="list-link">
-            <router-link :to="`/workspaces/${workspace}/table/${table}`">{{table}}</router-link>
+          <v-layout row wrap>
+            <v-flex class="text-md-center">
+              <v-btn :disabled="tableCreateDisabled" @click="createTable">create table</v-btn>
+            </v-flex>
+          </v-layout>
+
+          <div class="text-md-center">
+            <div v-for="table in tables" :key="table" class="list-link">
+              <router-link :to="`/workspaces/${workspace}/table/${table}`">{{table}}</router-link>
+            </div>
           </div>
-        </div>
-      </v-flex>
+        </v-flex>
 
-      <v-flex>
-        <h2 class="text-md-center">Graphs</h2>
+        <v-flex>
+          <h2 class="text-md-center">Graphs</h2>
 
-        <v-layout justify-center row wrap>
-          <v-flex md6>
-            <v-text-field v-model="newGraph" placeholder="name your graph" solo />
-          </v-flex>
-        </v-layout>
+          <v-layout justify-center row wrap>
+            <v-flex md6>
+              <v-text-field v-model="newGraph" placeholder="name your graph" solo />
+            </v-flex>
+          </v-layout>
 
-        <v-layout justify-center row wrap>
-          <v-flex md3>
-            <v-select
-              v-model="graphNodeTables"
-              :items="nodeTables"
-              chips
-              deletable-chips
-              clearable
-              solo
-              multiple
-            />
-          </v-flex>
+          <v-layout justify-center row wrap>
+            <v-flex md3>
+              <v-select
+                v-model="graphNodeTables"
+                :items="nodeTables"
+                chips
+                deletable-chips
+                clearable
+                solo
+                multiple
+              />
+            </v-flex>
 
-          <v-flex md3>
-            <v-select
-              v-model="graphEdgeTable"
-              :items="edgeTables"
-              solo
-            />
-          </v-flex>
-        </v-layout>
+            <v-flex md3>
+              <v-select
+                v-model="graphEdgeTable"
+                :items="edgeTables"
+                solo
+              />
+            </v-flex>
+          </v-layout>
 
-        <v-layout justify-center row wrap>
-          <v-flex class="text-md-center">
-            <v-btn :disabled="graphCreateDisabled" @click="createGraph">create graph</v-btn>
-          </v-flex>
-        </v-layout>
+          <v-layout justify-center row wrap>
+            <v-flex class="text-md-center">
+              <v-btn :disabled="graphCreateDisabled" @click="createGraph">create graph</v-btn>
+            </v-flex>
+          </v-layout>
 
-        <div class = "text-md-center">
-          <div v-for="graph in graphs" :key="graph" class="list-link">
-            <router-link :to="`/workspaces/${workspace}/graph/${graph}`">{{graph}}</router-link>
+          <div class = "text-md-center">
+            <div v-for="graph in graphs" :key="graph" class="list-link">
+              <router-link :to="`/workspaces/${workspace}/graph/${graph}`">{{graph}}</router-link>
+            </div>
           </div>
-        </div>
-      </v-flex>
-    </v-layout>
+        </v-flex>
+      </v-layout>
+    </v-content>
   </v-container>
 </template>
 
 <script>
 import api from '@/api';
 import FileInput from '@/components/FileInput'
+import Sidebar from '@/components/Sidebar'
 
 export default {
   name: 'WorkspaceDetail',
   components: {
     'file-input': FileInput,
+    Sidebar
   },
   props: ['workspace'],
   data () {
