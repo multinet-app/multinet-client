@@ -19,9 +19,9 @@
       </v-btn>
     </template>
 
-    <v-card class="white--text">
+    <v-card>
       <v-card-title
-        class="headline primary pt-3"
+        class="headline pb-0 pt-3"
         primary-title
       >
         Create Workspace
