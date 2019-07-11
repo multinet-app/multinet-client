@@ -2,7 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
-import Workspaces from '@/views/Workspaces'
+import Index from '@/views/Index'
 import WorkspaceDetail from '@/views/WorkspaceDetail'
 import TableDetail from '@/views/TableDetail'
 import GraphDetail from '@/views/GraphDetail'
@@ -11,11 +11,7 @@ import NodeDetail from '@/views/NodeDetail'
 const routes = [
   {
     path: '/',
-    redirect: '/workspaces'
-  },
-  {
-    path: '/workspaces',
-    component: Workspaces
+    component: Index
   },
   {
     path: '/workspaces/:workspace',
