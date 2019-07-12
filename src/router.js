@@ -2,7 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
-import Index from '@/views/Index'
+import FrontPage from '@/views/FrontPage'
 import WorkspaceDetail from '@/views/WorkspaceDetail'
 import TableDetail from '@/views/TableDetail'
 import GraphDetail from '@/views/GraphDetail'
@@ -11,7 +11,7 @@ import NodeDetail from '@/views/NodeDetail'
 const routes = [
   {
     path: '/',
-    component: Index
+    component: FrontPage
   },
   {
     path: '/workspaces/:workspace',
