@@ -70,6 +70,7 @@ export default {
 
         if (response.data.data) {
           this.$router.push(`/workspaces/${this.newWorkspace}`);
+          this.$emit('created', this.newWorkspace);
           this.dialog = false;
         }
       }

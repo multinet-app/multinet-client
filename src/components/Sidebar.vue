@@ -21,7 +21,9 @@
       </v-btn>
     </v-toolbar>
 
-    <WorkspaceDialog />
+    <WorkspaceDialog
+      @created="addWorkspace"
+    />
 
     <v-list subheader>
       <v-subheader>Your Workspaces</v-subheader>
@@ -66,7 +68,11 @@ export default {
   methods: {
     route (workspace) {
       this.$router.push(`/workspaces/${workspace}`);
-    }
+    },
+    addWorkspace (workspace) {
+      const workspaces = this.workspaces.concat([workspace]);
+      this.workspaces = workspaces.sort();
+    },
   },
   async created () {
     const response = await api().post('multinet/graphql', {query: `query {
