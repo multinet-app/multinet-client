@@ -7,16 +7,16 @@
     value="true"
   >
     <v-toolbar
-      color="blue-grey lighten-5"
+      color="grey lighten-2"
     >
       <v-toolbar-title>multinet</v-toolbar-title>
       <v-spacer />
       <v-btn icon>
         <v-avatar
-          color="blue-grey lighten-4"
+          color="grey lighten-4"
           size="36px"
         >
-          <v-icon color="blue-grey lighten-1">account_circle</v-icon>
+          <v-icon color="grey">account_circle</v-icon>
         </v-avatar>
       </v-btn>
     </v-toolbar>
@@ -25,16 +25,20 @@
 
     <v-list subheader>
       <v-subheader>Your Workspaces</v-subheader>
+
+      <v-divider></v-divider>
+
       <v-list-tile
-        active-class="blue-grey lighten-5"
+        active-class="grey lighten-4"
+        avatar
         ripple
         :key="space"
         :to="`/workspaces/${space}/`"
         v-for="space in workspaces"
       >
-        <v-list-tile-action>
+        <v-list-tile-avatar>
           <v-icon color="primary">library_books</v-icon>
-        </v-list-tile-action>
+        </v-list-tile-avatar>
 
         <v-list-tile-content>
           <v-list-tile-title>{{space}}</v-list-tile-title>

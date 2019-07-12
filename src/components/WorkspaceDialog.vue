@@ -7,7 +7,7 @@
       <v-btn
         class="workspace-btn ma-0 pa-4"
         block
-        color="blue-grey darken-3"
+        color="grey darken-3"
         dark
         depressed
         large
@@ -40,7 +40,7 @@
       <v-card-actions class="px-4 py-3">
         <v-spacer></v-spacer>
         <v-btn
-          color="blue-grey darken-3"
+          color="grey darken-3"
           dark
           depressed
           @click="create"
