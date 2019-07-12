@@ -5,7 +5,7 @@
   >
     <template v-slot:activator="{ on }">
       <v-btn
-        class="workspace-btn ma-0 pa-4"
+        class="ws-btn ma-0 pa-4"
         block
         color="grey darken-3"
         dark
@@ -78,3 +78,10 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.ws-btn.v-btn {
+  border-radius: 0;
+  height: auto;
+}
+</style>

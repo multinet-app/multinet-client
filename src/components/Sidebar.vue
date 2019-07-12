@@ -83,10 +83,3 @@ export default {
   }
 }
 </script>
-
-<style>
-.workspace-btn.v-btn {
-  border-radius: 0;
-  height: auto;
-}
-</style>
