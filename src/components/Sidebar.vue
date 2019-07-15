@@ -32,14 +32,16 @@
 
           <v-tooltip right>
             <template v-slot:activator="{ on }">
-              <v-btn
-                flat
-                icon
-                v-if="somethingChecked"
-                v-on="on"
-              >
-                <v-icon color="red accent-3">delete_sweep</v-icon>
-              </v-btn>
+              <v-scroll-x-transition>
+                <v-btn
+                  flat
+                  icon
+                  v-if="somethingChecked"
+                  v-on="on"
+                >
+                  <v-icon color="red accent-3">delete_sweep</v-icon>
+                </v-btn>
+              </v-scroll-x-transition>
             </template>
             <span>Delete selected</span>
           </v-tooltip>
@@ -59,16 +61,18 @@
           :to="`/workspaces/${space}/`"
         >
           <v-list-tile-avatar @click.prevent>
-            <v-icon
-              color="primary"
-              v-if="!hover && !checkbox[space]"
-            >library_books</v-icon>
+            <v-scale-transition leave-absolute>
+              <v-icon
+                color="primary"
+                v-if="!hover && !checkbox[space]"
+              >library_books</v-icon>
 
-            <v-checkbox
-              class="ws-checkbox"
-              v-else
-              v-model="checkbox[space]"
-            ></v-checkbox>
+              <v-checkbox
+                class="ws-checkbox"
+                v-else
+                v-model="checkbox[space]"
+              ></v-checkbox>
+            </v-scale-transition>
           </v-list-tile-avatar>
 
           <v-list-tile-content>
