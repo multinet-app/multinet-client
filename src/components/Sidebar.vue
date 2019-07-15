@@ -26,26 +26,56 @@
     />
 
     <v-list subheader>
-      <v-subheader>Your Workspaces</v-subheader>
+      <v-subheader class="pr-2">
+        Your Workspaces
+        <v-spacer />
+
+          <v-tooltip right>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                flat
+                icon
+                v-if="somethingChecked"
+                v-on="on"
+              >
+                <v-icon color="red accent-3">delete_sweep</v-icon>
+              </v-btn>
+            </template>
+            <span>Delete selected</span>
+          </v-tooltip>
+      </v-subheader>
 
       <v-divider></v-divider>
 
-      <v-list-tile
-        active-class="grey lighten-4"
-        avatar
-        ripple
-        :key="space"
-        :to="`/workspaces/${space}/`"
+      <v-hover
         v-for="space in workspaces"
+        :key="space"
       >
-        <v-list-tile-avatar>
-          <v-icon color="primary">library_books</v-icon>
-        </v-list-tile-avatar>
+        <v-list-tile
+          active-class="grey lighten-4"
+          avatar
+          ripple
+          slot-scope="{ hover }"
+          :to="`/workspaces/${space}/`"
+        >
+          <v-list-tile-avatar @click.prevent>
+            <v-icon
+              color="primary"
+              v-if="!hover && !checkbox[space]"
+            >library_books</v-icon>
 
-        <v-list-tile-content>
-          <v-list-tile-title>{{space}}</v-list-tile-title>
-        </v-list-tile-content>
-      </v-list-tile>
+            <v-checkbox
+              class="ws-checkbox"
+              v-else
+              v-model="checkbox[space]"
+            ></v-checkbox>
+          </v-list-tile-avatar>
+
+          <v-list-tile-content>
+            <v-list-tile-title>{{space}}</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+      </v-hover>
     </v-list>
   </v-navigation-drawer>
 </template>
@@ -59,11 +89,18 @@ export default {
     return {
       newWorkspace: '',
       workspaces: [],
-      right: null
+      right: null,
+      checkbox: {}
     }
   },
   components: {
     WorkspaceDialog
+  },
+  computed: {
+    somethingChecked() {
+      return Object.values(this.checkbox)
+        .some(d => !!d);
+    }
   },
   methods: {
     route (workspace) {
@@ -83,3 +120,10 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.ws-checkbox.v-input--selection-controls {
+  margin-top: 19px;
+  margin-left: 8px;
+}
+</style>
