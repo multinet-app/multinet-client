@@ -61,7 +61,7 @@
           :to="`/workspaces/${space}/`"
         >
           <v-list-tile-avatar @click.prevent>
-            <v-scale-transition leave-absolute>
+            <v-fade-transition hide-on-leave>
               <v-icon
                 color="primary"
                 v-if="!hover && !checkbox[space]"
@@ -72,7 +72,7 @@
                 v-else
                 v-model="checkbox[space]"
               ></v-checkbox>
-            </v-scale-transition>
+            </v-fade-transition>
           </v-list-tile-avatar>
 
           <v-list-tile-content>
