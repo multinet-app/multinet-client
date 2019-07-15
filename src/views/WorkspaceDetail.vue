@@ -3,7 +3,42 @@
     <sidebar />
 
     <v-content>
-      <h1 class="text-md-center">Workspace: {{this.workspace}}</h1>
+      <v-toolbar app>
+        <v-toolbar-title
+          class="ws-detail-title"
+          @mouseover="titleHover = true"
+          @mouseleave="titleHover = false"
+        >
+          <v-icon
+            class="mr-3"
+            color="grey lighten-1"
+          >library_books</v-icon>
+
+          {{this.workspace}}
+
+          <v-tooltip right>
+            <template v-slot:activator="{ on }">
+              <v-slide-x-transition>
+                <v-btn
+                  icon
+                  v-if="titleHover"
+                  v-on="on"
+                >
+                  <v-icon
+                    color="grey darken-3"
+                    size="20px"
+                  >edit</v-icon>
+                </v-btn>
+              </v-slide-x-transition>
+            </template>
+            <span>Rename workspace</span>
+          </v-tooltip>
+        </v-toolbar-title>
+        <v-spacer />
+        <v-btn icon>
+          <v-icon>more_vert</v-icon>
+        </v-btn>
+      </v-toolbar>
 
       <v-layout row wrap>
         <v-flex>
@@ -110,6 +145,7 @@ export default {
       selectedType: null,
       graphNodeTables: [],
       graphEdgeTable: null,
+      titleHover: false
     }
   },
   computed: {
@@ -203,5 +239,10 @@ export default {
   text-transform:uppercase;
   font-weight:bold;
   color:#7f9ba4;
+}
+
+.ws-detail-title {
+  align-items: center;
+  display: flex;
 }
 </style>
