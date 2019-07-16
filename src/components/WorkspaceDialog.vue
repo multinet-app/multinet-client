@@ -58,7 +58,8 @@ import api from '@/api'
 export default {
   data () {
     return {
-      dialog: false
+      dialog: false,
+      newWorkspace: '',
     }
   },
   methods: {
@@ -71,6 +72,7 @@ export default {
         if (response.data.data) {
           this.$router.push(`/workspaces/${this.newWorkspace}`);
           this.$emit('created', this.newWorkspace);
+          this.newWorkspace = '';
           this.dialog = false;
         }
       }
