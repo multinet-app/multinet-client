@@ -105,73 +105,14 @@
               <v-btn :disabled="tableCreateDisabled" @click="createTable">create table</v-btn>
             </v-card-text>
 
-            <v-list
-              dark
-              subheader
-            >
-              <v-subheader class="pr-2">
-                Your Tables
-                <v-spacer />
+            <item-panel
+              title="Your Tables"
+              :items="tables"
+              :workspace="workspace"
+              route-type="table"
+              icon="table_chart"
+            />
 
-                  <v-tooltip top>
-                    <template v-slot:activator="{ on }">
-                      <v-scroll-x-transition>
-                        <v-btn
-                          flat
-                          icon
-                          v-if="somethingCheckedTable"
-                          v-on="on"
-                        >
-                          <v-icon color="red accent-2">delete_sweep</v-icon>
-                        </v-btn>
-                      </v-scroll-x-transition>
-                    </template>
-                    <span>Delete selected</span>
-                  </v-tooltip>
-              </v-subheader>
-
-              <v-divider></v-divider>
-
-              <template v-if="tables.length > 0">
-                <v-hover
-                  v-for="table in tables"
-                  :key="table"
-                >
-                  <v-list-tile
-                    active-class="grey lighten-4"
-                    avatar
-                    ripple
-                    slot-scope="{ hover }"
-                    :to="`/workspaces/${workspace}/table/${table}`"
-                  >
-                    <v-list-tile-avatar @click.prevent>
-                      <v-fade-transition hide-on-leave>
-                        <v-icon
-                          color="blue lighten-1"
-                          v-if="!hover && !checkboxTable[table]"
-                        >table_chart</v-icon>
-
-                        <v-checkbox
-                          class="ws-detail-checkbox"
-                          v-else
-                          v-model="checkboxTable[table]"
-                        ></v-checkbox>
-                      </v-fade-transition>
-                    </v-list-tile-avatar>
-
-                    <v-list-tile-content>
-                      <v-list-tile-title>{{table}}</v-list-tile-title>
-                    </v-list-tile-content>
-                  </v-list-tile>
-                </v-hover>
-              </template>
-              <div
-                class="ws-detail-empty-list"
-                v-else
-              >
-                <v-icon color="blue lighten-1">info</v-icon> There are no tables yet...
-              </div>
-            </v-list>
           </v-card>
         </v-flex>
         <v-flex
@@ -218,72 +159,14 @@
               </v-layout>
             </v-card-text>
 
-            <v-list
-              dark
-              subheader
-            >
-              <v-subheader class="pr-2">
-                Your Graphs
-                <v-spacer />
-                <v-tooltip top>
-                  <template v-slot:activator="{ on }">
-                    <v-scroll-x-transition>
-                      <v-btn
-                        flat
-                        icon
-                        v-if="somethingCheckedGraph"
-                        v-on="on"
-                      >
-                        <v-icon color="red accent-2">delete_sweep</v-icon>
-                      </v-btn>
-                    </v-scroll-x-transition>
-                  </template>
-                  <span>Delete selected</span>
-                </v-tooltip>
-              </v-subheader>
+            <item-panel
+              title="Your Graphs"
+              :items="graphs"
+              :workspace="workspace"
+              route-type="graph"
+              icon="timeline"
+              />
 
-              <v-divider></v-divider>
-
-              <template v-if="graphs.length > 0">
-                <v-hover
-                  v-for="graph in graphs"
-                  :key="graph"
-                >
-                  <v-list-tile
-                    active-class="grey lighten-4"
-                    avatar
-                    ripple
-                    slot-scope="{ hover }"
-                    :to="`/workspaces/${workspace}/graph/${graph}`"
-                  >
-                    <v-list-tile-avatar @click.prevent>
-                      <v-fade-transition hide-on-leave>
-                        <v-icon
-                          color="blue lighten-1"
-                          v-if="!hover && !checkboxGraph[graph]"
-                        >timeline</v-icon>
-
-                        <v-checkbox
-                          class="ws-detail-checkbox"
-                          v-else
-                          v-model="checkboxGraph[graph]"
-                        ></v-checkbox>
-                      </v-fade-transition>
-                    </v-list-tile-avatar>
-
-                    <v-list-tile-content>
-                      <v-list-tile-title>{{graph}}</v-list-tile-title>
-                    </v-list-tile-content>
-                  </v-list-tile>
-                </v-hover>
-              </template>
-              <div
-                class="ws-detail-empty-list"
-                v-else
-              >
-                <v-icon color="blue lighten-1">info</v-icon> There are no graphs yet...
-              </div>
-            </v-list>
           </v-card>
         </v-flex>
       </v-layout>
@@ -295,12 +178,14 @@
 import api from '@/api';
 import FileInput from '@/components/FileInput'
 import Sidebar from '@/components/Sidebar'
+import ItemPanel from '@/components/ItemPanel'
 
 export default {
   name: 'WorkspaceDetail',
   components: {
     'file-input': FileInput,
-    Sidebar
+    Sidebar,
+    ItemPanel,
   },
   props: ['workspace','title'],
   data () {
@@ -309,8 +194,6 @@ export default {
       newTable: '',
       newGraph: '',
       tables: [],
-      checkboxTable: {},
-      checkboxGraph: {},
       nodeTables: [],
       edgeTables: [],
       graphs: [],
@@ -430,11 +313,6 @@ export default {
   display: flex;
   letter-spacing: 0;
   width: 95%;
-}
-
-.ws-detail-checkbox.v-input--selection-controls {
-  margin-top: 19px;
-  margin-left: 8px;
 }
 
 .ws-detail-empty-list {
