@@ -53,7 +53,7 @@
             </v-fade-transition>
 
             <span v-if="!editing">{{workspace}}</span>
-            
+
             <v-text-field
               autofocus
               background-color="transparent"
@@ -271,7 +271,12 @@ export default {
 
     async createGraph () {
       const response = await api().post('multinet/graphql', {query: `mutation {
-        graph (workspace: "${this.workspace}", name: "${this.newGraph}", node_tables: ${JSON.stringify(this.graphNodeTables)}, edge_table: "${this.graphEdgeTable}") {
+        graph (
+          workspace: "${this.workspace}",
+          name: "${this.newGraph}",
+          node_tables: ${JSON.stringify(this.graphNodeTables)},
+          edge_table: "${this.graphEdgeTable}"
+        ) {
           name
         }
       }`});
@@ -290,7 +295,7 @@ export default {
     handleFileInput(newFiles){
       this.fileList = newFiles[0]
       this.selectedType = newFiles[1]
-    }
+    },
   },
   created () {
     this.update()
