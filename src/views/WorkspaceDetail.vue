@@ -4,113 +4,287 @@
 
     <v-content>
       <v-toolbar app>
-        <v-toolbar-title
-          class="ws-detail-title"
-          @mouseover="titleHover = true"
-          @mouseleave="titleHover = false"
-        >
-          <v-icon
-            class="mr-3"
-            color="grey lighten-1"
-          >library_books</v-icon>
+        <v-hover>
+          <v-toolbar-title
+            class="ws-detail-title"
+            slot-scope="{ hover }"
+          >
+            <v-fade-transition hide-on-leave>
+              <v-icon
+                class="ml-2 mr-3"
+                color="grey lighten-1"
+                v-if="!hover && !editing"
+              >library_books</v-icon>
+            </v-fade-transition>
 
-          {{this.workspace}}
+            <v-tooltip left v-if="!editing">
+              <template v-slot:activator="{ on }">
+                <v-fade-transition hide-on-leave>
+                  <v-btn
+                    class="ml-1 mr-2"
+                    icon
+                    v-if="hover && !editing"
+                    v-on="on"
+                    @click="editing = !editing"
+                  >
+                    <v-icon
+                      color="grey darken-3"
+                      size="20px"
+                    >edit</v-icon>
+                  </v-btn>
+                </v-fade-transition>
+              </template>
+              <span>Rename workspace</span>
+            </v-tooltip>
 
-          <v-tooltip right>
-            <template v-slot:activator="{ on }">
-              <v-slide-x-transition>
-                <v-btn
-                  icon
-                  v-if="titleHover"
-                  v-on="on"
-                >
-                  <v-icon
-                    color="grey darken-3"
-                    size="20px"
-                  >edit</v-icon>
-                </v-btn>
-              </v-slide-x-transition>
-            </template>
-            <span>Rename workspace</span>
-          </v-tooltip>
-        </v-toolbar-title>
+            <v-fade-transition
+              hide-on-leave
+              v-if="editing"
+            >
+              <v-btn
+                icon
+                @click="editing = !editing"
+              >
+                <v-icon
+                  color="grey darken-3"
+                  size="20px"
+                >close</v-icon>
+              </v-btn>
+            </v-fade-transition>
+
+            <span v-if="!editing">{{workspace}}</span>
+            
+            <v-text-field
+              autofocus
+              background-color="transparent"
+              class="ws-rename"
+              flat
+              @focus="$event.target.select()"
+              solo
+              :value="workspace"
+              v-if="editing"
+            />
+
+          </v-toolbar-title>
+        </v-hover>
+
         <v-spacer />
         <v-btn icon>
           <v-icon>more_vert</v-icon>
         </v-btn>
       </v-toolbar>
 
-      <v-layout row wrap>
-        <v-flex>
-          <h2 class="text-md-center">Tables</h2>
+      <v-layout
+        row
+        wrap
+      >
+        <v-flex
+          md6
+          px-5
+          py-3
+        >
+          <v-card
+            color="transparent"
+            flat
+          >
+            <v-card-title>
+              <h2>Create Tables</h2>
+            </v-card-title>
 
-          <v-layout justify-center row wrap>
-            <v-flex md6>
-              <v-text-field v-model="newTable" placeholder="name your table" solo />
-            </v-flex>
-          </v-layout>
-
-          <v-layout justify-center row wrap>
-            <v-flex md6>
-              <file-input @handle-file-input="handleFileInput" v-bind:types="fileTypes"/>
-            </v-flex>
-          </v-layout>
-
-          <v-layout row wrap>
-            <v-flex class="text-md-center">
+            <v-card-text>
+              <v-layout row wrap>
+                <v-flex>
+                  <v-text-field v-model="newTable" placeholder="name your table" solo />
+                </v-flex>
+              </v-layout>
+              <v-layout row wrap>
+                <v-flex>
+                  <file-input @handle-file-input="handleFileInput" v-bind:types="fileTypes"/>
+                </v-flex>
+              </v-layout>
               <v-btn :disabled="tableCreateDisabled" @click="createTable">create table</v-btn>
-            </v-flex>
-          </v-layout>
+            </v-card-text>
 
-          <div class="text-md-center">
-            <div v-for="table in tables" :key="table" class="list-link">
-              <router-link :to="`/workspaces/${workspace}/table/${table}`">{{table}}</router-link>
-            </div>
-          </div>
+            <v-list
+              dark
+              subheader
+            >
+              <v-subheader class="pr-2">
+                Your Tables
+                <v-spacer />
+
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on }">
+                      <v-scroll-x-transition>
+                        <v-btn
+                          flat
+                          icon
+                          v-if="somethingCheckedTable"
+                          v-on="on"
+                        >
+                          <v-icon color="red accent-2">delete_sweep</v-icon>
+                        </v-btn>
+                      </v-scroll-x-transition>
+                    </template>
+                    <span>Delete selected</span>
+                  </v-tooltip>
+              </v-subheader>
+
+              <v-divider></v-divider>
+
+              <template v-if="tables.length > 0">
+                <v-hover
+                  v-for="table in tables"
+                  :key="table"
+                >
+                  <v-list-tile
+                    active-class="grey lighten-4"
+                    avatar
+                    ripple
+                    slot-scope="{ hover }"
+                    :to="`/workspaces/${workspace}/table/${table}`"
+                  >
+                    <v-list-tile-avatar @click.prevent>
+                      <v-fade-transition hide-on-leave>
+                        <v-icon
+                          color="blue lighten-1"
+                          v-if="!hover && !checkboxTable[table]"
+                        >table_chart</v-icon>
+
+                        <v-checkbox
+                          class="ws-detail-checkbox"
+                          v-else
+                          v-model="checkboxTable[table]"
+                        ></v-checkbox>
+                      </v-fade-transition>
+                    </v-list-tile-avatar>
+
+                    <v-list-tile-content>
+                      <v-list-tile-title>{{table}}</v-list-tile-title>
+                    </v-list-tile-content>
+                  </v-list-tile>
+                </v-hover>
+              </template>
+              <div
+                class="ws-detail-empty-list"
+                v-else
+              >
+                <v-icon color="blue lighten-1">info</v-icon> There are no tables yet...
+              </div>
+            </v-list>
+          </v-card>
         </v-flex>
+        <v-flex
+          md6
+          px-5
+          py-3
+        >
+          <v-card
+            color="transparent"
+            flat
+          >
+            <v-card-title>
+              <h2>Create Graphs</h2>
+            </v-card-title>
 
-        <v-flex>
-          <h2 class="text-md-center">Graphs</h2>
+            <v-card-text>
+              <v-layout row wrap>
+                <v-flex>
+                  <v-text-field v-model="newGraph" placeholder="name your graph" solo />
+                </v-flex>
+              </v-layout>
 
-          <v-layout justify-center row wrap>
-            <v-flex md6>
-              <v-text-field v-model="newGraph" placeholder="name your graph" solo />
-            </v-flex>
-          </v-layout>
+              <v-layout row wrap>
+                <v-flex md6>
+                  <v-select
+                    v-model="graphNodeTables"
+                    :items="nodeTables"
+                    chips
+                    deletable-chips
+                    clearable
+                    solo
+                    multiple
+                  />
+                </v-flex>
 
-          <v-layout justify-center row wrap>
-            <v-flex md3>
-              <v-select
-                v-model="graphNodeTables"
-                :items="nodeTables"
-                chips
-                deletable-chips
-                clearable
-                solo
-                multiple
-              />
-            </v-flex>
+                <v-flex md6>
+                  <v-select
+                    v-model="graphEdgeTable"
+                    :items="edgeTables"
+                    solo
+                  />
+                </v-flex>
+                <v-btn :disabled="graphCreateDisabled" @click="createGraph">create graph</v-btn>
+              </v-layout>
+            </v-card-text>
 
-            <v-flex md3>
-              <v-select
-                v-model="graphEdgeTable"
-                :items="edgeTables"
-                solo
-              />
-            </v-flex>
-          </v-layout>
+            <v-list
+              dark
+              subheader
+            >
+              <v-subheader class="pr-2">
+                Your Graphs
+                <v-spacer />
+                <v-tooltip top>
+                  <template v-slot:activator="{ on }">
+                    <v-scroll-x-transition>
+                      <v-btn
+                        flat
+                        icon
+                        v-if="somethingCheckedGraph"
+                        v-on="on"
+                      >
+                        <v-icon color="red accent-2">delete_sweep</v-icon>
+                      </v-btn>
+                    </v-scroll-x-transition>
+                  </template>
+                  <span>Delete selected</span>
+                </v-tooltip>
+              </v-subheader>
 
-          <v-layout justify-center row wrap>
-            <v-flex class="text-md-center">
-              <v-btn :disabled="graphCreateDisabled" @click="createGraph">create graph</v-btn>
-            </v-flex>
-          </v-layout>
+              <v-divider></v-divider>
 
-          <div class = "text-md-center">
-            <div v-for="graph in graphs" :key="graph" class="list-link">
-              <router-link :to="`/workspaces/${workspace}/graph/${graph}`">{{graph}}</router-link>
-            </div>
-          </div>
+              <template v-if="graphs.length > 0">
+                <v-hover
+                  v-for="graph in graphs"
+                  :key="graph"
+                >
+                  <v-list-tile
+                    active-class="grey lighten-4"
+                    avatar
+                    ripple
+                    slot-scope="{ hover }"
+                    :to="`/workspaces/${workspace}/graph/${graph}`"
+                  >
+                    <v-list-tile-avatar @click.prevent>
+                      <v-fade-transition hide-on-leave>
+                        <v-icon
+                          color="blue lighten-1"
+                          v-if="!hover && !checkboxGraph[graph]"
+                        >timeline</v-icon>
+
+                        <v-checkbox
+                          class="ws-detail-checkbox"
+                          v-else
+                          v-model="checkboxGraph[graph]"
+                        ></v-checkbox>
+                      </v-fade-transition>
+                    </v-list-tile-avatar>
+
+                    <v-list-tile-content>
+                      <v-list-tile-title>{{graph}}</v-list-tile-title>
+                    </v-list-tile-content>
+                  </v-list-tile>
+                </v-hover>
+              </template>
+              <div
+                class="ws-detail-empty-list"
+                v-else
+              >
+                <v-icon color="blue lighten-1">info</v-icon> There are no graphs yet...
+              </div>
+            </v-list>
+          </v-card>
         </v-flex>
       </v-layout>
     </v-content>
@@ -128,12 +302,15 @@ export default {
     'file-input': FileInput,
     Sidebar
   },
-  props: ['workspace'],
+  props: ['workspace','title'],
   data () {
     return {
+      editing: false,
       newTable: '',
       newGraph: '',
       tables: [],
+      checkboxTable: {},
+      checkboxGraph: {},
       nodeTables: [],
       edgeTables: [],
       graphs: [],
@@ -145,7 +322,6 @@ export default {
       selectedType: null,
       graphNodeTables: [],
       graphEdgeTable: null,
-      titleHover: false
     }
   },
   computed: {
@@ -154,6 +330,14 @@ export default {
     },
     tableCreateDisabled () {
       return this.fileList.length == 0 || !this.selectedType || !this.newTable;
+    },
+    somethingCheckedTable() {
+      return Object.values(this.checkboxTable)
+        .some(d => !!d);
+    },
+    somethingCheckedGraph() {
+      return Object.values(this.checkboxGraph)
+        .some(d => !!d);
     },
   },
   watch: {
@@ -244,5 +428,26 @@ export default {
 .ws-detail-title {
   align-items: center;
   display: flex;
+  letter-spacing: 0;
+  width: 95%;
+}
+
+.ws-detail-checkbox.v-input--selection-controls {
+  margin-top: 19px;
+  margin-left: 8px;
+}
+
+.ws-detail-empty-list {
+  padding: 40px 40px 55px;
+  text-align: center;
+}
+</style>
+
+<style>
+.ws-rename.v-text-field.v-text-field--enclosed .v-input__slot {
+  font-size: 20px;
+  letter-spacing: 2px !important;
+  margin-bottom: 2px;
+  padding-left: 0 !important;
 }
 </style>
