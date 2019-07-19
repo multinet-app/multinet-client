@@ -51,13 +51,9 @@
 
 <script>
 import api from '@/api'
-import Sidebar from '@/components/Sidebar'
 
 export default {
   name: 'NodeDetail',
-  components: {
-    Sidebar
-  },
   props: ['workspace', 'graph', 'type', 'node'],
   data () {
     return {

@@ -50,7 +50,6 @@
 
 <script>
 import api from '@/api'
-import Sidebar from '@/components/Sidebar'
 
 export default {
   name: 'GraphDetail',
@@ -58,9 +57,6 @@ export default {
     appendArgs (url) {
       return `${url}/?workspace=${this.workspace}&graph=${this.graph}`;
     },
-  },
-  components: {
-    Sidebar
   },
   props: ['workspace', 'graph', 'apps'],
   data () {

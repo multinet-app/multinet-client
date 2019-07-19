@@ -175,14 +175,12 @@
 <script>
 import api from '@/api';
 import FileInput from '@/components/FileInput'
-import Sidebar from '@/components/Sidebar'
 import ItemPanel from '@/components/ItemPanel'
 
 export default {
   name: 'WorkspaceDetail',
   components: {
     'file-input': FileInput,
-    Sidebar,
     ItemPanel,
   },
   props: ['workspace','title'],

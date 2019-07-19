@@ -30,13 +30,9 @@
 </template>
 <script>
 import api from '@/api'
-import Sidebar from '@/components/Sidebar'
 
 export default {
   name: 'TableDetail',
-  components: {
-    Sidebar
-  },
   props: ['workspace', 'table'],
   data () {
     return {
