@@ -1,7 +1,5 @@
 <template>
   <v-container fluid>
-    <sidebar />
-
     <v-content>
       <h1>Graph: {{`${this.workspace}/${this.graph}`}}</h1>
       <div id="graph-details">

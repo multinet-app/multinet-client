@@ -1,12 +1,18 @@
 <template>
   <v-app id="app">
+    <sidebar />
     <router-view :apps='apps' />
   </v-app>
 </template>
 
 <script>
+import Sidebar from '@/components/Sidebar'
+
 export default {
   name: 'app',
+  components: {
+    Sidebar,
+  },
   data () {
     return {
       apps: [],

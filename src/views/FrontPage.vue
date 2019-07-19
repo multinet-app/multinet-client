@@ -3,8 +3,6 @@
     fill-height
     fluid
   >
-    <sidebar />
-
     <v-content>
       <div class="getting-started">
         <v-icon
