@@ -20,11 +20,6 @@
   </v-container>
 </template>
 
-<script>
-export default {
-}
-</script>
-
 <style>
 .getting-started {
   align-items: flex-start;
