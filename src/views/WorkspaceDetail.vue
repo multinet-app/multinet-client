@@ -268,10 +268,10 @@ export default {
           },
         }
         );
-        this.tableCreationErrors = [];
+        this.tableCreationErrors = null;
         this.update()
       } catch(err) {
-        this.tableCreationErrors.push(err.response.data.message);
+        this.tableCreationErrors = err.response.data.message;
       }
     },
 
