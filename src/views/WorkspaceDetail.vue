@@ -205,7 +205,7 @@ export default {
       selectedType: null,
       graphNodeTables: [],
       graphEdgeTable: null,
-      tableCreationError: [],
+      tableCreationError: null,
     }
   },
   computed: {
