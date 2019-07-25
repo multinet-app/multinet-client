@@ -92,7 +92,7 @@
             <v-card-text>
               <v-layout row wrap>
                 <v-flex>
-                  <v-text-field v-model="newTable" placeholder="name your table" solo />
+                  <v-text-field v-model="newTable" placeholder="name your table" solo :error-messages="tableCreationError"/>
                 </v-flex>
               </v-layout>
               <v-layout row wrap>
@@ -201,6 +201,7 @@ export default {
       selectedType: null,
       graphNodeTables: [],
       graphEdgeTable: null,
+      tableCreationError: null,
     }
   },
   computed: {
@@ -254,15 +255,20 @@ export default {
 
     async createTable(){
       let queryType = this.fileTypes[this.selectedType].queryCall;
-      await api().post(`multinet/${queryType}/${this.workspace}/${this.newTable}`,
-      this.fileList[0],
-      {
-        headers: {
-        'Content-Type': 'text/plain'
-        },
+      try {
+        await api().post(`multinet/${queryType}/${this.workspace}/${this.newTable}`,
+        this.fileList[0],
+        {
+          headers: {
+          'Content-Type': 'text/plain'
+          },
+        }
+        );
+        this.tableCreationError = null;
+        this.update()
+      } catch(err) {
+        this.tableCreationError = err.response.data.message;
       }
-      )
-      this.update()
     },
 
     async createGraph () {
