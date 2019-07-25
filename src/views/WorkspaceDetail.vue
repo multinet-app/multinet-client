@@ -94,7 +94,7 @@
             <v-card-text>
               <v-layout row wrap>
                 <v-flex>
-                  <v-text-field v-model="newTable" placeholder="name your table" solo :error-messages="tableCreationErrors"/>
+                  <v-text-field v-model="newTable" placeholder="name your table" solo :error-messages="tableCreationError"/>
                 </v-flex>
               </v-layout>
               <v-layout row wrap>
@@ -205,8 +205,8 @@ export default {
       selectedType: null,
       graphNodeTables: [],
       graphEdgeTable: null,
-      tableCreationErrors: [],
       graphCreationErrors: [],
+      tableCreationError: null,
     }
   },
   computed: {
@@ -269,10 +269,10 @@ export default {
           },
         }
         );
-        this.tableCreationErrors = [];
+        this.tableCreationError = null;
         this.update()
       } catch(err) {
-        this.tableCreationErrors.push(err.response.data.message);
+        this.tableCreationError = err.response.data.message;
       }
     },
 
