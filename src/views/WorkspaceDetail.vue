@@ -196,7 +196,8 @@ export default {
       fileList: [],
       fileTypes: {
         csv: {extension: ['csv'], queryCall: 'csv'},
-        newick: {extension: ['phy', 'tree'], queryCall: 'newick'}
+        newick: {extension: ['phy', 'tree'], queryCall: 'newick'},
+        nested_json: {extension: ['json'], queryCall: 'nested_json'},
       },
       selectedType: null,
       graphNodeTables: [],
