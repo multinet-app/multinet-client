@@ -129,7 +129,7 @@
             <v-card-text>
               <v-layout row wrap>
                 <v-flex>
-                  <v-text-field v-model="newGraph" placeholder="name your graph" solo />
+                  <v-text-field v-model="newGraph" placeholder="name your graph" solo :error-messages="graphCreationErrors"/>
                 </v-flex>
               </v-layout>
 
@@ -201,6 +201,7 @@ export default {
       selectedType: null,
       graphNodeTables: [],
       graphEdgeTable: null,
+      graphCreationErrors: [],
       tableCreationError: null,
     }
   },
@@ -284,12 +285,18 @@ export default {
       }`});
 
       if (response.data.errors.length > 0) {
+        this.graphCreationErrors = response.data.errors;
         throw new Error(response.data.errors);
       }
 
       if (!response.data.data.graph) {
-        throw new Error(`Graph "${this.newGraph}" already exists.`);
+        const message = `Graph "${this.newGraph}" already exists.`
+
+        this.graphCreationErrors = [message];
+        throw new Error(message);
       }
+
+      this.graphCreationErrors = [];
 
       this.update();
     },
