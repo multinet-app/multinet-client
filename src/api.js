@@ -1,10 +1,11 @@
-import { getCurrentToken } from '@girder/core/auth';
-import { getApiRoot } from '@girder/core/rest';
 import axios from 'axios'
+
+function getApiRoot() {
+  return `${window.location.origin}/api/v1`;
+}
 
 export default function () {
   return axios.create({
     baseURL: getApiRoot(),
-    headers: {'Girder-Token': getCurrentToken()}
   })
 }
