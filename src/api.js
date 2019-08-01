@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 function getApiRoot() {
-  return `${window.location.origin}/api/v1`;
+  return `${window.location.origin}/api`;
 }
 
 export default function () {
