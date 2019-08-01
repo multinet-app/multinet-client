@@ -1,6 +1,9 @@
 // Read in .env file.
 const process = require('process');
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({
+  path: path.resolve('..', '.env'),
+});
 
 // Grab the port to proxy to.
 const flask_serve_port = process.env.FLASK_SERVE_PORT || 5000;
