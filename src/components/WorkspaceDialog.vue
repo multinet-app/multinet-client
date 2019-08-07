@@ -65,11 +65,9 @@ export default {
   methods: {
     async create () {
       if (this.newWorkspace) {
-        const response = await api().post('multinet/graphql', {query: `mutation {
-          workspace (name: "${this.newWorkspace}" )
-        }`});
+        const response = await api().post(`/multinet/workspace/${this.newWorkspace}`);
 
-        if (response.data.data) {
+        if (response) {
           this.$router.push(`/workspaces/${this.newWorkspace}`);
           this.$emit('created', this.newWorkspace);
           this.newWorkspace = '';

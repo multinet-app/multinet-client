@@ -274,23 +274,13 @@ export default {
     },
 
     async createGraph () {
-      const response = await api().post('multinet/graphql', {query: `mutation {
-        graph (
-          workspace: "${this.workspace}",
-          name: "${this.newGraph}",
-          node_tables: ${JSON.stringify(this.graphNodeTables)},
-          edge_table: "${this.graphEdgeTable}"
-        ) {
-          name
-        }
-      }`});
+      const { workspace, newGraph } = this;
+      const response = await api().post(`/multinet/workspace/${workspace}/graph/${newGraph}`, {
+        node_tables: this.graphNodeTables,
+        edge_table: this.graphEdgeTable,
+      });
 
-      if (response.data.errors.length > 0) {
-        this.graphCreationErrors = response.data.errors;
-        throw new Error(response.data.errors);
-      }
-
-      if (!response.data.data.graph) {
+      if (!response) {
         const message = `Graph "${this.newGraph}" already exists.`
 
         this.graphCreationErrors = [message];
