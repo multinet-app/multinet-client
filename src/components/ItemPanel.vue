@@ -1,9 +1,9 @@
 <template>
   <v-list
-    dark
+    class="item-panel ma-3"
     subheader
   >
-    <v-subheader class="pr-2">
+    <v-subheader class="px-0">
       {{title}}
 
       <v-spacer />
@@ -109,9 +109,8 @@ export default {
 </script>
 
 <style scoped>
-.ws-detail-checkbox.v-input--selection-controls {
-  margin-top: 19px;
-  margin-left: 8px;
+.v-list.item-panel {
+  background: none;
 }
 
 .ws-detail-empty-list {
