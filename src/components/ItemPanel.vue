@@ -39,7 +39,7 @@
           slot-scope="{ hover }"
           :to="`/workspaces/${workspace}/${routeType}/${item}`"
         >
-          <v-list-tile-avatar @click.prevent>
+          <v-list-tile-action @click.prevent>
             <v-fade-transition hide-on-leave>
               <v-icon
                 color="blue lighten-1"
@@ -52,7 +52,7 @@
                 v-model="checkbox[item]"
               ></v-checkbox>
             </v-fade-transition>
-          </v-list-tile-avatar>
+          </v-list-tile-action>
 
           <v-list-tile-content>
             <v-list-tile-title>{{item}}</v-list-tile-title>

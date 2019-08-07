@@ -60,7 +60,7 @@
           slot-scope="{ hover }"
           :to="`/workspaces/${space}/`"
         >
-          <v-list-tile-avatar @click.prevent>
+          <v-list-tile-action @click.prevent>
             <v-fade-transition hide-on-leave>
               <v-icon
                 color="primary"
@@ -73,7 +73,7 @@
                 v-model="checkbox[space]"
               ></v-checkbox>
             </v-fade-transition>
-          </v-list-tile-avatar>
+          </v-list-tile-action>
 
           <v-list-tile-content>
             <v-list-tile-title>{{space}}</v-list-tile-title>
@@ -126,8 +126,4 @@ export default {
 </script>
 
 <style scoped>
-.ws-checkbox.v-input--selection-controls {
-  margin-top: 19px;
-  margin-left: 8px;
-}
 </style>
