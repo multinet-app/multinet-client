@@ -1,12 +1,25 @@
 <template>
-  <div>
-    <input type="file" id="file" ref="file" placeholder="Upload File" v-on:change="handleFileInput"/>
-    <v-select
-      v-if="typeList.length"
-      v-model="selectedType"
-      :items="typeList"
-    />
-   </div>
+  <v-layout>
+    <v-flex
+      class="pr-2"
+      xs6
+    >
+      <input type="file" id="file" ref="file" placeholder="Upload File" v-on:change="handleFileInput"/>
+    </v-flex>
+    <v-spacer />
+    <v-flex
+      class="pl-2"
+      xs6
+    >
+      <v-select
+        box
+        label="File type"
+        v-if="typeList.length"
+        v-model="selectedType"
+        :items="typeList"
+      />
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>
