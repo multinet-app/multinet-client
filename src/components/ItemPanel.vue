@@ -113,4 +113,9 @@ export default {
   margin-top: 19px;
   margin-left: 8px;
 }
+
+.ws-detail-empty-list {
+  padding: 40px 40px 55px;
+  text-align: center;
+}
 </style>

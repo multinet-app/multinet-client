@@ -319,11 +319,6 @@ export default {
   letter-spacing: 0;
   width: 95%;
 }
-
-.ws-detail-empty-list {
-  padding: 40px 40px 55px;
-  text-align: center;
-}
 </style>
 
 <style>
