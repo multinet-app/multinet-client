@@ -86,7 +86,7 @@
             flat
           >
             <item-panel
-              title="Your Tables"
+              title="Tables"
               :items="tables"
               :workspace="workspace"
               route-type="table"
@@ -164,7 +164,7 @@
             flat
           >
             <item-panel
-              title="Your Graphs"
+              title="Graphs"
               :items="graphs"
               :workspace="workspace"
               route-type="graph"
