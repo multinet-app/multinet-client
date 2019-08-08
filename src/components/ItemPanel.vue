@@ -1,10 +1,10 @@
 <template>
   <v-list
-    class="item-panel ma-3"
+    class="item-panel"
     subheader
   >
     <v-subheader class="px-0">
-      {{title}}
+      <h2 class="black--text">{{title}}</h2>
 
       <v-spacer />
 
