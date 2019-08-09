@@ -29,7 +29,7 @@
 
       <v-card-text class="px-4 pt-4 pb-1">
         <v-text-field
-          box
+          filled
           label="Workspace name"
           v-model="newWorkspace"
         />

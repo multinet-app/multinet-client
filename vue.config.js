@@ -1,6 +1,7 @@
 // Read in .env file.
 const process = require('process');
 const path = require('path');
+const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin');
 require('dotenv').config({
   path: path.resolve('..', '.env'),
 });
@@ -9,6 +10,11 @@ require('dotenv').config({
 const flask_serve_port = process.env.FLASK_SERVE_PORT || 5000;
 
 module.exports = {
+  configureWebpack: {
+    plugins: [
+      new VuetifyLoaderPlugin(),
+    ],
+  },
   devServer: {
     proxy: {
       '/api': {

@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
     <v-content>
-      <v-toolbar app>
+      <v-app-bar app>
         <v-hover>
           <v-toolbar-title
             class="ws-detail-title"
@@ -56,7 +56,7 @@
               autofocus
               background-color="transparent"
               class="ws-rename"
-              flat
+              text
               @focus="$event.target.select()"
               solo
               :value="workspace"
@@ -70,10 +70,9 @@
         <v-btn icon>
           <v-icon>more_vert</v-icon>
         </v-btn>
-      </v-toolbar>
+      </v-app-bar>
 
       <v-layout
-        row
         wrap
       >
         <v-flex
@@ -83,7 +82,7 @@
         >
           <v-card
             color="transparent"
-            flat
+            text
           >
             <item-panel
               title="Tables"
@@ -124,17 +123,17 @@
                   </v-card-title>
 
                   <v-card-text class="px-4 pt-4 pb-1">
-                    <v-layout row wrap>
+                    <v-layout wrap>
                       <v-flex>
                         <v-text-field
-                          box
+                          filled
                           v-model="newTable"
                           label="Table name"
                           :error-messages="tableCreationError"
                         />
                       </v-flex>
                     </v-layout>
-                    <v-layout row wrap>
+                    <v-layout wrap>
                       <v-flex>
                         <file-input @handle-file-input="handleFileInput" v-bind:types="fileTypes"/>
                       </v-flex>
@@ -161,7 +160,7 @@
         >
           <v-card
             color="transparent"
-            flat
+            text
           >
             <item-panel
               title="Graphs"
@@ -202,10 +201,10 @@
                     </v-card-title>
 
                     <v-card-text class="px-4 pt-4 pb-1">
-                      <v-layout row wrap>
+                      <v-layout wrap>
                         <v-flex>
                           <v-text-field
-                            box
+                            filled
                             label="Graph name"
                             v-model="newGraph"
                             :error-messages="graphCreationErrors"
@@ -213,10 +212,10 @@
                         </v-flex>
                       </v-layout>
 
-                      <v-layout row wrap>
+                      <v-layout wrap>
                         <v-flex>
                           <v-select
-                            box
+                            filled
                             chips
                             class="choose-tables"
                             clearable
@@ -229,10 +228,10 @@
                         </v-flex>
                       </v-layout>
 
-                      <v-layout row wrap>
+                      <v-layout wrap>
                         <v-flex>
                           <v-select
-                            box
+                            filled
                             label="Choose edge table"
                             v-model="graphEdgeTable"
                             :items="edgeTables"

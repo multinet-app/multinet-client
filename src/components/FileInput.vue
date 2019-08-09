@@ -12,7 +12,7 @@
       xs6
     >
       <v-select
-        box
+        filled
         label="File type"
         v-if="typeList.length"
         v-model="selectedType"
