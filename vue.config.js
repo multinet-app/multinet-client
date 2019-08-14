@@ -1,13 +1,13 @@
-// Read in .env file.
+const fs = require('fs');
 const process = require('process');
 const path = require('path');
-const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin');
-require('dotenv').config({
-  path: path.resolve('..', '.env'),
-});
+const dotenv = require('dotenv');
 
-// Grab the port to proxy to.
-const flask_serve_port = process.env.FLASK_SERVE_PORT || 5000;
+const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin');
+
+// Read in .env file.
+const env = dotenv.parse(fs.readFileSync(path.resolve('..', 'multinet', '.env')));
+process.env.FLASK_SERVE_PORT = env.FLASK_SERVE_PORT || 5000;
 
 module.exports = {
   configureWebpack: {
@@ -18,7 +18,7 @@ module.exports = {
   devServer: {
     proxy: {
       '/api': {
-        target: `http://127.0.0.1:${flask_serve_port}`,
+        target: `http://127.0.0.1:${process.env.FLASK_SERVE_PORT}`,
         changeOrigin: true,
         pathRewrite: {
           '^/api': '',
