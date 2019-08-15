@@ -7,7 +7,7 @@
       <div class="getting-started">
         <v-icon
           class="gs-icon"
-          color="blue-grey lighten-3"
+          color="grey lighten-2"
         >
           outlined_flag
         </v-icon>
@@ -35,7 +35,7 @@
 }
 
 .gs-title {
-  color: #b0bec5;
+  color: #d2d2d2;
   font-size: 36px;
 }
 
