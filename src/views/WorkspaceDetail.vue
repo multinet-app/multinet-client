@@ -83,6 +83,7 @@
         >
           <v-card
             color="transparent"
+            flat
             text
           >
             <item-panel
@@ -99,7 +100,6 @@
               <template v-slot:activator="{ on }">
                 <v-btn
                   block
-                  class="pl-3 pr-2"
                   color="blue darken-2"
                   dark
                   depressed
@@ -161,6 +161,7 @@
         >
           <v-card
             color="transparent"
+            flat
             text
           >
             <item-panel
@@ -177,7 +178,6 @@
                 <template v-slot:activator="{ on }">
                   <v-btn
                     block
-                    class="pl-3 pr-2"
                     color="blue darken-2"
                     dark
                     depressed
