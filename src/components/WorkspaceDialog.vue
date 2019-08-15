@@ -1,11 +1,12 @@
 <template>
   <v-dialog
+    class="ws-dialogue"
     v-model="dialog"
     width="500"
   >
     <template v-slot:activator="{ on }">
       <v-btn
-        class="ws-btn ma-0 pa-4"
+        class="ws-btn ma-0 px-4 py-5"
         block
         color="grey darken-3"
         dark
@@ -15,7 +16,11 @@
       >
         New Workspace
         <v-spacer />
-        <v-icon right dark>add_circle</v-icon>
+        <v-icon
+          right
+          dark
+          size="20px"
+        >add_circle</v-icon>
       </v-btn>
     </template>
 
@@ -80,8 +85,13 @@ export default {
 </script>
 
 <style scoped>
-.ws-btn.v-btn {
+.v-dialog__container.ws-dialogue {
+  /* dialog adds weird space above button. Positioning absolutely pulls it out of the layout
+     so that it does not push the button down */
+  position: absolute;
+}
+.v-btn.ws-btn {
   border-radius: 0;
-  height: auto;
+  height: auto !important;
 }
 </style>
