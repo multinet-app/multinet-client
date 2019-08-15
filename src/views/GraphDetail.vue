@@ -86,7 +86,7 @@ export default {
   },
   methods: {
     async update () {
-      const response = await api().post('multinet/graphql', {query: `query {
+      const response = await api().post('graphql', {query: `query {
         graphs (workspace: "${this.workspace}", name: "${this.graph}") {
           nodeTypes {
             name

@@ -70,7 +70,7 @@ export default {
   methods: {
     async create () {
       if (this.newWorkspace) {
-        const response = await api().post(`/multinet/workspace/${this.newWorkspace}`);
+        const response = await api().post(`workspace/${this.newWorkspace}`);
 
         if (response) {
           this.$router.push(`/workspaces/${this.newWorkspace}`);

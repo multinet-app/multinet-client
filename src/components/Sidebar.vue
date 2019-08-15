@@ -116,7 +116,7 @@ export default {
     },
   },
   async created () {
-    const response = await api().post('multinet/graphql', {query: `query {
+    const response = await api().post('graphql', {query: `query {
       workspaces { name }
     }`});
 

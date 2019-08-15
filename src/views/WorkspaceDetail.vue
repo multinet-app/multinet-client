@@ -169,7 +169,7 @@ export default {
   },
   methods: {
     async update () {
-      const response = await api().post('multinet/graphql', {query: `query {
+      const response = await api().post('graphql', {query: `query {
         workspaces (name: "${this.workspace}") {
           tables {
             name

@@ -18,7 +18,7 @@ module.exports = {
   devServer: {
     proxy: {
       '/api': {
-        target: `http://127.0.0.1:${process.env.FLASK_SERVE_PORT}`,
+        target: `http://127.0.0.1:${process.env.FLASK_SERVE_PORT}/api`,
         changeOrigin: true,
         pathRewrite: {
           '^/api': '',

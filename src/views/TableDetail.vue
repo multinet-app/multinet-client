@@ -45,7 +45,7 @@ export default {
       return index % 2 == 0 ? 'even-row' : 'odd-row';
     },
     async update () {
-        const response = await api().post('multinet/graphql', {query: `query {
+        const response = await api().post('graphql', {query: `query {
         tables (workspace: "${this.workspace}", name: "${this.table}") {
           name,
           rows{
