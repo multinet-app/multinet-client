@@ -151,28 +151,16 @@ export default {
   data () {
     return {
       editing: false,
-      edgeTables: [],
-      fileList: [],
       fileTypes: {
         csv: {extension: ['csv'], queryCall: 'csv'},
         newick: {extension: ['phy', 'tree'], queryCall: 'newick'},
         nested_json: {extension: ['json'], queryCall: 'nested_json'},
       },
-      graphs: [],
-      nodeTables: [],
-      selectedType: null,
       tables: [],
+      nodeTables: [],
+      edgeTables: [],
+      graphs: [],
     }
-  },
-  computed: {
-    somethingCheckedTable() {
-      return Object.values(this.checkboxTable)
-        .some(d => !!d);
-    },
-    somethingCheckedGraph() {
-      return Object.values(this.checkboxGraph)
-        .some(d => !!d);
-    },
   },
   watch: {
     workspace () {
@@ -205,11 +193,6 @@ export default {
         .map(getName);
 
       this.graphs = workspace.graphs.map(getName);
-    },
-
-    handleFileInput(newFiles){
-      this.fileList = newFiles[0]
-      this.selectedType = newFiles[1]
     },
   },
   created () {
