@@ -135,8 +135,27 @@
                       </v-flex>
                     </v-layout>
                     <v-layout wrap>
-                      <v-flex>
-                        <file-input @handle-file-input="handleFileInput" v-bind:types="fileTypes"/>
+                      <v-flex
+                        class="pr-2"
+                        xs6
+                      >
+                        <v-file-input
+                          clearable
+                          filled
+                          label="Upload file"
+                          prepend-icon=""
+                          prepend-inner-icon="attach_file"
+                          single-line
+                        />
+                      </v-flex>
+                      <v-flex
+                        class="pl-2"
+                        xs6
+                      >
+                        <v-select
+                          filled
+                          label="File type"
+                        />
                       </v-flex>
                     </v-layout>
                   </v-card-text>
@@ -264,38 +283,36 @@
 
 <script>
 import api from '@/api';
-import FileInput from '@/components/FileInput'
 import ItemPanel from '@/components/ItemPanel'
 
 export default {
   name: 'WorkspaceDetail',
   components: {
-    'file-input': FileInput,
-    ItemPanel,
+    ItemPanel
   },
   props: ['workspace','title'],
   data () {
     return {
       editing: false,
-      tableDialog: false,
-      graphDialog: false,
-      newTable: '',
-      newGraph: '',
-      tables: [],
-      nodeTables: [],
       edgeTables: [],
-      graphs: [],
       fileList: [],
       fileTypes: {
         csv: {extension: ['csv'], queryCall: 'csv'},
         newick: {extension: ['phy', 'tree'], queryCall: 'newick'},
         nested_json: {extension: ['json'], queryCall: 'nested_json'},
       },
-      selectedType: null,
-      graphNodeTables: [],
-      graphEdgeTable: null,
       graphCreationErrors: [],
+      graphDialog: false,
+      graphEdgeTable: null,
+      graphNodeTables: [],
+      graphs: [],
+      newGraph: '',
+      newTable: '',
+      nodeTables: [],
+      selectedType: null,
       tableCreationError: null,
+      tableDialog: false,
+      tables: [],
     }
   },
   computed: {
