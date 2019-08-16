@@ -11,25 +11,30 @@ import NodeDetail from '@/views/NodeDetail'
 const routes = [
   {
     path: '/',
+    name: 'home',
     component: FrontPage
   },
   {
     path: '/workspaces/:workspace',
+    name: 'workspaceDetail',
     component: WorkspaceDetail,
     props: true
   },
   {
     path: '/workspaces/:workspace/table/:table',
+    name: 'tableDetail',
     component: TableDetail,
     props: true
   },
   {
     path: '/workspaces/:workspace/graph/:graph',
+    name: 'graphDetail',
     component: GraphDetail,
     props: true
   },
   {
     path: '/workspaces/:workspace/graph/:graph/node/:type/:node',
+    name: 'nodeDetail',
     component: NodeDetail,
     props: true
   }

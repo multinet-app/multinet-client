@@ -45,11 +45,14 @@
           >library_books</v-icon>
 
           <span class="breadcrumbs">
-            <a
-              :href="`/workspaces/${workspace}/`"
+            <router-link
+              :to="{
+                name: 'workspaceDetail',
+                params: { workspace }
+              }"
             >
               {{workspace}}
-            </a>
+            </router-link>
             <v-icon class="mx-4" color="grey lighten-2">chevron_right</v-icon>
             <v-icon class="mr-3" color="grey lighten-1">table_chart</v-icon>
             {{`${this.table}`}}
