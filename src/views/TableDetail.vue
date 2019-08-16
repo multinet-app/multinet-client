@@ -1,16 +1,75 @@
 <template>
-  <v-container fluid>
-    <v-content>
-      <div class="nav">
-        <div class="return-nav">
-          <v-btn :to="`/workspaces/${workspace}/`"><i class="fas fa-home"></i>&nbsp;to main table view</v-btn>
-        </div>
-      </div>
+  <v-container fluid class="pa-0">
+    <v-navigation-drawer
+      app
+      clipped
+      fixed
+      right
+      permanent
+    >
+      <v-list>
+        <v-list subheader>
+          <v-subheader class="pr-2">
+            All Tables
+          </v-subheader>
+
+          <v-divider></v-divider>
+
+          <v-list-item
+            ripple
+            v-for="table in tables"
+            :key="table"
+          >
+            <v-list-item-action>
+              <v-icon
+                color="primary"
+                v-if="!hover && !checkbox[space]"
+              >library_books</v-icon>
+            </v-list-item-action>
+
+            <v-list-item-content>
+              <v-list-item-title>{{table}}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+      </v-list>
+    </v-navigation-drawer>
+    <v-content class="ma-0">
+      <v-app-bar app clipped-right>
+        <v-toolbar-title
+          class="ws-detail-title"
+        >
+          <v-icon
+            class="ml-4 mr-5"
+            color="grey lighten-1"
+          >library_books</v-icon>
+
+          <span class="breadcrumbs">
+            <a
+              :href="`/workspaces/${workspace}/`"
+            >
+              {{workspace}}
+            </a>
+            <v-icon class="mx-4" color="grey lighten-2">chevron_right</v-icon>
+            <v-icon class="mr-3" color="grey lighten-1">table_chart</v-icon>
+            {{`${this.table}`}}
+          </span>
+
+        </v-toolbar-title>
+
+        <v-spacer />
+
+        <v-btn icon>
+          <v-icon>more_vert</v-icon>
+        </v-btn>
+      </v-app-bar>
       <div class="wrapper">
-        <h1>Table: {{`${this.workspace}/${this.table}`}}</h1>
-        <table>
+        <v-simple-table
+          fixed-header
+          height="calc(100vh - 64px)"
+        >
           <thead>
-            <tr >
+            <tr>
               <th v-for="head in this.headers" :key="head" class="head">
                 {{head}}
               </th>
@@ -18,12 +77,12 @@
           </thead>
           <tbody class="row-wrap">
             <tr v-for="(row, index) in rowKeys" :key="row.value" :class="rowClassName(index)">
-              <td v-for="col in row" :key="col.key" class="col">
+              <td v-for="col in row" :key="col.key">
                 {{col.value}}
               </td>
             </tr>
           </tbody>
-        </table>
+        </v-simple-table>
       </div>
     </v-content>
   </v-container>
@@ -37,7 +96,9 @@ export default {
   data () {
     return {
       rowKeys:[],
-      headers:[]
+      headers:[],
+      tables: [],
+      editing: false,
     }
   },
   methods: {
@@ -101,18 +162,14 @@ export default {
 .fa-home{
   font-size: 20px;
 }
-.wrapper{
-  padding:25px 0 0 0;
-}
 table{
   margin:auto;
 }
 th.head{
-text-transform: uppercase;
- background-color: #55B8CD;
- color:#fff;
- padding: 15px 25px;
- letter-spacing:1.5px;
+  text-transform: uppercase;
+  background-color: #1976d2 !important;
+  color:#fff !important;
+  height: 59px;
 }
 tr.even-row {
   background-color: #F3F6F6;
@@ -123,7 +180,31 @@ tr.odd-row {
   padding: 10px 10px;
 }
 td.col{
-margin:5px;
-padding:5px 25px;
+  margin:5px;
+  padding:5px 25px;
+}
+.ws-detail-title {
+  align-items: center;
+  display: flex;
+  letter-spacing: 0;
+  width: 95%;
+}
+.ws-detail-title a {
+  text-decoration: none;
+}
+.ws-detail-title a:hover {
+  text-decoration: underline;
+}
+</style>
+
+<style>
+.ws-rename.v-text-field {
+  height: 64px; /* match toolbar height */
+}
+
+.ws-rename.v-text-field.v-text-field--enclosed .v-input__slot {
+  font-size: 20px;
+  letter-spacing: 2px !important;
+  padding-top: 14px;
 }
 </style>
