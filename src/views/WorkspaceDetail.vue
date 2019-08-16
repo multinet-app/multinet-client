@@ -93,84 +93,13 @@
               route-type="table"
               icon="table_chart"
             />
-            <v-dialog
-              v-model="tableDialog"
-              width="700"
-            >
-              <template v-slot:activator="{ on }">
-                <v-btn
-                  block
-                  color="blue darken-2"
-                  dark
-                  depressed
-                  large
-                  v-on="on"
-                >
-                  New Table
-                  <v-spacer />
-                  <v-icon
-                    right
-                    size="20px"
-                  >add_circle</v-icon>
-                </v-btn>
-              </template>
-              <v-card>
-                <v-card>
-                  <v-card-title
-                    class="headline pb-0 pt-3"
-                    primary-title
-                  >
-                    Create Table
-                  </v-card-title>
 
-                  <v-card-text class="px-4 pt-4 pb-1">
-                    <v-layout wrap>
-                      <v-flex>
-                        <v-text-field
-                          filled
-                          v-model="newTable"
-                          label="Table name"
-                          :error-messages="tableCreationError"
-                        />
-                      </v-flex>
-                    </v-layout>
-                    <v-layout wrap>
-                      <v-flex
-                        class="pr-2"
-                        xs6
-                      >
-                        <v-file-input
-                          clearable
-                          filled
-                          label="Upload file"
-                          prepend-icon=""
-                          prepend-inner-icon="attach_file"
-                          single-line
-                        />
-                      </v-flex>
-                      <v-flex
-                        class="pl-2"
-                        xs6
-                      >
-                        <v-select
-                          filled
-                          label="File type"
-                        />
-                      </v-flex>
-                    </v-layout>
-                  </v-card-text>
+            <TableDialog
+              :types="fileTypes"
+              :workspace="workspace"
+              @success="update"
+            />
 
-                  <v-divider></v-divider>
-
-                  <v-card-actions class="px-4 py-3">
-                    <v-spacer></v-spacer>
-                    <v-btn :disabled="tableCreateDisabled" @click="createTable">
-                      Create Table
-                    </v-btn>
-                  </v-card-actions>
-                </v-card>
-              </v-card>
-            </v-dialog>
           </v-card>
         </v-flex>
         <v-flex
@@ -284,11 +213,13 @@
 <script>
 import api from '@/api';
 import ItemPanel from '@/components/ItemPanel'
+import TableDialog from '@/components/TableDialog';
 
 export default {
   name: 'WorkspaceDetail',
   components: {
-    ItemPanel
+    ItemPanel,
+    TableDialog,
   },
   props: ['workspace','title'],
   data () {
@@ -307,20 +238,14 @@ export default {
       graphNodeTables: [],
       graphs: [],
       newGraph: '',
-      newTable: '',
       nodeTables: [],
       selectedType: null,
-      tableCreationError: null,
-      tableDialog: false,
       tables: [],
     }
   },
   computed: {
     graphCreateDisabled () {
       return this.graphNodeTables.length == 0 || !this.graphEdgeTable || !this.newGraph;
-    },
-    tableCreateDisabled () {
-      return this.fileList.length == 0 || !this.selectedType || !this.newTable;
     },
     somethingCheckedTable() {
       return Object.values(this.checkboxTable)
@@ -362,24 +287,6 @@ export default {
         .map(getName);
 
       this.graphs = workspace.graphs.map(getName);
-    },
-
-    async createTable(){
-      let queryType = this.fileTypes[this.selectedType].queryCall;
-      try {
-        await api().post(`multinet/${queryType}/${this.workspace}/${this.newTable}`,
-        this.fileList[0],
-        {
-          headers: {
-          'Content-Type': 'text/plain'
-          },
-        }
-        );
-        this.tableCreationError = null;
-        this.update()
-      } catch(err) {
-        this.tableCreationError = err.response.data.message;
-      }
     },
 
     async createGraph () {
