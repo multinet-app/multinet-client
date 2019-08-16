@@ -119,89 +119,13 @@
               route-type="graph"
               icon="timeline"
               />
-              <v-dialog
-                v-model="graphDialog"
-                width="700"
-              >
-                <template v-slot:activator="{ on }">
-                  <v-btn
-                    block
-                    color="blue darken-2"
-                    dark
-                    depressed
-                    large
-                    v-on="on"
-                  >
-                    New Graph
-                    <v-spacer />
-                    <v-icon
-                      right
-                      size="20px"
-                    >add_circle</v-icon>
-                  </v-btn>
-                </template>
-                <v-card>
-                  <v-card>
-                    <v-card-title
-                      class="headline pb-0 pt-3"
-                      primary-title
-                    >
-                      Create Graph
-                    </v-card-title>
 
-                    <v-card-text class="px-4 pt-4 pb-1">
-                      <v-layout wrap>
-                        <v-flex>
-                          <v-text-field
-                            filled
-                            label="Graph name"
-                            v-model="newGraph"
-                            :error-messages="graphCreationErrors"
-                          />
-                        </v-flex>
-                      </v-layout>
-
-                      <v-layout wrap>
-                        <v-flex>
-                          <v-select
-                            filled
-                            chips
-                            class="choose-tables"
-                            clearable
-                            deletable-chips
-                            label="Choose node tables"
-                            multiple
-                            v-model="graphNodeTables"
-                            :items="nodeTables"
-                          />
-                        </v-flex>
-                      </v-layout>
-
-                      <v-layout wrap>
-                        <v-flex>
-                          <v-select
-                            filled
-                            label="Choose edge table"
-                            v-model="graphEdgeTable"
-                            :items="edgeTables"
-                          />
-                        </v-flex>
-                      </v-layout>
-                    </v-card-text>
-
-                    <v-divider></v-divider>
-
-                    <v-card-actions class="px-4 py-3">
-                      <v-spacer></v-spacer>
-                      <v-btn
-                        depressed
-                        :disabled="graphCreateDisabled"
-                        @click="createGraph"
-                      >create graph</v-btn>
-                    </v-card-actions>
-                  </v-card>
-                </v-card>
-              </v-dialog>
+              <GraphDialog
+                :node-tables="nodeTables"
+                :edge-tables="edgeTables"
+                :workspace="workspace"
+                @success="update"
+              />
 
           </v-card>
         </v-flex>
@@ -213,12 +137,14 @@
 <script>
 import api from '@/api';
 import ItemPanel from '@/components/ItemPanel'
+import GraphDialog from '@/components/GraphDialog';
 import TableDialog from '@/components/TableDialog';
 
 export default {
   name: 'WorkspaceDetail',
   components: {
     ItemPanel,
+    GraphDialog,
     TableDialog,
   },
   props: ['workspace','title'],
@@ -232,21 +158,13 @@ export default {
         newick: {extension: ['phy', 'tree'], queryCall: 'newick'},
         nested_json: {extension: ['json'], queryCall: 'nested_json'},
       },
-      graphCreationErrors: [],
-      graphDialog: false,
-      graphEdgeTable: null,
-      graphNodeTables: [],
       graphs: [],
-      newGraph: '',
       nodeTables: [],
       selectedType: null,
       tables: [],
     }
   },
   computed: {
-    graphCreateDisabled () {
-      return this.graphNodeTables.length == 0 || !this.graphEdgeTable || !this.newGraph;
-    },
     somethingCheckedTable() {
       return Object.values(this.checkboxTable)
         .some(d => !!d);
@@ -287,25 +205,6 @@ export default {
         .map(getName);
 
       this.graphs = workspace.graphs.map(getName);
-    },
-
-    async createGraph () {
-      const { workspace, newGraph } = this;
-      const response = await api().post(`/multinet/workspace/${workspace}/graph/${newGraph}`, {
-        node_tables: this.graphNodeTables,
-        edge_table: this.graphEdgeTable,
-      });
-
-      if (!response) {
-        const message = `Graph "${this.newGraph}" already exists.`
-
-        this.graphCreationErrors = [message];
-        throw new Error(message);
-      }
-
-      this.graphCreationErrors = [];
-
-      this.update();
     },
 
     handleFileInput(newFiles){
