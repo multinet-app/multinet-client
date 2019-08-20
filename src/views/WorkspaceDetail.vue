@@ -169,30 +169,22 @@ export default {
   },
   methods: {
     async update () {
-      const response = await api().post('graphql', {query: `query {
-        workspaces (name: "${this.workspace}") {
-          tables {
-            name
-            fields
-          }
-          graphs { name }
-        }
-      }`});
-      const workspace = response.data.data.workspaces[0];
+      // Get lists of node and edge tables.
+      let response = await api().get(`workspaces/${this.workspace}/tables?fields=true`);
+      const tables = response.data;
 
-      const getName = (obj) => obj.name;
+      const nodeTable = table => table.fields.indexOf('_from') === -1 || table.fields.indexOf('_to') === -1;
+      const edgeTable = table => table.fields.indexOf('_from') > -1 && table.fields.indexOf('_to') > -1;
 
-      this.tables = workspace.tables.map(getName);
+      this.tables = tables.map(d => d.table);
+      this.nodeTables = tables.filter(nodeTable).map(d => d.table);
+      this.edgeTables = tables.filter(edgeTable).map(d => d.table);
 
-      this.nodeTables = workspace.tables
-        .filter(table => table.fields.indexOf('_from') === -1 || table.fields.indexOf('_to') === -1)
-        .map(getName);
+      // Get list of graphs.
+      response = await api().get(`workspaces/${this.workspace}/graphs`);
+      const graphs = response.data;
 
-      this.edgeTables = workspace.tables
-        .filter(table => table.fields.indexOf('_from') > -1 && table.fields.indexOf('_to') > -1)
-        .map(getName);
-
-      this.graphs = workspace.graphs.map(getName);
+      this.graphs = graphs;
     },
   },
   created () {
