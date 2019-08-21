@@ -37,7 +37,11 @@ const routes = [
     name: 'nodeDetail',
     component: NodeDetail,
     props: true
-  }
+  },
+  {
+    path: '*',
+    redirect: { name: 'home' }
+  },
 ]
 
 const router = new VueRouter({routes})
