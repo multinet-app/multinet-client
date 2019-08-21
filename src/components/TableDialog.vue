@@ -129,7 +129,7 @@ export default {
     async createTable(){
       let queryType = this.types[this.selectedType].queryCall;
       try {
-        await api().post(`multinet/${queryType}/${this.workspace}/${this.newTable}`,
+        await api().post(`${queryType}/${this.workspace}/${this.newTable}`,
         this.file,
         {
           headers: {
