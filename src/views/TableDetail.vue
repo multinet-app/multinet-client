@@ -45,24 +45,28 @@ export default {
       return index % 2 == 0 ? 'even-row' : 'odd-row';
     },
     async update () {
-        const response = await api().post('graphql', {query: `query {
-        tables (workspace: "${this.workspace}", name: "${this.table}") {
-          name,
-          rows{
-            total,
-            data(offset: 0, limit: 30){
+      let response = await api().get(`/workspaces/${this.workspace}/tables/${this.table}?headers=true&rows=true`);
+      const result = response.data;
+
+      let rowKeys = [];
+      let headers = [];
+      if (result) {
+        result.forEach(row => {
+          let rowData = [];
+          Object.keys(row).filter(k => k != '_rev').forEach(key => {
+            rowData.push({
               key,
-              columns{
-                key,
-                value
-              }
-            }
-          },
-        }
-      }`});
-      let table = response.data.data.tables[0];
-      this.rowKeys = table.rows.data.map(r=> r.columns.filter(c=> c.key != "_rev"))
-      this.headers = this.rowKeys[0].map(k=> k.key.startsWith("_") ? k.key.slice(1) : k.key);
+              value: row[key],
+            });
+          });
+          rowKeys.push(rowData);
+        });
+
+        headers = Object.keys(result[0]).filter(d => d != '_rev');
+      }
+
+      this.rowKeys = rowKeys;
+      this.headers = headers;
     }
   },
   watch: {
