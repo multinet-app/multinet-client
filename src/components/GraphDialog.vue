@@ -112,7 +112,7 @@ export default {
   methods: {
     async createGraph () {
       const { workspace, newGraph } = this;
-      const response = await api().post(`/multinet/workspace/${workspace}/graph/${newGraph}`, {
+      const response = await api().post(`/workspace/${workspace}/graph/${newGraph}`, {
         node_tables: this.graphNodeTables,
         edge_table: this.graphEdgeTable,
       });
