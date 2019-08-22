@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
     <v-content>
-      <h1>Node: {{`${this.workspace}/${this.graph}/${this.node}`}}</h1>
+      <h1>Node: {{`${this.workspace}/${this.graph}/${this.type}/${this.node}`}}</h1>
       <div style="border-style: solid;">
         <label>Attributes</label>
         <table>
@@ -97,26 +97,23 @@ export default {
   },
   methods: {
     async update () {
-      const response = await api().post('graphql', {query: `query {
-        graph (workspace: "${this.workspace}", name: "${this.graph}") {
-          nodes(nodeType: "${this.type}" key: "${this.node}") {
-            data {
-              key
-              incoming { total data (offset: ${this.offsetIncoming}, limit: ${this.pageCount}) { key source {key} } }
-              outgoing { total data (offset: ${this.offsetOutgoing}, limit: ${this.pageCount}) { key target {key} } }
-              properties { key value }
-            }
-          }
-        }
-      }`});
+      let response = await api().get(`/workspaces/${this.workspace}/graphs/${this.graph}/nodes/${this.type}/${this.node}/data`);
+      const attributes = response.data;
 
-      const nodeData = response.data.data.graph.nodes.data[0];
+      response = await api().get(`/workspaces/${this.workspace}/graphs/${this.graph}/nodes/${this.type}/${this.node}/edges?direction=incoming&offset=${this.offsetIncoming}&limit=${this.pageCount}`);
+      const incoming = response.data;
 
-      this.attributes = nodeData.properties;
-      this.incoming = nodeData.incoming.data.map(edge => ({id: edge.key, airport: edge.source.key}));
-      this.outgoing = nodeData.outgoing.data.map(edge => ({id: edge.key, airport: edge.target.key}));
-      this.totalIncoming = nodeData.incoming.total;
-      this.totalOutgoing = nodeData.outgoing.total;
+      response = await api().get(`/workspaces/${this.workspace}/graphs/${this.graph}/nodes/${this.type}/${this.node}/edges?direction=outgoing&offset=${this.offsetOutgoing}&limit=${this.pageCount}`);
+      const outgoing = response.data;
+
+      this.attributes = Object.keys(attributes).map(key => ({
+        key,
+        value: attributes[key],
+      }));
+      this.incoming = incoming.edges.map(edge => ({id: edge.id, airport: edge.from}));
+      this.outgoing = outgoing.edges.map(edge => ({id: edge.id, airport: edge.to}));
+      this.totalIncoming = incoming.edgeCount;
+      this.totalOutgoing = outgoing.edgeCount;
     },
     turnPage (edgeType, forward) {
       if (edgeType === 'incoming') {
