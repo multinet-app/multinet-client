@@ -1,39 +1,5 @@
 <template>
   <v-container fluid class="pa-0">
-    <v-navigation-drawer
-      app
-      clipped
-      fixed
-      right
-      permanent
-    >
-      <v-list>
-        <v-list subheader>
-          <v-subheader class="pr-2">
-            All Tables
-          </v-subheader>
-
-          <v-divider></v-divider>
-
-          <v-list-item
-            ripple
-            v-for="table in tables"
-            :key="table"
-          >
-            <v-list-item-action>
-              <v-icon
-                color="primary"
-                v-if="!hover && !checkbox[space]"
-              >library_books</v-icon>
-            </v-list-item-action>
-
-            <v-list-item-content>
-              <v-list-item-title>{{table}}</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-      </v-list>
-    </v-navigation-drawer>
     <v-content class="ma-0">
       <v-app-bar app clipped-right>
         <v-toolbar-title
