@@ -55,7 +55,6 @@
         :key="space"
       >
         <v-list-item
-          active-class="grey lighten-4"
           ripple
           slot-scope="{ hover }"
           :to="`/workspaces/${space}/`"
