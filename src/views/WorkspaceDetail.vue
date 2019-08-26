@@ -170,15 +170,15 @@ export default {
   methods: {
     async update () {
       // Get lists of node and edge tables.
-      let response = await api().get(`workspaces/${this.workspace}/tables?fields=true`);
-      const tables = response.data;
+      let response = await api().get(`workspaces/${this.workspace}/tables?type=node`);
+      const nodeTables = response.data;
 
-      const nodeTable = table => table.fields.indexOf('_from') === -1 || table.fields.indexOf('_to') === -1;
-      const edgeTable = table => table.fields.indexOf('_from') > -1 && table.fields.indexOf('_to') > -1;
+      response = await api().get(`workspaces/${this.workspace}/tables?type=edge`);
+      const edgeTables = response.data;
 
-      this.tables = tables.map(d => d.table);
-      this.nodeTables = tables.filter(nodeTable).map(d => d.table);
-      this.edgeTables = tables.filter(edgeTable).map(d => d.table);
+      this.tables = nodeTables.concat(edgeTables);
+      this.nodeTables = nodeTables;
+      this.edgeTables = edgeTables;
 
       // Get list of graphs.
       response = await api().get(`workspaces/${this.workspace}/graphs`);
