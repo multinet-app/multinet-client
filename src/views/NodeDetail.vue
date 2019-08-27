@@ -97,7 +97,7 @@ export default {
   },
   methods: {
     async update () {
-      let response = await api().get(`/workspaces/${this.workspace}/graphs/${this.graph}/nodes/${this.type}/${this.node}/data`);
+      let response = await api().get(`/workspaces/${this.workspace}/graphs/${this.graph}/nodes/${this.type}/${this.node}/attributes`);
       const attributes = response.data;
 
       response = await api().get(`/workspaces/${this.workspace}/graphs/${this.graph}/nodes/${this.type}/${this.node}/edges?direction=incoming&offset=${this.offsetIncoming}&limit=${this.pageCount}`);

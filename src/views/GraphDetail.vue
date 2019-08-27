@@ -86,13 +86,16 @@ export default {
   },
   methods: {
     async update () {
-      const response = await api().get(`/workspaces/${this.workspace}/graphs/${this.graph}?offset=${this.offset}&limit=${this.limit}`);
+      let response = await api().get(`/workspaces/${this.workspace}/graphs/${this.graph}`);
       const graph = response.data;
 
+      response = await api().get(`/workspaces/${this.workspace}/graphs/${this.graph}/nodes?offset=${this.offset}&limit=${this.limit}`);
+      const nodes = response.data;
+
       this.nodeTypes = graph.nodeTables;
-      this.edgeTypes = graph.edgeTables;
-      this.nodes = graph.nodes;
-      this.total = graph.nodeCount;
+      this.edgeTypes = [graph.edgeTable];
+      this.nodes = nodes.nodes;
+      this.total = nodes.count;
     },
     turnPage (forward) {
       this.offset += forward ? this.limit : -this.limit
