@@ -1,5 +1,37 @@
 <template>
   <v-container fluid class="pa-0">
+    <v-navigation-drawer
+      app
+      clipped
+      fixed
+      right
+      permanent
+    >
+      <v-list>
+        <v-list subheader>
+          <v-subheader class="pr-2">
+            All Tables
+          </v-subheader>
+
+          <v-divider></v-divider>
+
+          <v-list-item
+            ripple
+            v-for="table in tables"
+            :key="table"
+            :to="`/workspaces/${workspace}/table/${table}`"
+          >
+            <v-list-item-action>
+              <v-icon color="primary">table_chart</v-icon>
+            </v-list-item-action>
+
+            <v-list-item-content>
+              <v-list-item-title>{{table}}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+      </v-list>
+    </v-navigation-drawer>
     <v-content class="ma-0">
       <v-app-bar app clipped-right>
         <v-toolbar-title
@@ -97,6 +129,10 @@ export default {
 
       this.rowKeys = rowKeys;
       this.headers = headers;
+
+      // Roni to convert these lines to computed function
+      response = await api().get(`workspaces/${this.workspace}/tables?type=all`);
+      this.tables = response.data;
     }
   },
   watch: {
