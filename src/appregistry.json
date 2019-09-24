@@ -1,7 +1,6 @@
 [
-  {
-    "name": "nodelink",
-    "url": "http://localhost:8081"
-  }
+    {
+        "name": "nodelink",
+        "url": "http://multinet.app/nodelink"
+    }
 ]
-
