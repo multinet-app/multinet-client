@@ -5,10 +5,11 @@
   </v-app>
 </template>
 
-<script>
+<script lang="ts">
 import Sidebar from '@/components/Sidebar'
+import Vue from 'vue';
 
-export default {
+export default Vue.extend({
   name: 'app',
   components: {
     Sidebar,
@@ -21,7 +22,7 @@ export default {
   created () {
     this.apps = require('./appregistry.json');
   },
-}
+});
 </script>
 
 <style>
