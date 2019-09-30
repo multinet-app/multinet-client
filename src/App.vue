@@ -6,7 +6,7 @@
 </template>
 
 <script lang="ts">
-import Sidebar from '@/components/Sidebar'
+import Sidebar from '@/components/Sidebar';
 import Vue from 'vue';
 
 export default Vue.extend({
@@ -14,12 +14,12 @@ export default Vue.extend({
   components: {
     Sidebar,
   },
-  data () {
+  data() {
     return {
       apps: [],
     };
   },
-  created () {
+  created() {
     this.apps = require('./appregistry.json');
   },
 });
