@@ -6,7 +6,7 @@
 </template>
 
 <script lang="ts">
-import Sidebar from '@/components/Sidebar';
+import Sidebar from '@/components/Sidebar.vue';
 import Vue from 'vue';
 
 export default Vue.extend({
