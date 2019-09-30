@@ -83,84 +83,86 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="ts">
+import Vue from 'vue';
+
 import api from '@/api';
 
-export default {
+export default Vue.extend({
   name: 'TableDialog',
 
   props: {
     types: {
       type: Object,
-      default: function(){
-        return {}
-      }
+      default() {
+        return {};
+      },
     },
 
     workspace: String,
   },
 
-  data () {
+  data() {
     return {
-      tableCreationError: null,
+      tableCreationError: null as string | null,
       tableDialog: false,
-      selectedType: null,
-      file: null,
+      selectedType: null as any | null,
+      file: null as File | null,
       newTable: '',
     };
   },
 
   computed: {
-    typeList () {
+    typeList(): string[] {
       return Object.keys(this.types);
     },
 
-    tableCreateDisabled () {
+    tableCreateDisabled(): boolean {
       return !this.file || !this.selectedType || !this.newTable;
     },
   },
 
   methods: {
-    handleFileInput (file) {
+    handleFileInput(file: File) {
       this.selectedType = this.fileType(file);
       this.file = file;
     },
 
-    async createTable(){
-      let queryType = this.types[this.selectedType].queryCall;
+    async createTable() {
+      const queryType = this.types[this.selectedType].queryCall;
       try {
         await api().post(`/${queryType}/${this.workspace}/${this.newTable}`,
         this.file,
         {
           headers: {
-            'Content-Type': 'text/plain'
+            'Content-Type': 'text/plain',
           },
-        }
+        },
         );
         this.tableCreationError = null;
         this.$emit('success');
         this.tableDialog = false;
-      } catch(err) {
+      } catch (err) {
         this.tableCreationError = err.response.data.message;
       }
     },
 
-    fileType(file){
+    fileType(file: File) {
       if (!file) {
-        return null
+        return null;
       }
 
-      let fileName = file.name.split('.')
-      let extension = fileName[fileName.length - 1]
+      const fileName = file.name.split('.');
+      const extension = fileName[fileName.length - 1];
 
-      for(let type in this.types){
-        if(this.types[type].extension.includes(extension)){
-          return type
+      for (const type in this.types) {
+        if (this.types[type].extension.includes(extension)) {
+          return type;
         }
       }
-      return null
-    }
+      return null;
+    },
 
   },
-}
+});
 </script>
