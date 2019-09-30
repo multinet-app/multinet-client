@@ -83,42 +83,43 @@
   </v-navigation-drawer>
 </template>
 
-<script>
-import api from '@/api'
-import WorkspaceDialog from '@/components/WorkspaceDialog'
+<script lang="ts">
+import Vue from 'vue';
 
-export default {
-  data () {
+import api from '@/api';
+import WorkspaceDialog from '@/components/WorkspaceDialog.vue';
+
+export default Vue.extend({
+  data() {
     return {
       newWorkspace: '',
-      workspaces: [],
-      right: null,
-      checkbox: {}
-    }
+      workspaces: [] as string[],
+      checkbox: {},
+    };
   },
   components: {
-    WorkspaceDialog
+    WorkspaceDialog,
   },
   computed: {
-    somethingChecked() {
+    somethingChecked(): boolean {
       return Object.values(this.checkbox)
-        .some(d => !!d);
-    }
+        .some((d) => !!d);
+    },
   },
   methods: {
-    route (workspace) {
+    route(workspace: string) {
       this.$router.push(`/workspaces/${workspace}`);
     },
-    addWorkspace (workspace) {
+    addWorkspace(workspace: string) {
       const workspaces = this.workspaces.concat([workspace]);
       this.workspaces = workspaces.sort();
     },
   },
-  async created () {
+  async created() {
     const response = await api().get('/workspaces');
     this.workspaces = response.data;
-  }
-}
+  },
+});
 </script>
 
 <style scoped>
