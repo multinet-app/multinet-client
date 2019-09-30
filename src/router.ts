@@ -2,11 +2,11 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
-import FrontPage from '@/views/FrontPage'
-import WorkspaceDetail from '@/views/WorkspaceDetail'
-import TableDetail from '@/views/TableDetail'
-import GraphDetail from '@/views/GraphDetail'
-import NodeDetail from '@/views/NodeDetail'
+import FrontPage from '@/views/FrontPage.vue'
+import WorkspaceDetail from '@/views/WorkspaceDetail.vue'
+import TableDetail from '@/views/TableDetail.vue'
+import GraphDetail from '@/views/GraphDetail.vue'
+import NodeDetail from '@/views/NodeDetail.vue'
 
 const routes = [
   {
