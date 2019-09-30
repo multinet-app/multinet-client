@@ -88,34 +88,40 @@
     </v-content>
   </v-container>
 </template>
-<script>
-import api from '@/api'
 
-export default {
+<script lang="ts">
+import Vue from 'vue';
+
+import api from '@/api';
+
+export default Vue.extend({
   name: 'TableDetail',
   props: ['workspace', 'table'],
-  data () {
+  data() {
+    const rowKeys: string[] = [];
+    const headers: string[] = [];
+
     return {
-      rowKeys:[],
-      headers:[],
+      rowKeys,
+      headers,
       tables: [],
       editing: false,
-    }
+    };
   },
   methods: {
-    rowClassName(index) {
-      return index % 2 == 0 ? 'even-row' : 'odd-row';
+    rowClassName(index: number): 'even-row' | 'odd-row' {
+      return index % 2 === 0 ? 'even-row' : 'odd-row';
     },
-    async update () {
+    async update() {
       let response = await api().get(`/workspaces/${this.workspace}/tables/${this.table}?headers=true&rows=true`);
-      const result = response.data;
+      const result: any[] = response.data;
 
-      let rowKeys = [];
-      let headers = [];
+      const rowKeys: any[] = [];
+      let headers: any[] = [];
       if (result) {
-        result.forEach(row => {
-          let rowData = [];
-          Object.keys(row).filter(k => k != '_rev').forEach(key => {
+        result.forEach((row) => {
+          const rowData: any[] = [];
+          Object.keys(row).filter((k) => k !== '_rev').forEach((key) => {
             rowData.push({
               key,
               value: row[key],
@@ -124,7 +130,7 @@ export default {
           rowKeys.push(rowData);
         });
 
-        headers = Object.keys(result[0]).filter(d => d != '_rev');
+        headers = Object.keys(result[0]).filter((d) => d !== '_rev');
       }
 
       this.rowKeys = rowKeys;
@@ -133,20 +139,20 @@ export default {
       // Roni to convert these lines to computed function
       response = await api().get(`workspaces/${this.workspace}/tables?type=all`);
       this.tables = response.data;
-    }
+    },
   },
   watch: {
-    workspace () {
-      this.update()
+    workspace() {
+      this.update();
     },
-    table () {
-      this.update()
-    }
+    table() {
+      this.update();
+    },
   },
-  created () {
-    this.update()
-  }
-}
+  created() {
+    this.update();
+  },
+});
 </script>
 
 <style scoped>
