@@ -57,18 +57,23 @@
   </v-dialog>
 </template>
 
-<script>
-import api from '@/api'
+<script lang="ts">
+import Vue from 'vue';
 
-export default {
-  data () {
+import api from '@/api';
+
+export default Vue.extend({
+  data() {
+    const dialog: boolean = false;
+    const newWorkspace: string = '';
+
     return {
-      dialog: false,
-      newWorkspace: '',
-    }
+      dialog,
+      newWorkspace,
+    };
   },
   methods: {
-    async create () {
+    async create() {
       if (this.newWorkspace) {
         const response = await api().post(`/workspaces/${this.newWorkspace}`);
 
@@ -80,8 +85,8 @@ export default {
         }
       }
     },
-  }
-}
+  },
+});
 </script>
 
 <style scoped>
