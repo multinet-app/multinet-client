@@ -49,54 +49,73 @@
   </v-container>
 </template>
 
-<script>
-import api from '@/api'
+<script lang="ts">
+import Vue from 'vue';
 
-export default {
+import api from '@/api';
+
+interface EdgeRecord {
+  id: string;
+  from: string;
+  to: string;
+}
+
+type EdgeType = 'incoming' | 'outgoing';
+
+export default Vue.extend({
   name: 'NodeDetail',
   props: ['workspace', 'graph', 'type', 'node'],
-  data () {
+  data() {
+    const incoming: any[] = [];
+    const outgoing: any[] = [];
+    const attributes: any[] = [];
+    const offsetIncoming: number = 0;
+    const offsetOutgoing: number = 0;
+    const pageCount: number = 20;
+    const totalIncoming: number = 0;
+    const totalOutgoing: number = 0;
+
     return {
-      incoming: [],
-      outgoing: [],
-      attributes: [],
-      offsetIncoming: 0,
-      offsetOutgoing: 0,
-      pageCount: 20,
-      totalIncoming: 0,
-      totalOutgoing: 0
-    }
+      incoming,
+      outgoing,
+      attributes,
+      offsetIncoming,
+      offsetOutgoing,
+      pageCount,
+      totalIncoming,
+      totalOutgoing,
+    };
   },
   computed: {
-    lastIncomingPage () {
+    lastIncomingPage(): number {
       return (
         this.totalIncoming % this.pageCount
-          ? Math.floor(this.totalIncoming/this.pageCount)
-          : this.totalIncoming/this.pageCount-1
-      ) * this.pageCount
+          ? Math.floor(this.totalIncoming / this.pageCount)
+          : this.totalIncoming / this.pageCount - 1
+      ) * this.pageCount;
     },
-    lastOutgoingPage () {
+    lastOutgoingPage(): number {
       return (
         this.totalOutgoing % this.pageCount
-          ? Math.floor(this.totalOutgoing/this.pageCount)
-          : this.totalOutgoing/this.pageCount-1
-      ) * this.pageCount
+          ? Math.floor(this.totalOutgoing / this.pageCount)
+          : this.totalOutgoing / this.pageCount - 1
+      ) * this.pageCount;
     },
-    nextIncoming () {
-      return this.lastIncomingPage !== this.offsetIncoming
+    nextIncoming(): boolean {
+      return this.lastIncomingPage !== this.offsetIncoming;
     },
-    nextOutgoing () {
-      return this.lastOutgoingPage !== this.offsetOutgoing
+    nextOutgoing(): boolean {
+      return this.lastOutgoingPage !== this.offsetOutgoing;
     },
-    prevIncoming () {
-      return 0 !== this.offsetIncoming
+    prevIncoming(): boolean {
+      return 0 !== this.offsetIncoming;
     },
-    prevOutgoing () {
-      return 0 !== this.offsetOutgoing
-    }
+    prevOutgoing(): boolean {
+      return 0 !== this.offsetOutgoing;
+    },
   },
   methods: {
-    async update () {
+    async update() {
       let response = await api().get(`/workspaces/${this.workspace}/graphs/${this.graph}/nodes/${this.type}/${this.node}/attributes`);
       const attributes = response.data;
 
@@ -106,64 +125,64 @@ export default {
       response = await api().get(`/workspaces/${this.workspace}/graphs/${this.graph}/nodes/${this.type}/${this.node}/edges?direction=outgoing&offset=${this.offsetOutgoing}&limit=${this.pageCount}`);
       const outgoing = response.data;
 
-      this.attributes = Object.keys(attributes).map(key => ({
+      this.attributes = Object.keys(attributes).map((key) => ({
         key,
         value: attributes[key],
       }));
-      this.incoming = incoming.edges.map(edge => ({id: edge.id, airport: edge.from}));
-      this.outgoing = outgoing.edges.map(edge => ({id: edge.id, airport: edge.to}));
+      this.incoming = incoming.edges.map((edge: EdgeRecord) => ({id: edge.id, airport: edge.from}));
+      this.outgoing = outgoing.edges.map((edge: EdgeRecord) => ({id: edge.id, airport: edge.to}));
       this.totalIncoming = incoming.edgeCount;
       this.totalOutgoing = outgoing.edgeCount;
     },
-    turnPage (edgeType, forward) {
+    turnPage(edgeType: EdgeType, forward: number) {
       if (edgeType === 'incoming') {
-        this.offsetIncoming += forward ? this.pageCount : -this.pageCount
+        this.offsetIncoming += forward ? this.pageCount : -this.pageCount;
       } else if (edgeType === 'outgoing') {
-        this.offsetOutgoing += forward ? this.pageCount : -this.pageCount
+        this.offsetOutgoing += forward ? this.pageCount : -this.pageCount;
       }
     },
-    lastPage (edgeType) {
+    lastPage(edgeType: EdgeType) {
       if (edgeType === 'incoming') {
-        this.offsetIncoming = this.lastIncomingPage
+        this.offsetIncoming = this.lastIncomingPage;
       } else if (edgeType === 'outgoing') {
-        this.offsetOutgoing = this.lastOutgoingPage
+        this.offsetOutgoing = this.lastOutgoingPage;
       }
     },
-    firstPage (edgeType) {
+    firstPage(edgeType: EdgeType) {
       if (edgeType === 'incoming') {
-        this.offsetIncoming = 0
+        this.offsetIncoming = 0;
       } else if (edgeType === 'outgoing') {
-        this.offsetOutgoing = 0
+        this.offsetOutgoing = 0;
       }
-    }
+    },
   },
   watch: {
-    workspace () {
-      this.update()
+    workspace() {
+      this.update();
     },
-    graph () {
-      this.update()
+    graph() {
+      this.update();
     },
-    type () {
-      this.update()
+    type() {
+      this.update();
     },
-    node () {
-      this.update()
+    node() {
+      this.update();
     },
-    offsetIncoming () {
-      this.update()
+    offsetIncoming() {
+      this.update();
     },
-    offsetOutgoing () {
-      this.update()
+    offsetOutgoing() {
+      this.update();
     },
-    pageCount () {
-      this.update()
+    pageCount() {
+      this.update();
     },
   },
-  created () {
-    this.update()
-  }
-}
+  created() {
+    this.update();
+  },
+});
 </script>
 
 <style scoped>
