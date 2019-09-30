@@ -69,8 +69,10 @@
   </v-list>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import Vue from 'vue';
+
+export default Vue.extend({
   name: 'ItemPanel',
   props: {
     title: {
@@ -100,12 +102,12 @@ export default {
     };
   },
   computed: {
-    anySelected() {
+    anySelected(): boolean {
       return Object.values(this.checkbox)
-        .some(d => !!d);
+        .some((d) => !!d);
     },
   },
-}
+});
 </script>
 
 <style scoped>
