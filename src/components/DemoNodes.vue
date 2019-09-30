@@ -20,21 +20,23 @@
   </table>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import Vue, { PropType } from 'vue';
+
+export default Vue.extend({
   props: {
-    nodes: Array
+    nodes: Object as PropType<any[]>,
   },
   computed: {
-    headers () {
+    headers(): string[] {
       if (this.nodes) {
         return Object.keys(this.nodes[0]);
       }
 
       return [];
-    }
+    },
   },
-}
+});
 </script>
 
 <style scoped>
