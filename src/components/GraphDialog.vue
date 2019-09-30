@@ -84,33 +84,35 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="ts">
+import Vue from 'vue';
+
 import api from '@/api';
 
-export default {
+export default Vue.extend({
   name: 'GraphDialog',
   props: {
     nodeTables: Array,
     edgeTables: Array,
     workspace: String,
   },
-  data () {
+  data() {
     return {
-      graphCreationErrors: [],
+      graphCreationErrors: [] as any[],
       graphDialog: false,
-      graphEdgeTable: null,
-      graphNodeTables: [],
+      graphEdgeTable: null as string | null,
+      graphNodeTables: [] as string[],
       newGraph: '',
     };
   },
   computed: {
-    graphCreateDisabled () {
-      return this.graphNodeTables.length == 0 || !this.graphEdgeTable || !this.newGraph;
+    graphCreateDisabled(): boolean {
+      return this.graphNodeTables.length === 0 || !this.graphEdgeTable || !this.newGraph;
     },
 
   },
   methods: {
-    async createGraph () {
+    async createGraph() {
       const { workspace, newGraph } = this;
       const response = await api().post(`/workspaces/${workspace}/graph/${newGraph}`, {
         node_tables: this.graphNodeTables,
@@ -118,7 +120,7 @@ export default {
       });
 
       if (!response) {
-        const message = `Graph "${this.newGraph}" already exists.`
+        const message = `Graph "${this.newGraph}" already exists.`;
 
         this.graphCreationErrors = [message];
         throw new Error(message);
@@ -130,5 +132,5 @@ export default {
       this.graphDialog = false;
     },
   },
-}
+});
 </script>
