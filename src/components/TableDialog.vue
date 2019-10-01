@@ -87,13 +87,14 @@
 import Vue from 'vue';
 
 import api from '@/api';
+import { FileType } from '@/types';
 
 export default Vue.extend({
   name: 'TableDialog',
 
   props: {
     types: {
-      type: Object,
+      type: Object as () => { [key: string]: FileType },
       default() {
         return {};
       },
@@ -106,7 +107,7 @@ export default Vue.extend({
     return {
       tableCreationError: null as string | null,
       tableDialog: false,
-      selectedType: null as any | null,
+      selectedType: null as string | null,
       file: null as File | null,
       newTable: '',
     };
@@ -129,7 +130,7 @@ export default Vue.extend({
     },
 
     async createTable() {
-      const queryType = this.types[this.selectedType].queryCall;
+      const queryType = this.types[this.selectedType as string].queryCall;
       try {
         await api().post(`/${queryType}/${this.workspace}/${this.newTable}`,
         this.file,
@@ -147,7 +148,7 @@ export default Vue.extend({
       }
     },
 
-    fileType(file: File) {
+    fileType(file: File): string | null {
       if (!file) {
         return null;
       }

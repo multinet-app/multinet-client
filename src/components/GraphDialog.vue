@@ -98,7 +98,7 @@ export default Vue.extend({
   },
   data() {
     return {
-      graphCreationErrors: [] as any[],
+      graphCreationErrors: [] as string[],
       graphDialog: false,
       graphEdgeTable: null as string | null,
       graphNodeTables: [] as string[],

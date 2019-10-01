@@ -53,11 +53,17 @@
 import Vue from 'vue';
 
 import api from '@/api';
+import { KeyValue } from '@/types';
 
 interface EdgeRecord {
   id: string;
   from: string;
   to: string;
+}
+
+interface Connection {
+  id: string;
+  airport: string;
 }
 
 type EdgeType = 'incoming' | 'outgoing';
@@ -66,24 +72,15 @@ export default Vue.extend({
   name: 'NodeDetail',
   props: ['workspace', 'graph', 'type', 'node'],
   data() {
-    const incoming: any[] = [];
-    const outgoing: any[] = [];
-    const attributes: any[] = [];
-    const offsetIncoming: number = 0;
-    const offsetOutgoing: number = 0;
-    const pageCount: number = 20;
-    const totalIncoming: number = 0;
-    const totalOutgoing: number = 0;
-
     return {
-      incoming,
-      outgoing,
-      attributes,
-      offsetIncoming,
-      offsetOutgoing,
-      pageCount,
-      totalIncoming,
-      totalOutgoing,
+      incoming: [] as Connection[],
+      outgoing: [] as Connection[],
+      attributes: [] as KeyValue[],
+      offsetIncoming: 0,
+      offsetOutgoing: 0,
+      pageCount: 20,
+      totalIncoming: 0,
+      totalOutgoing: 0,
     };
   },
   computed: {

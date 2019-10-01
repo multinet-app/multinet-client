@@ -62,20 +62,13 @@ export default Vue.extend({
   },
   props: ['workspace', 'graph', 'apps'],
   data() {
-    const nodeTypes: any[] = [];
-    const edgeTypes: any[] = [];
-    const nodes: any[] = [];
-    const offset: number = 0;
-    const limit: number = 20;
-    const total: number = 0;
-
     return {
-      nodeTypes,
-      edgeTypes,
-      nodes,
-      offset,
-      limit,
-      total,
+      nodeTypes: [] as string[],
+      edgeTypes: [] as string[],
+      nodes: [] as string[],
+      offset: 0,
+      limit: 20,
+      total: 0,
     };
   },
   computed: {

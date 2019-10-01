@@ -93,17 +93,15 @@
 import Vue from 'vue';
 
 import api from '@/api';
+import { KeyValue, TableRow } from '@/types';
 
 export default Vue.extend({
   name: 'TableDetail',
   props: ['workspace', 'table'],
   data() {
-    const rowKeys: string[] = [];
-    const headers: string[] = [];
-
     return {
-      rowKeys,
-      headers,
+      rowKeys: [] as KeyValue[][],
+      headers: [] as Array<keyof TableRow>,
       tables: [],
       editing: false,
     };
@@ -114,13 +112,13 @@ export default Vue.extend({
     },
     async update() {
       let response = await api().get(`/workspaces/${this.workspace}/tables/${this.table}?headers=true&rows=true`);
-      const result: any[] = response.data;
+      const result: TableRow[] = response.data;
 
-      const rowKeys: any[] = [];
-      let headers: any[] = [];
+      const rowKeys: KeyValue[][] = [];
+      let headers: Array<keyof TableRow> = [];
       if (result) {
         result.forEach((row) => {
-          const rowData: any[] = [];
+          const rowData: KeyValue[] = [];
           Object.keys(row).filter((k) => k !== '_rev').forEach((key) => {
             rowData.push({
               key,

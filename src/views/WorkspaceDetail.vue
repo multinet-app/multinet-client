@@ -94,7 +94,7 @@
               icon="table_chart"
             />
 
-            <TableDialog
+            <table-dialog
               :types="fileTypes"
               :workspace="workspace"
               @success="update"
@@ -141,6 +141,7 @@ import api from '@/api';
 import ItemPanel from '@/components/ItemPanel.vue';
 import GraphDialog from '@/components/GraphDialog.vue';
 import TableDialog from '@/components/TableDialog.vue';
+import { FileTypeTable } from '@/types';
 
 export default Vue.extend({
   name: 'WorkspaceDetail',
@@ -157,7 +158,7 @@ export default Vue.extend({
         csv: {extension: ['csv'], queryCall: 'csv'},
         newick: {extension: ['phy', 'tree'], queryCall: 'newick'},
         nested_json: {extension: ['json'], queryCall: 'nested_json'},
-      },
+      } as FileTypeTable,
       tables: [],
       nodeTables: [],
       edgeTables: [],
