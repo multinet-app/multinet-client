@@ -1,7 +1,35 @@
 <template>
   <v-container fluid>
     <v-content>
-      <h1>Graph: {{`${this.workspace}/${this.graph}`}}</h1>
+      <v-app-bar app>
+        <v-toolbar-title
+          class="ws-detail-title"
+        >
+          <v-icon
+            class="ml-4 mr-5"
+            color="grey lighten-1"
+          >library_books</v-icon>
+
+          <span class="breadcrumbs">
+            <router-link
+              :to="{
+                name: 'workspaceDetail',
+                params: { workspace }
+              }"
+            >{{workspace}}</router-link>
+            <v-icon class="mx-4" color="grey lighten-2">chevron_right</v-icon>
+            <v-icon class="mr-3" color="grey lighten-1">timeline</v-icon>
+            {{`${this.graph}`}}
+          </span>
+
+        </v-toolbar-title>
+
+        <v-spacer />
+
+        <v-btn icon>
+          <v-icon>more_vert</v-icon>
+        </v-btn>
+      </v-app-bar>
       <div id="graph-details">
         <div style="border-style: solid; width: 100%;">
           <label>Node Types</label>
