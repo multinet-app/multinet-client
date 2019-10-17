@@ -158,15 +158,22 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-#graph-details {
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: space-around;
-}
-
 ul {
   padding: 10px;
   list-style-type: none;
   text-align: left;
+}
+
+.ws-detail-title {
+  align-items: center;
+  display: flex;
+  letter-spacing: 0;
+  width: 95%;
+}
+.ws-detail-title a {
+  text-decoration: none;
+}
+.ws-detail-title a:hover {
+  text-decoration: underline;
 }
 </style>
