@@ -10,19 +10,17 @@
 
         <v-tooltip top>
           <template v-slot:activator="{ on }">
-            <div>
-              <v-scroll-x-transition>
-                <v-btn
-                  icon
-                  small
-                  text
-                  v-if="anySelected"
-                  v-on="on"
-                >
-                  <v-icon color="red accent-2" size="22px">delete_sweep</v-icon>
-                </v-btn>
-              </v-scroll-x-transition>
-            </div>
+            <v-scroll-x-transition>
+              <v-btn
+                icon
+                small
+                text
+                v-if="anySelected"
+                v-on="on"
+              >
+                <v-icon color="red accent-2" size="22px">delete_sweep</v-icon>
+              </v-btn>
+            </v-scroll-x-transition>
           </template>
           <span>Delete selected</span>
         </v-tooltip>

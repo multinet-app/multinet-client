@@ -17,22 +17,20 @@
 
             <v-tooltip left v-if="!editing">
               <template v-slot:activator="{ on }">
-                <div>
-                  <v-fade-transition hide-on-leave>
-                    <v-btn
-                      class="ml-1 mr-2"
-                      icon
-                      v-if="hover && !editing"
-                      v-on="on"
-                      @click="editing = !editing"
-                    >
-                      <v-icon
-                        color="grey darken-3"
-                        size="20px"
-                      >edit</v-icon>
-                    </v-btn>
-                  </v-fade-transition>
-                </div>
+                <v-fade-transition hide-on-leave>
+                  <v-btn
+                    class="ml-1 mr-2"
+                    icon
+                    v-if="hover && !editing"
+                    v-on="on"
+                    @click="editing = !editing"
+                  >
+                    <v-icon
+                      color="grey darken-3"
+                      size="20px"
+                    >edit</v-icon>
+                  </v-btn>
+                </v-fade-transition>
               </template>
               <span>Rename workspace</span>
             </v-tooltip>
