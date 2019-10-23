@@ -60,7 +60,7 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import api, { apix } from '@/api';
+import api from '@/api';
 
 export default Vue.extend({
   data() {
@@ -75,7 +75,7 @@ export default Vue.extend({
   methods: {
     async create() {
       if (this.newWorkspace) {
-        const response = apix.createWorkspace(this.newWorkspace);
+        const response = api.createWorkspace(this.newWorkspace);
 
         if (response) {
           this.$router.push(`/workspaces/${this.newWorkspace}`);

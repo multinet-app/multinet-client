@@ -87,7 +87,7 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import api, { apix } from '@/api';
+import api from '@/api';
 
 export default Vue.extend({
   name: 'GraphDialog',
@@ -119,7 +119,7 @@ export default Vue.extend({
         throw new Error('this.graphEdgeTable must not be null');
       }
 
-      const response = await apix.createGraph(workspace, newGraph, this.graphNodeTables, this.graphEdgeTable);
+      const response = await api.createGraph(workspace, newGraph, this.graphNodeTables, this.graphEdgeTable);
 
       if (!response) {
         const message = `Graph "${this.newGraph}" already exists.`;

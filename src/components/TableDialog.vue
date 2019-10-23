@@ -87,7 +87,7 @@
 import { DataType } from 'multinet';
 import Vue from 'vue';
 
-import api, { apix } from '@/api';
+import api from '@/api';
 import { FileType } from '@/types';
 
 export default Vue.extend({
@@ -137,7 +137,7 @@ export default Vue.extend({
           throw new Error('this.file must not be null');
         }
 
-        await apix.uploadTable(queryType, this.workspace, this.newTable, this.file);
+        await api.uploadTable(queryType, this.workspace, this.newTable, this.file);
 
         this.tableCreationError = null;
         this.$emit('success');

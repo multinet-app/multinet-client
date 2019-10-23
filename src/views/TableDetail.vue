@@ -92,7 +92,7 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import api, { apix } from '@/api';
+import api from '@/api';
 import { KeyValue, TableRow } from '@/types';
 
 export default Vue.extend({
@@ -111,7 +111,7 @@ export default Vue.extend({
       return index % 2 === 0 ? 'even-row' : 'odd-row';
     },
     async update() {
-      const result = await apix.table(this.workspace, this.table);
+      const result = await api.table(this.workspace, this.table);
 
       const rowKeys: KeyValue[][] = [];
       let headers: Array<keyof TableRow> = [];
@@ -137,7 +137,7 @@ export default Vue.extend({
       this.headers = headers;
 
       // Roni to convert these lines to computed function
-      this.tables = await apix.tables(this.workspace, 'all');
+      this.tables = await api.tables(this.workspace, 'all');
     },
   },
   watch: {

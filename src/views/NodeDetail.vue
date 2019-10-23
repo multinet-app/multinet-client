@@ -53,7 +53,7 @@
 import Vue from 'vue';
 import { Edge } from 'multinet';
 
-import api, { apix } from '@/api';
+import api from '@/api';
 import { KeyValue } from '@/types';
 
 interface EdgeRecord {
@@ -114,9 +114,9 @@ export default Vue.extend({
   },
   methods: {
     async update() {
-      const attributes = await apix.attributes(this.workspace, this.graph, `${this.type}/${this.node}`);
-      const incoming = await apix.edges(this.workspace, this.graph, `${this.type}/${this.node}`, 'incoming', this.offsetIncoming, this.pageCount);
-      const outgoing = await apix.edges(this.workspace, this.graph, `${this.type}/${this.node}`, 'outgoing', this.offsetOutgoing, this.pageCount);
+      const attributes = await api.attributes(this.workspace, this.graph, `${this.type}/${this.node}`);
+      const incoming = await api.edges(this.workspace, this.graph, `${this.type}/${this.node}`, 'incoming', this.offsetIncoming, this.pageCount);
+      const outgoing = await api.edges(this.workspace, this.graph, `${this.type}/${this.node}`, 'outgoing', this.offsetOutgoing, this.pageCount);
 
       this.attributes = Object.entries(attributes).map(([key, value]) => ({
         key,

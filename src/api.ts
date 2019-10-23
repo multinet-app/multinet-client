@@ -1,15 +1,9 @@
-import axios from 'axios';
-
 import { multinetApi } from 'multinet';
 
 function getApiRoot() {
   return `${window.location.origin}/api`;
 }
 
-export default function() {
-  return axios.create({
-    baseURL: getApiRoot(),
-  });
-}
+const api = multinetApi(getApiRoot());
 
-export const apix = multinetApi(getApiRoot());
+export default api;
