@@ -14,7 +14,7 @@ export interface TableRow {
 
 export interface FileType {
   extension: string[];
-  queryCall: DataType;
+  queryCall: UploadType;
 }
 
 export interface FileTypeTable {
