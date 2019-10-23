@@ -137,7 +137,9 @@ export default Vue.extend({
       this.headers = headers;
 
       // Roni to convert these lines to computed function
-      this.tables = await api.tables(this.workspace, 'all');
+      this.tables = await api.tables(this.workspace, {
+        type: 'all',
+      });
     },
   },
   watch: {

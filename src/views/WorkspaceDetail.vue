@@ -173,8 +173,8 @@ export default Vue.extend({
   methods: {
     async update() {
       // Get lists of node and edge tables.
-      const nodeTables = await api.tables(this.workspace, 'node');
-      const edgeTables = await api.tables(this.workspace, 'edge');
+      const nodeTables = await api.tables(this.workspace, { type: 'node' });
+      const edgeTables = await api.tables(this.workspace, { type: 'edge' });
 
       this.tables = nodeTables.concat(edgeTables);
       this.nodeTables = nodeTables;

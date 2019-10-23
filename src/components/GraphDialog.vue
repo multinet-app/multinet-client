@@ -119,7 +119,10 @@ export default Vue.extend({
         throw new Error('this.graphEdgeTable must not be null');
       }
 
-      const response = await api.createGraph(workspace, newGraph, this.graphNodeTables, this.graphEdgeTable);
+      const response = await api.createGraph(workspace, newGraph, {
+        nodeTables: this.graphNodeTables,
+        edgeTable: this.graphEdgeTable,
+      });
 
       if (!response) {
         const message = `Graph "${this.newGraph}" already exists.`;

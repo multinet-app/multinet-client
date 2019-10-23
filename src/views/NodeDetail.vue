@@ -115,8 +115,16 @@ export default Vue.extend({
   methods: {
     async update() {
       const attributes = await api.attributes(this.workspace, this.graph, `${this.type}/${this.node}`);
-      const incoming = await api.edges(this.workspace, this.graph, `${this.type}/${this.node}`, 'incoming', this.offsetIncoming, this.pageCount);
-      const outgoing = await api.edges(this.workspace, this.graph, `${this.type}/${this.node}`, 'outgoing', this.offsetOutgoing, this.pageCount);
+      const incoming = await api.edges(this.workspace, this.graph, `${this.type}/${this.node}`, {
+        direction: 'incoming',
+        offset: this.offsetIncoming,
+        limit: this.pageCount,
+      });
+      const outgoing = await api.edges(this.workspace, this.graph, `${this.type}/${this.node}`, {
+        direction: 'outgoing',
+        offset: this.offsetOutgoing,
+        limit: this.pageCount,
+      });
 
       this.attributes = Object.entries(attributes).map(([key, value]) => ({
         key,

@@ -131,13 +131,16 @@ export default Vue.extend({
     },
 
     async createTable() {
-      const queryType: DataType= this.types[this.selectedType as string].queryCall;
+      const queryType: DataType = this.types[this.selectedType as string].queryCall;
       try {
         if (this.file === null) {
           throw new Error('this.file must not be null');
         }
 
-        await api.uploadTable(queryType, this.workspace, this.newTable, this.file);
+        await api.uploadTable(this.workspace, this.newTable, {
+          type: queryType,
+          data: this.file,
+        });
 
         this.tableCreationError = null;
         this.$emit('success');
