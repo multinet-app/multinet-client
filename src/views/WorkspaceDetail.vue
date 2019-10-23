@@ -159,9 +159,9 @@ export default Vue.extend({
         newick: {extension: ['phy', 'tree'], queryCall: 'newick'},
         nested_json: {extension: ['json'], queryCall: 'nested_json'},
       } as FileTypeTable,
-      tables: [],
-      nodeTables: [],
-      edgeTables: [],
+      tables: [] as string[],
+      nodeTables: [] as string[],
+      edgeTables: [] as string[],
       graphs: [] as string[],
     };
   },
@@ -173,11 +173,8 @@ export default Vue.extend({
   methods: {
     async update() {
       // Get lists of node and edge tables.
-      let response = await api().get(`workspaces/${this.workspace}/tables?type=node`);
-      const nodeTables = response.data;
-
-      response = await api().get(`workspaces/${this.workspace}/tables?type=edge`);
-      const edgeTables = response.data;
+      const nodeTables = await apix.tables(this.workspace, 'node');
+      const edgeTables = await apix.tables(this.workspace, 'edge');
 
       this.tables = nodeTables.concat(edgeTables);
       this.nodeTables = nodeTables;

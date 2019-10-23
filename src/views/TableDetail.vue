@@ -102,7 +102,7 @@ export default Vue.extend({
     return {
       rowKeys: [] as KeyValue[][],
       headers: [] as Array<keyof TableRow>,
-      tables: [],
+      tables: [] as string[],
       editing: false,
     };
   },
@@ -137,8 +137,7 @@ export default Vue.extend({
       this.headers = headers;
 
       // Roni to convert these lines to computed function
-      const response = await api().get(`workspaces/${this.workspace}/tables?type=all`);
-      this.tables = response.data;
+      this.tables = await apix.tables(this.workspace, 'all');
     },
   },
   watch: {
