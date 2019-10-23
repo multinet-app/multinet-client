@@ -51,7 +51,7 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import api from '@/api';
+import api, { apix } from '@/api';
 
 export default Vue.extend({
   name: 'GraphDetail',
@@ -88,11 +88,8 @@ export default Vue.extend({
   },
   methods: {
     async update() {
-      let response = await api().get(`/workspaces/${this.workspace}/graphs/${this.graph}`);
-      const graph = response.data;
-
-      response = await api().get(`/workspaces/${this.workspace}/graphs/${this.graph}/nodes?offset=${this.offset}&limit=${this.limit}`);
-      const nodes = response.data;
+      const graph = await apix.graph(this.workspace, this.graph);
+      const nodes = await apix.nodes(this.workspace, this.graph, this.offset, this.limit);
 
       this.nodeTypes = graph.nodeTables;
       this.edgeTypes = [graph.edgeTable];

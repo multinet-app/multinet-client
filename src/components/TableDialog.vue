@@ -84,9 +84,10 @@
 </template>
 
 <script lang="ts">
+import { TableType } from 'multinet';
 import Vue from 'vue';
 
-import api from '@/api';
+import api, { apix } from '@/api';
 import { FileType } from '@/types';
 
 export default Vue.extend({
@@ -130,16 +131,14 @@ export default Vue.extend({
     },
 
     async createTable() {
-      const queryType = this.types[this.selectedType as string].queryCall;
+      const queryType: TableType = this.types[this.selectedType as string].queryCall;
       try {
-        await api().post(`/${queryType}/${this.workspace}/${this.newTable}`,
-        this.file,
-        {
-          headers: {
-            'Content-Type': 'text/plain',
-          },
-        },
-        );
+        if (this.file === null) {
+          throw new Error('this.file must not be null');
+        }
+
+        await apix.uploadTable(queryType, this.workspace, this.newTable, this.file);
+
         this.tableCreationError = null;
         this.$emit('success');
         this.tableDialog = false;

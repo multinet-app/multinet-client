@@ -86,7 +86,7 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import api from '@/api';
+import api, { apix } from '@/api';
 import WorkspaceDialog from '@/components/WorkspaceDialog.vue';
 
 export default Vue.extend({
@@ -116,8 +116,7 @@ export default Vue.extend({
     },
   },
   async created() {
-    const response = await api().get('/workspaces');
-    this.workspaces = response.data;
+    this.workspaces = await apix.workspaces();
   },
 });
 </script>

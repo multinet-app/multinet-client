@@ -51,8 +51,9 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { Edge } from 'multinet';
 
-import api from '@/api';
+import api, { apix } from '@/api';
 import { KeyValue } from '@/types';
 
 interface EdgeRecord {
@@ -113,23 +114,19 @@ export default Vue.extend({
   },
   methods: {
     async update() {
-      let response = await api().get(`/workspaces/${this.workspace}/graphs/${this.graph}/nodes/${this.type}/${this.node}/attributes`);
-      const attributes = response.data;
+      const attributes = await apix.attributes(this.workspace, this.graph, `${this.type}/${this.node}`);
+      const incoming = await apix.edges(this.workspace, this.graph, `${this.type}/${this.node}`, 'incoming', this.offsetIncoming, this.pageCount);
+      const outgoing = await apix.edges(this.workspace, this.graph, `${this.type}/${this.node}`, 'outgoing', this.offsetOutgoing, this.pageCount);
 
-      response = await api().get(`/workspaces/${this.workspace}/graphs/${this.graph}/nodes/${this.type}/${this.node}/edges?direction=incoming&offset=${this.offsetIncoming}&limit=${this.pageCount}`);
-      const incoming = response.data;
-
-      response = await api().get(`/workspaces/${this.workspace}/graphs/${this.graph}/nodes/${this.type}/${this.node}/edges?direction=outgoing&offset=${this.offsetOutgoing}&limit=${this.pageCount}`);
-      const outgoing = response.data;
-
-      this.attributes = Object.keys(attributes).map((key) => ({
+      this.attributes = Object.entries(attributes).map(([key, value]) => ({
         key,
-        value: attributes[key],
+        value,
       }));
-      this.incoming = incoming.edges.map((edge: EdgeRecord) => ({id: edge.id, airport: edge.from}));
-      this.outgoing = outgoing.edges.map((edge: EdgeRecord) => ({id: edge.id, airport: edge.to}));
-      this.totalIncoming = incoming.edgeCount;
-      this.totalOutgoing = outgoing.edgeCount;
+
+      this.incoming = incoming.edges.map((edge: Edge) => ({id: edge.edge, airport: edge.from}));
+      this.outgoing = outgoing.edges.map((edge: Edge) => ({id: edge.edge, airport: edge.to}));
+      this.totalIncoming = incoming.count;
+      this.totalOutgoing = outgoing.count;
     },
     turnPage(edgeType: EdgeType, forward: number) {
       if (edgeType === 'incoming') {

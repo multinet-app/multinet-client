@@ -137,7 +137,7 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import api from '@/api';
+import api, { apix } from '@/api';
 import ItemPanel from '@/components/ItemPanel.vue';
 import GraphDialog from '@/components/GraphDialog.vue';
 import TableDialog from '@/components/TableDialog.vue';
@@ -162,7 +162,7 @@ export default Vue.extend({
       tables: [],
       nodeTables: [],
       edgeTables: [],
-      graphs: [],
+      graphs: [] as string[],
     };
   },
   watch: {
@@ -184,10 +184,7 @@ export default Vue.extend({
       this.edgeTables = edgeTables;
 
       // Get list of graphs.
-      response = await api().get(`workspaces/${this.workspace}/graphs`);
-      const graphs = response.data;
-
-      this.graphs = graphs;
+      this.graphs = await apix.graphs(this.workspace);
     },
   },
   created() {
