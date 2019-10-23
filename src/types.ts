@@ -1,4 +1,4 @@
-import { TableType } from 'multinet';
+import { DataType } from 'multinet';
 
 export interface KeyValue {
   key: string;
@@ -14,7 +14,7 @@ export interface TableRow {
 
 export interface FileType {
   extension: string[];
-  queryCall: TableType;
+  queryCall: DataType;
 }
 
 export interface FileTypeTable {
