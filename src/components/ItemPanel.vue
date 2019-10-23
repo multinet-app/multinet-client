@@ -8,22 +8,29 @@
 
       <v-spacer />
 
-        <v-tooltip top>
-          <template v-slot:activator="{ on }">
-            <v-scroll-x-transition>
-              <v-btn
-                icon
-                small
-                text
-                v-if="anySelected"
-                v-on="on"
-              >
-                <v-icon color="red accent-2" size="22px">delete_sweep</v-icon>
-              </v-btn>
-            </v-scroll-x-transition>
-          </template>
-          <span>Delete selected</span>
-        </v-tooltip>
+      <v-tooltip top>
+        <template v-slot:activator="{ on }">
+          <v-scroll-x-transition>
+            <v-btn
+              icon
+              small
+              text
+              v-if="anySelected"
+              v-on="on"
+            >
+              <v-icon color="red accent-2" size="22px">delete_sweep</v-icon>
+            </v-btn>
+          </v-scroll-x-transition>
+        </template>
+        <span>Delete selected</span>
+      </v-tooltip>
+
+      <table-dialog
+        :types="fileTypes"
+        :workspace="workspace"
+        @success="update"
+      />
+
     </v-subheader>
 
     <v-divider></v-divider>
@@ -71,9 +78,13 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import TableDialog from '@/components/TableDialog.vue';
 
 export default Vue.extend({
   name: 'ItemPanel',
+  components: {
+    TableDialog,
+  },
   props: {
     title: {
       type: String,

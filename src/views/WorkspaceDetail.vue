@@ -94,12 +94,6 @@
               icon="table_chart"
             />
 
-            <table-dialog
-              :types="fileTypes"
-              :workspace="workspace"
-              @success="update"
-            />
-
           </v-card>
         </v-flex>
         <v-flex
@@ -118,14 +112,7 @@
               :workspace="workspace"
               route-type="graph"
               icon="timeline"
-              />
-
-              <GraphDialog
-                :node-tables="nodeTables"
-                :edge-tables="edgeTables"
-                :workspace="workspace"
-                @success="update"
-              />
+            />
 
           </v-card>
         </v-flex>
