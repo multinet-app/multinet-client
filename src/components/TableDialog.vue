@@ -84,7 +84,7 @@
 </template>
 
 <script lang="ts">
-import { DataType } from 'multinet';
+import { UploadType } from 'multinet';
 import Vue from 'vue';
 
 import api from '@/api';
@@ -131,7 +131,7 @@ export default Vue.extend({
     },
 
     async createTable() {
-      const queryType: DataType = this.types[this.selectedType as string].queryCall;
+      const queryType: UploadType = this.types[this.selectedType as string].queryCall;
       try {
         if (this.file === null) {
           throw new Error('this.file must not be null');

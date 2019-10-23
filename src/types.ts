@@ -1,4 +1,4 @@
-import { DataType } from 'multinet';
+import { UploadType } from 'multinet';
 
 export interface KeyValue {
   key: string;
