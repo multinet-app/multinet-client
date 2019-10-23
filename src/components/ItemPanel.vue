@@ -78,7 +78,10 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import api from '@/api';
+
 import TableDialog from '@/components/TableDialog.vue';
+import { FileTypeTable } from '@/types';
 
 export default Vue.extend({
   name: 'ItemPanel',
@@ -110,7 +113,40 @@ export default Vue.extend({
   data() {
     return {
       checkbox: {},
+      fileTypes: {
+        csv: {extension: ['csv'], queryCall: 'csv'},
+        newick: {extension: ['phy', 'tree'], queryCall: 'newick'},
+        nested_json: {extension: ['json'], queryCall: 'nested_json'},
+      } as FileTypeTable,
     };
+  },
+  watch: {
+    workspace() {
+      this.update();
+    },
+  },
+  methods: {
+    async update() {
+      // Get lists of node and edge tables.
+      let response = await api().get(`workspaces/${this.workspace}/tables?type=node`);
+      const nodeTables = response.data;
+
+      response = await api().get(`workspaces/${this.workspace}/tables?type=edge`);
+      const edgeTables = response.data;
+
+      this.tables = nodeTables.concat(edgeTables);
+      this.nodeTables = nodeTables;
+      this.edgeTables = edgeTables;
+
+      // Get list of graphs.
+      response = await api().get(`workspaces/${this.workspace}/graphs`);
+      const graphs = response.data;
+
+      this.graphs = graphs;
+    },
+  },
+  created() {
+    this.update();
   },
   computed: {
     anySelected(): boolean {

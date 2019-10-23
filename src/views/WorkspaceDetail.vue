@@ -124,61 +124,22 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import api from '@/api';
 import ItemPanel from '@/components/ItemPanel.vue';
-import GraphDialog from '@/components/GraphDialog.vue';
-import TableDialog from '@/components/TableDialog.vue';
-import { FileTypeTable } from '@/types';
 
 export default Vue.extend({
   name: 'WorkspaceDetail',
   components: {
     ItemPanel,
-    GraphDialog,
-    TableDialog,
   },
   props: ['workspace', 'title'],
   data() {
     return {
       editing: false,
-      fileTypes: {
-        csv: {extension: ['csv'], queryCall: 'csv'},
-        newick: {extension: ['phy', 'tree'], queryCall: 'newick'},
-        nested_json: {extension: ['json'], queryCall: 'nested_json'},
-      } as FileTypeTable,
       tables: [],
       nodeTables: [],
       edgeTables: [],
       graphs: [],
     };
-  },
-  watch: {
-    workspace() {
-      this.update();
-    },
-  },
-  methods: {
-    async update() {
-      // Get lists of node and edge tables.
-      let response = await api().get(`workspaces/${this.workspace}/tables?type=node`);
-      const nodeTables = response.data;
-
-      response = await api().get(`workspaces/${this.workspace}/tables?type=edge`);
-      const edgeTables = response.data;
-
-      this.tables = nodeTables.concat(edgeTables);
-      this.nodeTables = nodeTables;
-      this.edgeTables = edgeTables;
-
-      // Get list of graphs.
-      response = await api().get(`workspaces/${this.workspace}/graphs`);
-      const graphs = response.data;
-
-      this.graphs = graphs;
-    },
-  },
-  created() {
-    this.update();
   },
 
 });
