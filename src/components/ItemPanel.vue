@@ -26,9 +26,8 @@
       </v-tooltip>
 
       <table-dialog
-        :types="fileTypes"
         :workspace="workspace"
-        @success="update"
+        @success="$emit('new-table')"
       />
 
     </v-subheader>

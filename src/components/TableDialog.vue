@@ -80,19 +80,12 @@
 import Vue from 'vue';
 
 import api from '@/api';
-import { FileType } from '@/types';
+import { FileTypeTable } from '@/types';
 
 export default Vue.extend({
   name: 'TableDialog',
 
   props: {
-    types: {
-      type: Object as () => { [key: string]: FileType },
-      default() {
-        return {};
-      },
-    },
-
     workspace: String,
   },
 
@@ -103,6 +96,11 @@ export default Vue.extend({
       selectedType: null as string | null,
       file: null as File | null,
       newTable: '',
+      types: {
+        csv: {extension: ['csv'], queryCall: 'csv'},
+        newick: {extension: ['phy', 'tree'], queryCall: 'newick'},
+        nested_json: {extension: ['json'], queryCall: 'nested_json'},
+      } as FileTypeTable,
     };
   },
 
