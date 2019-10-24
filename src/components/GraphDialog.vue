@@ -5,19 +5,14 @@
   >
     <template v-slot:activator="{ on }">
       <v-btn
-        block
+        class="new-button"
         color="blue darken-2"
+        fab
         dark
-        depressed
-        large
+        medium
         v-on="on"
       >
-        New Graph
-        <v-spacer />
-        <v-icon
-          right
-          size="20px"
-        >add_circle</v-icon>
+        <v-icon dark>add</v-icon>
       </v-btn>
     </template>
     <v-card>
@@ -134,3 +129,10 @@ export default Vue.extend({
   },
 });
 </script>
+
+<style scoped>
+.new-button {
+  margin: 49px 10px 0 0;
+  z-index: 100;
+}
+</style>
