@@ -164,6 +164,6 @@ export default Vue.extend({
 <style scoped>
 .new-button {
   margin: 49px 10px 0 0;
-  z-index: 100;
+  z-index: 1;
 }
 </style>
