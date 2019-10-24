@@ -88,11 +88,11 @@ export default Vue.extend({
   },
   methods: {
     async update() {
-      let response = await api().get(`/workspaces/${this.workspace}/graphs/${this.graph}`);
-      const graph = response.data;
-
-      response = await api().get(`/workspaces/${this.workspace}/graphs/${this.graph}/nodes?offset=${this.offset}&limit=${this.limit}`);
-      const nodes = response.data;
+      const graph = await api.graph(this.workspace, this.graph);
+      const nodes = await api.nodes(this.workspace, this.graph, {
+        offset: this.offset,
+        limit: this.limit,
+      });
 
       this.nodeTypes = graph.nodeTables;
       this.edgeTypes = [graph.edgeTable];

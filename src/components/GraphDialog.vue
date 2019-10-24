@@ -109,9 +109,14 @@ export default Vue.extend({
   methods: {
     async createGraph() {
       const { workspace, newGraph } = this;
-      const response = await api().post(`/workspaces/${workspace}/graph/${newGraph}`, {
-        node_tables: this.graphNodeTables,
-        edge_table: this.graphEdgeTable,
+
+      if (this.graphEdgeTable === null) {
+        throw new Error('this.graphEdgeTable must not be null');
+      }
+
+      const response = await api.createGraph(workspace, newGraph, {
+        nodeTables: this.graphNodeTables,
+        edgeTable: this.graphEdgeTable,
       });
 
       if (!response) {

@@ -1,3 +1,5 @@
+import { UploadType } from 'multinet';
+
 export interface KeyValue {
   key: string;
   value: any;
@@ -12,7 +14,7 @@ export interface TableRow {
 
 export interface FileType {
   extension: string[];
-  queryCall: string;
+  queryCall: UploadType;
 }
 
 export interface FileTypeTable {

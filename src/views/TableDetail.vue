@@ -102,7 +102,7 @@ export default Vue.extend({
     return {
       rowKeys: [] as KeyValue[][],
       headers: [] as Array<keyof TableRow>,
-      tables: [],
+      tables: [] as string[],
       editing: false,
     };
   },
@@ -111,20 +111,22 @@ export default Vue.extend({
       return index % 2 === 0 ? 'even-row' : 'odd-row';
     },
     async update() {
-      let response = await api().get(`/workspaces/${this.workspace}/tables/${this.table}?headers=true&rows=true`);
-      const result: TableRow[] = response.data;
+      const result = await api.table(this.workspace, this.table);
 
       const rowKeys: KeyValue[][] = [];
       let headers: Array<keyof TableRow> = [];
       if (result) {
         result.forEach((row) => {
           const rowData: KeyValue[] = [];
-          Object.keys(row).filter((k) => k !== '_rev').forEach((key) => {
-            rowData.push({
-              key,
-              value: row[key],
+          Object.entries(row)
+            .filter(([key, value]) => key !== '_rev')
+            .forEach(([key, value]) => {
+              rowData.push({
+                key,
+                value,
+              });
             });
-          });
+
           rowKeys.push(rowData);
         });
 
@@ -135,8 +137,9 @@ export default Vue.extend({
       this.headers = headers;
 
       // Roni to convert these lines to computed function
-      response = await api().get(`workspaces/${this.workspace}/tables?type=all`);
-      this.tables = response.data;
+      this.tables = await api.tables(this.workspace, {
+        type: 'all',
+      });
     },
   },
   watch: {

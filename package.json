@@ -11,9 +11,9 @@
     "axios": "^0.18.1",
     "core-js": "^2.6.5",
     "material-design-icons-iconfont": "^5.0.1",
-    "vue": "^2.6.6",
-    "vue-router": "^3.0.2",
+    "multinet": "^0.1.0",
     "vue": "^2.6.10",
+    "vue-router": "^3.0.2",
     "vuetify": "^2.1.5"
   },
   "devDependencies": {

@@ -116,8 +116,7 @@ export default Vue.extend({
     },
   },
   async created() {
-    const response = await api().get('/workspaces');
-    this.workspaces = response.data;
+    this.workspaces = await api.workspaces();
   },
 });
 </script>
