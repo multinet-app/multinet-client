@@ -1,6 +1,10 @@
 [
     {
-        "name": "nodelink",
+        "name": "Nodelink",
         "url": "http://multinet.app/nodelink"
+    },
+    {
+        "name": "Adjacency Matrix",
+        "url": "http://multinet.app/adjmatrix"
     }
 ]
