@@ -75,7 +75,7 @@ export default Vue.extend({
   methods: {
     async create() {
       if (this.newWorkspace) {
-        const response = api.createWorkspace(this.newWorkspace);
+        const response = await api.createWorkspace(this.newWorkspace);
 
         if (response) {
           this.$router.push(`/workspaces/${this.newWorkspace}`);
