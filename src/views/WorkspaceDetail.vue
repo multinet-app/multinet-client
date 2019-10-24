@@ -111,8 +111,11 @@
               title="Graphs"
               :items="graphs"
               :workspace="workspace"
+              :node-tables="nodeTables"
+              :edge-tables="edgeTables"
               route-type="graph"
               icon="timeline"
+              @new-graph="update"
             />
 
           </v-card>

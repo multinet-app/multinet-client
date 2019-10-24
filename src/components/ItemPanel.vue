@@ -26,8 +26,16 @@
       </v-tooltip>
 
       <table-dialog
+        v-if="isTable"
         :workspace="workspace"
         @success="$emit('new-table')"
+      />
+      <graph-dialog
+        v-else
+        :node-tables="nodeTables"
+        :edge-tables="edgeTables"
+        :workspace="workspace"
+        @success="$emit('new-graph')"
       />
 
     </v-subheader>
@@ -78,10 +86,12 @@
 <script lang="ts">
 import Vue from 'vue';
 import TableDialog from '@/components/TableDialog.vue';
+import GraphDialog from '@/components/GraphDialog.vue';
 
 export default Vue.extend({
   name: 'ItemPanel',
   components: {
+    GraphDialog,
     TableDialog,
   },
   props: {
@@ -96,6 +106,14 @@ export default Vue.extend({
     workspace: {
       type: String,
       required: true,
+    },
+    nodeTables: {
+      type: Array,
+      required: false,
+    },
+    edgeTables: {
+      type: Array,
+      required: false,
     },
     routeType: {
       type: String,
@@ -112,6 +130,10 @@ export default Vue.extend({
     };
   },
   computed: {
+    isTable(): boolean {
+      return this.title === 'Tables';
+    },
+
     anySelected(): boolean {
       return Object.values(this.checkbox)
         .some((d) => !!d);
