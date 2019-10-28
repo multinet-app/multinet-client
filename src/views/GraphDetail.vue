@@ -30,32 +30,99 @@
           <v-icon>more_vert</v-icon>
         </v-btn>
       </v-app-bar>
-      <div id="graph-details">
-        <div style="border-style: solid; width: 100%;">
-          <label>Node Types</label>
-          <ul>
-            <li v-for="table in nodeTypes" :key="table.name">
-              <router-link :to="`/workspaces/${workspace}/table/${table}`">{{table}}</router-link>
-            </li>
-          </ul>
-        </div>
-        <div style="border-style: solid; width: 100%">
-          <label>Edge Types</label>
-          <ul>
-            <li v-for="table in edgeTypes" :key="table.name">
-              <router-link :to="`/workspaces/${workspace}/table/${table}`">{{table}}</router-link>
-            </li>
-          </ul>
-        </div>
-        <div style="border-style: solid; width: 100%">
-          <label>Apps</label>
-          <ul>
-            <li v-for="app in apps" :key="app.name">
-              <a :href="`${app.url}/?workspace=${workspace}&graph=${graph}`" target="_blank">{{app.name}}</a>
-            </li>
-          </ul>
-        </div>
-      </div>
+      <v-container
+        fluid
+        id="graph-details"
+      >
+        <v-layout row>
+          <v-flex pa-4>
+            <v-card height="100%">
+              <v-card-title class="pb-0">
+                Node Types
+              </v-card-title>
+              <v-card-text class="pa-0">
+                <v-list>
+                  <v-list-item
+                    class="pl-2"
+                    :key="table.name"
+                    :to="`/workspaces/${workspace}/table/${table}`"
+                    v-for="table in nodeTypes"
+                  >
+                    <v-list-item-avatar class="mr-3">
+                      <v-icon color="grey lighten-1">scatter_plot</v-icon>
+                    </v-list-item-avatar>
+                    <v-list-item-title>
+                      {{table}}
+                    </v-list-item-title>
+                    <v-list-item-icon>
+                      <v-icon color="grey lighten-1">chevron_right</v-icon>
+                    </v-list-item-icon>
+                  </v-list-item>
+                </v-list>
+              </v-card-text>
+            </v-card>
+          </v-flex>
+          <v-flex pa-4>
+            <v-card height="100%">
+              <v-card-title class="pb-0">
+                Edge Types
+              </v-card-title>
+              <v-card-text class="pa-0">
+                <v-list>
+                  <v-list-item
+                    class="pl-2"
+                    :key="table.name"
+                    :to="`/workspaces/${workspace}/table/${table}`"
+                    v-for="table in edgeTypes"
+                  >
+                    <v-list-item-avatar class="mr-3">
+                      <v-icon color="grey lighten-1">device_hub</v-icon>
+                    </v-list-item-avatar>
+                    <v-list-item-title>
+                      {{table}}
+                    </v-list-item-title>
+                    <v-list-item-icon>
+                      <v-icon color="grey lighten-1">chevron_right</v-icon>
+                    </v-list-item-icon>
+                  </v-list-item>
+                </v-list>
+              </v-card-text>
+            </v-card>
+          </v-flex>
+          <v-flex pa-4>
+            <v-card
+              color="blue darken-2"
+              dark
+              height="100%"
+            >
+              <v-card-title class="pb-0">
+                Apps to visualize this data
+              </v-card-title>
+              <v-card-text class="pa-0">
+                <v-list color="blue darken-2">
+                  <v-list-item
+                    class="pl-2"
+                    :key="app.name"
+                    :href="`${app.url}/?workspace=${workspace}&graph=${graph}`"
+                    v-for="app in apps"
+                    target="_blank"
+                  >
+                    <v-list-item-avatar class="mr-3">
+                      <v-icon color="blue lighten-3">exit_to_app</v-icon>
+                    </v-list-item-avatar>
+                    <v-list-item-title>
+                      {{app.name}}
+                    </v-list-item-title>
+                    <v-list-item-icon>
+                      <v-icon color="blue lighten-3">chevron_right</v-icon>
+                    </v-list-item-icon>
+                  </v-list-item>
+                </v-list>
+              </v-card-text>
+            </v-card>
+          </v-flex>
+        </v-layout>
+      </v-container>
       <div style="border-style: solid;">
         <label>Nodes</label>
         <br/>
