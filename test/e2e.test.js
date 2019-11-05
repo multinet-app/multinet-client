@@ -6,9 +6,9 @@ const height = 1080;
 
 function browser(width, height) {
     return puppeteer.launch({
-    headless: false,
+    headless: true,
     args: [`--window-size=${width},${height}`],
-    slowMo: 100
+    // slowMo: 100
     });
 }
 
