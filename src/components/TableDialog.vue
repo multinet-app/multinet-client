@@ -101,6 +101,7 @@ export default Vue.extend({
         csv: {extension: ['csv'], queryCall: 'csv'},
         newick: {extension: ['phy', 'tree'], queryCall: 'newick'},
         nested_json: {extension: ['json'], queryCall: 'nested_json'},
+        d3_json: {extension: ['json'], queryCall: 'd3_json'},
       } as FileTypeTable,
     };
   },
