@@ -46,7 +46,7 @@ test('e2e client test', async (t) => {
     await p.click("#add-table")
     await p.focus('#table-name')
     await p.keyboard.type('nodes')
-    await p.click("#file-selector")
+    // await p.click("#file-selector")
 
     // Assert: Check the tables and graph exist
 
