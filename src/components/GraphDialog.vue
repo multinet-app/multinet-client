@@ -5,6 +5,7 @@
   >
     <template v-slot:activator="{ on }">
       <v-btn
+        id="add-graph"
         class="new-button"
         color="blue darken-2"
         fab

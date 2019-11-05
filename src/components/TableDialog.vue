@@ -5,6 +5,7 @@
   >
     <template v-slot:activator="{ on }">
       <v-btn
+        id="add-table"
         class="new-button"
         color="blue darken-2"
         fab
@@ -27,6 +28,7 @@
         <v-layout wrap>
           <v-flex>
             <v-text-field
+              id="table-name"
               filled
               v-model="newTable"
               label="Table name"
@@ -40,6 +42,7 @@
             xs6
           >
             <v-file-input
+              id="file-selector"
               clearable
               filled
               label="Upload file"
@@ -54,6 +57,7 @@
             xs6
           >
             <v-select
+              id="file-type"
               filled
               label="File type"
               v-if="typeList.length"
@@ -68,7 +72,7 @@
 
       <v-card-actions class="px-4 py-3">
         <v-spacer></v-spacer>
-        <v-btn :disabled="tableCreateDisabled" @click="createTable">
+        <v-btn id="create-table" :disabled="tableCreateDisabled" @click="createTable">
           Create Table
         </v-btn>
       </v-card-actions>
