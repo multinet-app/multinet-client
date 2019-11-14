@@ -34,6 +34,7 @@
 
       <v-card-text class="px-4 pt-4 pb-1">
         <v-text-field
+          autofocus
           filled
           label="Workspace name"
           v-model="newWorkspace"
