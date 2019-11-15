@@ -1,6 +1,10 @@
 import test from 'tape';
 import puppeteer from 'puppeteer';
 
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 const width = 1920;
 const height = 1080;
 
@@ -8,7 +12,7 @@ function browser(width, height) {
     return puppeteer.launch({
     headless: true,
     args: [`--window-size=${width},${height}`],
-    // slowMo: 20
+    // slowMo: 20 // For testing
     });
 }
 
@@ -83,9 +87,10 @@ test('e2e-client-test-invalid-actions', async (t) => {
     await p.click("#create-workspace")
 
     // Assert: Check that the new workspace exists with no tables
+    await sleep(200)
     await p.waitForSelector(".v-list-item");
     await p.waitForSelector(".v-list-item__title");
-    const workspace_name = await p.evaluate(() => document.querySelector('.v-list-item__title').innerText);
+    const workspace_name = await p.evaluate(() => document.querySelectorAll('.v-list-item__title')[0].innerText);
     t.equal(workspace_name, "a", "Invalid workspaces weren't created but the last valid one was.")
 
     // Act: Try to add broken versions of a node table, an edge table, and a graph
