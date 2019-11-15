@@ -29,6 +29,7 @@
           <v-flex>
             <v-text-field
               id="table-name"
+              autofocus
               filled
               v-model="newTable"
               label="Table name"
@@ -105,6 +106,7 @@ export default Vue.extend({
         csv: {extension: ['csv'], queryCall: 'csv'},
         newick: {extension: ['phy', 'tree'], queryCall: 'newick'},
         nested_json: {extension: ['json'], queryCall: 'nested_json'},
+        d3_json: {extension: ['json'], queryCall: 'd3_json'},
       } as FileTypeTable,
     };
   },
