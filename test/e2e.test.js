@@ -88,15 +88,7 @@ test('e2e-client-test-invalid-actions', async (t) => {
     const workspace_name = await p.evaluate(() => document.querySelector('.v-list-item__title').innerText);
     t.equal(workspace_name, "a", "Invalid workspaces weren't created but the last valid one was.")
 
-    // Assert: Check that there are no tables or graphs yet
-    await p.waitForSelector(".ws-detail-empty-list");
-    let tables = await p.evaluate(() => document.querySelectorAll('.ws-detail-empty-list')[0].innerText.split("info ")[1]);
-    t.equal(tables, "There's nothing here yet...", "The new workspace has no tables.")
-
-    let graphs = await p.evaluate(() => document.querySelectorAll('.ws-detail-empty-list')[1].innerText.split("info ")[1]);
-    t.equal(graphs, "There's nothing here yet...", "The new workspace has no graphs.")
-
-    // Act: Add a node table, an edge table, and a graph
+    // Act: Try to add broken versions of a node table, an edge table, and a graph
     await p.waitForSelector("#add-table");
     await p.click("#add-table")
     await p.focus('#table-name')
