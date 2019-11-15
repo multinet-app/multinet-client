@@ -27,6 +27,7 @@
         <v-layout wrap>
           <v-flex>
             <v-text-field
+              autofocus
               filled
               v-model="newTable"
               label="Table name"

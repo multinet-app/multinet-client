@@ -28,6 +28,7 @@
           <v-layout wrap>
             <v-flex>
               <v-text-field
+                autofocus
                 filled
                 label="Graph name"
                 v-model="newGraph"
