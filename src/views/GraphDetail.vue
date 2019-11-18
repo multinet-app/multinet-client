@@ -182,6 +182,9 @@ export default Vue.extend({
 
       this.nodeTypes = graph.nodeTables;
       this.edgeTypes = [graph.edgeTable];
+
+      const nodes = await api.nodes(this.workspace, this.graph);
+      this.nodes = nodes.nodes;
     },
   },
   watch: {
