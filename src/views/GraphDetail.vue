@@ -123,22 +123,33 @@
           </v-flex>
         </v-layout>
       </v-container>
-      <div style="border-style: solid;">
-        <label>Nodes</label>
-        <br/>
-        <br/>
-        <div style="display: flex; flex-flow: row nowrap; justify-content: space-around">
-          <div v-if="prev" v-on:click="firstPage()">first</div>
-          <div v-if="prev" v-on:click="turnPage(false)">previous</div>
-          <div v-if="next" v-on:click="turnPage(true)">next</div>
-          <div v-if="next" v-on:click="lastPage()">last</div>
-        </div>
-        <ul>
-          <li v-for="node in nodes" :key="node">
-            <router-link :to="`/workspaces/${workspace}/graph/${graph}/node/${node}`">{{node}}</router-link>
-          </li>
-        </ul>
-      </div>
+      <v-container
+        fluid
+        pb-4
+        pt-0
+        py-4
+      >
+        <v-card
+          class="pt-0"
+          color="transparent"
+          flat
+        >
+          <v-card-title>
+            Nodes
+          </v-card-title>
+          <v-card-text>
+            <v-list>
+              <v-list-item
+                v-for="node in nodes"
+                :key="node"
+                :to="`/workspaces/${workspace}/graph/${graph}/node/${node}`"
+              >
+                {{node}}
+              </v-list-item>
+            </v-list>
+          </v-card-text>
+        </v-card>
+      </v-container>
     </v-content>
   </v-container>
 </template>
@@ -161,56 +172,23 @@ export default Vue.extend({
       nodeTypes: [] as string[],
       edgeTypes: [] as string[],
       nodes: [] as string[],
-      offset: 0,
-      limit: 20,
-      total: 0,
     };
   },
   computed: {
-    highestOffset(): number {
-      return (
-        this.total % this.limit
-          ? Math.floor(this.total / this.limit)
-          : this.total / this.limit - 1
-      ) * this.limit;
-    },
-    next(): boolean {
-      return this.highestOffset !== this.offset;
-    },
-    prev(): boolean {
-      return 0 !== this.offset;
-    },
   },
   methods: {
     async update() {
-      const graph = await api.graph(this.workspace, this.graph);
-      const nodes = await api.nodes(this.workspace, this.graph, {
-        offset: this.offset,
-        limit: this.limit,
-      });
+      let response = await api().get(`/workspaces/${this.workspace}/graphs/${this.graph}`);
+      const graph = response.data;
+
+      response = await api().get(`/workspaces/${this.workspace}/graphs/${this.graph}/nodes`);
+      const nodes = response.data;
 
       this.nodeTypes = graph.nodeTables;
       this.edgeTypes = [graph.edgeTable];
-      this.nodes = nodes.nodes;
-      this.total = nodes.count;
-    },
-    turnPage(forward: number) {
-      this.offset += forward ? this.limit : -this.limit;
-    },
-    lastPage() {
-      this.offset = this.highestOffset;
-    },
-    firstPage() {
-      this.offset = 0;
     },
   },
   watch: {
-    offset() {
-      this.update();
-    },
-    limit() {
-      this.update();
-    },
     workspace() {
       this.update();
     },
