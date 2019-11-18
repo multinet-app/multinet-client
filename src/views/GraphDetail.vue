@@ -178,11 +178,7 @@ export default Vue.extend({
   },
   methods: {
     async update() {
-      let response = await api().get(`/workspaces/${this.workspace}/graphs/${this.graph}`);
-      const graph = response.data;
-
-      response = await api().get(`/workspaces/${this.workspace}/graphs/${this.graph}/nodes`);
-      const nodes = response.data;
+      const graph = await api.graph(this.workspace, this.graph);
 
       this.nodeTypes = graph.nodeTables;
       this.edgeTypes = [graph.edgeTable];
