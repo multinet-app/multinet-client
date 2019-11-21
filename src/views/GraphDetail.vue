@@ -1,5 +1,8 @@
 <template>
-  <v-container fluid>
+  <v-container
+    class="graph-container"
+    fluid
+  >
     <v-content>
       <v-app-bar app>
         <v-toolbar-title
@@ -124,21 +127,52 @@
         </v-layout>
       </v-container>
       <v-container
+        id="node-details"
         fluid
         pb-4
         pt-0
         py-4
       >
-        <v-card
-          class="pt-0"
-          color="transparent"
-          flat
-        >
-          <v-card-title>
+        <v-card height="100%">
+          <v-card-title style="display: flex; justify-content: space-between;">
             Nodes
+            <div class="pagination">
+              <v-btn
+                icon
+                :disabled="!prev"
+                v-on:click="firstPage()"
+              >
+                <v-icon>skip_previous</v-icon>
+              </v-btn>
+              <v-btn
+                icon
+                :disabled="!prev"
+                v-on:click="turnPage(false)"
+              >
+                <v-icon>chevron_left</v-icon>
+              </v-btn>
+              <v-btn
+                icon
+                :disabled="!next"
+                v-on:click="turnPage(true)"
+              >
+                <v-icon>chevron_right</v-icon>
+              </v-btn>
+              <v-btn
+                icon
+                :disabled="!next"
+                v-on:click="lastPage()"
+              >
+                <v-icon>skip_next</v-icon>
+              </v-btn>
+            </div>
           </v-card-title>
           <v-card-text>
-            <v-list>
+            <v-list
+              class="node-list"
+              color="transparent"
+              dense
+            >
               <v-list-item
                 v-for="node in nodes"
                 :key="node"
@@ -172,22 +206,56 @@ export default Vue.extend({
       nodeTypes: [] as string[],
       edgeTypes: [] as string[],
       nodes: [] as string[],
+      offset: 0,
+      limit: 10,
+      total: 0,
     };
   },
   computed: {
+    highestOffset(): number {
+      return (
+        this.total % this.limit
+          ? Math.floor(this.total / this.limit)
+          : this.total / this.limit - 1
+      ) * this.limit;
+    },
+    next(): boolean {
+      return this.highestOffset !== this.offset;
+    },
+    prev(): boolean {
+      return 0 !== this.offset;
+    },
   },
   methods: {
     async update() {
       const graph = await api.graph(this.workspace, this.graph);
+      const nodes = await api.nodes(this.workspace, this.graph, {
+        offset: this.offset,
+        limit: this.limit,
+      });
 
       this.nodeTypes = graph.nodeTables;
       this.edgeTypes = [graph.edgeTable];
-
-      const nodes = await api.nodes(this.workspace, this.graph);
       this.nodes = nodes.nodes;
+      this.total = nodes.count;
+    },
+    turnPage(forward: number) {
+      this.offset += forward ? this.limit : -this.limit;
+    },
+    lastPage() {
+      this.offset = this.highestOffset;
+    },
+    firstPage() {
+      this.offset = 0;
     },
   },
   watch: {
+    offset() {
+      this.update();
+    },
+    limit() {
+      this.update();
+    },
     workspace() {
       this.update();
     },
