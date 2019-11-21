@@ -37,15 +37,35 @@ async function workspace_exists(p, name) {
         for (node of doc_nodes) {
             titles.push(node.innerText)
         }
-        return titles});
+        return titles
+    });
 
     exists = workspaces.includes(name)
 
     return exists
 }
 
-async function add_node_table(p, ) {
+async function node_table_exists(p, name, empty = false) {
+    let exists = false;
 
+    await p.waitForSelector(".ws-detail-empty-list");
+    let tables = await p.evaluate(() => {
+        let titles = []
+        let doc_nodes = document.querySelectorAll(".ws-detail-empty-list"); 
+        for (node of doc_nodes) {
+            titles.push(node.innerText)
+        }
+        return titles
+    });
+    console.log(tables)
+
+    // TODO: fix this
+    if (empty) {
+        return tables.length
+    } else {
+        exists = tables.includes(name)
+        return exists
+    }
 }
 
 // Start of tests
@@ -61,12 +81,11 @@ test("e2e - Check that actions that should work, do work", async (t) => {
 
     // Assert: Check that the new workspace exists with no tables
     let exists = await workspace_exists(p, "puppeteer")
-    t.equal(exists, true, "Workspace called "puppeteer" was created.")
+    t.equal(exists, true, "Workspace called 'puppeteer' was created.")
 
     // Assert: Check that there are no tables or graphs yet
-    await p.waitForSelector(".ws-detail-empty-list");
-    let tables = await p.evaluate(() => document.querySelectorAll(".ws-detail-empty-list")[0].innerText.split("info ")[1]);
-    t.equal(tables, "There"s nothing here yet...", "The new workspace has no tables.")
+    exists = await node_table_exists(p, "", true)
+    t.equal(exists, 0, "The new workspace has no tables.")
 
     let graphs = await p.evaluate(() => document.querySelectorAll(".ws-detail-empty-list")[1].innerText.split("info ")[1]);
     t.equal(graphs, "There's nothing here yet...", "The new workspace has no graphs.")
