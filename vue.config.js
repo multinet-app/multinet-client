@@ -5,10 +5,9 @@ const dotenv = require('dotenv');
 
 const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin');
 
-// Read in the local env and the .env file.
-const local_env = process.env;
+// Read in .env file.
 const env = dotenv.parse(fs.readFileSync(path.resolve('..', '.env')));
-process.env.FLASK_SERVE_PORT = local_env.FLASK_SERVE_PORT || env.FLASK_SERVE_PORT || 5000;
+process.env.FLASK_SERVE_PORT = process_env.FLASK_SERVE_PORT || env.FLASK_SERVE_PORT || 5000;
 
 module.exports = {
   configureWebpack: {
