@@ -1,19 +1,29 @@
 import test from 'tape';
 import puppeteer from 'puppeteer';
 
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 const width = 1920;
 const height = 1080;
 
+// Opens the chromium window
 function browser(width, height) {
     return puppeteer.launch({
     headless: true,
     args: [`--window-size=${width},${height}`],
     // slowMo: 20 // For testing
     });
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function create_workspace(p, name) {
+    await p.waitForSelector("#add-workspace");
+    await p.click("#add-workspace")
+    await p.waitForSelector("#workspace-name");
+    await p.focus('#workspace-name')
+    await p.keyboard.type(name)
+    await p.click("#create-workspace")
 }
 
 test('e2e-client-test-valid-actions', async (t) => {
@@ -24,12 +34,7 @@ test('e2e-client-test-valid-actions', async (t) => {
     await p.goto("http://127.0.0.1:8080/");
     
     // Act: Test creating a workspace
-    await p.waitForSelector("#add-workspace");
-    await p.click("#add-workspace")
-    await p.waitForSelector("#workspace-name");
-    await p.focus('#workspace-name')
-    await p.keyboard.type('puppeteer')
-    await p.click("#create-workspace")
+    await create_workspace(p, 'puppeteer')
 
     // Assert: Check that the new workspace exists with no tables
     await p.waitForSelector(".v-list-item");
@@ -71,20 +76,15 @@ test('e2e-client-test-invalid-actions', async (t) => {
     await p.goto("http://127.0.0.1:8080/");
     
     // Act: Test creating invalid workspaces
-    await p.waitForSelector("#add-workspace");
-    await p.click("#add-workspace")
-    await p.waitForSelector("#workspace-name");
-    await p.focus('#workspace-name')
-    await p.keyboard.type('123')
-    await p.click("#create-workspace")
+    await create_workspace(p, '123')
     await p.click("#workspace-name", { clickCount: 3 })
-    await p.focus('#workspace-name')
-    await p.keyboard.type('++--==__')
-    await p.click("#create-workspace")
+    await p.click("#add-workspace") // Close the modal
+
+    await create_workspace(p, '++--==__')
     await p.click("#workspace-name", { clickCount: 3 })
-    await p.focus('#workspace-name')
-    await p.keyboard.type('a')
-    await p.click("#create-workspace")
+    await p.click("#add-workspace") // Close the modal
+
+    await create_workspace(p, "a")
 
     // Assert: Check that the new workspace exists with no tables
     await sleep(200)
