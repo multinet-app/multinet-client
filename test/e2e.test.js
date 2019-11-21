@@ -57,7 +57,7 @@ test('e2e-client-test-valid-actions', async (t) => {
 
     // Assert: Check that the new workspace exists with no tables
     let exists = await workspace_exists(p, "puppeteer")
-    t.equal(exists, true, "The new workspace is created and called the right thing.")
+    t.equal(exists, true, "Workspace called 'puppeteer' was created.")
 
     // Assert: Check that there are no tables or graphs yet
     await p.waitForSelector(".ws-detail-empty-list");
