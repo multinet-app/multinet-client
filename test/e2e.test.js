@@ -1,5 +1,5 @@
-import test from 'tape';
-import puppeteer from 'puppeteer';
+import test from "tape";
+import puppeteer from "puppeteer";
 
 const width = 1920;
 const height = 1080;
@@ -22,7 +22,7 @@ async function create_workspace(p, name) {
     await p.waitForSelector("#add-workspace");
     await p.click("#add-workspace")
     await p.waitForSelector("#workspace-name");
-    await p.focus('#workspace-name')
+    await p.focus("#workspace-name")
     await p.keyboard.type(name)
     await p.click("#create-workspace")
 }
@@ -33,7 +33,7 @@ async function workspace_exists(p, name) {
     await p.waitForSelector(".v-list-item__title");
     let workspaces = await p.evaluate(() => {
         let titles = []
-        let doc_nodes = document.querySelectorAll('.v-list-item__title'); 
+        let doc_nodes = document.querySelectorAll(".v-list-item__title"); 
         for (node of doc_nodes) {
             titles.push(node.innerText)
         }
@@ -49,7 +49,7 @@ async function add_node_table(p, ) {
 }
 
 // Start of tests
-test('e2e-client-test-valid-actions', async (t) => {
+test("e2e - Check that actions that should work, do work", async (t) => {
     // Arrange: Set up the page
     const b = await browser(width, height);
     const p = await b.newPage();
@@ -57,18 +57,18 @@ test('e2e-client-test-valid-actions', async (t) => {
     await p.goto("http://127.0.0.1:8080/");
     
     // Act: Test creating a workspace
-    await create_workspace(p, 'puppeteer')
+    await create_workspace(p, "puppeteer")
 
     // Assert: Check that the new workspace exists with no tables
     let exists = await workspace_exists(p, "puppeteer")
-    t.equal(exists, true, "Workspace called 'puppeteer' was created.")
+    t.equal(exists, true, "Workspace called "puppeteer" was created.")
 
     // Assert: Check that there are no tables or graphs yet
     await p.waitForSelector(".ws-detail-empty-list");
-    let tables = await p.evaluate(() => document.querySelectorAll('.ws-detail-empty-list')[0].innerText.split("info ")[1]);
-    t.equal(tables, "There's nothing here yet...", "The new workspace has no tables.")
+    let tables = await p.evaluate(() => document.querySelectorAll(".ws-detail-empty-list")[0].innerText.split("info ")[1]);
+    t.equal(tables, "There"s nothing here yet...", "The new workspace has no tables.")
 
-    let graphs = await p.evaluate(() => document.querySelectorAll('.ws-detail-empty-list')[1].innerText.split("info ")[1]);
+    let graphs = await p.evaluate(() => document.querySelectorAll(".ws-detail-empty-list")[1].innerText.split("info ")[1]);
     t.equal(graphs, "There's nothing here yet...", "The new workspace has no graphs.")
 
     // Cleanup
@@ -76,7 +76,7 @@ test('e2e-client-test-valid-actions', async (t) => {
     t.end();
 });
 
-test('e2e-client-test-invalid-actions', async (t) => {
+test("e2e - Check that actions that shouldn't work, don't work", async (t) => {
     // Arrange: Set up the page
     const b = await browser(width, height);
     const p = await b.newPage();
@@ -84,11 +84,11 @@ test('e2e-client-test-invalid-actions', async (t) => {
     await p.goto("http://127.0.0.1:8080/");
     
     // Act: Test creating invalid workspaces
-    await create_workspace(p, '123')
+    await create_workspace(p, "123")
     await p.click("#workspace-name", { clickCount: 3 })
     await p.click("#add-workspace") // Close the modal (this will cause a failure in the next command if it is made)
 
-    await create_workspace(p, '++--==__')
+    await create_workspace(p, "++--==__")
     await p.click("#workspace-name", { clickCount: 3 })
     await p.click("#add-workspace") // Close the modal (this will cause a failure in the next command if it is made)
 
