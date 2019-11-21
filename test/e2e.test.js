@@ -44,6 +44,10 @@ async function workspace_exists(p, name) {
     return exists
 }
 
+async function add_node_table(p, ) {
+
+}
+
 // Start of tests
 test('e2e-client-test-valid-actions', async (t) => {
     // Arrange: Set up the page
@@ -67,21 +71,8 @@ test('e2e-client-test-valid-actions', async (t) => {
     let graphs = await p.evaluate(() => document.querySelectorAll('.ws-detail-empty-list')[1].innerText.split("info ")[1]);
     t.equal(graphs, "There's nothing here yet...", "The new workspace has no graphs.")
 
-    // Act: Add a node table, an edge table, and a graph
-    await p.waitForSelector("#add-table");
-    await p.click("#add-table")
-    await p.focus('#table-name')
-    await p.keyboard.type('nodes')
-    // await p.click("#file-selector")
-
-    // Assert: Check the tables and graph exist
-
-
-    // Act: Check that the tables imported correctly, the data should show what we expect
-
-
+    // Cleanup
     await b.close();
-
     t.end();
 });
 
@@ -95,11 +86,11 @@ test('e2e-client-test-invalid-actions', async (t) => {
     // Act: Test creating invalid workspaces
     await create_workspace(p, '123')
     await p.click("#workspace-name", { clickCount: 3 })
-    await p.click("#add-workspace") // Close the modal
+    await p.click("#add-workspace") // Close the modal (this will cause a failure in the next command if it is made)
 
     await create_workspace(p, '++--==__')
     await p.click("#workspace-name", { clickCount: 3 })
-    await p.click("#add-workspace") // Close the modal
+    await p.click("#add-workspace") // Close the modal (this will cause a failure in the next command if it is made)
 
     await create_workspace(p, "a")
 
@@ -114,20 +105,7 @@ test('e2e-client-test-invalid-actions', async (t) => {
     exists = await workspace_exists(p, "a")
     t.equal(exists, true, "Workspace called 'a' was created.")
 
-    // Act: Try to add broken versions of a node table, an edge table, and a graph
-    await p.waitForSelector("#add-table");
-    await p.click("#add-table")
-    await p.focus('#table-name')
-    await p.keyboard.type('nodes')
-    // await p.click("#file-selector")
-
-    // Assert: Check the tables and graph exist
-
-
-    // Act: Check that the tables imported correctly, the data should show what we expect
-
-
+    // Cleanup
     await b.close();
-
     t.end();
 });
