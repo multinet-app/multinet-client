@@ -27,6 +27,7 @@ async function create_workspace(p, name) {
   await p.click('#create-workspace');
 }
 
+// Checks that a workspace exists in the left pane
 async function workspace_exists(p, name) {
   let exists = false;
 
@@ -41,30 +42,45 @@ async function workspace_exists(p, name) {
   });
 
   exists = workspaces.includes(name);
-
   return exists;
 }
 
-async function element_exists(empty = false, element_type, p, name) {
-  let exists, list_is_empty, tables;
+// Get the names of either all tables or all graphs in the current workspace
+async function get_element_names(element_type, p) {
+    let tables;
 
-  await p.waitForSelector('[data-title="Tables"] .ws-detail-empty-list ');
-  tables = await p.evaluate(element_type => {
-    let titles = [];
-    let doc_nodes = document.querySelectorAll('[data-title="' + element_type + '"] .ws-detail-empty-list ');
-    for (let node of doc_nodes) {
-      titles.push(node.innerText);
-    }
-    return titles;
-  }, element_type);
+    // Search for the text of the table or graph elements
+    await p.waitForSelector(`[data-title="${element_type}"] .ws-detail-empty-list`);
+    tables = await p.evaluate(element_type => {
+        let titles = []
+        let doc_nodes = document.querySelectorAll(`[data-title="${element_type}"] .ws-detail-empty-list`); 
+        for (let node of doc_nodes) {
+            titles.push(node.innerText)
+        }
+        return titles
+    }, element_type);
 
-  if (empty) {
-    list_is_empty = tables.includes('info There\'s nothing here yet...');
-    return list_is_empty;
-  } else {
-    exists = tables.includes(name);
-    return exists;
-  }
+    return tables
+}
+
+// Checks if a table or graph exists in the current workspace
+async function element_exists(element_type, p, name) {
+    let exists, tables;
+
+    tables = await get_element_names(element_type, p);
+
+    exists = tables.includes(name)
+    return exists
+}
+
+// Checks if no tables or graphs exist in the current workspace
+async function elements_empty(element_type, p, name) {
+    let list_is_empty, tables;
+
+    tables = await get_element_names(element_type, p);
+
+    list_is_empty = tables.includes("info There's nothing here yet...")
+    return list_is_empty
 }
 
 
@@ -84,11 +100,11 @@ test('e2e - Check that actions that should work, do work', async (t) => {
   t.ok(exists, 'Workspace called "puppeteer" was created.');
 
   // Assert: Check that there are no tables or graphs yet
-  exists = await element_exists(true, 'Tables', p, undefined);
+  exists = await elements_empty('Tables', p, undefined);
 
   t.ok(exists, 'The new workspace has no tables.');
 
-  exists = await element_exists(true, 'Graphs', p, undefined);
+  exists = await elements_empty('Graphs', p, undefined);
   t.ok(exists, 'The new workspace has no graphs.');
 
   // Cleanup
