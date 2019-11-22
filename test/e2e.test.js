@@ -45,28 +45,28 @@ async function workspace_exists(p, name) {
     return exists
 }
 
-async function table_exists(p, name, empty = false) {
-    let exists = false;
+async function element_exists(empty = false, element_type, p, name) {
+    let exists, list_is_empty, tables;
 
-    await p.waitForSelector('.ws-detail-empty-list');
-    let tables = await p.evaluate(() => {
+    await p.waitForSelector('[data-title="Tables"] .ws-detail-empty-list ');
+    tables = await p.evaluate(element_type => {
         let titles = []
-        let doc_nodes = document.querySelectorAll('.ws-detail-empty-list'); 
+        let doc_nodes = document.querySelectorAll('[data-title="' + element_type + '"] .ws-detail-empty-list '); 
         for (node of doc_nodes) {
             titles.push(node.innerText)
         }
         return titles
-    });
-    console.log(tables)
+    }, element_type);
 
-    // TODO: fix this
     if (empty) {
-        return tables.length
+        list_is_empty = tables.includes("info There's nothing here yet...")
+        return list_is_empty
     } else {
         exists = tables.includes(name)
         return exists
     }
 }
+
 
 // Start of tests
 test('e2e - Check that actions that should work, do work', async (t) => {
@@ -84,11 +84,12 @@ test('e2e - Check that actions that should work, do work', async (t) => {
     t.ok(exists, 'Workspace called "puppeteer" was created.')
 
     // Assert: Check that there are no tables or graphs yet
-    exists = await table_exists(p, '', true)
-    t.equal(exists, 0, 'The new workspace has no tables.')
+    exists = await element_exists(true, "Tables", p, undefined)
 
-    let graphs = await p.evaluate(() => document.querySelectorAll('.ws-detail-empty-list')[1].innerText.split('info ')[1]);
-    t.equal(graphs, 'There\'s nothing here yet...', 'The new workspace has no graphs.')
+    t.ok(exists, 'The new workspace has no tables.')
+
+    exists = await element_exists(true, "Graphs", p, undefined)
+    t.ok(exists, 'The new workspace has no graphs.')
 
     // Cleanup
     await b.close();
