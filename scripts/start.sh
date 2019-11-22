@@ -6,16 +6,16 @@ if [ -e server.pid ]; then
     exit 1
 fi
 
-FLASK_SERVE_PORT=50000 nohup yarn serve >server.out &
+FLASK_SERVE_PORT=50000 nohup yarn serve --port 58080 >server.out &
 echo $! >server.pid
 
-# Loop until the server is up.
+# Loop until the client is up.
 started=0
 count=0
 
 echo -n "waiting for client to come up"
 while [ ${started} = 0 ] && [ ${count} -lt 30 ]; do
-    headers=$(curl -s -I --max-time 0.5 http://localhost:8080/api/workspaces)
+    headers=$(curl -s -I --max-time 0.5 http://localhost:58080/api/workspaces)
     curl_status=$?
 
     if [ ${curl_status} = 0 ]; then

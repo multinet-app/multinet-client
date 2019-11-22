@@ -12,8 +12,9 @@
     "test:server:restart": "yarn test:server:down; yarn test:server:clean && yarn test:server:up",
     "test:client:up": "sh ./scripts/start.sh",
     "test:client:down": "sh ./scripts/stop.sh",
+    "test:client:restart": "yarn test:client:down; yarn test:client:up",
     "test:cmd": "tape -r esm test/**/*.test.js | tap-spec",
-    "test": "yarn test:server:restart && yarn test:client:up && yarn test:cmd; code=$?; yarn test:server:down; yarn test:client:down; if [ ${code} = 0 ]; then true; else false; fi"
+    "test": "yarn test:server:restart && yarn test:client:restart && yarn test:cmd; code=$?; yarn test:server:down; yarn test:client:down; if [ ${code} = 0 ]; then true; else false; fi"
   },
   "dependencies": {
     "axios": "^0.18.1",

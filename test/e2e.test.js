@@ -74,7 +74,7 @@ test('e2e - Check that actions that should work, do work', async (t) => {
     const b = await browser(width, height);
     const p = await b.newPage();
     await p.setViewport({ width, height });
-    await p.goto('http://127.0.0.1:8080/');
+    await p.goto('http://127.0.0.1:58080/');
     
     // Act: Test creating a workspace
     await create_workspace(p, 'puppeteer')
@@ -101,7 +101,7 @@ test('e2e - Check that actions that shouldn\'t work, don\'t work', async (t) => 
     const b = await browser(width, height);
     const p = await b.newPage();
     await p.setViewport({ width, height });
-    await p.goto('http://127.0.0.1:8080/');
+    await p.goto('http://127.0.0.1:58080/');
     
     // Act: Test creating invalid workspaces
     await create_workspace(p, '123')
