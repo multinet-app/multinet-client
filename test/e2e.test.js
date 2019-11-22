@@ -142,7 +142,7 @@ test('e2e - Check that actions that shouldn\'t work, don\'t work', async (t) => 
   t.ok(exists, 'Workspace called "a" was created.');
 
   exists = await element_exists('Tables', p, 'broken');
-  t.notOk(exists, 'New workspaces don\t have tables');
+  t.notOk(exists, 'New workspaces don\'t have tables');
 
   // Cleanup
   await b.close();
