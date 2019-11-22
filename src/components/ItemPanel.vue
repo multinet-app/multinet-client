@@ -1,6 +1,7 @@
 <template>
   <v-list
     class="item-panel"
+    :data-title="title"
     subheader
   >
     <v-subheader class="px-0">
