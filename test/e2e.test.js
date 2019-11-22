@@ -45,7 +45,7 @@ async function workspace_exists(p, name) {
     return exists
 }
 
-async function node_table_exists(p, name, empty = false) {
+async function table_exists(p, name, empty = false) {
     let exists = false;
 
     await p.waitForSelector('.ws-detail-empty-list');
