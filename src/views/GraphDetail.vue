@@ -22,7 +22,7 @@
             >{{workspace}}</router-link>
             <v-icon class="mx-4" color="grey lighten-2">chevron_right</v-icon>
             <v-icon class="mr-3" color="grey lighten-1">timeline</v-icon>
-            {{`${this.graph}`}}
+            {{graph}}
           </span>
 
         </v-toolbar-title>
