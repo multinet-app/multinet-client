@@ -84,7 +84,7 @@ test('e2e - Check that actions that should work, do work', async (t) => {
     t.ok(exists, 'Workspace called "puppeteer" was created.')
 
     // Assert: Check that there are no tables or graphs yet
-    exists = await node_table_exists(p, '', true)
+    exists = await table_exists(p, '', true)
     t.equal(exists, 0, 'The new workspace has no tables.')
 
     let graphs = await p.evaluate(() => document.querySelectorAll('.ws-detail-empty-list')[1].innerText.split('info ')[1]);
