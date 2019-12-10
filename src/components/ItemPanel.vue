@@ -55,18 +55,16 @@
           :to="`/workspaces/${workspace}/${routeType}/${item}`"
         >
           <v-list-item-action @click.prevent>
-            <v-fade-transition hide-on-leave>
-              <v-icon
-                color="blue lighten-1"
-                v-if="!hover && !checkbox[item]"
-              >{{icon}}</v-icon>
+            <v-icon
+              color="blue lighten-1"
+              v-if="!hover && !checkbox[item]"
+            >{{icon}}</v-icon>
 
-              <v-checkbox
-                class="ws-detail-checkbox"
-                v-else
-                v-model="checkbox[item]"
-              ></v-checkbox>
-            </v-fade-transition>
+            <v-checkbox
+              class="ws-detail-checkbox"
+              v-else
+              v-model="checkbox[item]"
+            ></v-checkbox>
           </v-list-item-action>
 
           <v-list-item-content>

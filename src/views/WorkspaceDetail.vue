@@ -7,17 +7,15 @@
             class="ws-detail-title"
             slot-scope="{ hover }"
           >
-            <v-fade-transition hide-on-leave>
-              <v-icon
-                class="ml-4 mr-5"
-                color="grey lighten-1"
-                v-if="!hover && !editing"
-              >library_books</v-icon>
-            </v-fade-transition>
+            <v-icon
+              class="ml-4 mr-5"
+              color="grey lighten-1"
+              v-if="!hover && !editing"
+            >library_books</v-icon>
 
             <v-tooltip left v-if="!editing">
               <template v-slot:activator="{ on }">
-                <v-fade-transition hide-on-leave>
+                <div>
                   <v-btn
                     class="ml-1 mr-2"
                     icon
@@ -30,25 +28,21 @@
                       size="20px"
                     >edit</v-icon>
                   </v-btn>
-                </v-fade-transition>
+                </div>
               </template>
               <span>Rename workspace</span>
             </v-tooltip>
 
-            <v-fade-transition
-              hide-on-leave
+            <v-btn
               v-if="editing"
+              icon
+              @click="editing = !editing"
             >
-              <v-btn
-                icon
-                @click="editing = !editing"
-              >
-                <v-icon
-                  color="grey darken-3"
-                  size="20px"
-                >close</v-icon>
-              </v-btn>
-            </v-fade-transition>
+              <v-icon
+                color="grey darken-3"
+                size="20px"
+              >close</v-icon>
+            </v-btn>
 
             <span v-if="!editing">{{workspace}}</span>
 

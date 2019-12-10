@@ -60,18 +60,16 @@
           :to="`/workspaces/${space}/`"
         >
           <v-list-item-action @click.prevent>
-            <v-fade-transition hide-on-leave>
-              <v-icon
-                color="primary"
-                v-if="!hover && !checkbox[space]"
-              >library_books</v-icon>
+            <v-icon
+              color="primary"
+              v-if="!hover && !checkbox[space]"
+            >library_books</v-icon>
 
-              <v-checkbox
-                class="ws-checkbox"
-                v-else
-                v-model="checkbox[space]"
-              ></v-checkbox>
-            </v-fade-transition>
+            <v-checkbox
+              class="ws-checkbox"
+              v-else
+              v-model="checkbox[space]"
+            ></v-checkbox>
           </v-list-item-action>
 
           <v-list-item-content>
