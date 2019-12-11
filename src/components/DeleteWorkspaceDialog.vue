@@ -67,12 +67,12 @@ import api from '@/api';
 export default Vue.extend({
   props: {
     somethingChecked: {
-      type: Object as PropType<boolean>,
+      type: Boolean as PropType<boolean>,
       required: true,
     },
 
     selection: {
-      type: Object as PropType<string[]>,
+      type: Array as PropType<string[]>,
       required: true,
     },
   },
