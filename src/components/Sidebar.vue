@@ -33,6 +33,7 @@
           <delete-workspace-dialog
             :somethingChecked="somethingChecked"
             :selection="selection"
+            @deleted="delayedRefresh(1000)"
             />
 
       </v-subheader>
@@ -85,10 +86,12 @@ export default Vue.extend({
       checkbox: {},
     };
   },
+
   components: {
     DeleteWorkspaceDialog,
     WorkspaceDialog,
   },
+
   computed: {
     somethingChecked(): boolean {
       return Object.values(this.checkbox)
@@ -103,17 +106,34 @@ export default Vue.extend({
       return Object.keys(checkbox).filter(d => !!checkbox[d]);
     },
   },
+
   methods: {
     route(workspace: string) {
       this.$router.push(`/workspaces/${workspace}`);
     },
+
+    unroute() {
+      this.$router.replace('/');
+    },
+
     addWorkspace(workspace: string) {
       const workspaces = this.workspaces.concat([workspace]);
       this.workspaces = workspaces.sort();
     },
+
+    delayedRefresh(ms) {
+      this.checkbox = {};
+      this.unroute();
+      window.setTimeout(() => this.refresh(), ms);
+    },
+
+    async refresh() {
+      this.workspaces = await api.workspaces();
+    },
   },
+
   async created() {
-    this.workspaces = await api.workspaces();
+    this.refresh();
   },
 });
 </script>

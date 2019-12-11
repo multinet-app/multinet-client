@@ -115,6 +115,7 @@ export default Vue.extend({
         await api.deleteWorkspace(ws);
       });
 
+      this.$emit('deleted');
       this.dialog = false;
     },
   },
