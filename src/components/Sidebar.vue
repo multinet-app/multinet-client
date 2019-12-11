@@ -30,22 +30,11 @@
         Your Workspaces
         <v-spacer />
 
-          <v-tooltip right>
-            <template v-slot:activator="{ on }">
-              <v-scroll-x-transition>
-                <v-btn
-                  icon
-                  small
-                  text
-                  v-if="somethingChecked"
-                  v-on="on"
-                >
-                  <v-icon color="red accent-3" size="22px">delete_sweep</v-icon>
-                </v-btn>
-              </v-scroll-x-transition>
-            </template>
-            <span>Delete selected</span>
-          </v-tooltip>
+          <delete-workspace-dialog
+            :somethingChecked="somethingChecked"
+            :selection="selection"
+            />
+
       </v-subheader>
 
       <v-divider></v-divider>
@@ -86,6 +75,7 @@ import Vue from 'vue';
 
 import api from '@/api';
 import WorkspaceDialog from '@/components/WorkspaceDialog.vue';
+import DeleteWorkspaceDialog from '@/components/DeleteWorkspaceDialog.vue';
 
 export default Vue.extend({
   data() {
@@ -96,12 +86,21 @@ export default Vue.extend({
     };
   },
   components: {
+    DeleteWorkspaceDialog,
     WorkspaceDialog,
   },
   computed: {
     somethingChecked(): boolean {
       return Object.values(this.checkbox)
         .some((d) => !!d);
+    },
+
+    selection(): string[] {
+      const {
+        checkbox
+      } = this;
+
+      return Object.keys(checkbox).filter(d => !!checkbox[d]);
     },
   },
   methods: {
