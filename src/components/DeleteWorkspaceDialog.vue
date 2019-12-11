@@ -60,18 +60,19 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { PropType } from 'vue';
 
 import api from '@/api';
 
 export default Vue.extend({
   props: {
     somethingChecked: {
-      type: Boolean,
+      type: Object as PropType<boolean>,
       required: true,
     },
 
     selection: {
+      type: Object as PropType<string[]>,
       required: true,
     },
   },
@@ -80,12 +81,13 @@ export default Vue.extend({
     return {
       dialog: false,
       disabled: true,
-      timeout: null as number | null,
+      timeout: undefined as number | undefined,
     };
   },
 
   computed: {
-    plural() {
+    // This workaround is necessary because of https://github.com/vuejs/vue/issues/10455
+    plural(this: any) {
       return this.selection.length > 1 ? 's' : '';
     },
   },
@@ -95,12 +97,12 @@ export default Vue.extend({
       if (this.dialog) {
         this.timeout = window.setTimeout(() => {
           this.disabled = false;
-          this.timeout = null;
+          this.timeout = undefined;
         }, 2000);
       } else {
         window.clearTimeout(this.timeout);
         this.disabled = true;
-        this.timeout = null;
+        this.timeout = undefined;
       }
     },
   },

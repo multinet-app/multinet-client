@@ -78,12 +78,16 @@ import api from '@/api';
 import WorkspaceDialog from '@/components/WorkspaceDialog.vue';
 import DeleteWorkspaceDialog from '@/components/DeleteWorkspaceDialog.vue';
 
+interface CheckboxTable {
+  [index: string]: boolean;
+}
+
 export default Vue.extend({
   data() {
     return {
       newWorkspace: '',
       workspaces: [] as string[],
-      checkbox: {},
+      checkbox: {} as CheckboxTable,
     };
   },
 
@@ -121,7 +125,7 @@ export default Vue.extend({
       this.workspaces = workspaces.sort();
     },
 
-    delayedRefresh(ms) {
+    delayedRefresh(ms: number) {
       this.checkbox = {};
       this.unroute();
       window.setTimeout(() => this.refresh(), ms);
