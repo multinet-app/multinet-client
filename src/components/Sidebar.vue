@@ -100,10 +100,10 @@ export default Vue.extend({
 
     selection(): string[] {
       const {
-        checkbox
+        checkbox,
       } = this;
 
-      return Object.keys(checkbox).filter(d => !!checkbox[d]);
+      return Object.keys(checkbox).filter((d) => !!checkbox[d]);
     },
   },
 

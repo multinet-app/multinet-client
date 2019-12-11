@@ -111,7 +111,7 @@ export default Vue.extend({
         selection,
       } = this;
 
-      selection.forEach(async ws => {
+      selection.forEach(async (ws) => {
         await api.deleteWorkspace(ws);
       });
 
