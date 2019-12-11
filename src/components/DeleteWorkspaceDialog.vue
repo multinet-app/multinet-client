@@ -26,13 +26,13 @@
 
     <v-card>
       <v-card-title
-        class="headline pb-0 pt-3"
+        class="headline pb-0 pt-3 px-5"
         primary-title
         >
         Delete Workspaces
       </v-card-title>
 
-      <v-card-text class="px-4 pt-4 pb-1">
+      <v-card-text class="px-5 py-4">
         You are about to delete {{ selection.length }} workspace{{plural}}. <strong>Are you sure?</strong>
       </v-card-text>
 
