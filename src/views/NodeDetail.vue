@@ -1,50 +1,48 @@
 <template>
-  <v-container fluid>
+  <v-container
+    class="node-container"
+    fluid
+  >
     <v-content>
-      <h1>Node: {{`${this.workspace}/${this.graph}/${this.type}/${this.node}`}}</h1>
-      <div style="border-style: solid;">
-        <label>Attributes</label>
-        <table>
-          <tr v-for="field in attributes" :key="field.key">
-            <td class="key"><b>{{field.key}}:</b></td>
-            <td class="value">{{field.value}}</td>
-          </tr>
-        </table>
-      </div>
-      <div id="node-details">
-        <div style="border-style: solid; width: 100%;">
-          <label>Incoming Edges</label>
-          <br/>
-          <br/>
-          <div style="display: flex; flex-flow: row nowrap; justify-content: space-around">
-            <div v-if="prevIncoming" v-on:click="firstPage('incoming')">first</div>
-            <div v-if="prevIncoming" v-on:click="turnPage('incoming', false)">previous</div>
-            <div v-if="nextIncoming" v-on:click="turnPage('incoming', true)">next</div>
-            <div v-if="nextIncoming" v-on:click="lastPage('incoming')">last</div>
-          </div>
-          <ul>
-            <li v-for="(edge, index) in incoming" :key="index">
-              <router-link :to="`/workspaces/${workspace}/graph/${graph}/node/${edge.airport}`">{{edge.airport}}</router-link>
-            </li>
-          </ul>
-        </div>
-        <div style="border-style: solid; width: 100%;">
-          <label>Outgoing Edges</label>
-          <br/>
-          <br/>
-          <div style="display: flex; flex-flow: row nowrap; justify-content: space-around">
-            <div v-if="prevOutgoing" v-on:click="firstPage('outgoing')">first</div>
-            <div v-if="prevOutgoing" v-on:click="turnPage('outgoing', false)">previous</div>
-            <div v-if="nextOutgoing" v-on:click="turnPage('outgoing', true)">next</div>
-            <div v-if="nextOutgoing" v-on:click="lastPage('outgoing')">last</div>
-          </div>
-          <ul>
-            <li v-for="(edge, index) in outgoing" :key="index">
-              <router-link :to="`/workspaces/${workspace}/graph/${graph}/node/${edge.airport}`">{{edge.airport}}</router-link>
-            </li>
-          </ul>
-        </div>
-      </div>
+      <v-app-bar app>
+        <v-toolbar-title
+          class="ws-detail-title"
+        >
+          <v-icon
+            class="ml-4 mr-5"
+            color="grey lighten-1"
+          >library_books</v-icon>
+
+          <span class="breadcrumbs">
+            <router-link
+              :to="{
+                name: 'workspaceDetail',
+                params: { workspace }
+              }"
+            >{{workspace}}</router-link>
+            <v-icon class="mx-4" color="grey lighten-2">chevron_right</v-icon>
+            <v-icon class="mr-3" color="grey lighten-1">timeline</v-icon>
+            <router-link
+              :to="{
+                name: 'graphDetail',
+                params: { graph }
+              }"
+            >{{graph}}</router-link>
+            <v-icon class="mx-4" color="grey lighten-2">chevron_right</v-icon>
+            {{type}}
+            <v-icon class="mx-4" color="grey lighten-2">chevron_right</v-icon>
+            {{node}}
+          </span>
+
+        </v-toolbar-title>
+
+        <v-spacer />
+
+        <v-btn icon>
+          <v-icon>more_vert</v-icon>
+        </v-btn>
+      </v-app-bar>
+
     </v-content>
   </v-container>
 </template>
