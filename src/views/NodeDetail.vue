@@ -91,6 +91,108 @@
             </v-card>
           </v-col>
 
+          <v-col pa-4>
+            <v-card height="100%">
+              <v-card-title class="pag-title">
+                Incoming Edges
+                <div class="pagination">
+                  <v-btn
+                    icon
+                    :disabled="!prev"
+                    v-on:click="firstPage()"
+                  >
+                    <v-icon>skip_previous</v-icon>
+                  </v-btn>
+                  <v-btn
+                    icon
+                    :disabled="!prev"
+                    v-on:click="turnPage(false)"
+                  >
+                    <v-icon>chevron_left</v-icon>
+                  </v-btn>
+                  <v-btn
+                    icon
+                    :disabled="!next"
+                    v-on:click="turnPage(true)"
+                  >
+                    <v-icon>chevron_right</v-icon>
+                  </v-btn>
+                  <v-btn
+                    icon
+                    :disabled="!next"
+                    v-on:click="lastPage()"
+                  >
+                    <v-icon>skip_next</v-icon>
+                  </v-btn>
+                </div>
+              </v-card-title>
+              <v-card-text>
+                <v-list dense>
+                  <v-list-item
+                    v-for="(edge, index) in incoming"
+                    :key="index"
+                    :to="`/workspaces/${workspace}/graph/${graph}/node/${edge.airport}`"
+                  >
+                    <v-list-item-content>
+                      {{edge.airport}}
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list>
+              </v-card-text>
+            </v-card>
+          </v-col>
+
+          <v-col pa-4>
+            <v-card height="100%">
+              <v-card-title class="pag-title">
+                Outgoing Edges
+                <div class="pagination">
+                  <v-btn
+                    icon
+                    :disabled="!prev"
+                    v-on:click="firstPage()"
+                  >
+                    <v-icon>skip_previous</v-icon>
+                  </v-btn>
+                  <v-btn
+                    icon
+                    :disabled="!prev"
+                    v-on:click="turnPage(false)"
+                  >
+                    <v-icon>chevron_left</v-icon>
+                  </v-btn>
+                  <v-btn
+                    icon
+                    :disabled="!next"
+                    v-on:click="turnPage(true)"
+                  >
+                    <v-icon>chevron_right</v-icon>
+                  </v-btn>
+                  <v-btn
+                    icon
+                    :disabled="!next"
+                    v-on:click="lastPage()"
+                  >
+                    <v-icon>skip_next</v-icon>
+                  </v-btn>
+                </div>
+              </v-card-title>
+              <v-card-text>
+                <v-list dense>
+                  <v-list-item
+                    v-for="(edge, index) in outgoing"
+                    :key="index"
+                    :to="`/workspaces/${workspace}/graph/${graph}/node/${edge.airport}`"
+                  >
+                    <v-list-item-content>
+                      {{edge.airport}}
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list>
+              </v-card-text>
+            </v-card>
+          </v-col>
+
         </v-row>
 
       </v-container>
@@ -257,5 +359,10 @@ td.key {
 
 td.value {
   text-align: left;
+}
+
+.pag-title {
+  display: flex;
+  justify-content: space-between;
 }
 </style>
