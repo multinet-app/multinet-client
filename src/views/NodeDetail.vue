@@ -361,6 +361,19 @@ td.value {
   text-align: left;
 }
 
+.ws-detail-title {
+  align-items: center;
+  display: flex;
+  letter-spacing: 0;
+  width: 95%;
+}
+.ws-detail-title a {
+  text-decoration: none;
+}
+.ws-detail-title a:hover {
+  text-decoration: underline;
+}
+
 .pag-title {
   display: flex;
   justify-content: space-between;
