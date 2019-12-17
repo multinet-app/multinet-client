@@ -43,6 +43,57 @@
         </v-btn>
       </v-app-bar>
 
+      <v-container
+        id="node-details"
+        fluid
+      >
+        <v-row>
+          <v-col
+            cols="12"
+            pa-4
+          >
+            <v-card
+              color="primary"
+              dark
+            >
+              <v-card-title>
+                Attributes
+              </v-card-title>
+              <v-divider />
+              <v-card-text py-0>
+                <v-container
+                  fluid
+                  py-0
+                >
+                  <v-row>
+                    <v-col
+                      px-2
+                      py-0
+                      v-for="field in attributes"
+                      :key="field.key"
+                    >
+                      <v-card
+                        color="transparent"
+                        flat
+                        py-0
+                      >
+                        <v-card-title class="headline pt-0">
+                          {{field.value}}
+                        </v-card-title>
+                        <v-card-subtitle>
+                          {{field.key}}
+                        </v-card-subtitle>
+                      </v-card>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-card-text>
+            </v-card>
+          </v-col>
+
+        </v-row>
+
+      </v-container>
     </v-content>
   </v-container>
 </template>
