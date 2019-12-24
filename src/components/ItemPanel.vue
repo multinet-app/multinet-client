@@ -26,18 +26,7 @@
         <span>Delete selected</span>
       </v-tooltip>
 
-      <table-dialog
-        v-if="isTable"
-        :workspace="workspace"
-        @success="$emit('new-table')"
-      />
-      <graph-dialog
-        v-else
-        :node-tables="nodeTables"
-        :edge-tables="edgeTables"
-        :workspace="workspace"
-        @success="$emit('new-graph')"
-      />
+      <slot></slot>
 
     </v-subheader>
 
@@ -106,14 +95,6 @@ export default Vue.extend({
       type: String,
       required: true,
     },
-    nodeTables: {
-      type: Array,
-      required: false,
-    },
-    edgeTables: {
-      type: Array,
-      required: false,
-    },
     routeType: {
       type: String,
       required: true,
@@ -129,10 +110,6 @@ export default Vue.extend({
     };
   },
   computed: {
-    isTable(): boolean {
-      return this.title === 'Tables';
-    },
-
     anySelected(): boolean {
       return Object.values(this.checkbox)
         .some((d) => !!d);

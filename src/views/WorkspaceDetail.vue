@@ -86,8 +86,12 @@
               :workspace="workspace"
               route-type="table"
               icon="table_chart"
-              @new-table="update"
-            />
+              >
+                <table-dialog
+                  :workspace="workspace"
+                  @success="update"
+                  />
+            </item-panel>
 
           </v-card>
         </v-flex>
@@ -105,12 +109,16 @@
               title="Graphs"
               :items="graphs"
               :workspace="workspace"
-              :node-tables="nodeTables"
-              :edge-tables="edgeTables"
               route-type="graph"
               icon="timeline"
-              @new-graph="update"
-            />
+              >
+                <graph-dialog
+                  :node-tables="nodeTables"
+                  :edge-tables="edgeTables"
+                  :workspace="workspace"
+                  @success="update"
+                  />
+            </item-panel>
 
           </v-card>
         </v-flex>
