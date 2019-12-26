@@ -5,16 +5,17 @@
     width="700"
     >
 
-    <template v-slot:activator="{ on }">
+    <template v-slot:activator="{ on: dialog }">
       <v-tooltip right>
-        <template v-slot:activator="tooltip">
+        <template v-slot:activator="{ on: tooltip }">
           <v-scroll-x-transition>
             <v-btn
               icon
               small
               text
               v-if="somethingChecked"
-              v-on="on"
+              @click="dialog.click"
+              v-on="tooltip"
               >
               <v-icon color="red accent-3" size="22px">delete_sweep</v-icon>
             </v-btn>
