@@ -3,6 +3,7 @@
   <v-dialog
     v-model="dialog"
     width="700"
+    v-if="somethingChecked"
     >
 
     <template v-slot:activator="{ on: dialog }">
@@ -13,7 +14,6 @@
               icon
               small
               text
-              v-if="somethingChecked"
               @click="dialog.click"
               v-on="tooltip"
               >
