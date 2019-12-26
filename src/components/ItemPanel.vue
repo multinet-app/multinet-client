@@ -9,22 +9,7 @@
 
       <v-spacer />
 
-      <v-tooltip top>
-        <template v-slot:activator="{ on }">
-          <v-scroll-x-transition>
-            <v-btn
-              icon
-              small
-              text
-              v-if="anySelected"
-              v-on="on"
-            >
-              <v-icon color="red accent-2" size="22px">delete_sweep</v-icon>
-            </v-btn>
-          </v-scroll-x-transition>
-        </template>
-        <span>Delete selected</span>
-      </v-tooltip>
+      <slot name="deleter" :selection="selection"></slot>
 
       <slot></slot>
 
@@ -105,14 +90,22 @@ export default Vue.extend({
     },
   },
   data() {
+    interface CheckboxTable {
+      [index: string]: boolean;
+    }
+
     return {
-      checkbox: {},
+      checkbox: {} as CheckboxTable,
     };
   },
   computed: {
+    selection(): string[] {
+      return Object.keys(this.checkbox)
+        .filter((d) => !!this.checkbox[d]);
+    },
+
     anySelected(): boolean {
-      return Object.values(this.checkbox)
-        .some((d) => !!d);
+      return this.selection.length > 0;
     },
   },
 });
