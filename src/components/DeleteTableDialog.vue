@@ -65,7 +65,7 @@
         The following graphs are using these tables:
         <ul>
           <li v-for="graph in using">
-            {{ graph }}
+            {{ graph.graph }} ({{ graph.tables.join(', ') }})
           </li>
         </ul>
       </v-card-text>
@@ -113,7 +113,7 @@ export default Vue.extend({
       dialog: false,
       disabled: true,
       timeout: undefined as number | undefined,
-      using: [] as string[],
+      using: [] as Array<{graph: string, tables: string[]}>,
     };
   },
 
@@ -135,6 +135,7 @@ export default Vue.extend({
   watch: {
     async dialog() {
       if (this.dialog) {
+        this.using = [];
         const using = await this.findDependentGraphs();
         if (using.length > 0) {
           this.using = using;
@@ -175,13 +176,22 @@ export default Vue.extend({
 
       const graphNames = await api.graphs(workspace);
 
-      console.log(selection);
-
-      const using = [] as string[];
+      const using = [] as Array<{graph: string, tables: string[]}>;
       for (const graph of graphNames) {
         const data = await api.graph(workspace, graph);
-        if (selection.some((table) => data.edgeTable === table || data.nodeTables.indexOf(table) > -1)) {
-          using.push(graph);
+
+        const tables = [];
+        for (const table of selection) {
+          if (table === data.edgeTable || data.nodeTables.indexOf(table) > -1) {
+            tables.push(table);
+          }
+        }
+
+        if (tables.length > 0) {
+          using.push({
+            graph,
+            tables,
+          });
         }
       }
 
