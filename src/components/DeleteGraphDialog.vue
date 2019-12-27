@@ -29,7 +29,7 @@
         class="headline pb-0 pt-3 px-5"
         primary-title
         >
-        Delete Workspaces
+        Delete Graphs
       </v-card-title>
 
       <v-card-text class="px-5 py-4">
@@ -68,6 +68,11 @@ export default Vue.extend({
   props: {
     selection: {
       type: Array as PropType<string[]>,
+      required: true,
+    },
+
+    workspace: {
+      type: String as PropType<string>,
       required: true,
     },
   },
@@ -110,13 +115,12 @@ export default Vue.extend({
     async execute() {
       const {
         selection,
+        workspace,
       } = this;
 
-      // selection.forEach(async (ws) => {
-        // await api.deleteWorkspace(ws);
-      // });
-
-      console.log(selection);
+      selection.forEach(async (graph) => {
+        await api.deleteGraph(workspace, graph);
+      });
 
       this.$emit('deleted');
       this.dialog = false;

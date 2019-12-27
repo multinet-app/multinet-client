@@ -9,7 +9,11 @@
 
       <v-spacer />
 
-      <slot name="deleter" :selection="selection"></slot>
+      <slot name="deleter"
+            :selection="selection"
+            :workspace="workspace"
+            >
+      </slot>
 
       <slot></slot>
 
@@ -106,6 +110,14 @@ export default Vue.extend({
 
     anySelected(): boolean {
       return this.selection.length > 0;
+    },
+  },
+
+  methods: {
+    clearCheckboxes() {
+      Object.keys(this.checkbox).forEach((key) => {
+        this.checkbox[key] = false;
+      });
     },
   },
 });

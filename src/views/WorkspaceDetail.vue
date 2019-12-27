@@ -81,6 +81,7 @@
             text
           >
             <item-panel
+              ref="tablePanel"
               title="Tables"
               :items="tables"
               :workspace="workspace"
@@ -106,6 +107,7 @@
             text
           >
             <item-panel
+              ref="graphPanel"
               title="Graphs"
               :items="graphs"
               :workspace="workspace"
@@ -122,6 +124,8 @@
                 <template v-slot:deleter="deleter">
                   <delete-graph-dialog
                     :selection="deleter.selection"
+                    :workspace="deleter.workspace"
+                    @deleted="update"
                     />
                 </template>
             </item-panel>
@@ -184,6 +188,10 @@ export default Vue.extend({
 
       // Get list of graphs.
       this.graphs = await api.graphs(this.workspace);
+
+      // Instruct both ItemPanels to clear their checkbox state.
+      this.$refs.graphPanel.clearCheckboxes();
+      this.$refs.tablePanel.clearCheckboxes();
     },
   },
   created() {
