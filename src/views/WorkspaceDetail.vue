@@ -92,6 +92,14 @@
                   :workspace="workspace"
                   @success="update"
                   />
+
+                <template v-slot:deleter="deleter">
+                  <delete-table-dialog
+                    :selection="deleter.selection"
+                    :workspace="deleter.workspace"
+                    @deleted="update"
+                    />
+                </template>
             </item-panel>
 
           </v-card>
@@ -145,6 +153,7 @@ import ItemPanel from '@/components/ItemPanel.vue';
 import GraphDialog from '@/components/GraphDialog.vue';
 import DeleteGraphDialog from '@/components/DeleteGraphDialog.vue';
 import TableDialog from '@/components/TableDialog.vue';
+import DeleteTableDialog from '@/components/DeleteTableDialog.vue';
 
 import { FileTypeTable } from '@/types';
 
@@ -155,6 +164,7 @@ export default Vue.extend({
     GraphDialog,
     DeleteGraphDialog,
     TableDialog,
+    DeleteTableDialog,
   },
   props: ['workspace', 'title'],
   data() {
