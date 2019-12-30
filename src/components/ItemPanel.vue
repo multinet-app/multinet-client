@@ -9,14 +9,13 @@
 
       <v-spacer />
 
-      <v-tooltip top>
+      <v-tooltip top v-if="anySelected">
         <template v-slot:activator="{ on }">
           <v-scroll-x-transition>
             <v-btn
               icon
               small
               text
-              v-if="anySelected"
               v-on="on"
             >
               <v-icon color="red accent-2" size="22px">delete_sweep</v-icon>
