@@ -13,13 +13,12 @@
               v-if="!hover && !editing"
             >library_books</v-icon>
 
-            <v-tooltip left v-if="!editing">
+            <v-tooltip left v-if="!editing && hover">
               <template v-slot:activator="{ on }">
                 <div>
                   <v-btn
                     class="ml-1 mr-2"
                     icon
-                    v-if="hover && !editing"
                     v-on="on"
                     @click="editing = !editing"
                   >
