@@ -44,14 +44,7 @@
             >
               chevron_right
             </v-icon>
-            {{type}}
-            <v-icon
-              class="mx-4"
-              color="grey lighten-2"
-            >
-              chevron_right
-            </v-icon>
-            {{node}}
+            {{type}}/{{node}}
           </span>
 
         </v-toolbar-title>
