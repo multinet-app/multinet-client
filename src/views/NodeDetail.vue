@@ -77,7 +77,7 @@
               dark
             >
               <v-card-title>
-                Attributes
+                Attributes: {{ attributeTable._id }}
               </v-card-title>
               <v-divider />
               <v-card-text pa-0>
@@ -288,6 +288,19 @@ export default Vue.extend({
     },
     prevOutgoing(): boolean {
       return 0 !== this.offsetOutgoing;
+    },
+
+    attributeTable() {
+      const {
+        attributes,
+      } = this;
+
+      const table = {};
+      for (const entry of attributes) {
+        table[entry.key] = entry.value;
+      }
+
+      return table;
     },
   },
   methods: {
