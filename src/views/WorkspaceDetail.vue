@@ -43,8 +43,6 @@
               >close</v-icon>
             </v-btn>
 
-            <span v-if="!editing">{{workspace}}</span>
-
             <v-text-field
               v-if="editing"
               autofocus
@@ -56,6 +54,8 @@
               flat
               :value="workspace"
             />
+
+            <span v-else>{{workspace}}</span>
 
           </v-toolbar-title>
         </v-hover>
