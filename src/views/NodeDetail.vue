@@ -1,13 +1,8 @@
 <template>
-  <v-container
-    class="node-container"
-    fluid
-  >
+  <v-container class="node-container" fluid>
     <v-content>
       <v-app-bar app>
-        <v-toolbar-title
-          class="ws-detail-title"
-        >
+        <v-toolbar-title class="ws-detail-title">
           <v-icon
             class="ml-4 mr-5"
             color="grey lighten-1"
@@ -43,49 +38,39 @@
         </v-btn>
       </v-app-bar>
 
-      <v-container
-        id="node-details"
-        fluid
-      >
+      <v-container id="node-details" fluid>
         <v-row>
-          <v-col
-            cols="12"
-            pa-4
-          >
-            <v-card
-              color="primary"
-              dark
-            >
+
+          <v-col cols="12" pa-4>
+            <v-card color="primary" dark>
               <v-card-title>
                 Attributes
               </v-card-title>
               <v-divider />
-              <v-card-text py-0>
-                <v-container
-                  fluid
-                  py-0
-                >
-                  <v-row>
-                    <v-col
-                      px-2
-                      py-0
-                      v-for="field in attributes"
-                      :key="field.key"
-                    >
-                      <v-card
-                        color="transparent"
-                        flat
-                        py-0
-                      >
-                        <v-card-title class="headline pt-0">
-                          {{field.value}}
-                        </v-card-title>
-                        <v-card-subtitle>
-                          {{field.key}}
-                        </v-card-subtitle>
-                      </v-card>
-                    </v-col>
-                  </v-row>
+              <v-card-text pa-0>
+                <v-container fluid pa-0>
+                  <v-list class="pt-0" color="transparent">
+                    <v-container fluid pa-0>
+                      <v-row>
+                        <v-col
+                          class="py-0"
+                          cols="3"
+                          v-for="field in attributes"
+                          :key="field.key"
+                        >
+                          <v-list-item style="display: block;">
+                            <v-list-item-subtitle class="pt-3 pb-1" style="font-size: 11px;">
+                              {{field.key}}
+                            </v-list-item-subtitle>
+                            <v-list-item-title class="pb-3">
+                              {{field.value}}
+                            </v-list-item-title>
+                            <v-divider />
+                          </v-list-item>
+                        </v-col>
+                      </v-row>
+                    </v-container>
+                  </v-list>
                 </v-container>
               </v-card-text>
             </v-card>
@@ -96,32 +81,16 @@
               <v-card-title class="pag-title">
                 Incoming Edges
                 <div class="pagination">
-                  <v-btn
-                    icon
-                    :disabled="!prev"
-                    v-on:click="firstPage()"
-                  >
+                  <v-btn icon :disabled="!prev" v-on:click="firstPage()">
                     <v-icon>skip_previous</v-icon>
                   </v-btn>
-                  <v-btn
-                    icon
-                    :disabled="!prev"
-                    v-on:click="turnPage(false)"
-                  >
+                  <v-btn icon :disabled="!prev" v-on:click="turnPage(false)">
                     <v-icon>chevron_left</v-icon>
                   </v-btn>
-                  <v-btn
-                    icon
-                    :disabled="!next"
-                    v-on:click="turnPage(true)"
-                  >
+                  <v-btn icon :disabled="!next" v-on:click="turnPage(true)">
                     <v-icon>chevron_right</v-icon>
                   </v-btn>
-                  <v-btn
-                    icon
-                    :disabled="!next"
-                    v-on:click="lastPage()"
-                  >
+                  <v-btn icon :disabled="!next" v-on:click="lastPage()">
                     <v-icon>skip_next</v-icon>
                   </v-btn>
                 </div>
