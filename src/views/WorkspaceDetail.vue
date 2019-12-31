@@ -46,6 +46,7 @@
             <span v-if="!editing">{{workspace}}</span>
 
             <v-text-field
+              v-if="editing"
               autofocus
               background-color="transparent"
               class="ws-rename"
@@ -54,7 +55,6 @@
               solo
               flat
               :value="workspace"
-              v-if="editing"
             />
 
           </v-toolbar-title>
