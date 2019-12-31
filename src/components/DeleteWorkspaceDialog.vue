@@ -7,7 +7,7 @@
     >
 
     <template v-slot:activator="{ on: dialog }">
-      <v-tooltip right>
+      <v-tooltip left>
         <template v-slot:activator="{ on: tooltip }">
           <v-scroll-x-transition>
             <v-btn
