@@ -1,5 +1,8 @@
 <template>
-  <v-container class="node-container" fluid>
+  <v-container
+    class="node-container"
+    fluid
+  >
     <v-content>
       <v-app-bar app>
         <v-toolbar-title class="ws-detail-title">
@@ -15,17 +18,39 @@
                 params: { workspace }
               }"
             >{{workspace}}</router-link>
-            <v-icon class="mx-4" color="grey lighten-2">chevron_right</v-icon>
-            <v-icon class="mr-3" color="grey lighten-1">timeline</v-icon>
+            <v-icon
+              class="mx-4"
+              color="grey lighten-2"
+            >
+              chevron_right
+            </v-icon>
+            <v-icon
+              class="mr-3"
+              color="grey lighten-1"
+            >
+              timeline
+            </v-icon>
             <router-link
               :to="{
                 name: 'graphDetail',
                 params: { graph }
               }"
-            >{{graph}}</router-link>
-            <v-icon class="mx-4" color="grey lighten-2">chevron_right</v-icon>
+            >
+              {{graph}}
+            </router-link>
+            <v-icon
+              class="mx-4"
+              color="grey lighten-2"
+            >
+              chevron_right
+            </v-icon>
             {{type}}
-            <v-icon class="mx-4" color="grey lighten-2">chevron_right</v-icon>
+            <v-icon
+              class="mx-4"
+              color="grey lighten-2"
+            >
+              chevron_right
+            </v-icon>
             {{node}}
           </span>
 
@@ -38,18 +63,32 @@
         </v-btn>
       </v-app-bar>
 
-      <v-container id="node-details" fluid>
+      <v-container
+        id="node-details"
+        fluid
+      >
         <v-row>
-
-          <v-col cols="12" pa-4>
-            <v-card color="primary" dark>
+          <v-col
+            cols="12"
+            pa-4
+          >
+            <v-card
+              color="primary"
+              dark
+            >
               <v-card-title>
                 Attributes
               </v-card-title>
               <v-divider />
               <v-card-text pa-0>
-                <v-container fluid pa-0>
-                  <v-list class="pt-0" color="transparent">
+                <v-container
+                  fluid
+                  pa-0
+                >
+                  <v-list
+                    class="pt-0"
+                    color="transparent"
+                  >
                     <v-container fluid pa-0>
                       <v-row>
                         <v-col
@@ -59,7 +98,10 @@
                           :key="field.key"
                         >
                           <v-list-item style="display: block;">
-                            <v-list-item-subtitle class="pt-3 pb-1" style="font-size: 11px;">
+                            <v-list-item-subtitle
+                              class="pt-3 pb-1"
+                              style="font-size: 11px;"
+                            >
                               {{field.key}}
                             </v-list-item-subtitle>
                             <v-list-item-title class="pb-3">
@@ -81,16 +123,32 @@
               <v-card-title class="pag-title">
                 Incoming Edges
                 <div class="pagination">
-                  <v-btn icon :disabled="!prev" v-on:click="firstPage()">
+                  <v-btn
+                    icon
+                    :disabled="!prev"
+                    v-on:click="firstPage()"
+                  >
                     <v-icon>skip_previous</v-icon>
                   </v-btn>
-                  <v-btn icon :disabled="!prev" v-on:click="turnPage(false)">
+                  <v-btn
+                    icon
+                    :disabled="!prev"
+                    v-on:click="turnPage(false)"
+                  >
                     <v-icon>chevron_left</v-icon>
                   </v-btn>
-                  <v-btn icon :disabled="!next" v-on:click="turnPage(true)">
+                  <v-btn
+                    icon
+                    :disabled="!next"
+                    v-on:click="turnPage(true)"
+                  >
                     <v-icon>chevron_right</v-icon>
                   </v-btn>
-                  <v-btn icon :disabled="!next" v-on:click="lastPage()">
+                  <v-btn
+                    icon
+                    :disabled="!next"
+                    v-on:click="lastPage()"
+                  >
                     <v-icon>skip_next</v-icon>
                   </v-btn>
                 </div>
