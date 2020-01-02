@@ -306,7 +306,7 @@ export default Vue.extend({
         attributes,
       } = this;
 
-      const table = {};
+      const table: { [key: string]: any } = {};
       for (const entry of attributes) {
         table[entry.key] = entry.value;
       }
