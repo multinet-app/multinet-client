@@ -3,9 +3,8 @@
   <v-dialog
     v-model="dialog"
     width="700"
-    v-if="somethingChecked"
-    >
-
+    v-if="nonZeroSelection"
+  >
     <template v-slot:activator="{ on: dialog }">
       <v-tooltip left>
         <template v-slot:activator="{ on: tooltip }">
@@ -30,11 +29,11 @@
         class="headline pb-0 pt-3 px-5"
         primary-title
         >
-        Delete Workspaces
+        Delete Graphs
       </v-card-title>
 
       <v-card-text class="px-5 py-4">
-        You are about to delete {{ selection.length }} workspace{{plural}}. <strong>Are you sure?</strong>
+        You are about to delete {{ selection.length }} graph{{plural}}. <strong>Are you sure?</strong>
       </v-card-text>
 
       <v-divider />
@@ -67,13 +66,13 @@ import api from '@/api';
 
 export default Vue.extend({
   props: {
-    somethingChecked: {
-      type: Boolean as PropType<boolean>,
+    selection: {
+      type: Array as PropType<string[]>,
       required: true,
     },
 
-    selection: {
-      type: Array as PropType<string[]>,
+    workspace: {
+      type: String as PropType<string>,
       required: true,
     },
   },
@@ -90,6 +89,10 @@ export default Vue.extend({
     // This workaround is necessary because of https://github.com/vuejs/vue/issues/10455
     plural(this: any) {
       return this.selection.length > 1 ? 's' : '';
+    },
+
+    nonZeroSelection(): boolean {
+      return this.selection.length > 0;
     },
   },
 
@@ -112,10 +115,11 @@ export default Vue.extend({
     async execute() {
       const {
         selection,
+        workspace,
       } = this;
 
-      selection.forEach(async (ws) => {
-        await api.deleteWorkspace(ws);
+      selection.forEach(async (graph) => {
+        await api.deleteGraph(workspace, graph);
       });
 
       this.$emit('deleted');
