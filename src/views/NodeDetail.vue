@@ -257,18 +257,10 @@ export default Vue.extend({
   },
   computed: {
     lastIncomingPage(): number {
-      return (
-        this.totalIncoming % this.pageCount
-          ? Math.floor(this.totalIncoming / this.pageCount)
-          : this.totalIncoming / this.pageCount - 1
-      ) * this.pageCount;
+      return this.computePageNumber(this.totalIncoming) * this.pageCount;
     },
     lastOutgoingPage(): number {
-      return (
-        this.totalOutgoing % this.pageCount
-          ? Math.floor(this.totalOutgoing / this.pageCount)
-          : this.totalOutgoing / this.pageCount - 1
-      ) * this.pageCount;
+      return this.computePageNumber(this.totalOutgoing) * this.pageCount;
     },
     nextIncoming(): boolean {
       return this.lastIncomingPage !== this.offsetIncoming;
@@ -340,6 +332,11 @@ export default Vue.extend({
       } else if (edgeType === 'outgoing') {
         this.offsetOutgoing = 0;
       }
+    },
+
+    computePageNumber(offset: number) {
+      const exactPageBoundary = offset % this.pageCount === 0;
+      return exactPageBoundary ? offset / this.pageCount - 1 : Math.floor(offset / this.pageCount)
     },
   },
   watch: {
