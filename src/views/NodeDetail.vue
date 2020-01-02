@@ -335,8 +335,7 @@ export default Vue.extend({
     },
 
     computePageNumber(offset: number) {
-      const exactPageBoundary = offset % this.pageCount === 0;
-      return exactPageBoundary ? offset / this.pageCount - 1 : Math.floor(offset / this.pageCount)
+      return Math.floor(offset / this.pageCount);
     },
   },
   watch: {
