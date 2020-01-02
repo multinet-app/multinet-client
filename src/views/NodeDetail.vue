@@ -118,29 +118,29 @@
                 <div class="pagination">
                   <v-btn
                     icon
-                    :disabled="!prev"
-                    v-on:click="firstPage()"
+                    :disabled="!prevIncoming"
+                    v-on:click="firstPage('incoming')"
                   >
                     <v-icon>skip_previous</v-icon>
                   </v-btn>
                   <v-btn
                     icon
-                    :disabled="!prev"
-                    v-on:click="turnPage(false)"
+                    :disabled="!prevIncoming"
+                    v-on:click="turnPage('incoming', false)"
                   >
                     <v-icon>chevron_left</v-icon>
                   </v-btn>
                   <v-btn
                     icon
-                    :disabled="!next"
-                    v-on:click="turnPage(true)"
+                    :disabled="!nextIncoming"
+                    v-on:click="turnPage('incoming', true)"
                   >
                     <v-icon>chevron_right</v-icon>
                   </v-btn>
                   <v-btn
                     icon
-                    :disabled="!next"
-                    v-on:click="lastPage()"
+                    :disabled="!nextIncoming"
+                    v-on:click="lastPage('incoming')"
                   >
                     <v-icon>skip_next</v-icon>
                   </v-btn>
@@ -169,29 +169,29 @@
                 <div class="pagination">
                   <v-btn
                     icon
-                    :disabled="!prev"
-                    v-on:click="firstPage()"
+                    :disabled="!prevOutgoing"
+                    v-on:click="firstPage('outgoing')"
                   >
                     <v-icon>skip_previous</v-icon>
                   </v-btn>
                   <v-btn
                     icon
-                    :disabled="!prev"
-                    v-on:click="turnPage(false)"
+                    :disabled="!prevOutgoing"
+                    v-on:click="turnPage('outgoing', false)"
                   >
                     <v-icon>chevron_left</v-icon>
                   </v-btn>
                   <v-btn
                     icon
-                    :disabled="!next"
-                    v-on:click="turnPage(true)"
+                    :disabled="!nextOutgoing"
+                    v-on:click="turnPage('outgoing', true)"
                   >
                     <v-icon>chevron_right</v-icon>
                   </v-btn>
                   <v-btn
                     icon
-                    :disabled="!next"
-                    v-on:click="lastPage()"
+                    :disabled="!nextOutgoing"
+                    v-on:click="lastPage('outgoing')"
                   >
                     <v-icon>skip_next</v-icon>
                   </v-btn>
