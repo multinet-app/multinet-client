@@ -85,6 +85,7 @@
           </tbody>
         </v-simple-table> -->
         <v-data-table
+          class="table-details"
           :headers="dataTableHeaders"
           :items="dataTableRows"
           :items-per-page="15"
@@ -209,24 +210,6 @@ export default Vue.extend({
 table{
   margin:auto;
 }
-th.head{
-  text-transform: uppercase;
-  background-color: #1976d2 !important;
-  color:#fff !important;
-  height: 59px;
-}
-tr.even-row {
-  background-color: #F3F6F6;
-  padding: 10px 10px;
-}
-tr.odd-row {
-  margin:3px;
-  padding: 10px 10px;
-}
-td.col{
-  margin:5px;
-  padding:5px 25px;
-}
 .ws-detail-title {
   align-items: center;
   display: flex;
@@ -250,5 +233,18 @@ td.col{
   font-size: 20px;
   letter-spacing: 2px !important;
   padding-top: 14px;
+}
+
+.table-details table th {
+  background-color: #1976d2 !important;
+  color:#fff !important;
+  height: 59px;
+  white-space: nowrap;
+}
+.table-details table td {
+  white-space: nowrap;
+}
+.table-details table tr:nth-of-type(even) {
+  background-color: #F3F6F6;
 }
 </style>
