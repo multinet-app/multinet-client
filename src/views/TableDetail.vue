@@ -85,8 +85,8 @@
           </tbody>
         </v-simple-table> -->
         <v-data-table
-          :headers="this.dataTableHeaders"
-          :items="this.dataTableRows"
+          :headers="dataTableHeaders"
+          :items="dataTableRows"
           :items-per-page="15"
         />
       </div>
@@ -113,10 +113,25 @@ export default Vue.extend({
   },
   computed: {
     dataTableHeaders() {
-      return this.headers.map( (header) => ({text:header}) );
+      return this.headers.map((header) => ({
+        text: header,
+        value: header,
+      }));
     },
+
     dataTableRows() {
-      return this.rowKeys.map( (rowKey) => rowKey.value );
+      let result = [];
+
+      this.rowKeys.forEach((rowKey) => {
+        let obj = {};
+        rowKey.forEach((entry) => {
+          obj[entry.key] = entry.value;
+        });
+
+        result.push(obj);
+      });
+
+      return result;
     },
   },
   methods: {
