@@ -12,7 +12,7 @@
       <slot name="deleter"
             :selection="selection"
             :workspace="workspace"
-            >
+      >
       </slot>
 
       <slot></slot>
@@ -107,7 +107,6 @@ export default Vue.extend({
       return Object.keys(this.checkbox)
         .filter((d) => !!this.checkbox[d]);
     },
-
     anySelected(): boolean {
       return this.selection.length > 0;
     },
