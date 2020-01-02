@@ -65,7 +65,7 @@
         </v-btn>
       </v-app-bar>
       <div class="wrapper">
-        <v-simple-table
+        <!-- <v-simple-table
           fixed-header
           height="calc(100vh - 64px)"
         >
@@ -83,7 +83,12 @@
               </td>
             </tr>
           </tbody>
-        </v-simple-table>
+        </v-simple-table> -->
+        <v-data-table
+          :headers="this.dataTableHeaders"
+          :items="this.dataTableRows"
+          :items-per-page="15"
+        />
       </div>
     </v-content>
   </v-container>
@@ -105,6 +110,14 @@ export default Vue.extend({
       tables: [] as string[],
       editing: false,
     };
+  },
+  computed: {
+    dataTableHeaders() {
+      return this.headers.map( (header) => ({text:header}) );
+    },
+    dataTableRows() {
+      return this.rowKeys.map( (rowKey) => rowKey.value );
+    },
   },
   methods: {
     rowClassName(index: number): 'even-row' | 'odd-row' {
