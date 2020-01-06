@@ -113,18 +113,22 @@ export default Vue.extend({
     };
   },
   computed: {
-    dataTableHeaders() {
-      return this.headers.map((header) => ({
+    dataTableHeaders(this: any) {
+      const {
+        headers,
+      } = this;
+
+      return headers.map((header: Array<keyof TableRow>) => ({
         text: header,
         value: header,
       }));
     },
 
     dataTableRows() {
-      let result = [];
+      const result = [] as TableRow[];
 
       this.rowKeys.forEach((rowKey) => {
-        let obj = {};
+        const obj = {} as TableRow;
         rowKey.forEach((entry) => {
           obj[entry.key] = entry.value;
         });
