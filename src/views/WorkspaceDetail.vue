@@ -194,7 +194,7 @@ export default Vue.extend({
         edgeTables = await api.tables(this.workspace, { type: 'edge' });
       } catch (err) {
         if (err.status === 404 && err.statusText === 'Workspace Not Found') {
-          this.$router.push({name: 'home'});
+          this.$router.replace({name: 'home'});
         } else {
           throw err;
         }
