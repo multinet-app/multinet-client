@@ -192,16 +192,14 @@ export default Vue.extend({
       try {
         nodeTables = await api.tables(this.workspace, { type: 'node' });
         edgeTables = await api.tables(this.workspace, { type: 'edge' });
-      }
-      catch(err) {
-        if (err.status === 404 && err.statusText === "Workspace Not Found") {
-          this.$router.push({name: "home"})
-        }
-        else {
-          throw err
+      } catch (err) {
+        if (err.status === 404 && err.statusText === 'Workspace Not Found') {
+          this.$router.push({name: 'home'});
+        } else {
+          throw err;
         }
 
-        return
+        return;
       }
 
       this.tables = nodeTables.concat(edgeTables);
