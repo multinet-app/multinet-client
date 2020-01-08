@@ -65,25 +65,6 @@
         </v-btn>
       </v-app-bar>
       <div class="wrapper">
-        <!-- <v-simple-table
-          fixed-header
-          height="calc(100vh - 64px)"
-        >
-          <thead>
-            <tr>
-              <th v-for="head in this.headers" :key="head" class="head">
-                {{head}}
-              </th>
-            </tr>
-          </thead>
-          <tbody class="row-wrap">
-            <tr v-for="(row, index) in rowKeys" :key="row.value" :class="rowClassName(index)">
-              <td v-for="col in row" :key="col.key">
-                {{col.value}}
-              </td>
-            </tr>
-          </tbody>
-        </v-simple-table> -->
         <v-data-table
           class="table-details"
           :headers="dataTableHeaders"
