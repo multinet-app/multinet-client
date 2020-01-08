@@ -118,29 +118,34 @@
                 <div class="pagination">
                   <v-btn
                     icon
-                    :disabled="!prev"
-                    v-on:click="firstPage()"
+                    :disabled="!prevIncoming"
+                    v-on:click="firstPage('incoming')"
                   >
                     <v-icon>skip_previous</v-icon>
                   </v-btn>
                   <v-btn
                     icon
-                    :disabled="!prev"
-                    v-on:click="turnPage(false)"
+                    :disabled="!prevIncoming"
+                    v-on:click="turnPage('incoming', false)"
                   >
                     <v-icon>chevron_left</v-icon>
                   </v-btn>
+
+                  <span class="overline" style="vertical-align: middle;">
+                    {{ currentIncomingPageNumber }} of {{ lastIncomingPageNumber }}
+                  </span>
+
                   <v-btn
                     icon
-                    :disabled="!next"
-                    v-on:click="turnPage(true)"
+                    :disabled="!nextIncoming"
+                    v-on:click="turnPage('incoming', true)"
                   >
                     <v-icon>chevron_right</v-icon>
                   </v-btn>
                   <v-btn
                     icon
-                    :disabled="!next"
-                    v-on:click="lastPage()"
+                    :disabled="!nextIncoming"
+                    v-on:click="lastPage('incoming')"
                   >
                     <v-icon>skip_next</v-icon>
                   </v-btn>
@@ -169,29 +174,34 @@
                 <div class="pagination">
                   <v-btn
                     icon
-                    :disabled="!prev"
-                    v-on:click="firstPage()"
+                    :disabled="!prevOutgoing"
+                    v-on:click="firstPage('outgoing')"
                   >
                     <v-icon>skip_previous</v-icon>
                   </v-btn>
                   <v-btn
                     icon
-                    :disabled="!prev"
-                    v-on:click="turnPage(false)"
+                    :disabled="!prevOutgoing"
+                    v-on:click="turnPage('outgoing', false)"
                   >
                     <v-icon>chevron_left</v-icon>
                   </v-btn>
+
+                  <span class="overline" style="vertical-align: middle;">
+                    {{ currentOutgoingPageNumber }} of {{ lastOutgoingPageNumber }}
+                  </span>
+
                   <v-btn
                     icon
-                    :disabled="!next"
-                    v-on:click="turnPage(true)"
+                    :disabled="!nextOutgoing"
+                    v-on:click="turnPage('outgoing', true)"
                   >
                     <v-icon>chevron_right</v-icon>
                   </v-btn>
                   <v-btn
                     icon
-                    :disabled="!next"
-                    v-on:click="lastPage()"
+                    :disabled="!nextOutgoing"
+                    v-on:click="lastPage('outgoing')"
                   >
                     <v-icon>skip_next</v-icon>
                   </v-btn>
@@ -257,18 +267,10 @@ export default Vue.extend({
   },
   computed: {
     lastIncomingPage(): number {
-      return (
-        this.totalIncoming % this.pageCount
-          ? Math.floor(this.totalIncoming / this.pageCount)
-          : this.totalIncoming / this.pageCount - 1
-      ) * this.pageCount;
+      return this.computePageNumber(this.totalIncoming) * this.pageCount;
     },
     lastOutgoingPage(): number {
-      return (
-        this.totalOutgoing % this.pageCount
-          ? Math.floor(this.totalOutgoing / this.pageCount)
-          : this.totalOutgoing / this.pageCount - 1
-      ) * this.pageCount;
+      return this.computePageNumber(this.totalOutgoing) * this.pageCount;
     },
     nextIncoming(): boolean {
       return this.lastIncomingPage !== this.offsetIncoming;
@@ -281,6 +283,22 @@ export default Vue.extend({
     },
     prevOutgoing(): boolean {
       return 0 !== this.offsetOutgoing;
+    },
+
+    currentIncomingPageNumber(): number {
+      return this.computePageNumber(this.offsetIncoming) + 1;
+    },
+
+    lastIncomingPageNumber(): number {
+      return this.computePageNumber(this.totalIncoming) + 1;
+    },
+
+    currentOutgoingPageNumber(): number {
+      return this.computePageNumber(this.offsetOutgoing) + 1;
+    },
+
+    lastOutgoingPageNumber(): number {
+      return this.computePageNumber(this.totalOutgoing) + 1;
     },
 
     attributeTable() {
@@ -340,6 +358,10 @@ export default Vue.extend({
       } else if (edgeType === 'outgoing') {
         this.offsetOutgoing = 0;
       }
+    },
+
+    computePageNumber(offset: number) {
+      return Math.floor(offset / this.pageCount);
     },
   },
   watch: {
