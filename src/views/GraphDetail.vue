@@ -236,7 +236,7 @@ export default Vue.extend({
 
       this.nodeTypes = graph.nodeTables;
       this.edgeTypes = [graph.edgeTable];
-      this.nodes = nodes.nodes;
+      this.nodes = nodes.nodes.map((d) => d._id);
       this.total = nodes.count;
     },
     turnPage(forward: number) {
