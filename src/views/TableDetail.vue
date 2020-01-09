@@ -71,11 +71,7 @@
           class="table-details"
           :headers="dataTableHeaders"
           :items="dataTableRows"
-          :items-per-page="20"
-          :footer-props="{
-            itemsPerPageOptions: [5, 10, 15, 20, -1],
-            showFirstLastPage: true,
-          }"
+          :items-per-page="15"
         />
       </div>
     </v-content>
