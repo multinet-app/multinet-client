@@ -9,7 +9,16 @@
     <v-toolbar
       color="grey lighten-2"
     >
-      <v-toolbar-title>multinet</v-toolbar-title>
+      <v-toolbar-title>
+        <router-link
+          :to="{
+            name: 'home',
+          }"
+          tag="button"
+        >
+          Multinet
+        </router-link>
+      </v-toolbar-title>
       <v-spacer />
       <v-btn icon>
         <v-avatar
