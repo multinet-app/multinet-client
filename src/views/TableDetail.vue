@@ -71,6 +71,9 @@
           class="table-details"
           :headers="dataTableHeaders"
           :items="dataTableRows"
+          :footer-props="{
+            itemsPerPageOptions: [10, 20, 50, 100],
+          }"
           :server-items-length="tableSize"
           :options.sync="pagination"
         />
