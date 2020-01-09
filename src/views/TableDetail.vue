@@ -66,6 +66,8 @@
       </v-app-bar>
       <div class="wrapper">
         <v-data-table
+          fixed-header
+          height="calc(100vh - 123px)"
           class="table-details"
           :headers="dataTableHeaders"
           :items="dataTableRows"
