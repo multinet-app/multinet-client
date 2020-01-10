@@ -42,22 +42,6 @@
             <v-flex>
               <v-select
                 filled
-                chips
-                class="choose-tables"
-                clearable
-                deletable-chips
-                label="Choose node tables"
-                multiple
-                v-model="graphNodeTables"
-                :items="nodeTables"
-              />
-            </v-flex>
-          </v-layout>
-
-          <v-layout wrap>
-            <v-flex>
-              <v-select
-                filled
                 label="Choose edge table"
                 v-model="graphEdgeTable"
                 :items="edgeTables"
@@ -89,7 +73,6 @@ import api from '@/api';
 export default Vue.extend({
   name: 'GraphDialog',
   props: {
-    nodeTables: Array,
     edgeTables: Array,
     workspace: String,
   },
@@ -98,13 +81,12 @@ export default Vue.extend({
       graphCreationErrors: [] as string[],
       graphDialog: false,
       graphEdgeTable: null as string | null,
-      graphNodeTables: [] as string[],
       newGraph: '',
     };
   },
   computed: {
     graphCreateDisabled(): boolean {
-      return this.graphNodeTables.length === 0 || !this.graphEdgeTable || !this.newGraph;
+      return !this.graphEdgeTable || !this.newGraph;
     },
 
   },
@@ -117,7 +99,6 @@ export default Vue.extend({
       }
 
       const response = await api.createGraph(workspace, newGraph, {
-        nodeTables: this.graphNodeTables,
         edgeTable: this.graphEdgeTable,
       });
 
