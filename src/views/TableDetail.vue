@@ -89,6 +89,15 @@ import Vue from 'vue';
 import api from '@/api';
 import { KeyValue, TableRow } from '@/types';
 
+interface DataPagination {
+  page: number;
+  itemsPerPage: number;
+  pageStart: number;
+  pageStop: number;
+  pageCount: number;
+  itemsLength: number;
+}
+
 export default Vue.extend({
   name: 'TableDetail',
   props: ['workspace', 'table'],
@@ -99,7 +108,7 @@ export default Vue.extend({
       tables: [] as string[],
       editing: false,
       tableSize: 1,
-      pagination: {},
+      pagination: {} as DataPagination,
     };
   },
   computed: {
