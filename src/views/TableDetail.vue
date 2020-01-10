@@ -73,6 +73,7 @@
           :items="dataTableRows"
           :footer-props="{
             itemsPerPageOptions: [10, 20, 50, 100],
+            showFirstLastPage: true,
           }"
           :server-items-length="tableSize"
           :options.sync="pagination"
