@@ -39,8 +39,12 @@
     </v-app-bar>
     <v-content class="fill-height">
       <v-container
+        align-stretch
+        d-flex
+        fill-height
+        flex-column
         fluid
-        id="graph-details"
+        pa-0
       >
         <v-layout row>
           <v-flex pa-4>
