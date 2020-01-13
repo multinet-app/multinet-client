@@ -1,38 +1,43 @@
 <template>
   <v-container
     class="graph-container"
+    fill-height
     fluid
+    pa-0
   >
-    <v-content>
-      <v-app-bar app>
-        <v-toolbar-title
-          class="ws-detail-title"
-        >
-          <v-icon
-            class="ml-4 mr-5"
-            color="grey lighten-1"
-          >library_books</v-icon>
+    <v-app-bar
+      app
+      clipped-right
+    >
+      <v-toolbar-title
+        class="ws-detail-title"
+      >
+        <v-icon
+          class="ml-4 mr-5"
+          color="grey lighten-1"
+        >library_books</v-icon>
 
-          <span class="breadcrumbs">
-            <router-link
-              :to="{
-                name: 'workspaceDetail',
-                params: { workspace }
-              }"
-            >{{workspace}}</router-link>
-            <v-icon class="mx-4" color="grey lighten-2">chevron_right</v-icon>
-            <v-icon class="mr-3" color="grey lighten-1">timeline</v-icon>
-            {{graph}}
-          </span>
+        <span class="breadcrumbs">
+          <router-link
+            :to="{
+              name: 'workspaceDetail',
+              params: { workspace }
+            }"
+          >{{workspace}}</router-link>
+          <v-icon class="mx-4" color="grey lighten-2">chevron_right</v-icon>
+          <v-icon class="mr-3" color="grey lighten-1">timeline</v-icon>
+          {{graph}}
+        </span>
 
-        </v-toolbar-title>
+      </v-toolbar-title>
 
-        <v-spacer />
+      <v-spacer />
 
-        <v-btn icon>
-          <v-icon>more_vert</v-icon>
-        </v-btn>
-      </v-app-bar>
+      <v-btn icon>
+        <v-icon>more_vert</v-icon>
+      </v-btn>
+    </v-app-bar>
+    <v-content class="fill-height">
       <v-container
         fluid
         id="graph-details"
