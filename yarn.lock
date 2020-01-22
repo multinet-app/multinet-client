@@ -5517,10 +5517,10 @@ multimatch@^2.1.0:
     arrify "^1.0.0"
     minimatch "^3.0.0"
 
-multinet@0.6.0:
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/multinet/-/multinet-0.6.0.tgz#adad62084f24a469da71fc17f812326bd147dc54"
-  integrity sha512-hALbdK2fuH5OWf9+1BfRrE5OL9PCh3q6P+E1f6b5Nwnfi0ftHvWtZAYr+4xnjpEyl/x7ShBe/8+jI0xuHkJGDQ==
+multinet@0.7.0:
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/multinet/-/multinet-0.7.0.tgz#9688d20dd0d22d96b9d32631f4734d667c6701d6"
+  integrity sha512-kMNlS+VU4wTv0nzQ0cAUhygPpCOEYHdchbMvuplCvtq7xbX97U+TiH8ugStIdrPpF7R+hKmchIGHroYJ4THQxg==
   dependencies:
     axios "^0.19.0"
 
