@@ -27,8 +27,12 @@
         About Multinet
       </v-card-title>
 
-      <v-card-text class="px-4 pt-4 pb-1">
-        Hello.
+      <v-card-text
+        v-if="gitSha"
+        class="px-4 pt-4 pb-1"
+        >
+        This instance of Multinet was built from Git SHA
+        <a :href="gitShaURL" target="_blank" rel="noopener noreferrer">{{gitSha.slice(0, 6)}}</a>.
       </v-card-text>
 
       <v-divider />
@@ -54,12 +58,29 @@
 <script lang="ts">
 import Vue from 'vue';
 
+declare var GIT_SHA: string;
+
 export default Vue.extend({
   data() {
     return {
       dialog: false,
     };
   },
+
+  computed: {
+    gitSha() {
+      return GIT_SHA;
+    },
+
+    gitShaURL(this: any) {
+      const {
+        gitSha,
+      } = this;
+
+      return `https://github.com/multinet-app/multinet/tree/${gitSha}`;
+    },
+  },
+
 });
 
 </script>
