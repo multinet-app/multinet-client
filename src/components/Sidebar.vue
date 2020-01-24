@@ -30,6 +30,8 @@
       </v-btn>
     </v-toolbar>
 
+    <about-dialog />
+
     <WorkspaceDialog
       @created="addWorkspace"
     />
@@ -77,6 +79,7 @@
         </v-list-item>
       </v-hover>
     </v-list>
+
   </v-navigation-drawer>
 </template>
 
@@ -86,6 +89,7 @@ import Vue from 'vue';
 import api from '@/api';
 import WorkspaceDialog from '@/components/WorkspaceDialog.vue';
 import DeleteWorkspaceDialog from '@/components/DeleteWorkspaceDialog.vue';
+import AboutDialog from '@/components/AboutDialog.vue';
 
 interface CheckboxTable {
   [index: string]: boolean;
@@ -103,6 +107,7 @@ export default Vue.extend({
   components: {
     DeleteWorkspaceDialog,
     WorkspaceDialog,
+    AboutDialog,
   },
 
   computed: {
