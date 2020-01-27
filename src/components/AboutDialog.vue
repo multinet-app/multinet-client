@@ -28,6 +28,16 @@
       </v-card-title>
 
       <v-card-text
+        class="px-4 pt-4 pb-1"
+        >
+        Multinet is a system for storing and processing <a
+          href="https://vdl.sci.utah.edu/mvnv/" rel="noopener
+          noreferrer">multivariate networks</a>. Learn more and explore the code
+        at <a href="https://github.com/multinet-app/multinet" rel="noopener
+          noreferrer">GitHub</a>.
+      </v-card-text>
+
+      <v-card-text
         v-if="gitSha"
         class="px-4 pt-4 pb-1"
         >
