@@ -12,6 +12,7 @@
         dark
         depressed
         large
+        tile
         v-on="on"
         >
         About Multinet
