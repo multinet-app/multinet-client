@@ -97,7 +97,7 @@
                 </v-toolbar-title>
               </v-toolbar>
               <v-card-text class="pa-0">
-                <v-list class="node-type-list" color="transparent">
+                <v-list class="node-type-list pa-0" color="transparent">
                   <v-list-item
                     class="pl-2"
                     :key="table.name"
@@ -135,7 +135,7 @@
                 </v-toolbar-title>
               </v-toolbar>
               <v-card-text class="pa-0">
-                <v-list class="edge-type-list" color="transparent">
+                <v-list class="edge-type-list pa-0" color="transparent">
                   <v-list-item
                     class="pl-2"
                     :key="table.name"
@@ -204,7 +204,7 @@
               </v-toolbar>
               <v-card-text class="pa-0">
                 <v-list
-                  class="node-list"
+                  class="node-list pa-0"
                   color="transparent"
                   dense
                 >
