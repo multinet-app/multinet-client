@@ -83,7 +83,7 @@ export default Vue.extend({
       return GIT_SHA;
     },
 
-    gitShaURL(this: any) {
+    gitShaURL(this: any): string {
       const {
         gitSha,
       } = this;
