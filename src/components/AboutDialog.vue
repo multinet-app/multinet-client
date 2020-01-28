@@ -69,7 +69,7 @@
 <script lang="ts">
 import Vue from 'vue';
 
-declare var GIT_SHA: string;
+declare const GIT_SHA: string;
 
 export default Vue.extend({
   data() {
