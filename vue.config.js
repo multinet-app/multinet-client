@@ -14,7 +14,7 @@ process.env.FLASK_SERVE_PORT = process.env.FLASK_SERVE_PORT || env.FLASK_SERVE_P
 // application.
 let GIT_SHA = null;
 if (fs.existsSync('git-sha')) {
-  GIT_SHA = JSON.stringify(fs.readFileSync('git-sha').toString());
+  GIT_SHA = JSON.stringify(fs.readFileSync('git-sha').toString().trim());
 }
 
 module.exports = {
