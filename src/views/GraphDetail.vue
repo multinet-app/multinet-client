@@ -171,36 +171,44 @@
                   Nodes
                 </v-toolbar-title>
                 <v-spacer />
-                <v-toolbar-items class="pagination">
+                <div class="pagination">
                   <v-btn
+                    class="mx-1"
                     icon
+                    small
                     :disabled="!prev"
                     v-on:click="firstPage()"
                   >
                     <v-icon>skip_previous</v-icon>
                   </v-btn>
                   <v-btn
+                    class="mx-1"
                     icon
+                    small
                     :disabled="!prev"
                     v-on:click="turnPage(false)"
                   >
                     <v-icon>chevron_left</v-icon>
                   </v-btn>
                   <v-btn
+                    class="mx-1"
                     icon
+                    small
                     :disabled="!next"
                     v-on:click="turnPage(true)"
                   >
                     <v-icon>chevron_right</v-icon>
                   </v-btn>
                   <v-btn
+                    class="mx-1"
                     icon
+                    small
                     :disabled="!next"
                     v-on:click="lastPage()"
                   >
                     <v-icon>skip_next</v-icon>
                   </v-btn>
-                </v-toolbar-items>
+                </div>
               </v-toolbar>
               <v-card-text class="pa-0">
                 <v-list
