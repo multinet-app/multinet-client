@@ -6,16 +6,12 @@
     >
     <template v-slot:activator="{ on }">
       <v-btn
-        class="ws-btn"
-        block
-        color="blue darken-3"
-        dark
-        depressed
-        large
-        tile
+        class="mt-n1 ml-n1"
+        icon
+        small
         v-on="on"
-        >
-        About Multinet
+      >
+        <v-icon size="18">help</v-icon>
       </v-btn>
     </template>
 

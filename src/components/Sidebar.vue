@@ -17,6 +17,7 @@
           tag="button"
         >
           Multinet
+          <about-dialog />
         </router-link>
       </v-toolbar-title>
       <v-spacer />
@@ -29,8 +30,6 @@
         </v-avatar>
       </v-btn>
     </v-toolbar>
-
-    <about-dialog />
 
     <WorkspaceDialog
       @created="addWorkspace"
