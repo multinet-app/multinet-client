@@ -79,7 +79,7 @@ export default Vue.extend({
   },
 
   computed: {
-    gitSha() {
+    gitSha(): string {
       return GIT_SHA;
     },
 
