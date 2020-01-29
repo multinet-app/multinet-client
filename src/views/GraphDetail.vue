@@ -90,6 +90,7 @@
               <v-toolbar
                 color="blue darken-1"
                 dark
+                dense
                 flat
               >
                 <v-toolbar-title>
@@ -97,15 +98,24 @@
                 </v-toolbar-title>
               </v-toolbar>
               <v-card-text class="pa-0">
-                <v-list class="node-type-list pa-0" color="transparent">
+                <v-list
+                  class="node-type-list pa-0"
+                  color="transparent"
+                  dense
+                >
                   <v-list-item
                     class="pl-2"
                     :key="table.name"
                     :to="`/workspaces/${workspace}/table/${table}`"
                     v-for="table in nodeTypes"
                   >
-                    <v-list-item-avatar class="mr-3">
-                      <v-icon color="grey lighten-1">scatter_plot</v-icon>
+                    <v-list-item-avatar class="my-0">
+                      <v-icon
+                        color="grey lighten-1"
+                        size="18"
+                      >
+                        scatter_plot
+                      </v-icon>
                     </v-list-item-avatar>
                     <v-list-item-title>
                       {{table}}
@@ -128,6 +138,7 @@
               <v-toolbar
                 color="blue darken-2"
                 dark
+                dense
                 flat
               >
                 <v-toolbar-title>
@@ -135,15 +146,24 @@
                 </v-toolbar-title>
               </v-toolbar>
               <v-card-text class="pa-0">
-                <v-list class="edge-type-list pa-0" color="transparent">
+                <v-list
+                  class="edge-type-list pa-0"
+                  color="transparent"
+                  dense
+                >
                   <v-list-item
                     class="pl-2"
                     :key="table.name"
                     :to="`/workspaces/${workspace}/table/${table}`"
                     v-for="table in edgeTypes"
                   >
-                    <v-list-item-avatar class="mr-3">
-                      <v-icon color="grey lighten-1">device_hub</v-icon>
+                    <v-list-item-avatar class="my-0">
+                      <v-icon
+                        color="grey lighten-1"
+                        size="18"
+                      >
+                        device_hub
+                      </v-icon>
                     </v-list-item-avatar>
                     <v-list-item-title>
                       {{table}}
@@ -165,6 +185,7 @@
               <v-toolbar
                 color="blue darken-1"
                 dark
+                dense
                 flat
               >
                 <v-toolbar-title>
@@ -221,7 +242,9 @@
                     :key="node"
                     :to="`/workspaces/${workspace}/graph/${graph}/node/${node}`"
                   >
-                    {{node}}
+                    <v-list-item-title>
+                      {{node}}
+                    </v-list-item-title>
                   </v-list-item>
                 </v-list>
               </v-card-text>
