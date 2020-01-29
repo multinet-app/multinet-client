@@ -46,7 +46,7 @@
         fluid
         pa-0
       >
-        <div class="graph-viz">
+        <div class="graph-vis">
           <div class="visualization">
             VISUALIZATION WILL GO HERE
           </div>
@@ -372,7 +372,8 @@ ul {
   list-style-type: none;
   text-align: left;
 }
-.graph-viz {
+
+.graph-vis {
   height: calc(100vh - 314px);
   position: relative;
   z-index: 1;
