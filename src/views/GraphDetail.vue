@@ -60,6 +60,19 @@
                 More ways to visualize
               </v-subheader>
               <v-divider />
+              <div class="grey lighten-4 pa-3">
+                <v-select
+                  :items="vizItems"
+                  clearable
+                  background-color="white"
+                  dense
+                  hide-details="auto"
+                  label="Label Here"
+                  menu-props="auto"
+                  outlined
+                ></v-select>
+              </div>
+              <v-divider />
               <v-list-item
                 class="pl-2"
                 :key="app.name"
@@ -292,6 +305,7 @@ export default Vue.extend({
       offset: 0,
       limit: 10,
       total: 0,
+      vizItems: ['Foo', 'Bar'],
     };
   },
   computed: {
