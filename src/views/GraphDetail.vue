@@ -66,7 +66,7 @@
                   clearable
                   background-color="white"
                   dense
-                  hide-details="auto"
+                  hide-details
                   label="Label Here"
                   menu-props="auto"
                   outlined
