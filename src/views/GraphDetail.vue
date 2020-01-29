@@ -46,7 +46,7 @@
         fluid
         pa-0
       >
-        <div class="graph-vis">
+        <div :class="graphVisClasses">
           <div class="visualization">
             VISUALIZATION WILL GO HERE
           </div>
@@ -93,7 +93,7 @@
             </v-list>
           </v-navigation-drawer>
         </div>
-        <div class="d-flex flex-row node-cols">
+        <div :class="nodeColsClasses">
           <div class="node-types flex-grow-1">
             <v-card
               flat
@@ -270,12 +270,13 @@
             depressed
             fab
             small
+            @click="toggle"
           >
             <v-icon
               dark
               size="18"
             >
-              expand_more
+              {{ drawerIcon }}
             </v-icon>
           </v-btn>
         </div>
@@ -306,6 +307,7 @@ export default Vue.extend({
       limit: 10,
       total: 0,
       vizItems: ['Foo', 'Bar'],
+      panelOpen: true,
     };
   },
   computed: {
@@ -322,8 +324,28 @@ export default Vue.extend({
     prev(): boolean {
       return 0 !== this.offset;
     },
+    nodeColsClasses(): string {
+      const {
+        panelOpen,
+      } = this;
+
+      return `d-flex flex-row node-cols${panelOpen ? '' : ' node-cols-closed'}`;
+    },
+    graphVisClasses(): string {
+      const {
+        panelOpen,
+      } = this;
+
+      return `graph-vis${panelOpen ? '' : ' graph-vis-closed'}`;
+    },
+    drawerIcon(): string {
+      return this.panelOpen ? 'expand_more' : 'expand_less';
+    },
   },
   methods: {
+    toggle() {
+      this.panelOpen = !this.panelOpen;
+    },
     async update() {
       const graph = await api.graph(this.workspace, this.graph);
       const nodes = await api.nodes(this.workspace, this.graph, {
@@ -379,6 +401,10 @@ ul {
   z-index: 1;
 }
 
+.graph-vis-closed {
+  height: calc(100vh - 75px);
+}
+
 .node-cols {
   height: 250px;
   position: relative;
@@ -387,6 +413,10 @@ ul {
 
 .node-cols > div {
   height: 100%;
+}
+
+.node-cols-closed {
+  height: 13px;
 }
 
 .node-type-list,
