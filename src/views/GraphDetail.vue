@@ -378,7 +378,7 @@ ul {
 .edge-type-list,
 .node-list {
   overflow-y: auto;
-  max-height: 168px;
+  max-height: 202px;
 }
 
 .tray-action {
