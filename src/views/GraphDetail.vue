@@ -419,6 +419,13 @@ ul {
   height: 13px;
 }
 
+.graph-vis,
+.graph-vis-closed,
+.node-cols,
+.node-cols-closed {
+  transition: height .5s ease-in-out;
+}
+
 .node-type-list,
 .edge-type-list,
 .node-list {
