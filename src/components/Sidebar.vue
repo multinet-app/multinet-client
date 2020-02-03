@@ -9,15 +9,21 @@
     <v-toolbar
       color="grey lighten-2"
     >
-      <v-toolbar-title>
+      <v-toolbar-title class="d-flex align-center">
         <router-link
           :to="{
             name: 'home',
           }"
           tag="button"
         >
-          Multinet
-          <about-dialog />
+          <v-row class="mx-0 align-center">
+            <v-col class="pa-0" cols="9">
+              <img src="../assets/app_logo.png" alt="Multinet" width="100%">
+            </v-col>
+            <v-col class="pa-0">
+              <about-dialog />
+            </v-col>
+          </v-row>
         </router-link>
       </v-toolbar-title>
       <v-spacer />
