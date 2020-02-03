@@ -19,8 +19,8 @@ async function setup() {
   const p = await b.newPage();
   await p.setViewport({ width, height });
   await p.goto('http://127.0.0.1:58080/');
-  await p.setDefaultTimeout(2000) // Default timeout of 2 seconds
-  return [b, p]
+  await p.setDefaultTimeout(2000); // Default timeout of 2 seconds
+  return [b, p];
 }
 
 function sleep(ms) {
@@ -97,7 +97,7 @@ async function elements_empty(element_type, p) {
 // Start of tests
 test('e2e - Check that actions that should work, do work', async (t) => {
   // Arrange: Set up the page
-  [b, p] == await setup();
+  const [b, p] = await setup();
 
   // Act: Test creating a workspace
   await create_workspace(p, 'puppeteer');
@@ -121,7 +121,7 @@ test('e2e - Check that actions that should work, do work', async (t) => {
 
 test('e2e - Check that actions that shouldn\'t work, don\'t work', async (t) => {
   // Arrange: Set up the page
-  [b, p] == await setup();
+  const [b, p] = await setup();
 
   // Act: Test creating invalid workspaces
   await create_workspace(p, '123');
