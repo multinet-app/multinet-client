@@ -17,10 +17,16 @@
           tag="button"
         >
           <v-row class="mx-0 align-center">
-            <v-col class="pa-0" cols="9">
+            <v-col
+              class="pb-0 pt-2 px-0"
+              cols="2"
+            >
               <img src="../assets/app_logo.png" alt="Multinet" width="100%">
             </v-col>
-            <v-col class="pa-0">
+            <v-col class="text-left" cols="6">
+              Multinet
+            </v-col>
+            <v-col class="pa-0" cols="2">
               <about-dialog />
             </v-col>
           </v-row>
