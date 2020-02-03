@@ -99,7 +99,6 @@ test('e2e - Check that actions that should work, do work', async (t) => {
   // Arrange: Set up the page
   [b, p] == await setup();
 
-
   // Act: Test creating a workspace
   await create_workspace(p, 'puppeteer');
 
