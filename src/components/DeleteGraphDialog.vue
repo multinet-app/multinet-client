@@ -29,11 +29,11 @@
         class="headline pb-0 pt-3 px-5"
         primary-title
         >
-        Delete Graphs
+        Delete Networks
       </v-card-title>
 
       <v-card-text class="px-5 py-4">
-        You are about to delete {{ selection.length }} graph{{plural}}. <strong>Are you sure?</strong>
+        You are about to delete {{ selection.length }} network{{plural}}. <strong>Are you sure?</strong>
       </v-card-text>
 
       <v-divider />

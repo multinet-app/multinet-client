@@ -22,7 +22,7 @@
           class="headline pb-0 pt-3"
           primary-title
         >
-          Create Graph
+          Create Network
         </v-card-title>
 
         <v-card-text class="px-4 pt-4 pb-1">
@@ -31,7 +31,7 @@
               <v-text-field
                 autofocus
                 filled
-                label="Graph name"
+                label="Network name"
                 v-model="newGraph"
                 :error-messages="graphCreationErrors"
               />
@@ -58,7 +58,7 @@
             depressed
             :disabled="graphCreateDisabled"
             @click="createGraph"
-          >create graph</v-btn>
+          >create network</v-btn>
         </v-card-actions>
       </v-card>
     </v-card>
@@ -103,7 +103,7 @@ export default Vue.extend({
       });
 
       if (!response) {
-        const message = `Graph "${this.newGraph}" already exists.`;
+        const message = `Network "${this.newGraph}" already exists.`;
 
         this.graphCreationErrors = [message];
         throw new Error(message);

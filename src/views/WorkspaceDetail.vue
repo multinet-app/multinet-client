@@ -81,7 +81,7 @@
           >
             <item-panel
               ref="graphPanel"
-              title="Graphs"
+              title="Networks"
               :items="graphs"
               :workspace="workspace"
               route-type="graph"

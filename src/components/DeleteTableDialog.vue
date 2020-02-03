@@ -62,7 +62,7 @@
       </v-card-title>
 
       <v-card-text class="px-5 py-4">
-        The following graphs are using these tables:
+        The following networks are using these tables:
         <ul>
           <li v-for="graph in using">
             {{ graph.graph }} ({{ graph.tables.join(', ') }})
@@ -71,7 +71,7 @@
       </v-card-text>
 
       <v-card-text class="px-5 py-4">
-        You must delete these graphs before you can delete the tables.
+        You must delete these networks before you can delete the tables.
       </v-card-text>
 
       <v-divider />
