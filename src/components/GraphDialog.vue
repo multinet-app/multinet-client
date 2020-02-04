@@ -67,8 +67,8 @@ export default Vue.extend({
       graphDialog: false,
       uploadFiletypes: {
         newick: {extension: ['phy', 'tree'], queryCall: 'newick'},
-        nested_json: {extension: ['json'], queryCall: 'nested_json'},
         d3_json: {extension: ['json'], queryCall: 'd3_json'},
+        nested_json: {extension: ['json'], queryCall: 'nested_json'},
       },
     };
   },
