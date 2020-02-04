@@ -80,19 +80,21 @@
             text
           >
             <item-panel
-              ref="tablePanel"
-              title="Tables"
-              :items="tables"
+              ref="graphPanel"
+              title="Networks"
+              :items="graphs"
               :workspace="workspace"
-              route-type="table"
-              icon="table_chart"
+              route-type="graph"
+              icon="timeline"
               >
-                <table-dialog
+                <graph-dialog
+                  :node-tables="nodeTables"
+                  :edge-tables="edgeTables"
                   :workspace="workspace"
                   @success="update"
                   />
                 <template v-slot:deleter="deleter">
-                  <delete-table-dialog
+                  <delete-graph-dialog
                     :selection="deleter.selection"
                     :workspace="deleter.workspace"
                     @deleted="update"
@@ -113,21 +115,19 @@
             text
           >
             <item-panel
-              ref="graphPanel"
-              title="Graphs"
-              :items="graphs"
+              ref="tablePanel"
+              title="Tables"
+              :items="tables"
               :workspace="workspace"
-              route-type="graph"
-              icon="timeline"
+              route-type="table"
+              icon="table_chart"
               >
-                <graph-dialog
-                  :node-tables="nodeTables"
-                  :edge-tables="edgeTables"
+                <table-dialog
                   :workspace="workspace"
                   @success="update"
                   />
                 <template v-slot:deleter="deleter">
-                  <delete-graph-dialog
+                  <delete-table-dialog
                     :selection="deleter.selection"
                     :workspace="deleter.workspace"
                     @deleted="update"

@@ -111,8 +111,8 @@ test('e2e - Check that actions that should work, do work', async (t) => {
 
   t.ok(exists, 'The new workspace has no tables.');
 
-  exists = await elements_empty('Graphs', p, undefined);
-  t.ok(exists, 'The new workspace has no graphs.');
+  exists = await elements_empty('Networks', p, undefined);
+  t.ok(exists, 'The new workspace has no networks.');
 
   // Cleanup
   await b.close();
