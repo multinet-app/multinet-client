@@ -416,14 +416,21 @@ ul {
 }
 
 .node-cols-closed {
-  height: 13px;
+  height: 11px;
 }
 
 .graph-vis,
-.graph-vis-closed,
+.graph-vis-closed {
+  transition: height .1s .05s ease-in-out;
+}
+
 .node-cols,
 .node-cols-closed {
-  transition: height .5s ease-in-out;
+  transition: height .15s ease-in-out;
+}
+
+.node-cols-closed > * {
+  overflow: hidden;
 }
 
 .node-type-list,
@@ -434,11 +441,15 @@ ul {
 }
 
 .tray-action {
-  height: 26px;
+  height: 22px;
   position: absolute;
   right: calc(50% + 13px);
-  top: -13px;
-  width: 26px;
+  top: -11px;
+  width: 22px;
+}
+
+.tray-action i {
+  margin-top: -1px;
 }
 
 .ws-detail-title {
