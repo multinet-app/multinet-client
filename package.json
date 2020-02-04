@@ -23,6 +23,7 @@
     "material-design-icons-iconfont": "^5.0.1",
     "multinet": "0.7.0",
     "vue": "^2.6.10",
+    "vue-gtag": "^1.2.1",
     "vue-router": "^3.0.2",
     "vuetify": "^2.1.5"
   },
