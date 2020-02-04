@@ -14,9 +14,7 @@
         </v-flex>
       </v-layout>
       <v-layout wrap>
-        <v-flex
-          class="pr-2"
-        >
+        <v-flex class="pr-2">
           <v-file-input
             id="file-selector"
             clearable
@@ -27,6 +25,16 @@
             single-line
             @change="handleFileInput"
             :error-messages="fileUploadError"
+          />
+        </v-flex>
+        <v-flex xs6 class="pl-2" v-if="fileTypeSelector">
+          <v-select
+            id="file-type"
+            filled
+            label="File type"
+            v-if="typeList.length"
+            v-model="selectedType"
+            :items="typeList"
           />
         </v-flex>
       </v-layout>
@@ -55,9 +63,10 @@ export default Vue.extend({
   name: 'FileUploadForm',
 
   props: {
-    workspace: {
-      type: String,
-      required: true,
+    fileTypeSelector: {
+      type: Boolean,
+      default: false,
+      required: false,
     },
     namePlaceholder: {
       type: String,
@@ -73,6 +82,10 @@ export default Vue.extend({
       type: String,
       default: 'Create',
       required: false,
+    },
+    workspace: {
+      type: String,
+      required: true,
     },
     types: {
       type: Object as PropType<FileTypeTable>,
@@ -91,6 +104,9 @@ export default Vue.extend({
   },
 
   computed: {
+    typeList(): string[] {
+      return Object.keys(this.types);
+    },
     createDisabled(): boolean {
       return !this.file || !this.selectedType || !this.newTable;
     },

@@ -27,7 +27,13 @@
           </v-tab>
 
           <v-tab-item>
-            <file-upload-form createButtonText="Upload" :workspace="workspace" :types="uploadFiletypes" @success="graphDialogSuccess"></file-upload-form>
+            <file-upload-form
+              fileTypeSelector
+              createButtonText="Upload"
+              :workspace="workspace"
+              :types="uploadFiletypes"
+              @success="graphDialogSuccess"
+            />
           </v-tab-item>
 
           <v-tab-item>
