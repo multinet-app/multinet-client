@@ -108,7 +108,7 @@ export default Vue.extend({
       return Object.keys(this.types);
     },
     createDisabled(): boolean {
-      return !this.file || !this.selectedType || !this.newTable || this.fileUploadError;
+      return !this.file || !this.selectedType || !this.newTable || !!this.fileUploadError;
     },
   },
 
