@@ -29,6 +29,8 @@
           <v-tab-item>
             <file-upload-form
               fileTypeSelector
+              namePlaceholder="Network name"
+              fileInputPlaceholder="Select network file"
               createButtonText="Upload"
               :workspace="workspace"
               :types="uploadFiletypes"
