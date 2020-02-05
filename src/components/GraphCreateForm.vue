@@ -3,23 +3,23 @@
     <v-card-text class="px-4 pt-4 pb-1">
       <v-layout wrap>
         <v-flex>
-          <v-text-field
-            autofocus
+          <v-select
             filled
-            label="Network name"
-            v-model="newGraph"
-            :error-messages="graphCreationErrors"
+            label="Choose edge table"
+            v-model="graphEdgeTable"
+            :items="edgeTables"
           />
         </v-flex>
       </v-layout>
 
       <v-layout wrap>
         <v-flex>
-          <v-select
+          <v-text-field
+            autofocus
             filled
-            label="Choose edge table"
-            v-model="graphEdgeTable"
-            :items="edgeTables"
+            label="Network name"
+            v-model="newGraph"
+            :error-messages="graphCreationErrors"
           />
         </v-flex>
       </v-layout>

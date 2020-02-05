@@ -2,18 +2,6 @@
   <v-card>
     <v-card-text class="px-4 pt-4 pb-1">
       <v-layout wrap>
-        <v-flex>
-          <v-text-field
-            id="table-name"
-            autofocus
-            filled
-            v-model="newTable"
-            :label="namePlaceholder"
-            :error-messages="tableCreationError"
-          />
-        </v-flex>
-      </v-layout>
-      <v-layout wrap>
         <v-flex class="pr-2">
           <v-file-input
             id="file-selector"
@@ -35,6 +23,18 @@
             v-if="typeList.length"
             v-model="selectedType"
             :items="typeList"
+          />
+        </v-flex>
+      </v-layout>
+      <v-layout wrap>
+        <v-flex>
+          <v-text-field
+            id="table-name"
+            autofocus
+            filled
+            v-model="newTable"
+            :label="namePlaceholder"
+            :error-messages="tableCreationError"
           />
         </v-flex>
       </v-layout>
