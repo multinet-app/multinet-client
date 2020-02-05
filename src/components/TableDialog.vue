@@ -53,7 +53,6 @@ export default Vue.extend({
       } as FileTypeTable,
     };
   },
-  computed: {},
   methods: {
     uploadSuccess() {
       this.tableDialog = false;
