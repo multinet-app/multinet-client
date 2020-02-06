@@ -18,48 +18,30 @@
     </template>
     <v-card>
       <v-card>
-        <v-card-title
-          class="headline pb-0 pt-3"
-          primary-title
-        >
-          Create Network
-        </v-card-title>
+        <v-tabs>
+          <v-tab>
+            Upload
+          </v-tab>
+          <v-tab>
+            Create
+          </v-tab>
 
-        <v-card-text class="px-4 pt-4 pb-1">
-          <v-layout wrap>
-            <v-flex>
-              <v-text-field
-                autofocus
-                filled
-                label="Network name"
-                v-model="newGraph"
-                :error-messages="graphCreationErrors"
-              />
-            </v-flex>
-          </v-layout>
+          <v-tab-item>
+            <file-upload-form
+              fileTypeSelector
+              namePlaceholder="Network name"
+              fileInputPlaceholder="Select network file"
+              createButtonText="Upload"
+              :workspace="workspace"
+              :types="uploadFiletypes"
+              @success="graphDialogSuccess"
+            />
+          </v-tab-item>
 
-          <v-layout wrap>
-            <v-flex>
-              <v-select
-                filled
-                label="Choose edge table"
-                v-model="graphEdgeTable"
-                :items="edgeTables"
-              />
-            </v-flex>
-          </v-layout>
-        </v-card-text>
-
-        <v-divider></v-divider>
-
-        <v-card-actions class="px-4 py-3">
-          <v-spacer></v-spacer>
-          <v-btn
-            depressed
-            :disabled="graphCreateDisabled"
-            @click="createGraph"
-          >create network</v-btn>
-        </v-card-actions>
+          <v-tab-item>
+            <graph-create-form :edge-tables="edgeTables" :workspace="workspace" @success="graphDialogSuccess"/>
+          </v-tab-item>
+        </v-tabs>
       </v-card>
     </v-card>
   </v-dialog>
@@ -69,6 +51,8 @@
 import Vue from 'vue';
 
 import api from '@/api';
+import GraphCreateForm from '@/components/GraphCreateForm.vue';
+import FileUploadForm from '@/components/FileUploadForm.vue';
 
 export default Vue.extend({
   name: 'GraphDialog',
@@ -76,43 +60,25 @@ export default Vue.extend({
     edgeTables: Array,
     workspace: String,
   },
+  components: {
+    GraphCreateForm,
+    FileUploadForm,
+  },
   data() {
     return {
-      graphCreationErrors: [] as string[],
       graphDialog: false,
-      graphEdgeTable: null as string | null,
-      newGraph: '',
+      uploadFiletypes: {
+        d3_json: {extension: ['json'], queryCall: 'd3_json'},
+        nested_json: {extension: ['json'], queryCall: 'nested_json'},
+        newick: {extension: ['phy', 'tree'], queryCall: 'newick'},
+      },
     };
   },
-  computed: {
-    graphCreateDisabled(): boolean {
-      return !this.graphEdgeTable || !this.newGraph;
-    },
-
-  },
+  computed: {},
   methods: {
-    async createGraph() {
-      const { workspace, newGraph } = this;
-
-      if (this.graphEdgeTable === null) {
-        throw new Error('this.graphEdgeTable must not be null');
-      }
-
-      const response = await api.createGraph(workspace, newGraph, {
-        edgeTable: this.graphEdgeTable,
-      });
-
-      if (!response) {
-        const message = `Network "${this.newGraph}" already exists.`;
-
-        this.graphCreationErrors = [message];
-        throw new Error(message);
-      }
-
-      this.graphCreationErrors = [];
-
-      this.$emit('success');
+    graphDialogSuccess() {
       this.graphDialog = false;
+      this.$emit('success');
     },
   },
 });

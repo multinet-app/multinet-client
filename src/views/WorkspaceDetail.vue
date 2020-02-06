@@ -152,8 +152,6 @@ import DeleteGraphDialog from '@/components/DeleteGraphDialog.vue';
 import TableDialog from '@/components/TableDialog.vue';
 import DeleteTableDialog from '@/components/DeleteTableDialog.vue';
 
-import { FileTypeTable } from '@/types';
-
 export default Vue.extend({
   name: 'WorkspaceDetail',
   components: {
@@ -167,11 +165,6 @@ export default Vue.extend({
   data() {
     return {
       editing: false,
-      fileTypes: {
-        csv: {extension: ['csv'], queryCall: 'csv'},
-        newick: {extension: ['phy', 'tree'], queryCall: 'newick'},
-        nested_json: {extension: ['json'], queryCall: 'nested_json'},
-      } as FileTypeTable,
       tables: [] as string[],
       nodeTables: [] as string[],
       edgeTables: [] as string[],
