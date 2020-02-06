@@ -3,52 +3,50 @@
     <v-content>
       <!-- BANNER -->
       <v-responsive
-        class="primary mb-5 pa-5"
-        height="350"
+        class="mb-5 pt-5"
       >
-        <v-container
-          class="d-flex"
-        >
-          <v-card
-            class="pr-5"
-            color="transparent"
+        <v-container class="d-flex align-center">
+          <v-sheet
+            class="d-flex pa-5"
+            color="primary"
             dark
             flat
             height="100%"
-            tile
           >
-            <v-container>
+            <v-card
+              class="pr-5"
+              color="transparent"
+              flat
+              width="66%"
+            >
               <v-card-title>Samples Heading</v-card-title>
               <v-divider />
               <v-card-text>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras dignissim ante ac felis aliquet, ut elementum nibh efficitur. In semper consequat felis vel tempor. Cras vestibulum mauris odio, sit amet mattis nunc blandit ut. Pellentesque auctor lacinia ante faucibus pharetra.
               </v-card-text>
-            </v-container>
-          </v-card>
-          <v-card width="33%">
-            <v-card-title>Collaborators</v-card-title>
-            <v-card-text class="mb-3 pb-5">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras dignissim ante ac felis aliquet, ut elementum nibh efficitur.
-            </v-card-text>
-            <v-divider />
-            <v-card-text>
-              <v-row class="px-4">
-                <v-col
-                  class="align-center d-flex py-1"
-                  cols="4"
-                  :key="collab.logo"
-                  v-for="collab in collabs"
-                >
-                  <img :src="collab.logo" alt="" width="100%" height="auto">
-                </v-col>
-              </v-row>
-            </v-card-text>
-          </v-card>
+            </v-card>
+            <v-card light width="33%">
+              <v-card-title>Collaborators</v-card-title>
+              <v-divider />
+              <v-card-text>
+                <v-row class="px-4">
+                  <v-col
+                    class="align-center d-flex py-1"
+                    cols="4"
+                    :key="collab.logo"
+                    v-for="collab in collabs"
+                  >
+                    <img :src="collab.logo" alt="" width="100%" height="auto">
+                  </v-col>
+                </v-row>
+              </v-card-text>
+            </v-card>
+          </v-sheet>
         </v-container>
       </v-responsive>
 
       <!-- COLUMNS -->
-      <v-container class="pt-5">
+      <v-container>
         <v-row>
           <v-col
             cols="4"
