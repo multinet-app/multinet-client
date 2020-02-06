@@ -36,6 +36,7 @@
                 <v-col
                   class="align-center d-flex py-1"
                   cols="4"
+                  :key="collab.logo"
                   v-for="collab in collabs"
                 >
                   <img :src="collab.logo" alt="" width="100%" height="auto">
