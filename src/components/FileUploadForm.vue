@@ -20,6 +20,8 @@
             id="file-type"
             filled
             label="File type"
+            persistent-hint
+            :hint="selectedType ? types[selectedType].hint : null"
             v-if="typeList.length"
             v-model="selectedType"
             :items="typeList"
