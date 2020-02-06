@@ -15,7 +15,6 @@
       <v-layout wrap>
         <v-flex>
           <v-text-field
-            autofocus
             filled
             label="Network name"
             v-model="newGraph"

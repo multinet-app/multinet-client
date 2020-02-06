@@ -30,7 +30,6 @@
         <v-flex>
           <v-text-field
             id="table-name"
-            autofocus
             filled
             v-model="newTable"
             :label="namePlaceholder"
