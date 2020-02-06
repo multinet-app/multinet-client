@@ -21,7 +21,7 @@
             filled
             label="File type"
             v-if="typeList.length"
-            v-model="selectedType"
+            v-model="selectedFileType"
             :items="typeList"
           />
         </v-flex>
@@ -31,7 +31,7 @@
           <v-text-field
             id="table-name"
             filled
-            v-model="newTable"
+            v-model="selectedFileName"
             :label="namePlaceholder"
             :error-messages="tableCreationError"
           />
@@ -96,9 +96,9 @@ export default Vue.extend({
     return {
       tableCreationError: null as string | null,
       fileUploadError: null as string | null,
-      selectedType: null as string | null,
+      selectedFileName: null as string | null,
+      selectedFileType: null as string | null,
       file: null as File | null,
-      newTable: '',
     };
   },
 
@@ -107,17 +107,29 @@ export default Vue.extend({
       return Object.keys(this.types);
     },
     createDisabled(): boolean {
-      return !this.file || !this.selectedType || !this.newTable || !!this.fileUploadError;
+      return (
+        !this.file ||
+        !this.selectedFileName ||
+        !this.selectedFileType ||
+        !!this.fileUploadError
+      );
     },
   },
 
   methods: {
     handleFileInput(file: File) {
       this.file = file;
-      const fileType = this.fileType(file);
 
-      if (fileType) {
-        this.selectedType = fileType;
+      if (!file) {
+        this.selectedFileName = null;
+        this.selectedFileType = null;
+        this.fileUploadError = null;
+        return;
+      }
+
+      const fileInfo = this.fileInfo(file);
+      if (fileInfo !== null) {
+        [this.selectedFileName, this.selectedFileType] = fileInfo;
         this.fileUploadError = null;
       } else {
         this.fileUploadError = 'Invalid file type';
@@ -125,13 +137,13 @@ export default Vue.extend({
     },
 
     async createTable() {
-      try {
-        if (this.file === null) {
-          throw new Error('this.file must not be null');
-        }
+      if (this.file === null || this.selectedFileName === null) {
+        throw new Error('Valid file must be selected.');
+      }
 
-        await api.uploadTable(this.workspace, this.newTable, {
-          type: this.selectedType as UploadType,
+      try {
+        await api.uploadTable(this.workspace, this.selectedFileName, {
+          type: this.selectedFileType as UploadType,
           data: this.file,
         });
 
@@ -142,17 +154,17 @@ export default Vue.extend({
       }
     },
 
-    fileType(file: File): string | null {
+    fileInfo(file: File): [string, string] | null {
       if (!file) {
         return null;
       }
 
-      const fileName = file.name.split('.');
-      const extension = fileName[fileName.length - 1];
+      const [fileName, ...extensions] = file.name.split('.');
+      const extension = extensions[extensions.length - 1];
 
       for (const type in this.types) {
         if (this.types[type].extension.includes(extension) && validUploadType(type)) {
-          return type;
+          return [fileName, type];
         }
       }
       return null;
