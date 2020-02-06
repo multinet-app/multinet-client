@@ -25,9 +25,11 @@
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras dignissim ante ac felis aliquet, ut elementum nibh efficitur. In semper consequat felis vel tempor. Cras vestibulum mauris odio, sit amet mattis nunc blandit ut. Pellentesque auctor lacinia ante faucibus pharetra.
               </v-card-text>
             </v-card>
-            <v-card light width="33%">
-              <v-card-title>Collaborators</v-card-title>
-              <v-divider />
+            <v-card
+              class="d-flex align-center"
+              light
+              width="33%"
+            >
               <v-card-text>
                 <v-row class="px-4">
                   <v-col
