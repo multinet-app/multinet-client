@@ -1,24 +1,53 @@
 <template>
-  <v-container fluid>
+  <v-container class="pa-0" fluid>
     <v-content>
       <!-- BANNER -->
-      <v-container fluid>
-        <v-card
-          color="primary"
-          dark
-          flat
-          class="mb-2"
+      <v-responsive
+        class="primary mb-5 pa-5"
+        height="350"
+      >
+        <v-container
+          class="d-flex"
         >
-          <v-card-title>Samples Heading</v-card-title>
-          <v-divider />
-          <v-card-text>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras dignissim ante ac felis aliquet, ut elementum nibh efficitur. In semper consequat felis vel tempor. Cras vestibulum mauris odio, sit amet mattis nunc blandit ut. Pellentesque auctor lacinia ante faucibus pharetra.
-          </v-card-text>
-        </v-card>
-      </v-container>
+          <v-card
+            class="pr-5"
+            color="transparent"
+            dark
+            flat
+            height="100%"
+            tile
+          >
+            <v-container>
+              <v-card-title>Samples Heading</v-card-title>
+              <v-divider />
+              <v-card-text>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras dignissim ante ac felis aliquet, ut elementum nibh efficitur. In semper consequat felis vel tempor. Cras vestibulum mauris odio, sit amet mattis nunc blandit ut. Pellentesque auctor lacinia ante faucibus pharetra.
+              </v-card-text>
+            </v-container>
+          </v-card>
+          <v-card width="33%">
+            <v-card-title>Collaborators</v-card-title>
+            <v-card-text class="mb-3 pb-5">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras dignissim ante ac felis aliquet, ut elementum nibh efficitur.
+            </v-card-text>
+            <v-divider />
+            <v-card-text>
+              <v-row class="px-4">
+                <v-col
+                  class="align-center d-flex py-1"
+                  cols="4"
+                  v-for="collab in collabs"
+                >
+                  <img :src="collab.logo" alt="" width="100%" height="auto">
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-card>
+        </v-container>
+      </v-responsive>
 
       <!-- COLUMNS -->
-      <v-container fluid>
+      <v-container class="pt-5">
         <v-row>
           <v-col
             cols="4"
@@ -66,7 +95,17 @@ import Vue from 'vue';
 export default Vue.extend ({
   data() {
     return {
-      overlay: false,
+      collabs: [
+        {
+          logo: require('../assets/Ulogo_100px.png'),
+        },
+        {
+          logo: require('../assets/kw_logo.png'),
+        },
+        {
+          logo: require('../assets/nsf_logo.png'),
+        },
+      ],
       samples: [
         {
           title: 'Boston',
