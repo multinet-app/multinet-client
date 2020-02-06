@@ -2,10 +2,10 @@
   <v-menu
     class="get-started"
     :close-on-content-click="false"
-    :close-on-click="false"
-    max-width="250"
+    max-width="275"
     offset-x
-    :nudge-top="35"
+    origin="center center"
+    transition="scale-transition"
     v-model="popover"
   >
     <template v-slot:activator="{ on }">
@@ -73,7 +73,7 @@
     <v-card>
       <v-card-title class="get-started-title pb-2">Getting Started</v-card-title>
       <v-card-text class="pb-5">
-        Click here to create a workspace or select an existing one from the Workpaces list.
+        Click <strong>NEW WORKSPACE</strong> to create a workspace or select an existing one from the Workpaces list.
       </v-card-text>
       <v-divider />
       <v-card-actions>
