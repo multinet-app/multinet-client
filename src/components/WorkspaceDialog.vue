@@ -1,64 +1,93 @@
 <template>
-  <v-dialog
-    class="ws-dialogue"
-    v-model="dialog"
-    width="500"
+  <v-menu
+    class="get-started"
+    :close-on-content-click="false"
+    :close-on-click="false"
+    max-width="250"
+    offset-x
+    :nudge-top="35"
+    v-model="popover"
   >
     <template v-slot:activator="{ on }">
-      <v-btn
-        class="ws-btn ma-0 px-4 py-5"
-        block
-        color="grey darken-3"
-        dark
-        depressed
-        large
-        v-on="on"
-        id="add-workspace"
+      <v-dialog
+        class="ws-dialogue"
+        v-model="dialog"
+        width="500"
       >
-        New Workspace
-        <v-spacer />
-        <v-icon
-          right
-          dark
-          size="20px"
-        >add_circle</v-icon>
-      </v-btn>
+        <template v-slot:activator="{ on }">
+          <v-btn
+            class="ws-btn ma-0 px-4 py-5"
+            block
+            color="grey darken-3"
+            dark
+            depressed
+            large
+            v-on="on"
+            id="add-workspace"
+          >
+            New Workspace
+            <v-spacer />
+            <v-icon
+              right
+              dark
+              size="20px"
+            >add_circle</v-icon>
+          </v-btn>
+        </template>
+
+        <v-card>
+          <v-card-title
+            class="headline pb-0 pt-3"
+            primary-title
+          >
+            Create Workspace
+          </v-card-title>
+
+          <v-card-text class="px-4 pt-4 pb-1">
+            <v-text-field
+              id="workspace-name"
+              autofocus
+              filled
+              label="Workspace name"
+              v-model="newWorkspace"
+            />
+          </v-card-text>
+
+          <v-divider></v-divider>
+
+          <v-card-actions class="px-4 py-3">
+            <v-spacer></v-spacer>
+            <v-btn
+              id="create-workspace"
+              color="grey darken-3"
+              dark
+              depressed
+              @click="create"
+            >
+              Create Workspace
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </template>
-
     <v-card>
-      <v-card-title
-        class="headline pb-0 pt-3"
-        primary-title
-      >
-        Create Workspace
-      </v-card-title>
-
-      <v-card-text class="px-4 pt-4 pb-1">
-        <v-text-field
-          id="workspace-name"
-          autofocus
-          filled
-          label="Workspace name"
-          v-model="newWorkspace"
-        />
+      <v-card-title class="get-started-title pb-2">Getting Started</v-card-title>
+      <v-card-text class="pb-5">
+        Click here to create a workspace or select an existing one from the Workpaces list.
       </v-card-text>
-
-      <v-divider></v-divider>
-
-      <v-card-actions class="px-4 py-3">
-        <v-spacer></v-spacer>
+      <v-divider />
+      <v-card-actions>
+        <v-spacer />
         <v-btn
-          id="create-workspace"
-          color="grey darken-3"
-          dark
-          depressed
-          @click="create"
+          color="primary"
+          @click="popover = false"
+          small
         >
-          Create Workspace
+          Got it!
         </v-btn>
       </v-card-actions>
     </v-card>
-  </v-dialog>
+  </v-menu>
 </template>
 
 <script lang="ts">
@@ -74,6 +103,7 @@ export default Vue.extend({
     return {
       dialog,
       newWorkspace,
+      popover: true,
     };
   },
   methods: {
@@ -94,13 +124,13 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-.v-dialog__container.ws-dialogue {
-  /* dialog adds weird space above button. Positioning absolutely pulls it out of the layout
-     so that it does not push the button down */
-  position: absolute;
-}
+
 .v-btn.ws-btn {
   border-radius: 0;
   height: auto !important;
+}
+
+.get-started {
+  position: relative;
 }
 </style>
