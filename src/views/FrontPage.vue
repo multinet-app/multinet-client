@@ -84,7 +84,13 @@
                     >
                       <div class="overlay-text">
                         <p>{{ sample.text }}</p>
-                        <v-btn color="primary">See more info</v-btn>
+                        <v-btn
+                          color="primary"
+                          :href="sample.href"
+                          target="_blank"
+                          >
+                          Open in New Window
+                        </v-btn>
                       </div>
                     </v-overlay>
                   </v-fade-transition>
@@ -121,11 +127,13 @@ export default Vue.extend ({
           title: 'Paul Revere - Node Link Diagram',
           image: require('../assets/boston.jpg'),
           text: 'Explore the Paul Revere dataset using an interactive and beautiful node-link diagram. Discover the figures coordinating a pivotal event in history!',
+          href: '/nodelink/?workspace=boston&graph=boston',
         },
         {
           title: 'Les Miserables - Adjacency Matrix',
           image: require('../assets/miserables.jpg'),
           text: 'Explore the Les Miserables dataset using an interactive adjacency matrix. See the factions and relationships for yourself!',
+          href: '/adjmatrix/?workspace=miserables&graph=miserables',
         },
       ],
     };
