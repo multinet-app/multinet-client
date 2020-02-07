@@ -13,6 +13,8 @@ export interface TableRow {
 }
 
 export interface FileType {
+  displayName: string;
+  hint: string;
   extension: string[];
   queryCall: UploadType;
 }

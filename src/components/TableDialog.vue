@@ -23,7 +23,11 @@
       >
         Create Table
       </v-card-title>
-      <file-upload-form :types="types" :workspace="workspace" @success="uploadSuccess" />
+      <file-upload-form
+        :types="types"
+        :workspace="workspace"
+        @success="uploadSuccess"
+      />
     </v-card>
   </v-dialog>
 </template>
@@ -32,7 +36,7 @@
 import Vue from 'vue';
 
 import api from '@/api';
-import { FileTypeTable } from '@/types';
+import { FileType } from '@/types';
 import FileUploadForm from '@/components/FileUploadForm.vue';
 
 
@@ -48,9 +52,14 @@ export default Vue.extend({
   data() {
     return {
       tableDialog: false,
-      types: {
-        csv: {extension: ['csv'], queryCall: 'csv'},
-      } as FileTypeTable,
+      types: [
+        {
+          extension: ['csv'],
+          queryCall: 'csv',
+          hint: 'Comma Separated Value file',
+          displayName: 'CSV',
+        },
+      ] as FileType[],
     };
   },
   methods: {

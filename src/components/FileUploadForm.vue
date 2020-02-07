@@ -17,12 +17,17 @@
         </v-flex>
         <v-flex xs6 class="pl-2" v-if="fileTypeSelector">
           <v-select
+            v-if="types.length"
             id="file-type"
             filled
             label="File type"
-            v-if="typeList.length"
-            v-model="selectedFileType"
-            :items="typeList"
+            persistent-hint
+            :hint="selectedType ? selectedType.hint : null"
+            v-model="selectedType"
+            :items="types"
+            item-text="displayName"
+            item-value="displayName"
+            return-object
           />
         </v-flex>
       </v-layout>
@@ -31,7 +36,7 @@
           <v-text-field
             id="table-name"
             filled
-            v-model="selectedFileName"
+            v-model="fileName"
             :label="namePlaceholder"
             :error-messages="tableCreationError"
           />
@@ -55,7 +60,7 @@ import { UploadType, validUploadType } from 'multinet';
 import Vue, { PropType } from 'vue';
 
 import api from '@/api';
-import { FileTypeTable } from '@/types';
+import { FileType } from '@/types';
 
 
 export default Vue.extend({
@@ -87,7 +92,7 @@ export default Vue.extend({
       required: true,
     },
     types: {
-      type: Object as PropType<FileTypeTable>,
+      type: Array as PropType<FileType[]>,
       required: true,
     },
   },
@@ -96,21 +101,18 @@ export default Vue.extend({
     return {
       tableCreationError: null as string | null,
       fileUploadError: null as string | null,
-      selectedFileName: null as string | null,
-      selectedFileType: null as string | null,
+      fileName: null as string | null,
+      selectedType: null as FileType | null,
       file: null as File | null,
     };
   },
 
   computed: {
-    typeList(): string[] {
-      return Object.keys(this.types);
-    },
     createDisabled(): boolean {
       return (
         !this.file ||
-        !this.selectedFileName ||
-        !this.selectedFileType ||
+        !this.fileName ||
+        !this.selectedType ||
         !!this.fileUploadError
       );
     },
@@ -121,15 +123,15 @@ export default Vue.extend({
       this.file = file;
 
       if (!file) {
-        this.selectedFileName = null;
-        this.selectedFileType = null;
+        this.fileName = null;
+        this.selectedType = null;
         this.fileUploadError = null;
         return;
       }
 
       const fileInfo = this.fileInfo(file);
       if (fileInfo !== null) {
-        [this.selectedFileName, this.selectedFileType] = fileInfo;
+        [this.fileName, this.selectedType] = fileInfo;
         this.fileUploadError = null;
       } else {
         this.fileUploadError = 'Invalid file type';
@@ -137,14 +139,21 @@ export default Vue.extend({
     },
 
     async createTable() {
-      if (this.file === null || this.selectedFileName === null) {
+      const {
+        file,
+        workspace,
+        fileName,
+        selectedType,
+      } = this;
+
+      if (file === null || fileName === null) {
         throw new Error('Valid file must be selected.');
       }
 
       try {
-        await api.uploadTable(this.workspace, this.selectedFileName, {
-          type: this.selectedFileType as UploadType,
-          data: this.file,
+        await api.uploadTable(workspace, fileName, {
+          type: selectedType!.queryCall as UploadType,
+          data: file,
         });
 
         this.tableCreationError = null;
@@ -154,7 +163,7 @@ export default Vue.extend({
       }
     },
 
-    fileInfo(file: File): [string, string] | null {
+    fileInfo(file: File): [string, FileType] | null {
       if (!file) {
         return null;
       }
@@ -162,8 +171,8 @@ export default Vue.extend({
       const [fileName, ...extensions] = file.name.split('.');
       const extension = extensions[extensions.length - 1];
 
-      for (const type in this.types) {
-        if (this.types[type].extension.includes(extension) && validUploadType(type)) {
+      for (const type of this.types) {
+        if (type.extension.includes(extension) && validUploadType(type.queryCall)) {
           return [fileName, type];
         }
       }
