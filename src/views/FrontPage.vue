@@ -19,10 +19,19 @@
               flat
               width="66%"
             >
-              <v-card-title>Samples Heading</v-card-title>
+              <v-card-title>Welcome to Multinet!</v-card-title>
               <v-divider />
               <v-card-text>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras dignissim ante ac felis aliquet, ut elementum nibh efficitur. In semper consequat felis vel tempor. Cras vestibulum mauris odio, sit amet mattis nunc blandit ut. Pellentesque auctor lacinia ante faucibus pharetra.
+                Check out the featured datasets and visualizations below! You
+                can also create your own workspace and upload your own data with
+                the <strong>New Workspace</strong> button to the left, or
+                explore data others have uploaded.
+              </v-card-text>
+
+              <v-card-text>
+                This project is a joint research and development effort between
+                the University of Utah and Kitware Inc., funded by the National
+                Science Foundation.
               </v-card-text>
             </v-card>
             <v-card
