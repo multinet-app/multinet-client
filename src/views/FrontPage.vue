@@ -118,14 +118,14 @@ export default Vue.extend ({
       ],
       samples: [
         {
-          title: 'Boston',
+          title: 'Paul Revere - Node Link Diagram',
           image: require('../assets/boston.jpg'),
-          text: 'Boston Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras dignissim ante ac felis aliquet, ut elementum nibh efficitur. In semper consequat felis vel tempor.',
+          text: 'Explore the Paul Revere dataset using an interactive and beautiful node-link diagram. Discover the figures coordinating a pivotal event in history!',
         },
         {
-          title: 'Miserables',
+          title: 'Les Miserables - Adjacency Matrix',
           image: require('../assets/miserables.jpg'),
-          text: 'Miserables Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras dignissim ante ac felis aliquet, ut elementum nibh efficitur. In semper consequat felis vel tempor.',
+          text: 'Explore the Les Miserables dataset using an interactive adjacency matrix. See the factions and relationships for yourself!',
         },
       ],
     };
