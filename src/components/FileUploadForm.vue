@@ -123,7 +123,6 @@ export default Vue.extend({
       this.file = file;
 
       if (!file) {
-        this.fileName = null;
         this.selectedType = null;
         this.fileUploadError = null;
         return;
@@ -131,10 +130,13 @@ export default Vue.extend({
 
       const fileInfo = this.fileInfo(file);
       if (fileInfo !== null) {
-        [this.fileName, this.selectedType] = fileInfo;
+        const [fileName, selectedType] = fileInfo;
+        this.fileName = this.fileName || fileName;
+        this.selectedType = selectedType;
         this.fileUploadError = null;
       } else {
         this.fileUploadError = 'Invalid file type';
+        this.selectedType = null;
       }
     },
 
