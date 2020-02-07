@@ -70,19 +70,19 @@ export default Vue.extend({
       uploadFiletypes: [
         {
           displayName: 'D3 JSON (ext: .json)',
-          hint: 'Networks described with the D3-force layout format.',
+          hint: 'JSON format compatible with d3-force',
           queryCall: 'd3_json',
           extension: ['json'],
         },
         {
-          displayName: 'Arbor Nested JSON (ext: .json)',
-          hint: 'Arbor Nested JSON.',
+          displayName: 'Arbor Nested Tree (ext: .json)',
+          hint: 'JSON-encoded tree format used by the Arbor project',
           queryCall: 'nested_json',
           extension: ['json'],
         },
         {
           displayName: 'Newick Tree (ext: .phy, .tree)',
-          hint: 'The Newick Standard for representing trees in computer-readable form.',
+          hint: 'The Newick Standard for representing trees in computer-readable form',
           queryCall: 'newick',
           extension: ['phy', 'tree'],
         },
