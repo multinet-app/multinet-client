@@ -67,23 +67,26 @@ export default Vue.extend({
   data() {
     return {
       graphDialog: false,
-      uploadFiletypes: {
-        d3_json: {
-          extension: ['json'],
-          queryCall: 'd3_json',
+      uploadFiletypes: [
+        {
+          displayName: 'D3 JSON (ext: .json)',
           hint: 'Networks described with the D3-force layout format.',
-        },
-        nested_json: {
+          queryCall: 'd3_json',
           extension: ['json'],
-          queryCall: 'nested_json',
+        },
+        {
+          displayName: 'Arbor Nested JSON (ext: .json)',
           hint: 'Arbor Nested JSON.',
+          queryCall: 'nested_json',
+          extension: ['json'],
         },
-        newick: {
-          extension: ['phy', 'tree'],
-          queryCall: 'newick',
+        {
+          displayName: 'Newick Tree (ext: .phy, .tree)',
           hint: 'The Newick Standard for representing trees in computer-readable form.',
+          queryCall: 'newick',
+          extension: ['phy', 'tree'],
         },
-      },
+      ],
     };
   },
   computed: {},

@@ -17,14 +17,17 @@
         </v-flex>
         <v-flex xs6 class="pl-2" v-if="fileTypeSelector">
           <v-select
+            v-if="types.length"
             id="file-type"
             filled
             label="File type"
             persistent-hint
-            :hint="selectedType ? types[selectedType].hint : null"
-            v-if="typeList.length"
+            :hint="selectedType ? selectedType.hint : null"
             v-model="selectedType"
-            :items="typeList"
+            :items="types"
+            item-text="displayName"
+            item-value="displayName"
+            return-object
           />
         </v-flex>
       </v-layout>
@@ -57,7 +60,7 @@ import { UploadType, validUploadType } from 'multinet';
 import Vue, { PropType } from 'vue';
 
 import api from '@/api';
-import { FileTypeTable } from '@/types';
+import { FileType } from '@/types';
 
 
 export default Vue.extend({
@@ -89,7 +92,7 @@ export default Vue.extend({
       required: true,
     },
     types: {
-      type: Object as PropType<FileTypeTable>,
+      type: Array as PropType<FileType[]>,
       required: true,
     },
   },
@@ -98,16 +101,13 @@ export default Vue.extend({
     return {
       tableCreationError: null as string | null,
       fileUploadError: null as string | null,
-      selectedType: null as string | null,
+      selectedType: null as FileType | null,
       file: null as File | null,
       newTable: '',
     };
   },
 
   computed: {
-    typeList(): string[] {
-      return Object.keys(this.types);
-    },
     createDisabled(): boolean {
       return !this.file || !this.selectedType || !this.newTable || !!this.fileUploadError;
     },
@@ -127,14 +127,21 @@ export default Vue.extend({
     },
 
     async createTable() {
+      const {
+        file,
+        workspace,
+        newTable,
+        selectedType,
+      } = this;
+
       try {
-        if (this.file === null) {
+        if (file === null) {
           throw new Error('this.file must not be null');
         }
 
-        await api.uploadTable(this.workspace, this.newTable, {
-          type: this.selectedType as UploadType,
-          data: this.file,
+        await api.uploadTable(workspace, newTable, {
+          type: selectedType!.queryCall as UploadType,
+          data: file,
         });
 
         this.tableCreationError = null;
@@ -144,7 +151,7 @@ export default Vue.extend({
       }
     },
 
-    fileType(file: File): string | null {
+    fileType(file: File): FileType | null {
       if (!file) {
         return null;
       }
@@ -152,8 +159,8 @@ export default Vue.extend({
       const fileName = file.name.split('.');
       const extension = fileName[fileName.length - 1];
 
-      for (const type in this.types) {
-        if (this.types[type].extension.includes(extension) && validUploadType(type)) {
+      for (const type of this.types) {
+        if (type.extension.includes(extension) && validUploadType(type.queryCall)) {
           return type;
         }
       }
