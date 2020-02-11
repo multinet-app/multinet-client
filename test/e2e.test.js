@@ -39,7 +39,9 @@ async function setup() {
   await p.setDefaultTimeout(5000);
 
   // Navigate to the app, and dismiss the "got it" dialog.
-  await p.goto(url);
+  await p.goto(url, {
+    waitUntil: 'domcontentloaded',
+  });
   await p.waitForSelector('#got-it');
   await p.click('#got-it');
 
