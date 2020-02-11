@@ -28,7 +28,7 @@ async function setup() {
   const p = await b.newPage();
   await p.setViewport({ width, height });
   await p.goto('http://127.0.0.1:58080/');
-  await p.setDefaultTimeout(2000); // Default timeout of 30 seconds
+  await p.setDefaultTimeout(5000);
   return [b, p];
 }
 
