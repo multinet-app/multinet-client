@@ -17,12 +17,14 @@ const host = process.env.HOST || 'localhost';
 const port = process.env.PORT || '8080';
 const url = `http://${host}:${port}/`;
 
+const debug = !!process.env.DEBUG;
+
 // Opens the chromium window
 function browser(width, height) {
   return puppeteer.launch({
-    headless: true,
+    headless: !debug,
     args: [`--window-size=${width},${height}`],
-    // slowMo: 20 // For testing
+    slowMo: debug ? 250 : 0,
   });
 }
 
