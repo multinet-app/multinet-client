@@ -190,6 +190,32 @@ test('Create a valid workspace', async (t) => {
   const deleted = !await workspace_exists(p, name);
   t.ok(deleted, `Workspace "${name}" was deleted`);
 
+  t.end();
+});
+
+test('Create a workspace with an invalid name (consisting of numbers)', async (t) => {
+  const workspaces = await get_workspace_names(p);
+  let name;
+  const limit = 1000;
+  for (name = 123; name < limit; name++) {
+    if (!workspaces.includes(`${name}`)) {
+      break;
+    }
+  }
+  if (name === limit) {
+    throw new Error('fatal: could not find an unused name');
+  }
+  name = `${name}`;
+
+  await create_workspace(p, name);
+  await p.click('#workspace-name', {
+    clickCount: 3,
+  });
+  await p.click('#add-workspace');
+
+  const workspaces2 = await get_workspace_names(p);
+  t.ok(!workspaces2.includes(name), `Workspace with invalid name "${name}" was not created`);
+
   await b.close();
 
   t.end();
