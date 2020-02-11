@@ -17,7 +17,7 @@
               class="pr-5"
               color="transparent"
               flat
-              width="66%"
+              width="74%"
             >
               <v-card-title>Welcome to Multinet!</v-card-title>
               <v-divider />
@@ -37,13 +37,13 @@
             <v-card
               class="d-flex align-center"
               light
-              width="33%"
+              width="26%"
             >
               <v-card-text>
                 <v-row class="px-4">
                   <v-col
                     class="align-center d-flex py-1"
-                    cols="4"
+                    cols="6"
                     :key="collab.logo"
                     v-for="collab in collabs"
                   >
@@ -113,10 +113,13 @@ export default Vue.extend ({
     return {
       collabs: [
         {
-          logo: require('../assets/Ulogo_100px.png'),
+          logo: require('../assets/utah_logo.png'),
         },
         {
-          logo: require('../assets/kw_logo.png'),
+          logo: require('../assets/Kitware_Logo.png'),
+        },
+        {
+          logo: require('../assets/vdl_logo.png'),
         },
         {
           logo: require('../assets/nsf_logo.png'),
