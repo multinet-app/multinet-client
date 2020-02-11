@@ -40,8 +40,9 @@ async function setup() {
 
   // Navigate to the app, and dismiss the "got it" dialog.
   await p.goto(url);
-  await p.waitForSelector('#got-it');
-  await sleep(4000);
+  await p.waitForSelector('#got-it', {
+    visible: true,
+  });
   await p.click('#got-it');
 
   return [b, p];
