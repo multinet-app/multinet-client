@@ -1,5 +1,14 @@
+import process from 'process';
+
 import test from 'tape';
 import puppeteer from 'puppeteer';
+
+process.on('unhandledRejection', (error) => {
+  console.log('FATAL: unhandled promise rejection');
+  console.log(error);
+
+  process.exit(1);
+});
 
 const width = 1920;
 const height = 1080;
@@ -99,68 +108,56 @@ test('e2e - Check that actions that should work, do work', async (t) => {
   // Arrange: Set up the page
   const [b, p] = await setup();
 
-  try {
-    // Act: Test creating a workspace
-    await create_workspace(p, 'puppeteer');
+  // Act: Test creating a workspace
+  await create_workspace(p, 'puppeteer');
 
-    // Assert: Check that the new workspace exists with no tables
-    let exists = await workspace_exists(p, 'puppeteer');
-    t.ok(exists, 'Workspace called "puppeteer" was created.');
+  // Assert: Check that the new workspace exists with no tables
+  let exists = await workspace_exists(p, 'puppeteer');
+  t.ok(exists, 'Workspace called "puppeteer" was created.');
 
-    // Assert: Check that there are no tables or graphs yet
-    exists = await elements_empty('Tables', p, undefined);
+  // Assert: Check that there are no tables or graphs yet
+  exists = await elements_empty('Tables', p, undefined);
 
-    t.ok(exists, 'The new workspace has no tables.');
+  t.ok(exists, 'The new workspace has no tables.');
 
-    exists = await elements_empty('Networks', p, undefined);
-    t.ok(exists, 'The new workspace has no networks.');
+  exists = await elements_empty('Networks', p, undefined);
+  t.ok(exists, 'The new workspace has no networks.');
 
-    // Cleanup
-    await b.close();
-    t.end();
-  } catch(e) {
-    await b.close();
-    t.fail('Tests crashed');
-    t.end();
-  }
+  // Cleanup
+  await b.close();
+  t.end();
 });
 
 test('e2e - Check that actions that shouldn\'t work, don\'t work', async (t) => {
-    // Arrange: Set up the page
-    const [b, p] = await setup();
+  // Arrange: Set up the page
+  const [b, p] = await setup();
 
-  try {
-    // Act: Test creating invalid workspaces
-    await create_workspace(p, '123');
-    await p.click('#workspace-name', { clickCount: 3 });
-    await p.click('#add-workspace'); // Close the modal (this will cause a failure in the next command if it is made)
+  // Act: Test creating invalid workspaces
+  await create_workspace(p, '123');
+  await p.click('#workspace-name', { clickCount: 3 });
+  await p.click('#add-workspace'); // Close the modal (this will cause a failure in the next command if it is made)
 
-    await create_workspace(p, '++--==__');
-    await p.click('#workspace-name', { clickCount: 3 });
-    await p.click('#add-workspace'); // Close the modal (this will cause a failure in the next command if it is made)
+  await create_workspace(p, '++--==__');
+  await p.click('#workspace-name', { clickCount: 3 });
+  await p.click('#add-workspace'); // Close the modal (this will cause a failure in the next command if it is made)
 
-    await create_workspace(p, 'a');
+  await create_workspace(p, 'a');
 
-    // Assert: Check that the new workspace exists with no tables
-    await sleep(200);
-    let exists = await workspace_exists(p, '123');
-    t.notOk(exists, 'Workspace called "123" wasn\'t created.');
+  // Assert: Check that the new workspace exists with no tables
+  await sleep(200);
+  let exists = await workspace_exists(p, '123');
+  t.notOk(exists, 'Workspace called "123" wasn\'t created.');
 
-    exists = await workspace_exists(p, '++--==__');
-    t.notOk(exists, 'Workspace called "++--==__" wasn\'t created.');
+  exists = await workspace_exists(p, '++--==__');
+  t.notOk(exists, 'Workspace called "++--==__" wasn\'t created.');
 
-    exists = await workspace_exists(p, 'a');
-    t.ok(exists, 'Workspace called "a" was created.');
+  exists = await workspace_exists(p, 'a');
+  t.ok(exists, 'Workspace called "a" was created.');
 
-    exists = await element_exists('Tables', p, 'broken');
-    t.notOk(exists, 'New workspaces don\'t have tables');
+  exists = await element_exists('Tables', p, 'broken');
+  t.notOk(exists, 'New workspaces don\'t have tables');
 
-    // Cleanup
-    await b.close();
-    t.end();
-  } catch(e) {
-    await b.close();
-    t.fail('Tests crashed');
-    t.end();
-  }
+  // Cleanup
+  await b.close();
+  t.end();
 });
