@@ -216,6 +216,25 @@ test('Create a workspace with an invalid name (consisting of numbers)', async (t
   const workspaces2 = await get_workspace_names(p);
   t.ok(!workspaces2.includes(name), `Workspace with invalid name "${name}" was not created`);
 
+  t.end();
+});
+
+test('Create a workspace with an invalid name (consisting of punctuation)', async (t) => {
+  const workspaces = await get_workspace_names(p);
+  const name = '++--==__';
+  if (workspaces.includes(name)) {
+    throw new Error('fatal: could not find an unused name');
+  }
+
+  await create_workspace(p, name);
+  await p.click('#workspace-name', {
+    clickCount: 3,
+  });
+  await p.click('#add-workspace');
+
+  const workspaces2 = await get_workspace_names(p);
+  t.ok(!workspaces2.includes(name), `Workspace with invalid name "${name}" was not created`);
+
   await b.close();
 
   t.end();
