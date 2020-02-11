@@ -128,16 +128,6 @@ async function get_element_names(element_type, p) {
   return tables;
 }
 
-// Checks if a table or graph exists in the current workspace
-async function element_exists(element_type, p, name) {
-  let exists, tables;
-
-  tables = await get_element_names(element_type, p);
-
-  exists = tables.includes(name);
-  return exists;
-}
-
 // Checks if no tables or graphs exist in the current workspace
 async function elements_empty(element_type, p) {
   let list_is_empty, tables;
