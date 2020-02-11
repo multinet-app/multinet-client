@@ -11,6 +11,7 @@
         <template v-slot:activator="{ on: tooltip }">
           <v-scroll-x-transition>
             <v-btn
+              id="delete-workspaces"
               icon
               small
               text
@@ -42,6 +43,7 @@
       <v-card-actions class="px-4 py-3">
         <v-spacer />
         <v-btn
+          id="delete-workspace-yes"
           depressed
           color="error"
           @click="execute"

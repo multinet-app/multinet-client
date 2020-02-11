@@ -79,6 +79,7 @@
       <v-card-actions>
         <v-spacer />
         <v-btn
+          id="got-it"
           color="primary"
           @click="popover = false"
           small
