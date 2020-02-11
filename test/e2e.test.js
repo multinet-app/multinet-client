@@ -93,7 +93,6 @@ async function delete_workspace(p, name) {
 }
 
 async function get_workspace_names(p) {
-  await p.waitForSelector('.v-list-item__title');
   return p.evaluate(() => {
     let titles = [];
     let doc_nodes = document.querySelectorAll('.v-list-item__title');
@@ -106,7 +105,6 @@ async function get_workspace_names(p) {
 
 // Checks that a workspace exists in the left pane
 async function workspace_exists(p, name) {
-  await p.waitForSelector('.v-list-item__title');
   const workspaces = await get_workspace_names(p);
 
   return workspaces.includes(name);
