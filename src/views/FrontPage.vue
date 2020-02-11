@@ -22,16 +22,13 @@
               <v-card-title>Welcome to Multinet!</v-card-title>
               <v-divider />
               <v-card-text>
-                Check out the featured datasets and visualizations below! You
+                <p>Check out the featured datasets and visualizations below! You
                 can also create your own workspace and upload your own data with
                 the <strong>New Workspace</strong> button to the left, or
-                explore data others have uploaded.
-              </v-card-text>
-
-              <v-card-text>
-                This project is a joint research and development effort between
+                explore data others have uploaded.</p>
+                <p>This project is a joint research and development effort between
                 the University of Utah and Kitware Inc., funded by the National
-                Science Foundation.
+                Science Foundation.</p>
               </v-card-text>
             </v-card>
             <v-card
