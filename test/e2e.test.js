@@ -13,6 +13,10 @@ process.on('unhandledRejection', (error) => {
 const width = 1920;
 const height = 1080;
 
+const host = process.env.HOST || 'localhost';
+const port = process.env.PORT || '8080';
+const url = `http://${host}:${port}/`;
+
 // Opens the chromium window
 function browser(width, height) {
   return puppeteer.launch({
@@ -27,7 +31,7 @@ async function setup() {
   const b = await browser(width, height);
   const p = await b.newPage();
   await p.setViewport({ width, height });
-  await p.goto('http://127.0.0.1:58080/');
+  await p.goto(url);
   await p.setDefaultTimeout(5000);
   return [b, p];
 }
