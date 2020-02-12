@@ -4,7 +4,7 @@
       <v-layout wrap>
         <v-flex>
           <v-select
-            filled
+            outlined
             label="Choose edge table"
             v-model="graphEdgeTable"
             :items="edgeTables"
@@ -15,7 +15,7 @@
       <v-layout wrap>
         <v-flex>
           <v-text-field
-            filled
+            outlined
             label="Network name"
             v-model="newGraph"
             :error-messages="graphCreationErrors"

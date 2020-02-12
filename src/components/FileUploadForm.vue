@@ -6,7 +6,7 @@
           <v-file-input
             id="file-selector"
             clearable
-            filled
+            outlined
             :label="fileInputPlaceholder"
             prepend-icon=""
             prepend-inner-icon="attach_file"
@@ -19,7 +19,7 @@
           <v-select
             v-if="types.length"
             id="file-type"
-            filled
+            outlined
             label="File type"
             persistent-hint
             :hint="selectedType ? selectedType.hint : null"
@@ -28,6 +28,7 @@
             item-text="displayName"
             item-value="displayName"
             return-object
+            class="file-type"
           />
         </v-flex>
       </v-layout>
@@ -35,7 +36,7 @@
         <v-flex>
           <v-text-field
             id="table-name"
-            filled
+            outlined
             v-model="fileName"
             :label="namePlaceholder"
             :error-messages="tableCreationError"
@@ -183,6 +184,14 @@ export default Vue.extend({
   },
 });
 </script>
+
+<style>
+/* These styles make it so that the text-field details for file type
+   don't nudge the network name field down if it goes to multiple lines. */
+.file-type .v-text-field__details {
+  min-height: 36px;
+}
+</style>
 
 <style scoped>
 .new-button {
