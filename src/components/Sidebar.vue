@@ -21,7 +21,7 @@
               class="pb-0 pt-2 px-0"
               cols="2"
             >
-              <img src="../assets/logo/app_logo.png" alt="Multinet" width="100%">
+              <img src="../assets/logo/app_logo.svg" alt="Multinet" width="100%">
             </v-col>
             <v-col class="text-left" cols="6">
               Multinet
