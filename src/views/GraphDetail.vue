@@ -419,16 +419,6 @@ ul {
   height: 11px;
 }
 
-.graph-vis,
-.graph-vis-closed {
-  transition: height .1s .05s ease-in-out;
-}
-
-.node-cols,
-.node-cols-closed {
-  transition: height .15s ease-in-out;
-}
-
 .node-cols-closed > * {
   overflow: hidden;
 }
