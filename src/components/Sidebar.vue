@@ -17,16 +17,13 @@
           tag="button"
         >
           <v-row class="mx-0 align-center">
-            <v-col
-              class="pb-0 pt-2 px-0"
-              cols="2"
-            >
-              <img src="../assets/logo/app_logo.png" alt="Multinet" width="100%">
+            <v-col class="app-logo pb-0 pt-2 px-0">
+              <img src="../assets/logo/app_logo.svg" alt="Multinet" width="100%">
             </v-col>
-            <v-col class="text-left" cols="6">
+            <v-col class="text-left">
               Multinet
             </v-col>
-            <v-col class="pa-0" cols="2">
+            <v-col class="pa-0">
               <about-dialog />
             </v-col>
           </v-row>
@@ -168,4 +165,7 @@ export default Vue.extend({
 </script>
 
 <style scoped>
+.app-logo {
+  width: 48px;
+}
 </style>
