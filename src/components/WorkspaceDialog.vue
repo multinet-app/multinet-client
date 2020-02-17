@@ -47,6 +47,7 @@
             <v-text-field
               id="workspace-name"
               autofocus
+              dense
               outlined
               label="Workspace name"
               v-model="newWorkspace"

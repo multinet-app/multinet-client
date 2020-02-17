@@ -4,42 +4,45 @@
       <v-layout wrap>
         <v-flex class="pr-2">
           <v-file-input
-            id="file-selector"
+            @change="handleFileInput"
             clearable
-            outlined
+            dense
+            :error-messages="fileUploadError"
+            id="file-selector"
             :label="fileInputPlaceholder"
+            outlined
             prepend-icon=""
             prepend-inner-icon="attach_file"
             single-line
-            @change="handleFileInput"
-            :error-messages="fileUploadError"
           />
         </v-flex>
         <v-flex xs6 class="pl-2" v-if="fileTypeSelector">
           <v-select
-            v-if="types.length"
-            id="file-type"
-            outlined
-            label="File type"
-            persistent-hint
+            class="file-type"
+            dense
             :hint="selectedType ? selectedType.hint : null"
-            v-model="selectedType"
+            id="file-type"
             :items="types"
             item-text="displayName"
             item-value="displayName"
+            label="File type"
+            outlined
+            persistent-hint
             return-object
-            class="file-type"
+            v-if="types.length"
+            v-model="selectedType"
           />
         </v-flex>
       </v-layout>
       <v-layout wrap>
         <v-flex>
           <v-text-field
+            dense
+            :error-messages="tableCreationError"
             id="table-name"
+            :label="namePlaceholder"
             outlined
             v-model="fileName"
-            :label="namePlaceholder"
-            :error-messages="tableCreationError"
           />
         </v-flex>
       </v-layout>

@@ -4,10 +4,11 @@
       <v-layout wrap>
         <v-flex>
           <v-select
-            outlined
-            label="Choose edge table"
-            v-model="graphEdgeTable"
+            dense
             :items="edgeTables"
+            label="Choose edge table"
+            outlined
+            v-model="graphEdgeTable"
           />
         </v-flex>
       </v-layout>
@@ -15,10 +16,11 @@
       <v-layout wrap>
         <v-flex>
           <v-text-field
-            outlined
-            label="Network name"
-            v-model="newGraph"
+            dense
             :error-messages="graphCreationErrors"
+            label="Network name"
+            outlined
+            v-model="newGraph"
           />
         </v-flex>
       </v-layout>
