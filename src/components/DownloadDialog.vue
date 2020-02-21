@@ -33,7 +33,12 @@
       </v-card-title>
 
       <v-card-text class="px-5 py-4">
-        Download {{ selection.length }} {{downloadType}}{{plural}}?
+        Download the following {{ selection.length > 1 ? selection.length : '' }} {{downloadType}}{{plural}}?
+        <ul>
+          <li v-for="item in selection" :key="item">
+            {{ item }}
+          </li>
+        </ul>
       </v-card-text>
 
       <v-divider />
