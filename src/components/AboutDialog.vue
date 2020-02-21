@@ -34,6 +34,12 @@
           noreferrer">GitHub</a>.
       </v-card-text>
 
+      <v-card-text class="px-4 pt-4 pb-1">
+        Check out the Multinet project <a-ext
+          href="https://multinet-app.readthedocs.io">documentation</a-ext>, or
+        the <a-ext href="/apidocs">API docs</a-ext>.
+      </v-card-text>
+
       <v-card-text
         v-if="gitSha"
         class="px-4 pt-4 pb-1"
@@ -65,9 +71,15 @@
 <script lang="ts">
 import Vue from 'vue';
 
+import AExt from '@/components/AExt.vue';
+
 declare const GIT_SHA: string;
 
 export default Vue.extend({
+  components: {
+    AExt,
+  },
+
   data() {
     return {
       dialog: false,
