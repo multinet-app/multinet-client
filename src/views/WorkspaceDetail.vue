@@ -86,22 +86,29 @@
               :workspace="workspace"
               route-type="graph"
               icon="timeline"
-              >
-                <graph-dialog
-                  :node-tables="nodeTables"
-                  :edge-tables="edgeTables"
-                  :workspace="workspace"
-                  @success="update"
-                  />
-                <template v-slot:deleter="deleter">
-                  <delete-graph-dialog
-                    :selection="deleter.selection"
-                    :workspace="deleter.workspace"
-                    @deleted="update"
-                    />
-                </template>
+            >
+              <graph-dialog
+                :node-tables="nodeTables"
+                :edge-tables="edgeTables"
+                :workspace="workspace"
+                @success="update"
+              />
+              <template v-slot:deleter="deleter">
+                <delete-graph-dialog
+                  :selection="deleter.selection"
+                  :workspace="deleter.workspace"
+                  @deleted="update"
+                />
+              </template>
+              <template v-slot:downloader="downloader">
+                <download-dialog
+                  :selection="downloader.selection"
+                  :workspace="downloader.workspace"
+                  downloadType="network"
+                  @deleted="update"
+                />
+              </template>
             </item-panel>
-
           </v-card>
         </v-flex>
         <v-flex
@@ -125,16 +132,23 @@
                 <table-dialog
                   :workspace="workspace"
                   @success="update"
-                  />
+                />
                 <template v-slot:deleter="deleter">
                   <delete-table-dialog
                     :selection="deleter.selection"
                     :workspace="deleter.workspace"
                     @deleted="update"
-                    />
+                  />
+                </template>
+                <template v-slot:downloader="downloader">
+                  <download-dialog
+                    :selection="downloader.selection"
+                    :workspace="downloader.workspace"
+                    downloadType="table"
+                    @deleted="update"
+                  />
                 </template>
             </item-panel>
-
           </v-card>
         </v-flex>
       </v-layout>
@@ -151,6 +165,7 @@ import GraphDialog from '@/components/GraphDialog.vue';
 import DeleteGraphDialog from '@/components/DeleteGraphDialog.vue';
 import TableDialog from '@/components/TableDialog.vue';
 import DeleteTableDialog from '@/components/DeleteTableDialog.vue';
+import DownloadDialog from '@/components/DownloadDialog.vue';
 
 export default Vue.extend({
   name: 'WorkspaceDetail',
@@ -160,6 +175,7 @@ export default Vue.extend({
     DeleteGraphDialog,
     TableDialog,
     DeleteTableDialog,
+    DownloadDialog,
   },
   props: ['workspace', 'title'],
   data() {
