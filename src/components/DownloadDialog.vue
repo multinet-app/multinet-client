@@ -16,7 +16,7 @@
               @click="dialog.click"
               v-on="tooltip"
             >
-              <v-icon color="primary" size="22px">save</v-icon>
+              <v-icon color="primary" size="22px">save_alt</v-icon>
             </v-btn>
           </v-scroll-x-transition>
         </template>
