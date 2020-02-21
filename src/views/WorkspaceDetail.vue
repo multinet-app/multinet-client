@@ -105,7 +105,7 @@
                   :selection="downloader.selection"
                   :workspace="downloader.workspace"
                   downloadType="network"
-                  @deleted="update"
+                  @downloaded="update"
                 />
               </template>
             </item-panel>
@@ -145,7 +145,7 @@
                     :selection="downloader.selection"
                     :workspace="downloader.workspace"
                     downloadType="table"
-                    @deleted="update"
+                    @downloaded="update"
                   />
                 </template>
             </item-panel>
