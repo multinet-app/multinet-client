@@ -134,7 +134,8 @@ export default Vue.extend({
       this.loading = true;
       for (const name of selection) {
         const { data, headers: {'content-type': contentType } } = await this.downloadEnpoint(workspace, name);
-        const blob = new Blob([JSON.stringify(data, null, 2)], {type: contentType});
+        const blobData = data instanceof Object ? JSON.stringify(data, null, 2) : data;
+        const blob = new Blob([blobData], {type: contentType});
 
         const extension = contentType.split('/')[1];
         const filename = `${name}.${extension}`;
