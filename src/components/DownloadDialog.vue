@@ -2,7 +2,7 @@
 
   <v-dialog
     v-model="dialog"
-    width="700"
+    width="400"
     v-if="nonZeroSelection"
   >
     <template v-slot:activator="{ on: dialog }">
@@ -24,21 +24,35 @@
       </v-tooltip>
     </template>
 
-    <v-card>
+    <v-card class="pa-0">
       <v-card-title
-        class="headline pb-0 pt-3 px-5"
+        class="pa-4"
         primary-title
-        >
-        Download {{downloadType}}s
+      >
+        Download the following {{ selection.length > 1 ? selection.length : '' }} {{downloadType}}{{plural}}?
       </v-card-title>
 
-      <v-card-text class="px-5 py-4">
-        Download the following {{ selection.length > 1 ? selection.length : '' }} {{downloadType}}{{plural}}?
-        <ul>
-          <li v-for="item in selection" :key="item">
-            {{ item }}
-          </li>
-        </ul>
+      <v-card-text class="pa-0">
+        <v-list
+          class="pa-0"
+          color="grey lighten-4"
+        >
+          <template v-for="item in selection">
+            <v-divider />
+            <v-list-item :key="item">
+              <v-list-item-icon>
+                <v-icon
+                  color="green accent-4"
+                  size="18"
+                >
+                  check
+                </v-icon>
+              </v-list-item-icon>
+              {{ item }}
+            </v-list-item>
+          </template>
+
+        </v-list>
       </v-card-text>
 
       <v-divider />
