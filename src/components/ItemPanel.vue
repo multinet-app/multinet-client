@@ -9,9 +9,14 @@
 
       <v-spacer />
 
+      <slot name="downloader"
+        :selection="selection"
+        :workspace="workspace"
+      >
+      </slot>
       <slot name="deleter"
-            :selection="selection"
-            :workspace="workspace"
+        :selection="selection"
+        :workspace="workspace"
       >
       </slot>
 
