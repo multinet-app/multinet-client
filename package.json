@@ -17,6 +17,7 @@
     "test": "tape -r esm test/**/*.test.js | tap-spec"
   },
   "dependencies": {
+    "@types/node": "^13.7.7",
     "axios": "^0.18.1",
     "core-js": "^2.6.5",
     "material-design-icons-iconfont": "^5.0.1",

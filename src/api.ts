@@ -1,9 +1,6 @@
 import { multinetApi } from 'multinet';
 
-function getApiRoot() {
-  return `${window.location.origin}/api`;
-}
-
-const api = multinetApi(getApiRoot());
+const host = process.env.VUE_APP_MULTINET_HOST || 'http://localhost:5000';
+const api = multinetApi(`${host}/api`);
 
 export default api;
