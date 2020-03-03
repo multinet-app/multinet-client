@@ -47,9 +47,18 @@
         pa-0
       >
         <div :class="graphVisClasses">
-          <div class="visualization">
-            VISUALIZATION WILL GO HERE
-          </div>
+          <v-list>
+            <v-list-item>
+              <v-list-item-title>
+                Nodes: {{totalNodes}}
+              </v-list-item-title>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-title>
+                Edges: {{totalEdges}}
+              </v-list-item-title>
+            </v-list-item>
+          </v-list>
           <v-navigation-drawer
             absolute
             right
@@ -305,7 +314,8 @@ export default Vue.extend({
       nodes: [] as string[],
       offset: 0,
       limit: 10,
-      total: 0,
+      totalNodes: 0,
+      totalEdges: 0,
       vizItems: ['Foo', 'Bar'],
       panelOpen: true,
     };
@@ -313,9 +323,9 @@ export default Vue.extend({
   computed: {
     highestOffset(): number {
       return (
-        this.total % this.limit
-          ? Math.floor(this.total / this.limit)
-          : this.total / this.limit - 1
+        this.totalNodes % this.limit
+          ? Math.floor(this.totalNodes / this.limit)
+          : this.totalNodes / this.limit - 1
       ) * this.limit;
     },
     next(): boolean {
@@ -353,10 +363,17 @@ export default Vue.extend({
         limit: this.limit,
       });
 
+      const edgeQuery = `
+        FOR table in [${graph.edgeTable}]
+          RETURN LENGTH(table)
+      `;
+      const edges = await api.aql(this.workspace, edgeQuery);
+
       this.nodeTypes = graph.nodeTables;
       this.edgeTypes = [graph.edgeTable];
       this.nodes = nodes.nodes.map((d) => d._id);
-      this.total = nodes.count;
+      this.totalNodes = nodes.count;
+      this.totalEdges = edges.reduce((acc, val) => acc + val, 0);
     },
     turnPage(forward: number) {
       this.offset += forward ? this.limit : -this.limit;
