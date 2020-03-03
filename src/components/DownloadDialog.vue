@@ -35,7 +35,8 @@
       <v-card-text class="pa-0">
         <v-list
           class="pa-0"
-          color="grey lighten-4"
+          color="grey lighten-5"
+          dense
         >
           <template v-for="item in selection">
             <v-divider />
