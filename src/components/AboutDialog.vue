@@ -70,8 +70,7 @@
 import Vue from 'vue';
 
 import AExt from '@/components/AExt.vue';
-
-const GIT_SHA: string = process.env.VUE_APP_GIT_SHA || '';
+import { gitSha as GIT_SHA } from '@/environment';
 
 export default Vue.extend({
   components: {
