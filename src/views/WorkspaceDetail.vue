@@ -80,19 +80,21 @@
             text
           >
             <item-panel
-              ref="tablePanel"
-              title="Tables"
-              :items="tables"
+              ref="graphPanel"
+              title="Networks"
+              :items="graphs"
               :workspace="workspace"
-              route-type="table"
-              icon="table_chart"
+              route-type="graph"
+              icon="timeline"
               >
-                <table-dialog
+                <graph-dialog
+                  :node-tables="nodeTables"
+                  :edge-tables="edgeTables"
                   :workspace="workspace"
                   @success="update"
                   />
                 <template v-slot:deleter="deleter">
-                  <delete-table-dialog
+                  <delete-graph-dialog
                     :selection="deleter.selection"
                     :workspace="deleter.workspace"
                     @deleted="update"
@@ -113,21 +115,19 @@
             text
           >
             <item-panel
-              ref="graphPanel"
-              title="Graphs"
-              :items="graphs"
+              ref="tablePanel"
+              title="Tables"
+              :items="tables"
               :workspace="workspace"
-              route-type="graph"
-              icon="timeline"
+              route-type="table"
+              icon="table_chart"
               >
-                <graph-dialog
-                  :node-tables="nodeTables"
-                  :edge-tables="edgeTables"
+                <table-dialog
                   :workspace="workspace"
                   @success="update"
                   />
                 <template v-slot:deleter="deleter">
-                  <delete-graph-dialog
+                  <delete-table-dialog
                     :selection="deleter.selection"
                     :workspace="deleter.workspace"
                     @deleted="update"
@@ -152,8 +152,6 @@ import DeleteGraphDialog from '@/components/DeleteGraphDialog.vue';
 import TableDialog from '@/components/TableDialog.vue';
 import DeleteTableDialog from '@/components/DeleteTableDialog.vue';
 
-import { FileTypeTable } from '@/types';
-
 export default Vue.extend({
   name: 'WorkspaceDetail',
   components: {
@@ -167,11 +165,6 @@ export default Vue.extend({
   data() {
     return {
       editing: false,
-      fileTypes: {
-        csv: {extension: ['csv'], queryCall: 'csv'},
-        newick: {extension: ['phy', 'tree'], queryCall: 'newick'},
-        nested_json: {extension: ['json'], queryCall: 'nested_json'},
-      } as FileTypeTable,
       tables: [] as string[],
       nodeTables: [] as string[],
       edgeTables: [] as string[],

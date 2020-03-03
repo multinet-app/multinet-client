@@ -18,64 +18,30 @@
     </template>
     <v-card>
       <v-card>
-        <v-card-title
-          class="headline pb-0 pt-3"
-          primary-title
-        >
-          Create Graph
-        </v-card-title>
+        <v-tabs>
+          <v-tab>
+            Upload
+          </v-tab>
+          <v-tab>
+            Create
+          </v-tab>
 
-        <v-card-text class="px-4 pt-4 pb-1">
-          <v-layout wrap>
-            <v-flex>
-              <v-text-field
-                autofocus
-                filled
-                label="Graph name"
-                v-model="newGraph"
-                :error-messages="graphCreationErrors"
-              />
-            </v-flex>
-          </v-layout>
+          <v-tab-item>
+            <file-upload-form
+              fileTypeSelector
+              namePlaceholder="Network name"
+              fileInputPlaceholder="Select network file"
+              createButtonText="Upload"
+              :workspace="workspace"
+              :types="uploadFiletypes"
+              @success="graphDialogSuccess"
+            />
+          </v-tab-item>
 
-          <v-layout wrap>
-            <v-flex>
-              <v-select
-                filled
-                chips
-                class="choose-tables"
-                clearable
-                deletable-chips
-                label="Choose node tables"
-                multiple
-                v-model="graphNodeTables"
-                :items="nodeTables"
-              />
-            </v-flex>
-          </v-layout>
-
-          <v-layout wrap>
-            <v-flex>
-              <v-select
-                filled
-                label="Choose edge table"
-                v-model="graphEdgeTable"
-                :items="edgeTables"
-              />
-            </v-flex>
-          </v-layout>
-        </v-card-text>
-
-        <v-divider></v-divider>
-
-        <v-card-actions class="px-4 py-3">
-          <v-spacer></v-spacer>
-          <v-btn
-            depressed
-            :disabled="graphCreateDisabled"
-            @click="createGraph"
-          >create graph</v-btn>
-        </v-card-actions>
+          <v-tab-item>
+            <graph-create-form :edge-tables="edgeTables" :workspace="workspace" @success="graphDialogSuccess"/>
+          </v-tab-item>
+        </v-tabs>
       </v-card>
     </v-card>
   </v-dialog>
@@ -85,53 +51,49 @@
 import Vue from 'vue';
 
 import api from '@/api';
+import GraphCreateForm from '@/components/GraphCreateForm.vue';
+import FileUploadForm from '@/components/FileUploadForm.vue';
 
 export default Vue.extend({
   name: 'GraphDialog',
   props: {
-    nodeTables: Array,
     edgeTables: Array,
     workspace: String,
   },
+  components: {
+    GraphCreateForm,
+    FileUploadForm,
+  },
   data() {
     return {
-      graphCreationErrors: [] as string[],
       graphDialog: false,
-      graphEdgeTable: null as string | null,
-      graphNodeTables: [] as string[],
-      newGraph: '',
+      uploadFiletypes: [
+        {
+          displayName: 'D3 JSON (ext: .json)',
+          hint: 'JSON format compatible with d3-force',
+          queryCall: 'd3_json',
+          extension: ['json'],
+        },
+        {
+          displayName: 'Arbor Nested Tree (ext: .json)',
+          hint: 'JSON-encoded tree format used by the Arbor project',
+          queryCall: 'nested_json',
+          extension: ['json'],
+        },
+        {
+          displayName: 'Newick Tree (ext: .phy, .tree)',
+          hint: 'The Newick Standard for representing trees in computer-readable form',
+          queryCall: 'newick',
+          extension: ['phy', 'tree'],
+        },
+      ],
     };
   },
-  computed: {
-    graphCreateDisabled(): boolean {
-      return this.graphNodeTables.length === 0 || !this.graphEdgeTable || !this.newGraph;
-    },
-
-  },
+  computed: {},
   methods: {
-    async createGraph() {
-      const { workspace, newGraph } = this;
-
-      if (this.graphEdgeTable === null) {
-        throw new Error('this.graphEdgeTable must not be null');
-      }
-
-      const response = await api.createGraph(workspace, newGraph, {
-        nodeTables: this.graphNodeTables,
-        edgeTable: this.graphEdgeTable,
-      });
-
-      if (!response) {
-        const message = `Graph "${this.newGraph}" already exists.`;
-
-        this.graphCreationErrors = [message];
-        throw new Error(message);
-      }
-
-      this.graphCreationErrors = [];
-
-      this.$emit('success');
+    graphDialogSuccess() {
       this.graphDialog = false;
+      this.$emit('success');
     },
   },
 });

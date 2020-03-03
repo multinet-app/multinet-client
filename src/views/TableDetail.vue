@@ -66,10 +66,17 @@
       </v-app-bar>
       <div class="wrapper">
         <v-data-table
+          fixed-header
+          height="calc(100vh - 123px)"
           class="table-details"
           :headers="dataTableHeaders"
           :items="dataTableRows"
-          :items-per-page="15"
+          :footer-props="{
+            itemsPerPageOptions: [10, 20, 50, 100],
+            showFirstLastPage: true,
+          }"
+          :server-items-length="tableSize"
+          :options.sync="pagination"
         />
       </div>
     </v-content>
@@ -82,6 +89,15 @@ import Vue from 'vue';
 import api from '@/api';
 import { KeyValue, TableRow } from '@/types';
 
+interface DataPagination {
+  page: number;
+  itemsPerPage: number;
+  pageStart: number;
+  pageStop: number;
+  pageCount: number;
+  itemsLength: number;
+}
+
 export default Vue.extend({
   name: 'TableDetail',
   props: ['workspace', 'table'],
@@ -91,6 +107,8 @@ export default Vue.extend({
       headers: [] as Array<keyof TableRow>,
       tables: [] as string[],
       editing: false,
+      tableSize: 1,
+      pagination: {} as DataPagination,
     };
   },
   computed: {
@@ -125,12 +143,26 @@ export default Vue.extend({
       return index % 2 === 0 ? 'even-row' : 'odd-row';
     },
     async update() {
-      const result = await api.table(this.workspace, this.table);
+      const {
+        pagination,
+      } = this;
+
+      const result = await api.table(this.workspace, this.table, {
+        offset: (pagination.page - 1) * pagination.itemsPerPage,
+        limit: pagination.itemsPerPage,
+      });
+
+      const {
+        rows,
+        count,
+      } = result;
+
+      this.tableSize = count;
 
       const rowKeys: KeyValue[][] = [];
       let headers: Array<keyof TableRow> = [];
-      if (result) {
-        result.forEach((row) => {
+      if (rows) {
+        rows.forEach((row) => {
           const rowData: KeyValue[] = [];
           Object.entries(row)
             .filter(([key, value]) => key !== '_rev')
@@ -144,7 +176,7 @@ export default Vue.extend({
           rowKeys.push(rowData);
         });
 
-        headers = Object.keys(result[0]).filter((d) => d !== '_rev');
+        headers = Object.keys(rows[0]).filter((d) => d !== '_rev');
       }
 
       this.rowKeys = rowKeys;
@@ -163,9 +195,10 @@ export default Vue.extend({
     table() {
       this.update();
     },
-  },
-  created() {
-    this.update();
+
+    pagination() {
+      this.update();
+    },
   },
 });
 </script>

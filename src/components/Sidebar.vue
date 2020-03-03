@@ -9,7 +9,26 @@
     <v-toolbar
       color="grey lighten-2"
     >
-      <v-toolbar-title>multinet</v-toolbar-title>
+      <v-toolbar-title class="d-flex align-center">
+        <router-link
+          :to="{
+            name: 'home',
+          }"
+          tag="button"
+        >
+          <v-row class="mx-0 align-center">
+            <v-col class="app-logo pb-0 pt-2 px-0">
+              <img src="../assets/logo/app_logo.svg" alt="Multinet" width="100%">
+            </v-col>
+            <v-col class="text-left">
+              Multinet
+            </v-col>
+            <v-col class="pa-0">
+              <about-dialog />
+            </v-col>
+          </v-row>
+        </router-link>
+      </v-toolbar-title>
       <v-spacer />
       <v-btn icon>
         <v-avatar
@@ -68,6 +87,7 @@
         </v-list-item>
       </v-hover>
     </v-list>
+
   </v-navigation-drawer>
 </template>
 
@@ -77,6 +97,7 @@ import Vue from 'vue';
 import api from '@/api';
 import WorkspaceDialog from '@/components/WorkspaceDialog.vue';
 import DeleteWorkspaceDialog from '@/components/DeleteWorkspaceDialog.vue';
+import AboutDialog from '@/components/AboutDialog.vue';
 
 interface CheckboxTable {
   [index: string]: boolean;
@@ -94,6 +115,7 @@ export default Vue.extend({
   components: {
     DeleteWorkspaceDialog,
     WorkspaceDialog,
+    AboutDialog,
   },
 
   computed: {
@@ -143,4 +165,7 @@ export default Vue.extend({
 </script>
 
 <style scoped>
+.app-logo {
+  width: 48px;
+}
 </style>

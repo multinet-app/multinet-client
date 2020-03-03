@@ -5517,10 +5517,10 @@ multimatch@^2.1.0:
     arrify "^1.0.0"
     minimatch "^3.0.0"
 
-multinet@0.5.0:
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/multinet/-/multinet-0.5.0.tgz#e6d6c395d2cad6b3792754cee862e0084b460fce"
-  integrity sha512-Jq8u+qbiwlDeiFAI3eeFYw13Chyu4ZxqfxNW+ObZdU/cR9XC1zL4BcauvTm/bCtM2Ko7M5ojQ9LJ+sGeAtk/Zw==
+multinet@0.8.0:
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/multinet/-/multinet-0.8.0.tgz#fcff1df77c8699519e83d49b717fdb356ab7fb91"
+  integrity sha512-sIx4mu++zKm6xV0gmLcTBTamP+xwp7VTOCjUP5plHIRzaMEfl9twTZbAOBKF8HLz0LK8Mo2ytBPLN0fNnJhOEQ==
   dependencies:
     axios "^0.19.0"
 
@@ -8550,6 +8550,11 @@ vm-browserify@^1.0.1:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/vm-browserify/-/vm-browserify-1.1.2.tgz#78641c488b8e6ca91a75f511e7a3b32a86e5dda0"
   integrity sha512-2ham8XPWTONajOR0ohOKOHXkm3+gaBmGut3SRuu75xLd/RRaY6vqgh8NBYYk7+RW3u5AtzPQZG8F10LHkl0lAQ==
+
+vue-gtag@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/vue-gtag/-/vue-gtag-1.2.1.tgz#3291d451455395ef3a2c7e37d2d504ee0c343605"
+  integrity sha512-Qz7pr+7oAoqDOhAz7l/sPVQByHhPOptaIuK5T+nhl3PqC+ewzPFsGQvBGjwgHxYN/k1iQMX0ZbZcyCbgusZ4rg==
 
 vue-hot-reload-api@^2.3.0:
   version "2.3.4"
