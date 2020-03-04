@@ -71,15 +71,15 @@
               <v-divider />
               <div class="grey lighten-4 pa-3">
                 <v-select
-                  :items="vizItems"
-                  clearable
+                  :items="visItems"
+                  v-model="selectedVis"
                   background-color="white"
                   dense
                   hide-details
-                  label="Label Here"
+                  label="Visualization"
                   menu-props="auto"
                   outlined
-                ></v-select>
+                />
               </div>
               <v-divider />
               <v-list-item
@@ -308,6 +308,7 @@ export default Vue.extend({
   },
   props: ['workspace', 'graph', 'apps'],
   data() {
+    const visItems = ['Network Overview'];
     return {
       nodeTypes: [] as string[],
       edgeTypes: [] as string[],
@@ -316,7 +317,8 @@ export default Vue.extend({
       limit: 10,
       totalNodes: 0,
       totalEdges: 0,
-      vizItems: ['Foo', 'Bar'],
+      visItems: [...visItems],
+      selectedVis: visItems[0],
       panelOpen: true,
     };
   },
