@@ -1,9 +1,6 @@
 import { multinetApi } from 'multinet';
+import { host } from '@/environment';
 
-function getApiRoot() {
-  return `${window.location.origin}/api`;
-}
-
-const api = multinetApi(getApiRoot());
+const api = multinetApi(`${host}/api`);
 
 export default api;

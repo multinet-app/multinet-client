@@ -2,13 +2,12 @@ import Vue from 'vue';
 import VueGtag from 'vue-gtag';
 
 import router from '@/router';
+import { gaTag } from '@/environment';
 
-declare const GA_TAG: string;
-
-if (GA_TAG) {
+if (gaTag) {
   Vue.use(VueGtag, {
     config: {
-      id: GA_TAG,
+      id: gaTag,
     },
   }, router);
 }
