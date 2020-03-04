@@ -27,8 +27,8 @@ jobs:
       - uses: actions/cache@v1
         id: client-cache
         with:
-          path: /home/runner/work/multinet-client/node_modules
-          key: ${{ runner.os }}-${{ hashFiles('/home/runner/work/multinet-client/yarn.lock') }}-client-cache
+          path: /home/runner/work/multinet-client/multinet-client/node_modules
+          key: ${{ runner.os }}-${{ hashFiles('/home/runner/work/multinet-client/multinet-client/yarn.lock') }}-client-cache
 
       - name: Install yarn packages
         if: steps.client-cache.outputs.cache-hit != 'true'
