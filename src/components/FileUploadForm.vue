@@ -2,7 +2,7 @@
   <v-card>
     <v-card-text class="px-4 pt-4 pb-1">
       <v-layout wrap>
-        <v-flex class="pr-2">
+        <v-flex>
           <v-file-input
             @change="handleFileInput"
             clearable
