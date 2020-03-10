@@ -181,12 +181,23 @@ export default Vue.extend({
   data() {
     return {
       editing: false,
-      tables: [] as string[],
       nodeTables: [] as string[],
       edgeTables: [] as string[],
       graphs: [] as string[],
     };
   },
+
+  computed: {
+    tables(): string[] {
+      const {
+        nodeTables,
+        edgeTables,
+      } = this;
+
+      return nodeTables.concat(edgeTables);
+    },
+  },
+
   watch: {
     workspace() {
       this.update();
@@ -211,7 +222,6 @@ export default Vue.extend({
         return;
       }
 
-      this.tables = nodeTables.concat(edgeTables);
       this.nodeTables = nodeTables;
       this.edgeTables = edgeTables;
 
