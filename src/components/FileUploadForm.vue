@@ -103,6 +103,7 @@ export default Vue.extend({
 
   data() {
     return {
+      test: null as string | null,
       tableCreationError: null as string | null,
       fileUploadError: null as string | null,
       fileName: null as string | null,
