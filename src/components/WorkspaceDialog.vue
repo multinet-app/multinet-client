@@ -51,6 +51,7 @@
               outlined
               label="Workspace name"
               v-model="newWorkspace"
+              :error-messages="error ? [error] : []"
             />
           </v-card-text>
 
@@ -103,8 +104,18 @@ export default Vue.extend({
       dialog: false,
       newWorkspace: '',
       popover: true,
+      error: '',
     };
   },
+
+  watch: {
+    dialog() {
+      if (this.dialog) {
+        this.error = '';
+      }
+    },
+  },
+
   methods: {
     async create() {
       if (this.newWorkspace) {
