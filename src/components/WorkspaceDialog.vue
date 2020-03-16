@@ -99,12 +99,9 @@ import api from '@/api';
 
 export default Vue.extend({
   data() {
-    const dialog: boolean = false;
-    const newWorkspace: string = '';
-
     return {
-      dialog,
-      newWorkspace,
+      dialog: false,
+      newWorkspace: '',
       popover: true,
     };
   },
