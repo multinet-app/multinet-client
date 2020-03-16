@@ -156,10 +156,10 @@
                   <v-list-item
                     v-for="(edge, index) in incoming"
                     :key="index"
-                    :to="`/workspaces/${workspace}/graph/${graph}/node/${edge.airport}`"
+                    :to="`/workspaces/${workspace}/graph/${graph}/node/${edge.node}`"
                   >
                     <v-list-item-content>
-                      {{edge.airport}}
+                      {{edge.node}}
                     </v-list-item-content>
                   </v-list-item>
                 </v-list>
@@ -212,10 +212,10 @@
                   <v-list-item
                     v-for="(edge, index) in outgoing"
                     :key="index"
-                    :to="`/workspaces/${workspace}/graph/${graph}/node/${edge.airport}`"
+                    :to="`/workspaces/${workspace}/graph/${graph}/node/${edge.node}`"
                   >
                     <v-list-item-content>
-                      {{edge.airport}}
+                      {{edge.node}}
                     </v-list-item-content>
                   </v-list-item>
                 </v-list>
@@ -245,7 +245,7 @@ interface EdgeRecord {
 
 interface Connection {
   id: string;
-  airport: string;
+  node: string;
 }
 
 type EdgeType = 'incoming' | 'outgoing';
@@ -333,8 +333,8 @@ export default Vue.extend({
         value,
       }));
 
-      this.incoming = incoming.edges.map((edge: Edge) => ({id: edge.edge, airport: edge.from}));
-      this.outgoing = outgoing.edges.map((edge: Edge) => ({id: edge.edge, airport: edge.to}));
+      this.incoming = incoming.edges.map((edge: Edge) => ({id: edge.edge, node: edge.from}));
+      this.outgoing = outgoing.edges.map((edge: Edge) => ({id: edge.edge, node: edge.to}));
       this.totalIncoming = incoming.count;
       this.totalOutgoing = outgoing.count;
     },
