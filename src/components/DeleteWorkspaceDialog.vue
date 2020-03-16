@@ -76,10 +76,7 @@
 import Vue, { PropType } from 'vue';
 
 import api from '@/api';
-
-function selectRandomPhrase(): string {
-  return 'clever palomino';
-}
+import { randomPhrase } from '@/utils/randomPhrase';
 
 export default Vue.extend({
   props: {
@@ -112,7 +109,7 @@ export default Vue.extend({
   watch: {
     dialog() {
       if (this.dialog) {
-        this.confirmationPhrase = selectRandomPhrase();
+        this.confirmationPhrase = randomPhrase();
       }
     },
   },
