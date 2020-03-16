@@ -119,13 +119,21 @@ export default Vue.extend({
   methods: {
     async create() {
       if (this.newWorkspace) {
-        const response = await api.createWorkspace(this.newWorkspace);
+        try {
+          const response = await api.createWorkspace(this.newWorkspace);
 
-        if (response) {
-          this.$router.push(`/workspaces/${this.newWorkspace}`);
-          this.$emit('created', this.newWorkspace);
-          this.newWorkspace = '';
-          this.dialog = false;
+          if (response) {
+            this.$router.push(`/workspaces/${this.newWorkspace}`);
+            this.$emit('created', this.newWorkspace);
+            this.newWorkspace = '';
+            this.dialog = false;
+          }
+        } catch (err) {
+          if (err.status === 409) {
+            this.error = `Workspace "${err.data}" already exists!`;
+          } else {
+            this.error = `Error creating workspace: ${err.status}`;
+          }
         }
       }
     },
