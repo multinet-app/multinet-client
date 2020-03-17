@@ -33,7 +33,17 @@
       </v-card-title>
 
       <v-card-text class="px-5 py-4">
-        You are about to delete {{ selection.length }} network{{plural}}. <strong>Are you sure?</strong>
+        You are about to delete {{ selection.length }} network{{plural}}. Type
+        the following phrase to confirm: <strong>{{ confirmationPhrase }}</strong>
+      </v-card-text>
+
+      <v-card-text>
+        <v-text-field
+          v-model="confirmation"
+          autofocus
+          dense
+          outlined
+        />
       </v-card-text>
 
       <v-divider />
@@ -44,7 +54,7 @@
           depressed
           color="error"
           @click="execute"
-          :disabled="disabled"
+          :disabled="confirmation !== confirmationPhrase"
         >yes</v-btn>
 
         <v-btn
@@ -63,6 +73,7 @@
 import Vue, { PropType } from 'vue';
 
 import api from '@/api';
+import { randomPhrase } from '@/utils/randomPhrase';
 
 export default Vue.extend({
   props: {
@@ -80,8 +91,8 @@ export default Vue.extend({
   data() {
     return {
       dialog: false,
-      disabled: true,
-      timeout: undefined as number | undefined,
+      confirmation: '',
+      confirmationPhrase: '',
     };
   },
 
@@ -99,14 +110,7 @@ export default Vue.extend({
   watch: {
     dialog() {
       if (this.dialog) {
-        this.timeout = window.setTimeout(() => {
-          this.disabled = false;
-          this.timeout = undefined;
-        }, 2000);
-      } else {
-        window.clearTimeout(this.timeout);
-        this.disabled = true;
-        this.timeout = undefined;
+        this.confirmationPhrase = randomPhrase();
       }
     },
   },
