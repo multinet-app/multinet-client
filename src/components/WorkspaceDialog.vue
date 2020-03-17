@@ -51,6 +51,7 @@
               outlined
               label="Workspace name"
               v-model="newWorkspace"
+              :error-messages="error ? [error] : []"
             />
           </v-card-text>
 
@@ -99,25 +100,40 @@ import api from '@/api';
 
 export default Vue.extend({
   data() {
-    const dialog: boolean = false;
-    const newWorkspace: string = '';
-
     return {
-      dialog,
-      newWorkspace,
+      dialog: false,
+      newWorkspace: '',
       popover: true,
+      error: '',
     };
   },
+
+  watch: {
+    dialog() {
+      if (this.dialog) {
+        this.error = '';
+      }
+    },
+  },
+
   methods: {
     async create() {
       if (this.newWorkspace) {
-        const response = await api.createWorkspace(this.newWorkspace);
+        try {
+          const response = await api.createWorkspace(this.newWorkspace);
 
-        if (response) {
-          this.$router.push(`/workspaces/${this.newWorkspace}`);
-          this.$emit('created', this.newWorkspace);
-          this.newWorkspace = '';
-          this.dialog = false;
+          if (response) {
+            this.$router.push(`/workspaces/${this.newWorkspace}`);
+            this.$emit('created', this.newWorkspace);
+            this.newWorkspace = '';
+            this.dialog = false;
+          }
+        } catch (err) {
+          if (err.status === 409) {
+            this.error = `Workspace "${err.data}" already exists!`;
+          } else {
+            this.error = `Error creating workspace: ${err.status}`;
+          }
         }
       }
     },
