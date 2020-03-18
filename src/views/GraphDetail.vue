@@ -298,6 +298,8 @@
 import Vue from 'vue';
 
 import api from '@/api';
+// recommender
+import { host } from '@/environment';
 
 export default Vue.extend({
   name: 'GraphDetail',
@@ -320,6 +322,8 @@ export default Vue.extend({
       visItems: [...visItems],
       selectedVis: visItems[0],
       panelOpen: true,
+      // Recommender
+      stats: {},
     };
   },
   computed: {
@@ -376,6 +380,14 @@ export default Vue.extend({
       this.nodes = nodes.nodes.map((d) => d._id);
       this.totalNodes = nodes.count;
       this.totalEdges = edges.reduce((acc, val) => acc + val, 0);
+
+      // recommender part start
+      // console.log(`${host}/summary_statistics/workspace/${this.workspace}/graph/${this.graph}`);
+      const axios = require('axios');
+      const res = await axios.get(`${host}/summary_statistics/workspace/${this.workspace}/graph/${this.graph}`);
+      this.stats = res.data;
+
+      // recommender part end
     },
     turnPage(forward: number) {
       this.offset += forward ? this.limit : -this.limit;
