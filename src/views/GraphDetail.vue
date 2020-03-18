@@ -103,6 +103,75 @@
           </v-navigation-drawer>
         </div>
         <div :class="nodeColsClasses">
+
+      <!-- Recommender Part start -->
+          <div class="summary-statistics flex-grow-1">
+            <v-card
+              flat
+              height="100%"
+              tile
+            >
+              <v-toolbar
+                color="blue darken-1"
+                dark
+                dense
+                flat
+              >
+                <v-toolbar-title>
+                  Summary Statistics
+                </v-toolbar-title>
+                <v-spacer />
+              </v-toolbar>
+              <v-card-text class="pa-0">
+                <v-list
+                  class="node-list pa-0"
+                  color="transparent"
+                  dense
+                >
+                  <v-list-item>
+                    <v-list-item-title>
+                      Number of node attributes: {{stats['nr_node_attributes']}}
+                    </v-list-item-title>
+                  </v-list-item>
+                  <v-list-item>
+                    <v-list-item-title>
+                      Number of edge attributes: {{stats['nr_edge_attributes']}}
+                    </v-list-item-title>
+                  </v-list-item>
+                  <v-list-item>
+                    <v-list-item-title>
+                      Network size (Nr. of Nodes): {{stats['network_size']}}
+                    </v-list-item-title>
+                  </v-list-item>
+                  <v-list-item>
+                    <v-list-item-title>
+                      Network size (Nr. of Edges): {{stats['nr_edges']}}
+                    </v-list-item-title>
+                  </v-list-item>
+                  <v-list-item>
+                    <v-list-item-title>
+                      Is network a tree: {{stats['is_tree']}}
+                    </v-list-item-title>
+                  </v-list-item>
+                  <v-list-item>
+                    <v-list-item-title>
+                      Is network homogeneous: {{stats['is_homogeneous_network']}}
+                    </v-list-item-title>
+                  </v-list-item>
+
+                  <v-list-item
+                    v-for="item in stats['degree_statistics']"
+                  >
+                    <v-list-item-title>
+                      {{ item[0] }}: {{ item[1] }}
+                    </v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-card-text>
+            </v-card>
+          </div>
+      <!-- Recommender Part end -->
+
           <div class="node-types flex-grow-1">
             <v-card
               flat
