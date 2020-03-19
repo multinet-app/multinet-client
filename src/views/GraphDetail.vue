@@ -105,6 +105,77 @@
         <div :class="nodeColsClasses">
 
       <!-- Recommender Part start -->
+        
+        <div class="summary-statistics flex-grow-1">
+            <v-card
+              flat
+              height="100%"
+              tile
+            >
+              <v-toolbar
+                color="blue darken-1"
+                dark
+                dense
+                flat
+              >
+                <v-toolbar-title>
+                  Summary Statistics
+                </v-toolbar-title>
+                <v-spacer />
+              </v-toolbar>
+              <v-card-text class="pa-0">
+                <v-list
+                  class="node-list pa-0"
+                  color="transparent"
+                  dense
+                >
+                  <v-list-item>
+                    <v-list-item-title>
+                      Network size (Nodes): {{stats['network_size_nodes']}}
+                    </v-list-item-title>
+                  </v-list-item>
+                  <v-list-item>
+                    <v-list-item-title>
+                      Network size (Edges): {{stats['network_size_edges']}}
+                    </v-list-item-title>
+                  </v-list-item>
+                  <v-list-item>
+                    <v-list-item-title>
+                      Network Density: {{stats['network_density']}}
+                    </v-list-item-title>
+                  </v-list-item>
+                  <v-list-item>
+                    <v-list-item-title>
+                      Network Type: {{stats['network_type']}}
+                    </v-list-item-title>
+                  </v-list-item>
+                  <v-list-item>
+                    <v-list-item-title>
+                      Nr. Node Attributes: {{stats['nr_node_attributes']}}
+                    </v-list-item-title>
+                  </v-list-item>
+                  <v-list-item>
+                    <v-list-item-title>
+                      Nr. Edge Attributes: {{stats['nr_edge_attributes']}}
+                    </v-list-item-title>
+                  </v-list-item>
+                  <v-list-item>
+                    <v-list-item-title>
+                      Homogenous Nodes: {{stats['is_homogeneous_nodes']}}
+                    </v-list-item-title>
+                  </v-list-item>
+                  <v-list-item>
+                    <v-list-item-title>
+                      Homogenous Edges: {{stats['is_homogeneous_edges']}}
+                    </v-list-item-title>
+                  </v-list-item>
+
+                </v-list>
+              </v-card-text>
+            </v-card>
+          </div>
+
+        <!-- ..old..
           <div class="summary-statistics flex-grow-1">
             <v-card
               flat
@@ -170,6 +241,7 @@
               </v-card-text>
             </v-card>
           </div>
+        -->
       <!-- Recommender Part end -->
 
           <div class="node-types flex-grow-1">
