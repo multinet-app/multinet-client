@@ -6,7 +6,7 @@ const adjectives = [
   'attractive',
   'average',
   'beautiful',
-  'blue-eyed ',
+  'blue-eyed',
   'bloody',
   'blushing',
   'bright',
