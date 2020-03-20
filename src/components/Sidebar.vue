@@ -1,6 +1,7 @@
 <template>
   <v-navigation-drawer
     app
+    class="app-sidebar"
     fixed
     permanent
     stateless
@@ -167,5 +168,11 @@ export default Vue.extend({
 <style scoped>
 .app-logo {
   width: 48px;
+}
+</style>
+
+<style>
+.app-sidebar .v-navigation-drawer__content {
+  overflow: hidden;
 }
 </style>
