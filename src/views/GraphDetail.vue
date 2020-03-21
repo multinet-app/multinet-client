@@ -129,6 +129,12 @@
                   color="transparent"
                   dense
                 >
+                <v-list-item>
+                  <recommender-dialog
+                    :url="recommender_url"
+                    @success="update"
+                  />
+                </v-list-item>
                   <v-list-item>
                     <v-list-item-title>
                       Network size (Nodes): {{stats['network_size_nodes']}}
@@ -441,9 +447,14 @@ import Vue from 'vue';
 import api from '@/api';
 // recommender
 import { host } from '@/environment';
+import RecommenderDialog from '@/components/RecommenderDialog.vue';
+
 
 export default Vue.extend({
   name: 'GraphDetail',
+  components: {
+    RecommenderDialog,
+  },
   filters: {
     appendArgs(url: string) {
       return `${url}/?workspace=${this.workspace}&graph=${this.graph}`;
@@ -465,6 +476,7 @@ export default Vue.extend({
       panelOpen: true,
       // Recommender
       stats: {},
+      recommender_url: 'http://localhost:4000/mvnv/',
     };
   },
   computed: {
@@ -526,7 +538,10 @@ export default Vue.extend({
       // console.log(`${host}/summary_statistics/workspace/${this.workspace}/graph/${this.graph}`);
       const axios = require('axios');
       const res = await axios.get(`${host}/summary_statistics/workspace/${this.workspace}/graph/${this.graph}`);
-      this.stats = res.data;
+      const recommenderData = res.data;
+      this.stats = recommenderData.stats;
+      const cats = recommenderData.cats;
+      this.recommender_url = `http://localhost:4000/mvnv/?size=${cats.size}&type=${cats.type}&nrNodeAtts=${cats.nrNodeAtts}&typeNodeAtts=${cats.typeNodeAtts}&nrEdgeAtts=${cats.nrEdgeAtts}&typeEdgeAtts=${cats.typeEdgeAtts}`;
 
       // recommender part end
     },
