@@ -167,6 +167,8 @@ export default Vue.extend({
       } catch (err) {
         if (err.status === 409) {
           this.tableCreationError = `Table "${fileName}" already exists`;
+        } else if (err.status === 415) {
+          this.tableCreationError = 'Data could not be read as CSV';
         } else {
           this.tableCreationError = 'Unknown error; please see developer console for details';
           throw err;
