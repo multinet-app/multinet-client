@@ -36,6 +36,16 @@
                 dense
                 label="Key"
                 outlined
+                hide-details
+              />
+            </v-col>
+            <v-col cols="8">
+              <v-switch
+                v-model="uploadParams.overwrite"
+                class="mt-1 ml-2"
+                dense
+                label="Overwrite _key field"
+                outlined
               />
             </v-col>
           </v-row>
