@@ -145,7 +145,7 @@ export default Vue.extend({
 
 .v-btn.ws-btn {
   border-radius: 0;
-  height: auto !important;
+  height: 59px !important;
 }
 
 .get-started {
