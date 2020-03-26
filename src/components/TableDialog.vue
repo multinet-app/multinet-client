@@ -23,34 +23,65 @@
       >
         Create Table
       </v-card-title>
-      <file-upload-form
-        :types="types"
-        :workspace="workspace"
-        @success="uploadSuccess"
-      >
-        <template v-slot:default="{ uploadParams }">
+      <v-card>
+        <v-card-text class="px-4 pt-4 pb-1">
+          <v-layout wrap>
+            <v-flex>
+              <v-file-input
+                @change="handleFileInput"
+                :error-messages="fileUploadError"
+                label="Upload File"
+                prepend-inner-icon="attach_file"
+                prepend-icon=""
+                single-line
+                clearable
+                dense
+                outlined
+              />
+            </v-flex>
+          </v-layout>
+          <v-layout wrap>
+            <v-flex>
+              <v-text-field
+                v-model="fileName"
+                :error-messages="tableCreationError"
+                label="Table Name"
+                outlined
+                dense
+              />
+            </v-flex>
+          </v-layout>
           <v-row no-gutters>
             <v-col cols="4">
               <v-text-field
-                v-model="uploadParams.key"
-                dense
+                v-model="key"
                 label="Key"
-                outlined
                 hide-details
+                outlined
+                dense
               />
             </v-col>
-            <v-col cols="8">
+            <v-col cols="4">
               <v-switch
-                v-model="uploadParams.overwrite"
+                v-model="overwrite"
                 class="mt-1 ml-2"
                 dense
-                label="Overwrite _key field"
+                label="Overwrite Default Key"
                 outlined
               />
             </v-col>
           </v-row>
-        </template>
-      </file-upload-form>
+        </v-card-text>
+
+        <v-divider></v-divider>
+
+        <v-card-actions class="px-4 py-3">
+          <v-spacer></v-spacer>
+          <v-btn :disabled="createDisabled" @click="createTable">
+            Create
+          </v-btn>
+        </v-card-actions>
+      </v-card>
     </v-card>
   </v-dialog>
 </template>
@@ -60,6 +91,7 @@ import Vue from 'vue';
 
 import api from '@/api';
 import { FileType } from '@/types';
+import { validFileType, fileName as getFileName } from '@/utils/files';
 import FileUploadForm from '@/components/FileUploadForm.vue';
 
 
@@ -83,12 +115,61 @@ export default Vue.extend({
           displayName: 'CSV',
         },
       ] as FileType[],
+      file: null as File | null,
+      fileName: null as string | null,
+      fileUploadError: null as string | null,
+      tableCreationError: null as string | null,
+      key: undefined as string | undefined,
+      overwrite: false,
     };
   },
+  computed: {
+    createDisabled(): boolean {
+      return (
+        !this.file ||
+        !this.fileName ||
+        !!this.fileUploadError
+      );
+    },
+  },
   methods: {
-    uploadSuccess() {
-      this.tableDialog = false;
-      this.$emit('success');
+    handleFileInput(file: File) {
+      this.file = file;
+
+      if (!file) {
+        this.fileUploadError = null;
+      } else if (!validFileType(file, this.types)) {
+        this.fileUploadError = 'Invalid file type';
+      } else {
+        this.fileName = this.fileName || getFileName(file);
+        this.fileUploadError = null;
+      }
+    },
+    async createTable() {
+      const {
+        file,
+        workspace,
+        fileName,
+        key,
+        overwrite,
+      } = this;
+
+      if (file === null || fileName === null) {
+        return;
+      }
+
+      try {
+        await api.uploadTable(workspace, fileName, {
+          type: 'csv',
+          data: file,
+        }, key, overwrite);
+
+        this.tableCreationError = null;
+        this.tableDialog = false;
+        this.$emit('success');
+      } catch (err) {
+        this.tableCreationError = err.statusText;
+      }
     },
   },
 });
