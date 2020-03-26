@@ -9,17 +9,17 @@
 
       <v-spacer />
 
-      <slot name="downloader"
-        :selection="selection"
-        :workspace="workspace"
-      >
-      </slot>
-      <slot name="deleter"
-        :selection="selection"
-        :workspace="workspace"
-      >
-      </slot>
+      <div class="actions mr-2 pr-3">
+        <slot name="downloader"
+          :selection="selection"
+          :workspace="workspace"
+        ></slot>
 
+        <slot name="deleter"
+          :selection="selection"
+          :workspace="workspace"
+        ></slot>
+      </div>
       <slot></slot>
 
     </v-subheader>
@@ -159,4 +159,7 @@ export default Vue.extend({
   opacity: .4;
 }
 
+.actions {
+  border-right: 1px solid #ccc;
+}
 </style>
