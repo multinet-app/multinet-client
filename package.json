@@ -19,6 +19,7 @@
   "dependencies": {
     "axios": "^0.18.1",
     "core-js": "^2.6.5",
+    "direct-vuex": "^0.10.4",
     "material-design-icons-iconfont": "^5.0.1",
     "multinet": "0.10.0",
     "vue": "^2.6.10",
