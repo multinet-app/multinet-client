@@ -27,7 +27,20 @@
         :types="types"
         :workspace="workspace"
         @success="uploadSuccess"
-      />
+      >
+        <template v-slot:default="{ uploadParams }">
+          <v-row no-gutters>
+            <v-col cols="4">
+              <v-text-field
+                v-model="uploadParams.key"
+                dense
+                label="Key"
+                outlined
+              />
+            </v-col>
+          </v-row>
+        </template>
+      </file-upload-form>
     </v-card>
   </v-dialog>
 </template>
