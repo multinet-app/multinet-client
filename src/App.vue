@@ -1,7 +1,9 @@
 <template>
   <v-app id="app">
-    <sidebar />
-    <router-view :apps='apps' />
+    <!-- TODO: REMOVE THIS REF WHEN VUEX IS ADDED -->
+    <sidebar ref="sidebar" />
+    <!-- TODO: REMOVE THIS UPDATE WHEN VUEX IS ADDED -->
+    <router-view :apps='apps' @update="update"/>
   </v-app>
 </template>
 
@@ -21,6 +23,12 @@ export default Vue.extend({
   },
   created() {
     this.apps = require('./appregistry.json');
+  },
+  methods: {
+    // TODO: REMOVE THIS REF AND METHOD WHEN VUEX IS ADDED
+    update() {
+      this.$refs.sidebar.refresh();
+    },
   },
 });
 </script>

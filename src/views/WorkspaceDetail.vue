@@ -40,6 +40,7 @@
               <v-icon
                 color="grey darken-3"
                 size="20px"
+                @click="cancelRename"
               >close</v-icon>
             </v-btn>
 
@@ -52,7 +53,11 @@
               @focus="$event.target.select()"
               solo
               flat
-              :value="workspace"
+              dense
+              v-model="localWorkspace"
+              append-outer-icon="save"
+              @click:append-outer="renameWorkspace"
+              :error-messages="nameErrorMessage"
             />
 
             <span v-else>{{workspace}}</span>
@@ -180,10 +185,12 @@ export default Vue.extend({
   props: ['workspace', 'title'],
   data() {
     return {
+      localWorkspace: null as string | null,
       editing: false,
       nodeTables: [] as string[],
       edgeTables: [] as string[],
       graphs: [] as string[],
+      nameErrorMessage: null as string | null,
     };
   },
 
@@ -204,6 +211,30 @@ export default Vue.extend({
     },
   },
   methods: {
+    cancelRename() {
+      this.nameErrorMessage = null;
+      this.editing = false;
+    },
+    async renameWorkspace() {
+      if (this.localWorkspace === this.workspace) {
+        this.editing = false;
+        return;
+      }
+
+      if (this.localWorkspace !== null) {
+        try {
+          const { status, data } = await api.renameWorkspace(this.workspace, this.localWorkspace);
+          this.$router.push(`/workspaces/${data}`);
+          this.editing = false;
+          this.nameErrorMessage = null;
+
+          // TODO: REMOVE THIS REF WHEN VUEX IS ADDED
+          this.$emit('update');
+        } catch (err) {
+          this.nameErrorMessage = err.response.statusText;
+        }
+      }
+    },
     async update(this: any) {
       // Get lists of node and edge tables.
       let nodeTables;
@@ -231,6 +262,8 @@ export default Vue.extend({
       // Instruct both ItemPanels to clear their checkbox state.
       this.$refs.graphPanel.clearCheckboxes();
       this.$refs.tablePanel.clearCheckboxes();
+
+      this.localWorkspace = this.workspace;
     },
   },
   created() {
