@@ -46,7 +46,6 @@
           />
         </v-flex>
       </v-layout>
-      <slot :uploadParams="uploadParams"/>
     </v-card-text>
 
     <v-divider></v-divider>
@@ -110,7 +109,6 @@ export default Vue.extend({
       fileName: null as string | null,
       selectedType: null as FileType | null,
       file: null as File | null,
-      uploadParams: {} as AxiosRequestConfig,
     };
   },
 
@@ -153,7 +151,6 @@ export default Vue.extend({
         workspace,
         fileName,
         selectedType,
-        uploadParams,
       } = this;
 
       if (file === null || fileName === null) {
@@ -164,8 +161,6 @@ export default Vue.extend({
         await api.uploadTable(workspace, fileName, {
           type: selectedType!.queryCall as UploadType,
           data: file,
-        }, {
-          params: uploadParams,
         });
 
         this.tableCreationError = null;
