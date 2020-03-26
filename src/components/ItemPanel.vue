@@ -55,6 +55,21 @@
               <v-list-item-title>{{item}}</v-list-item-title>
             </v-list-item-content>
 
+            <v-item-action
+              @click.prevent
+              v-if="hover"
+            >
+              <v-btn
+                icon
+              >
+                <v-icon color="primary">save_alt</v-icon>
+              </v-btn>
+              <v-btn
+                icon
+              >
+                <v-icon color="red accent-3">delete</v-icon>
+              </v-btn>
+            </v-item-action>
           </v-list-item>
         </v-hover>
       </v-list-item-group>
