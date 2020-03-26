@@ -62,7 +62,6 @@
 <script lang="ts">
 import { UploadType, validUploadType } from 'multinet';
 import Vue, { PropType } from 'vue';
-import { AxiosRequestConfig } from 'axios';
 
 import api from '@/api';
 import { FileType } from '@/types';
