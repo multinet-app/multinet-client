@@ -92,7 +92,6 @@ import Vue from 'vue';
 import api from '@/api';
 import { FileType } from '@/types';
 import { validFileType, fileName as getFileName } from '@/utils/files';
-import FileUploadForm from '@/components/FileUploadForm.vue';
 
 
 export default Vue.extend({
@@ -100,9 +99,6 @@ export default Vue.extend({
 
   props: {
     workspace: String,
-  },
-  components: {
-    FileUploadForm,
   },
   data() {
     return {
