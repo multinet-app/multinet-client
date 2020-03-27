@@ -88,7 +88,8 @@
                 <v-list-item-title>{{space}}</v-list-item-title>
               </v-list-item-content>
 
-              <v-item-action
+              <v-list-item-action
+                class="mx-0 my-0"
                 @click.prevent
                 v-if="hover"
               >
@@ -98,7 +99,7 @@
                 >
                   <v-icon color="red accent-3" size="18">delete</v-icon>
                 </v-btn>
-              </v-item-action>
+              </v-list-item-action>
             </v-list-item>
           </v-hover>
         </v-list-item-group>
