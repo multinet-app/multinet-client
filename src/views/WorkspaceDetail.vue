@@ -55,12 +55,21 @@
               flat
               dense
               v-model="localWorkspace"
-              append-outer-icon="save"
-              @click:append-outer="renameWorkspace"
               @keydown.enter="renameWorkspace"
               @keydown.esc="cancelRename"
               :error-messages="nameErrorMessage"
-            />
+            >
+              <template v-slot:append-outer>
+                <v-btn
+                  @click="renameWorkspace"
+                  :disabled="!localWorkspace"
+                  color="success"
+                  icon
+                >
+                  <v-icon>done</v-icon>
+                </v-btn>
+              </template>
+            </v-text-field>
 
             <span v-else>{{workspace}}</span>
 
