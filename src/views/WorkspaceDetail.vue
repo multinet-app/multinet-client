@@ -57,6 +57,8 @@
               v-model="localWorkspace"
               append-outer-icon="save"
               @click:append-outer="renameWorkspace"
+              @keydown.enter="renameWorkspace"
+              @keydown.esc="cancelRename"
               :error-messages="nameErrorMessage"
             />
 
@@ -213,6 +215,7 @@ export default Vue.extend({
   methods: {
     cancelRename() {
       this.nameErrorMessage = null;
+      this.localWorkspace = this.workspace;
       this.editing = false;
     },
     async renameWorkspace() {
