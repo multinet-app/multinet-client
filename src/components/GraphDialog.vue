@@ -6,14 +6,12 @@
     <template v-slot:activator="{ on }">
       <v-btn
         id="add-graph"
-        class="new-button"
         color="blue darken-2"
-        fab
-        dark
+        icon
         medium
         v-on="on"
       >
-        <v-icon dark>add</v-icon>
+        <v-icon dark>add_circle</v-icon>
       </v-btn>
     </template>
     <v-card>
