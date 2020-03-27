@@ -62,7 +62,7 @@
               />
             </v-col>
             <v-col cols="4">
-              <v-switch
+              <v-checkbox
                 v-model="overwrite"
                 class="mt-1 ml-2"
                 dense
@@ -115,7 +115,7 @@ export default Vue.extend({
       fileName: null as string | null,
       fileUploadError: null as string | null,
       tableCreationError: null as string | null,
-      key: undefined as string | undefined,
+      key: '_key',
       overwrite: false,
     };
   },
