@@ -298,6 +298,7 @@
 import Vue from 'vue';
 
 import api from '@/api';
+import store from '@/store';
 
 export default Vue.extend({
   name: 'GraphDetail',

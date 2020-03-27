@@ -41,9 +41,7 @@
       </v-btn>
     </v-toolbar>
 
-    <WorkspaceDialog
-      @created="addWorkspace"
-    />
+    <WorkspaceDialog />
 
     <v-list subheader>
       <v-subheader class="pr-2">
@@ -53,8 +51,8 @@
           <delete-workspace-dialog
             :somethingChecked="somethingChecked"
             :selection="selection"
-            @deleted="delayedRefresh(1000)"
-            />
+            @deleted="workspaceDeleted"
+          />
 
       </v-subheader>
 
@@ -96,8 +94,11 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapState } from 'vuex';
 
 import api from '@/api';
+import store from '@/store';
+
 import WorkspaceDialog from '@/components/WorkspaceDialog.vue';
 import DeleteWorkspaceDialog from '@/components/DeleteWorkspaceDialog.vue';
 import AboutDialog from '@/components/AboutDialog.vue';
@@ -110,7 +111,6 @@ export default Vue.extend({
   data() {
     return {
       newWorkspace: '',
-      workspaces: [] as string[],
       checkbox: {} as CheckboxTable,
     };
   },
@@ -122,6 +122,7 @@ export default Vue.extend({
   },
 
   computed: {
+    ...mapState(['workspaces']),
     somethingChecked(): boolean {
       return Object.values(this.checkbox)
         .some((d) => !!d);
@@ -141,28 +142,14 @@ export default Vue.extend({
       this.$router.push(`/workspaces/${workspace}`);
     },
 
-    unroute() {
-      this.$router.replace('/');
-    },
-
-    addWorkspace(workspace: string) {
-      const workspaces = this.workspaces.concat([workspace]);
-      this.workspaces = workspaces.sort();
-    },
-
-    delayedRefresh(ms: number) {
+    workspaceDeleted() {
       this.checkbox = {};
-      this.unroute();
-      window.setTimeout(() => this.refresh(), ms);
-    },
-
-    async refresh() {
-      this.workspaces = await api.workspaces();
+      this.$router.replace({ name: 'home' });
     },
   },
 
   async created() {
-    this.refresh();
+    store.dispatch.fetchWorkspaces();
   },
 });
 </script>

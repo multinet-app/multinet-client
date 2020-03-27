@@ -76,6 +76,8 @@
 import Vue, { PropType } from 'vue';
 
 import api from '@/api';
+import store from '@/store';
+
 import { randomPhrase } from '@/utils/randomPhrase';
 
 export default Vue.extend({
@@ -123,6 +125,10 @@ export default Vue.extend({
       selection.forEach(async (ws) => {
         await api.deleteWorkspace(ws);
       });
+
+      // Seems to be required due to a race condition with the server
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      store.dispatch.fetchWorkspaces();
 
       this.$emit('deleted');
       this.dialog = false;
