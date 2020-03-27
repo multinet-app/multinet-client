@@ -27,7 +27,8 @@ export default Vue.extend({
   methods: {
     // TODO: REMOVE THIS REF AND METHOD WHEN VUEX IS ADDED
     update() {
-      this.$refs.sidebar.refresh();
+      const sidebar = this.$refs.sidebar as any;
+      sidebar.refresh();
     },
   },
 });
