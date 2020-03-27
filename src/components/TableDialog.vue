@@ -158,7 +158,9 @@ export default Vue.extend({
         await api.uploadTable(workspace, fileName, {
           type: 'csv',
           data: file,
-        }, key, overwrite);
+          key,
+          overwrite,
+        });
 
         this.tableCreationError = null;
         this.tableDialog = false;
