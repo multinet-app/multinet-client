@@ -56,7 +56,8 @@
               <v-text-field
                 v-model="key"
                 label="Key"
-                hide-details
+                append-icon="restore"
+                @click:append="restoreKeyField"
                 outlined
                 dense
               />
@@ -93,7 +94,7 @@ import api from '@/api';
 import { FileType } from '@/types';
 import { validFileType, fileName as getFileName } from '@/utils/files';
 
-
+const defaultKeyField = '_key';
 export default Vue.extend({
   name: 'TableDialog',
 
@@ -115,7 +116,7 @@ export default Vue.extend({
       fileName: null as string | null,
       fileUploadError: null as string | null,
       tableCreationError: null as string | null,
-      key: '_key',
+      key: defaultKeyField,
       overwrite: false,
     };
   },
@@ -129,6 +130,9 @@ export default Vue.extend({
     },
   },
   methods: {
+    restoreKeyField() {
+      this.key = defaultKeyField;
+    },
     handleFileInput(file: File) {
       this.file = file;
 
