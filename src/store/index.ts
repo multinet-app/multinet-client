@@ -33,18 +33,18 @@ const {
     },
   },
   actions: {
-    async fetchWorkspaces({ commit }) {
+    async fetchWorkspaces(context) {
+      const { commit } = rootActionContext(context);
       const workspaces = await api.workspaces();
-      commit('setWorkspaces', workspaces);
+      commit.setWorkspaces(workspaces);
     },
-    async fetchWorkspace({ commit }, workspace: string) {
+    async fetchWorkspace(context, workspace: string) {
+      const { commit } = rootActionContext(context);
       const nodeTables = await api.tables(workspace, { type: 'node' });
       const edgeTables = await api.tables(workspace, { type: 'edge' });
       const graphs = await api.graphs(workspace);
 
-      // console.log("nodeTables --->", nodeTables);
-
-      commit('setCurrentWorkspace', { name: workspace, nodeTables, edgeTables, graphs });
+      commit.setCurrentWorkspace({ name: workspace, nodeTables, edgeTables, graphs });
     },
   },
 });
