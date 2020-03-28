@@ -57,12 +57,12 @@
               v-model="localWorkspace"
               @keydown.enter="renameWorkspace"
               @keydown.esc="cancelRename"
-              :error-messages="nameErrorMessage"
+              :error-messages="nameErrorMessages"
             >
               <template v-slot:append-outer>
                 <v-btn
                   @click="renameWorkspace"
-                  :disabled="!localWorkspace"
+                  :disabled="!!nameErrorMessages.length"
                   color="success"
                   icon
                 >
@@ -183,6 +183,13 @@ import TableDialog from '@/components/TableDialog.vue';
 import DeleteTableDialog from '@/components/DeleteTableDialog.vue';
 import DownloadDialog from '@/components/DownloadDialog.vue';
 
+
+const surroundingWhitespace = /^\s+|\s+$/;
+const workspaceNameRules: Array<(x: string) => string|boolean> = [
+  (x: string) => !!x || 'Workspace name cannot be blank.',
+  (x: string) => !surroundingWhitespace.test(x) || 'Workspace name cannot begin or end with whitespace.',
+];
+
 export default Vue.extend({
   name: 'WorkspaceDetail',
   components: {
@@ -201,11 +208,20 @@ export default Vue.extend({
       nodeTables: [] as string[],
       edgeTables: [] as string[],
       graphs: [] as string[],
-      nameErrorMessage: null as string | null,
+      requestError: null as string | null,
     };
   },
 
   computed: {
+    nameErrorMessages(): string[] {
+      const { requestError } = this;
+      const errors = [
+        ...workspaceNameRules.map((rule) => rule(this.localWorkspace as string)),
+        requestError,
+      ];
+
+      return errors.filter((res): res is string => typeof res === 'string');
+    },
     tables(): string[] {
       const {
         nodeTables,
@@ -220,14 +236,22 @@ export default Vue.extend({
     workspace() {
       this.update();
     },
+    localWorkspace() {
+      // Once the user types, clears the error returned on sending the rename API call.
+      this.requestError = null;
+    },
   },
   methods: {
     cancelRename() {
-      this.nameErrorMessage = null;
+      this.requestError = null;
       this.localWorkspace = this.workspace;
       this.editing = false;
     },
     async renameWorkspace() {
+      if (this.nameErrorMessages.length) {
+        return;
+      }
+
       if (this.localWorkspace === this.workspace) {
         this.editing = false;
         return;
@@ -238,12 +262,12 @@ export default Vue.extend({
           const { status, data } = await api.renameWorkspace(this.workspace, this.localWorkspace);
           this.$router.push(`/workspaces/${data}`);
           this.editing = false;
-          this.nameErrorMessage = null;
+          this.requestError = null;
 
           // TODO: REMOVE THIS REF WHEN VUEX IS ADDED
           this.$emit('update');
         } catch (err) {
-          this.nameErrorMessage = err.response.statusText;
+          this.requestError = err.response.statusText;
         }
       }
     },
