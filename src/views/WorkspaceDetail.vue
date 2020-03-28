@@ -167,6 +167,7 @@ import DeleteGraphDialog from '@/components/DeleteGraphDialog.vue';
 import TableDialog from '@/components/TableDialog.vue';
 import DeleteTableDialog from '@/components/DeleteTableDialog.vue';
 import DownloadDialog from '@/components/DownloadDialog.vue';
+import store from '@/store';
 
 export default Vue.extend({
   name: 'WorkspaceDetail',
@@ -214,7 +215,7 @@ export default Vue.extend({
   },
   methods: {
     async update(this: any) {
-      this.$store.dispatch('fetchWorkspace', this.workspace);
+      store.dispatch.fetchWorkspace(this.workspace);
 
       if (Object.keys(this.$refs).length) {
         this.$refs.graphPanel.clearCheckboxes();
