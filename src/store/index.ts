@@ -13,6 +13,11 @@ interface WorkspaceSpec {
   graphs?: string[];
 }
 
+interface State {
+  workspaces: string[];
+  currentWorkspace: WorkspaceSpec | null;
+}
+
 const {
   store,
   rootActionContext,
@@ -21,8 +26,28 @@ const {
   moduleGetterContext,
 } = createDirectStore({
   state: {
-    workspaces: [] as string[],
-    currentWorkspace: null as WorkspaceSpec | null,
+    workspaces: [],
+    currentWorkspace: null,
+  } as State,
+  getters: {
+    nodeTables(state: State): string[] {
+      if (state.currentWorkspace !== null && state.currentWorkspace.nodeTables) {
+        return state.currentWorkspace.nodeTables;
+      }
+      return [];
+    },
+    edgeTables(state: State): string[] {
+      if (state.currentWorkspace !== null && state.currentWorkspace.edgeTables) {
+        return state.currentWorkspace.edgeTables;
+      }
+      return [];
+    },
+    graphs(state: State) {
+      if (state.currentWorkspace !== null && state.currentWorkspace.graphs) {
+        return state.currentWorkspace.graphs;
+      }
+      return [];
+    },
   },
   mutations: {
     setWorkspaces(state, workspaces: string[]) {

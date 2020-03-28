@@ -158,7 +158,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapState } from 'vuex';
+import { mapState, mapGetters } from 'vuex';
 
 import api from '@/api';
 import ItemPanel from '@/components/ItemPanel.vue';
@@ -186,6 +186,7 @@ export default Vue.extend({
   },
 
   computed: {
+    // ...mapGetters(['nodeTables, edgeTables, graphs']),
     nodeTables(): string[] {
       return this.currentWorkspace ? this.currentWorkspace.nodeTables : [];
     },
