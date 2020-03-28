@@ -55,7 +55,7 @@
             <v-col cols="4">
               <v-text-field
                 v-model="key"
-                label="Key"
+                label="Key Column"
                 append-icon="restore"
                 @click:append="restoreKeyField"
                 outlined
