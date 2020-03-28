@@ -158,6 +158,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapState } from 'vuex';
 
 import api from '@/api';
 import ItemPanel from '@/components/ItemPanel.vue';
@@ -181,14 +182,20 @@ export default Vue.extend({
   data() {
     return {
       editing: false,
-      nodeTables: [] as string[],
-      edgeTables: [] as string[],
-      graphs: [] as string[],
     };
   },
 
   computed: {
-    tables(): string[] {
+    nodeTables(): string[] {
+      return this.currentWorkspace ? this.currentWorkspace.nodeTables : [];
+    },
+    edgeTables(): string[] {
+      return this.currentWorkspace ? this.currentWorkspace.edgeTables : [];
+    },
+    graphs() {
+      return this.currentWorkspace ? this.currentWorkspace.graphs : [];
+    },
+    tables(this: any): string[] {
       const {
         nodeTables,
         edgeTables,
@@ -196,6 +203,7 @@ export default Vue.extend({
 
       return nodeTables.concat(edgeTables);
     },
+    ...mapState(['currentWorkspace']),
   },
 
   watch: {
@@ -205,32 +213,12 @@ export default Vue.extend({
   },
   methods: {
     async update(this: any) {
-      // Get lists of node and edge tables.
-      let nodeTables;
-      let edgeTables;
+      this.$store.dispatch('fetchWorkspace', this.workspace);
 
-      try {
-        nodeTables = await api.tables(this.workspace, { type: 'node' });
-        edgeTables = await api.tables(this.workspace, { type: 'edge' });
-      } catch (err) {
-        if (err.status === 404 && err.statusText === 'Workspace Not Found') {
-          this.$router.replace({name: 'home'});
-        } else {
-          throw err;
-        }
-
-        return;
+      if (Object.keys(this.$refs).length) {
+        this.$refs.graphPanel.clearCheckboxes();
+        this.$refs.tablePanel.clearCheckboxes();
       }
-
-      this.nodeTables = nodeTables;
-      this.edgeTables = edgeTables;
-
-      // Get list of graphs.
-      this.graphs = await api.graphs(this.workspace);
-
-      // Instruct both ItemPanels to clear their checkbox state.
-      this.$refs.graphPanel.clearCheckboxes();
-      this.$refs.tablePanel.clearCheckboxes();
     },
   },
   created() {
