@@ -231,7 +231,7 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { PropType } from 'vue';
 import { Edge } from 'multinet';
 
 import api from '@/api';
@@ -252,7 +252,12 @@ type EdgeType = 'incoming' | 'outgoing';
 
 export default Vue.extend({
   name: 'NodeDetail',
-  props: ['workspace', 'graph', 'type', 'node'],
+  props: {
+    workspace: String as PropType<string>,
+    graph: String as PropType<string>,
+    type: String as PropType<string>,
+    node: String as PropType<string>,
+  },
   data() {
     return {
       incoming: [] as Connection[],
