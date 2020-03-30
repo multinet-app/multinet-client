@@ -59,16 +59,6 @@
               @keydown.esc="cancelRename"
               :error-messages="nameErrorMessages"
             >
-              <template v-slot:append-outer>
-                <v-btn
-                  @click="renameWorkspace"
-                  :disabled="!!nameErrorMessages.length"
-                  color="success"
-                  icon
-                >
-                  <v-icon>done</v-icon>
-                </v-btn>
-              </template>
             </v-text-field>
 
             <span v-else>{{workspace}}</span>
