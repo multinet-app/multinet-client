@@ -157,7 +157,7 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { PropType } from 'vue';
 
 import api from '@/api';
 import ItemPanel from '@/components/ItemPanel.vue';
@@ -177,7 +177,9 @@ export default Vue.extend({
     DeleteTableDialog,
     DownloadDialog,
   },
-  props: ['workspace', 'title'],
+  props: {
+    workspace: String as PropType<string>,
+  },
   data() {
     return {
       editing: false,
