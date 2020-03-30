@@ -340,10 +340,10 @@ export default Vue.extend({
   height: 64px; /* match toolbar height */
 }
 
-.ws-rename.v-text-field.v-text-field--enclosed .v-input__slot {
+.ws-rename.v-text-field.v-text-field--enclosed:not(.v-text-field--rounded) > .v-input__control > .v-input__slot, .ws-rename.v-text-field.v-text-field--enclosed .v-text-field__details {
   font-size: 20px;
-  letter-spacing: 2px !important;
-  padding-top: 14px;
+  letter-spacing: 2px;
+  padding-top: 15px;
 }
 
 .choose-tables.v-select .v-select__selections {
