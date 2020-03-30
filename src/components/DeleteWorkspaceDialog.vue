@@ -35,8 +35,9 @@
       </v-card-title>
 
       <v-card-text class="px-5 py-4">
-        You are about to delete {{ selection.length }} workspace{{plural}}. Type
-        the following phrase to confirm: <strong>{{ confirmationPhrase }}</strong>
+        You are about to delete {{ selection.length }}
+        workspace{{plural}}{{ detail }}. Type the following phrase to confirm:
+        <strong>{{ confirmationPhrase }}</strong>
       </v-card-text>
 
       <v-card-text>
@@ -103,6 +104,10 @@ export default Vue.extend({
     // This workaround is necessary because of https://github.com/vuejs/vue/issues/10455
     plural(this: any) {
       return this.selection.length > 1 ? 's' : '';
+    },
+
+    detail(this: any) {
+      return this.selection.length === 1 ? ` (${this.selection[0]})` : '';
     },
   },
 
