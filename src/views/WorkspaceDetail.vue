@@ -186,8 +186,8 @@ import DownloadDialog from '@/components/DownloadDialog.vue';
 
 const surroundingWhitespace = /^\s+|\s+$/;
 const workspaceNameRules: Array<(x: string) => string|boolean> = [
-  (x: string) => !!x || 'Workspace name cannot be blank.',
-  (x: string) => !surroundingWhitespace.test(x) || 'Workspace name cannot begin or end with whitespace.',
+  (x: string) => !!x || 'Workspace name cannot be blank',
+  (x: string) => !surroundingWhitespace.test(x) || 'Workspace name cannot begin or end with whitespace',
 ];
 
 export default Vue.extend({
