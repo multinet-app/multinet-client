@@ -267,7 +267,11 @@ export default Vue.extend({
           // TODO: REMOVE THIS REF WHEN VUEX IS ADDED
           this.$emit('update');
         } catch (err) {
-          this.requestError = err.response.statusText;
+          if (err.response.status === 409) {
+            this.requestError = 'A workspace by that name already exists';
+          } else {
+            this.requestError = err.response.statusText;
+          }
         }
       }
     },
