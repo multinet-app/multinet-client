@@ -59,7 +59,7 @@
 
           </v-toolbar-title>
         </v-hover>
-
+        <v-progress-linear v-if="loading" indeterminate absolute bottom/>
         <v-spacer />
         <v-btn icon>
           <v-icon>more_vert</v-icon>
@@ -186,6 +186,7 @@ export default Vue.extend({
       nodeTables: [] as string[],
       edgeTables: [] as string[],
       graphs: [] as string[],
+      loading: false,
     };
   },
 
@@ -212,9 +213,11 @@ export default Vue.extend({
       let edgeTables;
 
       try {
+        this.loading = true;
         nodeTables = await api.tables(this.workspace, { type: 'node' });
         edgeTables = await api.tables(this.workspace, { type: 'edge' });
       } catch (err) {
+        this.loading = false;
         if (err.status === 404 && err.statusText === 'Workspace Not Found') {
           this.$router.replace({name: 'home'});
         } else {
@@ -233,6 +236,8 @@ export default Vue.extend({
       // Instruct both ItemPanels to clear their checkbox state.
       this.$refs.graphPanel.clearCheckboxes();
       this.$refs.tablePanel.clearCheckboxes();
+
+      this.loading = false;
     },
   },
   created() {
