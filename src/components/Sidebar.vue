@@ -1,6 +1,7 @@
 <template>
   <v-navigation-drawer
     app
+    class="app-sidebar"
     fixed
     permanent
     stateless
@@ -59,33 +60,49 @@
 
       <v-divider></v-divider>
 
-      <v-hover
-        v-for="space in workspaces"
-        :key="space"
-      >
-        <v-list-item
-          ripple
-          slot-scope="{ hover }"
-          :to="`/workspaces/${space}/`"
-        >
-          <v-list-item-action @click.prevent>
-            <v-icon
-              color="primary"
-              v-if="!hover && !checkbox[space]"
-            >library_books</v-icon>
+      <div class="workspaces">
+        <v-list-item-group color="primary">
+          <v-hover
+            v-for="space in workspaces"
+            :key="space"
+          >
+            <v-list-item
+              ripple
+              slot-scope="{ hover }"
+              :to="`/workspaces/${space}/`"
+            >
+              <v-list-item-action @click.prevent>
+                <v-icon
+                  class="workspace-icon"
+                  v-if="!hover && !checkbox[space]"
+                >library_books</v-icon>
 
-            <v-checkbox
-              class="ws-checkbox"
-              v-else
-              v-model="checkbox[space]"
-            ></v-checkbox>
-          </v-list-item-action>
+                <v-checkbox
+                  class="ws-checkbox"
+                  v-else
+                  v-model="checkbox[space]"
+                ></v-checkbox>
+              </v-list-item-action>
 
-          <v-list-item-content>
-            <v-list-item-title>{{space}}</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-hover>
+              <v-list-item-content>
+                <v-list-item-title>{{space}}</v-list-item-title>
+              </v-list-item-content>
+
+              <v-item-action
+                @click.prevent
+                v-if="hover"
+              >
+                <v-btn
+                  icon
+                  small
+                >
+                  <v-icon color="red accent-3" size="18">delete</v-icon>
+                </v-btn>
+              </v-item-action>
+            </v-list-item>
+          </v-hover>
+        </v-list-item-group>
+      </div>
     </v-list>
 
   </v-navigation-drawer>
@@ -167,5 +184,21 @@ export default Vue.extend({
 <style scoped>
 .app-logo {
   width: 48px;
+}
+
+.workspaces {
+  /* 171px = height of app-bar + workspace button + list subheader */
+  height: calc(100vh - 171px);
+  overflow-y:scroll;
+}
+
+.workspace-icon {
+  opacity: .4;
+}
+</style>
+
+<style>
+.app-sidebar .v-navigation-drawer__content {
+  overflow: hidden;
 }
 </style>

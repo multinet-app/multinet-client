@@ -1,5 +1,10 @@
 import { UploadType } from 'multinet';
 
+export interface App {
+  name: string;
+  url: string;
+}
+
 export interface KeyValue {
   key: string;
   value: any;
