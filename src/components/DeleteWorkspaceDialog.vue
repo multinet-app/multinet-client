@@ -3,7 +3,6 @@
   <v-dialog
     v-model="dialog"
     width="700"
-    v-if="somethingChecked"
     >
 
     <template v-slot:activator="{ on: dialog }">
@@ -12,6 +11,7 @@
           <v-scroll-x-transition>
             <v-btn
               id="delete-workspaces"
+              v-if="somethingChecked"
               icon
               small
               text
@@ -110,6 +110,8 @@ export default Vue.extend({
     dialog() {
       if (this.dialog) {
         this.confirmationPhrase = randomPhrase();
+      } else {
+        this.$emit('closed');
       }
     },
   },
