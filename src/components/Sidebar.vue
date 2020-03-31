@@ -56,7 +56,7 @@
             :selection="selection"
             @deleted="delayedRefresh(1000)"
             @closed="singleSelected = null"
-            />
+          />
 
       </v-subheader>
 
@@ -197,7 +197,7 @@ export default Vue.extend({
 
     deleteWorkspace(ws: string) {
       this.singleSelected = ws;
-      this.$refs.dws.dialog = true;
+      (this.$refs.dws as any).dialog = true;
     },
   },
 

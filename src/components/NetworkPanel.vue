@@ -102,9 +102,9 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
-import DeleteGraphDialog from '@/components/DeleteGraphDialog';
-import GraphDialog from '@/components/GraphDialog';
-import DownloadDialog from '@/components/DownloadDialog';
+import DeleteGraphDialog from '@/components/DeleteGraphDialog.vue';
+import GraphDialog from '@/components/GraphDialog.vue';
+import DownloadDialog from '@/components/DownloadDialog.vue';
 
 export default Vue.extend({
   name: 'GraphPanel',
@@ -162,7 +162,7 @@ export default Vue.extend({
         checked,
       } = this;
 
-      let result = [];
+      let result: string[] = [];
 
       if (singleSelected !== null) {
         result = result.concat([singleSelected]);
@@ -181,12 +181,12 @@ export default Vue.extend({
   methods: {
     deleteItem(item: string) {
       this.singleSelected = item;
-      this.$refs.deleter.dialog = true;
+      (this.$refs.deleter as any).dialog = true;
     },
 
     downloadItem(item: string) {
       this.singleSelected = item;
-      this.$refs.downloader.dialog = true;
+      (this.$refs.downloader as any).dialog = true;
     },
 
     clearCheckboxes() {
