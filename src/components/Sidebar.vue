@@ -146,7 +146,7 @@ export default Vue.extend({
   computed: {
     somethingChecked(): boolean {
       return Object.values(this.checkbox)
-        .some((d) => !!d);
+        .some(Boolean);
     },
 
     checked(): string[] {
