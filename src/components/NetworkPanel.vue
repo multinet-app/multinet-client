@@ -21,7 +21,7 @@
           ref="deleter"
           :selection="selection"
           :workspace="workspace"
-          @deleted="cleanup"
+          @closed="cleanup"
         />
       </div>
 
@@ -195,16 +195,17 @@ export default Vue.extend({
       });
     },
 
-    cleanup() {
+    cleanup(deleted?: string[]) {
       const {
         singleSelected,
       } = this;
 
       if (singleSelected !== null) {
-        this.checkbox[this.singleSelected] = false;
         this.singleSelected = null;
-      } else {
-        this.clearCheckboxes();
+      }
+
+      if (deleted) {
+        deleted.forEach((item) => this.checkbox[item] = false);
       }
 
       this.$emit('update');

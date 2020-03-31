@@ -137,6 +137,15 @@ export default Vue.extend({
       }
     },
   },
+
+  watch: {
+    dialog() {
+      if (!this.dialog) {
+        this.$emit('closed');
+      }
+    },
+  },
+
   methods: {
     async execute() {
       const {
