@@ -111,46 +111,17 @@
             </item-panel>
           </v-card>
         </v-flex>
-        <v-flex
-          md6
-          px-5
-          py-3
-        >
-          <v-card
-            color="transparent"
-            flat
-            text
-          >
-            <item-panel
-              ref="tablePanel"
-              title="Tables"
-              :items="tables"
+
+        <v-flex md6 px-5 py-3>
+          <v-card color="transparent" flat text>
+            <table-panel
               :workspace="workspace"
-              route-type="table"
-              icon="table_chart"
-              >
-                <table-dialog
-                  :workspace="workspace"
-                  @success="update"
-                />
-                <template v-slot:deleter="deleter">
-                  <delete-table-dialog
-                    :selection="deleter.selection"
-                    :workspace="deleter.workspace"
-                    @deleted="update"
-                  />
-                </template>
-                <template v-slot:downloader="downloader">
-                  <download-dialog
-                    :selection="downloader.selection"
-                    :workspace="downloader.workspace"
-                    downloadType="table"
-                    @downloaded="update"
-                  />
-                </template>
-            </item-panel>
+              :items="tables"
+              @update="update"
+            />
           </v-card>
         </v-flex>
+
       </v-layout>
     </v-content>
   </v-container>
@@ -161,6 +132,7 @@ import Vue, { PropType } from 'vue';
 
 import api from '@/api';
 import ItemPanel from '@/components/ItemPanel.vue';
+import TablePanel from '@/components/TablePanel.vue';
 import GraphDialog from '@/components/GraphDialog.vue';
 import DeleteGraphDialog from '@/components/DeleteGraphDialog.vue';
 import TableDialog from '@/components/TableDialog.vue';
@@ -171,6 +143,7 @@ export default Vue.extend({
   name: 'WorkspaceDetail',
   components: {
     ItemPanel,
+    TablePanel,
     GraphDialog,
     DeleteGraphDialog,
     TableDialog,
@@ -232,10 +205,6 @@ export default Vue.extend({
 
       // Get list of graphs.
       this.graphs = await api.graphs(this.workspace);
-
-      // Instruct both ItemPanels to clear their checkbox state.
-      this.$refs.graphPanel.clearCheckboxes();
-      this.$refs.tablePanel.clearCheckboxes();
 
       this.loading = false;
     },
