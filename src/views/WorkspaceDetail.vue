@@ -330,10 +330,31 @@ export default Vue.extend({
   height: 64px; /* match toolbar height */
 }
 
-.ws-rename.v-text-field.v-text-field--enclosed:not(.v-text-field--rounded) > .v-input__control > .v-input__slot, .ws-rename.v-text-field.v-text-field--enclosed .v-text-field__details {
+.ws-rename.v-text-field.v-text-field--enclosed:not(.v-text-field--rounded) > .v-input__control > .v-input__slot {
   font-size: 20px;
   letter-spacing: 2px;
   padding-top: 15px;
+}
+
+.ws-rename.v-text-field.v-text-field--enclosed .v-text-field__details .error--text {
+  background: rgba(255, 23, 68, 0.9);
+  border-radius: 3px;
+  color: #fff !important;
+  padding: 7px 10px;
+  position: absolute;
+  top: 54px;
+}
+
+.ws-rename.v-text-field.v-text-field--enclosed .v-text-field__details .error--text:before {
+  border-style: solid;
+  border-width: 0 6px 6px 6px;
+  border-color: transparent transparent rgba(255, 23, 68, 0.9) transparent;
+  content:'';
+  height: 0;
+  position: absolute;
+  bottom: 100%;
+  left: 9px;
+  width: 0;
 }
 
 .choose-tables.v-select .v-select__selections {
