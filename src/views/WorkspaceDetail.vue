@@ -69,46 +69,15 @@
       <v-layout
         wrap
       >
-        <v-flex
-          md6
-          px-5
-          py-3
-        >
-          <v-card
-            color="transparent"
-            flat
-            text
-          >
-            <item-panel
-              ref="graphPanel"
-              title="Networks"
-              :items="graphs"
+        <v-flex md6 px-5 py-3>
+          <v-card color="transparent" flat text>
+            <network-panel
               :workspace="workspace"
-              route-type="graph"
-              icon="timeline"
-            >
-              <graph-dialog
-                :node-tables="nodeTables"
-                :edge-tables="edgeTables"
-                :workspace="workspace"
-                @success="update"
-              />
-              <template v-slot:deleter="deleter">
-                <delete-graph-dialog
-                  :selection="deleter.selection"
-                  :workspace="deleter.workspace"
-                  @deleted="update"
-                />
-              </template>
-              <template v-slot:downloader="downloader">
-                <download-dialog
-                  :selection="downloader.selection"
-                  :workspace="downloader.workspace"
-                  downloadType="network"
-                  @downloaded="update"
-                />
-              </template>
-            </item-panel>
+              :items="graphs"
+              :node-tables="nodeTables"
+              :edge-tables="edgeTables"
+              @update="update"
+            />
           </v-card>
         </v-flex>
 
@@ -133,6 +102,7 @@ import Vue, { PropType } from 'vue';
 import api from '@/api';
 import ItemPanel from '@/components/ItemPanel.vue';
 import TablePanel from '@/components/TablePanel.vue';
+import NetworkPanel from '@/components/NetworkPanel.vue';
 import GraphDialog from '@/components/GraphDialog.vue';
 import DeleteGraphDialog from '@/components/DeleteGraphDialog.vue';
 import TableDialog from '@/components/TableDialog.vue';
@@ -144,6 +114,7 @@ export default Vue.extend({
   components: {
     ItemPanel,
     TablePanel,
+    NetworkPanel,
     GraphDialog,
     DeleteGraphDialog,
     TableDialog,
