@@ -40,6 +40,7 @@
               <v-icon
                 color="grey darken-3"
                 size="20px"
+                @click="cancelRename"
               >close</v-icon>
             </v-btn>
 
@@ -52,8 +53,13 @@
               @focus="$event.target.select()"
               solo
               flat
-              :value="workspace"
-            />
+              dense
+              v-model="localWorkspace"
+              @keydown.enter="renameWorkspace"
+              @keydown.esc="cancelRename"
+              :error-messages="nameErrorMessages"
+            >
+            </v-text-field>
 
             <span v-else>{{workspace}}</span>
 
@@ -167,6 +173,13 @@ import TableDialog from '@/components/TableDialog.vue';
 import DeleteTableDialog from '@/components/DeleteTableDialog.vue';
 import DownloadDialog from '@/components/DownloadDialog.vue';
 
+
+const surroundingWhitespace = /^\s+|\s+$/;
+const workspaceNameRules: Array<(x: string) => string|boolean> = [
+  (x: string) => !!x || 'Workspace name cannot be blank',
+  (x: string) => !surroundingWhitespace.test(x) || 'Workspace name cannot begin or end with whitespace',
+];
+
 export default Vue.extend({
   name: 'WorkspaceDetail',
   components: {
@@ -182,15 +195,26 @@ export default Vue.extend({
   },
   data() {
     return {
+      localWorkspace: null as string | null,
       editing: false,
       nodeTables: [] as string[],
       edgeTables: [] as string[],
       graphs: [] as string[],
+      requestError: null as string | null,
       loading: false,
     };
   },
 
   computed: {
+    nameErrorMessages(): string[] {
+      const { requestError } = this;
+      const errors = [
+        ...workspaceNameRules.map((rule) => rule(this.localWorkspace as string)),
+        requestError,
+      ];
+
+      return errors.filter((res): res is string => typeof res === 'string');
+    },
     tables(): string[] {
       const {
         nodeTables,
@@ -205,8 +229,45 @@ export default Vue.extend({
     workspace() {
       this.update();
     },
+    localWorkspace() {
+      // Once the user types, clears the error returned on sending the rename API call.
+      this.requestError = null;
+    },
   },
   methods: {
+    cancelRename() {
+      this.requestError = null;
+      this.localWorkspace = this.workspace;
+      this.editing = false;
+    },
+    async renameWorkspace() {
+      if (this.nameErrorMessages.length) {
+        return;
+      }
+
+      if (this.localWorkspace === this.workspace) {
+        this.editing = false;
+        return;
+      }
+
+      if (this.localWorkspace !== null) {
+        try {
+          const { status, data } = await api.renameWorkspace(this.workspace, this.localWorkspace);
+          this.$router.push(`/workspaces/${data}`);
+          this.editing = false;
+          this.requestError = null;
+
+          // TODO: REMOVE THIS REF WHEN VUEX IS ADDED
+          this.$emit('update');
+        } catch (err) {
+          if (err.response.status === 409) {
+            this.requestError = 'A workspace by that name already exists';
+          } else {
+            this.requestError = err.response.statusText;
+          }
+        }
+      }
+    },
     async update(this: any) {
       // Get lists of node and edge tables.
       let nodeTables;
@@ -237,6 +298,7 @@ export default Vue.extend({
       this.$refs.graphPanel.clearCheckboxes();
       this.$refs.tablePanel.clearCheckboxes();
 
+      this.localWorkspace = this.workspace;
       this.loading = false;
     },
   },
@@ -274,10 +336,31 @@ export default Vue.extend({
   height: 64px; /* match toolbar height */
 }
 
-.ws-rename.v-text-field.v-text-field--enclosed .v-input__slot {
+.ws-rename.v-text-field.v-text-field--enclosed:not(.v-text-field--rounded) > .v-input__control > .v-input__slot {
   font-size: 20px;
-  letter-spacing: 2px !important;
-  padding-top: 14px;
+  letter-spacing: 2px;
+  padding-top: 15px;
+}
+
+.ws-rename.v-text-field.v-text-field--enclosed .v-text-field__details .error--text {
+  background: rgba(255, 23, 68, 0.9);
+  border-radius: 3px;
+  color: #fff !important;
+  padding: 7px 10px;
+  position: absolute;
+  top: 54px;
+}
+
+.ws-rename.v-text-field.v-text-field--enclosed .v-text-field__details .error--text:before {
+  border-style: solid;
+  border-width: 0 6px 6px 6px;
+  border-color: transparent transparent rgba(255, 23, 68, 0.9) transparent;
+  content:'';
+  height: 0;
+  position: absolute;
+  bottom: 100%;
+  left: 9px;
+  width: 0;
 }
 
 .choose-tables.v-select .v-select__selections {
