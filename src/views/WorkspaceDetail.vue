@@ -100,7 +100,6 @@
 import Vue, { PropType } from 'vue';
 
 import api from '@/api';
-import ItemPanel from '@/components/ItemPanel.vue';
 import TablePanel from '@/components/TablePanel.vue';
 import NetworkPanel from '@/components/NetworkPanel.vue';
 import GraphDialog from '@/components/GraphDialog.vue';
@@ -112,7 +111,6 @@ import DownloadDialog from '@/components/DownloadDialog.vue';
 export default Vue.extend({
   name: 'WorkspaceDetail',
   components: {
-    ItemPanel,
     TablePanel,
     NetworkPanel,
     GraphDialog,
