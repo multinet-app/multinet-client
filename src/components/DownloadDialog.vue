@@ -139,8 +139,8 @@ export default Vue.extend({
   },
 
   watch: {
-    dialog() {
-      if (!this.dialog) {
+    dialog(open) {
+      if (!open) {
         this.$emit('closed');
       }
     },
