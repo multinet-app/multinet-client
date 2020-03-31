@@ -12,11 +12,10 @@
             <v-btn
               icon
               small
-              text
               @click="dialog.click"
               v-on="tooltip"
             >
-              <v-icon color="primary" size="22px">save_alt</v-icon>
+              <v-icon color="primary" size="20px">save_alt</v-icon>
             </v-btn>
           </v-scroll-x-transition>
         </template>
