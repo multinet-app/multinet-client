@@ -60,13 +60,8 @@ const {
       state.currentWorkspace = workspace;
     },
 
-    setEmptyWorkspace(state, name: string) {
-      state.currentWorkspace = {
-        name,
-        nodeTables: [],
-        edgeTables: [],
-        graphs: [],
-      };
+    unsetCurrentWorkspace(state) {
+      state.currentWorkspace = null;
     },
   },
   actions: {
@@ -78,7 +73,7 @@ const {
 
     async fetchWorkspace(context, workspace: string) {
       const { commit } = rootActionContext(context);
-      commit.setEmptyWorkspace(workspace);
+      commit.unsetCurrentWorkspace();
 
       const nodeTables = await api.tables(workspace, { type: 'node' });
       const edgeTables = await api.tables(workspace, { type: 'edge' });
