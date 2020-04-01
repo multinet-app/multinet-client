@@ -120,9 +120,7 @@ export default Vue.extend({
         selection,
       } = this;
 
-      selection.forEach(async (ws) => {
-        await api.deleteWorkspace(ws);
-      });
+      await Promise.all(selection.map((ws) => api.deleteWorkspace(ws)));
 
       this.$emit('deleted');
       this.dialog = false;
