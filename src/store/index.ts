@@ -98,9 +98,9 @@ export {
 };
 
 // The following lines enable types in the injected store '$store'.
-export type AppStore = typeof store;
+export type ApplicationStore = typeof store;
 declare module 'vuex' {
   interface Store<S> {
-    direct: AppStore;
+    direct: ApplicationStore;
   }
 }
