@@ -1,21 +1,29 @@
 module.exports = {
   root: true,
+
   env: {
     node: true,
   },
+
   extends: [
     'plugin:vue/recommended',
     '@vue/airbnb',
-    '@vue/typescript'
+    '@vue/typescript',
+    'plugin:vue/recommended',
+    '@vue/typescript/recommended',
   ],
+
   plugins: [
-    'vuetify'
+    'vuetify',
   ],
-  rules: {},
+
+  rules: {
+    'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+  },
+
   parserOptions: {
     parser: '@typescript-eslint/parser',
-    // May need to add back
-    // sourceType: 'module', // allow the use of imports statements
-    // ecmaVersion: 2018, // allow the parsing of modern ecmascript
+    ecmaVersion: 2020,
   },
 };
