@@ -131,11 +131,9 @@ export default Vue.extend({
 
       await Promise.all(selection.map((ws) => api.deleteWorkspace(ws)));
 
-      // Seems to be required due to a race condition with the server
-      await new Promise((resolve) => setTimeout(resolve, 500));
       store.dispatch.fetchWorkspaces();
-
       this.$emit('deleted');
+
       this.dialog = false;
     },
   },
