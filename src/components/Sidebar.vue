@@ -41,9 +41,7 @@
       </v-btn>
     </v-toolbar>
 
-    <WorkspaceDialog
-      @created="addWorkspace"
-    />
+    <WorkspaceDialog />
 
     <v-list subheader>
       <v-subheader class="pr-2">
@@ -54,7 +52,7 @@
             ref="dws"
             :somethingChecked="somethingChecked"
             :selection="selection"
-            @deleted="delayedRefresh(1000)"
+            @deleted="workspaceDeleted"
             @closed="singleSelected = null"
           />
 
@@ -119,6 +117,8 @@
 import Vue from 'vue';
 
 import api from '@/api';
+import store from '@/store';
+
 import WorkspaceDialog from '@/components/WorkspaceDialog.vue';
 import DeleteWorkspaceDialog from '@/components/DeleteWorkspaceDialog.vue';
 import AboutDialog from '@/components/AboutDialog.vue';
@@ -131,7 +131,6 @@ export default Vue.extend({
   data() {
     return {
       newWorkspace: '',
-      workspaces: [] as string[],
       checkbox: {} as CheckboxTable,
       singleSelected: null as string | null,
     };
@@ -144,6 +143,7 @@ export default Vue.extend({
   },
 
   computed: {
+    workspaces: () => store.state.workspaces,
     somethingChecked(): boolean {
       return Object.values(this.checkbox)
         .some(Boolean);
@@ -176,23 +176,9 @@ export default Vue.extend({
       this.$router.push(`/workspaces/${workspace}`);
     },
 
-    unroute() {
-      this.$router.replace('/');
-    },
-
-    addWorkspace(workspace: string) {
-      const workspaces = this.workspaces.concat([workspace]);
-      this.workspaces = workspaces.sort();
-    },
-
-    delayedRefresh(ms: number) {
+    workspaceDeleted() {
       this.checkbox = {};
-      this.unroute();
-      window.setTimeout(() => this.refresh(), ms);
-    },
-
-    async refresh() {
-      this.workspaces = await api.workspaces();
+      this.$router.replace({ name: 'home' });
     },
 
     deleteWorkspace(ws: string) {
@@ -201,8 +187,8 @@ export default Vue.extend({
     },
   },
 
-  async created() {
-    this.refresh();
+  created() {
+    store.dispatch.fetchWorkspaces();
   },
 });
 </script>

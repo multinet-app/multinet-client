@@ -97,6 +97,7 @@
 import Vue from 'vue';
 
 import api from '@/api';
+import store from '@/store';
 
 export default Vue.extend({
   data() {
@@ -123,8 +124,9 @@ export default Vue.extend({
           const response = await api.createWorkspace(this.newWorkspace);
 
           if (response) {
+            store.dispatch.fetchWorkspaces();
+
             this.$router.push(`/workspaces/${this.newWorkspace}`);
-            this.$emit('created', this.newWorkspace);
             this.newWorkspace = '';
             this.dialog = false;
           }
