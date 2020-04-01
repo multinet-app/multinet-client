@@ -3,15 +3,9 @@ import Vuex, { Store } from 'vuex';
 import { createDirectStore } from 'direct-vuex';
 
 import api from '@/api';
+import { WorkspaceSpec } from '@/types';
 
 Vue.use(Vuex);
-
-interface WorkspaceSpec {
-  name: string;
-  nodeTables?: string[];
-  edgeTables?: string[];
-  graphs?: string[];
-}
 
 interface State {
   workspaces: string[];
