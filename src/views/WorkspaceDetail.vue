@@ -164,7 +164,7 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
-import { mapState, mapGetters } from 'vuex';
+import { mapGetters } from 'vuex';
 
 import api from '@/api';
 import ItemPanel from '@/components/ItemPanel.vue';
@@ -206,13 +206,19 @@ export default Vue.extend({
   computed: {
     // ...mapGetters(['nodeTables, edgeTables, graphs']),
     nodeTables(): string[] {
-      return this.currentWorkspace ? this.currentWorkspace.nodeTables : [];
+      return this.currentWorkspace && this.currentWorkspace.nodeTables
+        ? this.currentWorkspace.nodeTables
+        : [];
     },
     edgeTables(): string[] {
-      return this.currentWorkspace ? this.currentWorkspace.edgeTables : [];
+      return this.currentWorkspace && this.currentWorkspace.edgeTables
+        ? this.currentWorkspace.edgeTables
+        : [];
     },
-    graphs() {
-      return this.currentWorkspace ? this.currentWorkspace.graphs : [];
+    graphs(): string[] {
+      return this.currentWorkspace && this.currentWorkspace.graphs
+        ? this.currentWorkspace.graphs
+        : [];
     },
     nameErrorMessages(this: any): string[] {
       const { requestError } = this;
@@ -231,7 +237,7 @@ export default Vue.extend({
 
       return nodeTables.concat(edgeTables);
     },
-    ...mapState(['currentWorkspace']),
+    currentWorkspace: () => store.state.currentWorkspace,
   },
 
   watch: {
