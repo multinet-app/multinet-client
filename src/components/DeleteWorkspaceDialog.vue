@@ -3,7 +3,6 @@
   <v-dialog
     v-model="dialog"
     width="700"
-    v-if="somethingChecked"
     >
 
     <template v-slot:activator="{ on: dialog }">
@@ -12,6 +11,7 @@
           <v-scroll-x-transition>
             <v-btn
               id="delete-workspaces"
+              v-if="somethingChecked"
               icon
               small
               text
@@ -35,8 +35,9 @@
       </v-card-title>
 
       <v-card-text class="px-5 py-4">
-        You are about to delete {{ selection.length }} workspace{{plural}}. Type
-        the following phrase to confirm: <strong>{{ confirmationPhrase }}</strong>
+        You are about to delete {{ selection.length }}
+        workspace{{plural}}{{ detail }}. Type the following phrase to confirm:
+        <strong>{{ confirmationPhrase }}</strong>
       </v-card-text>
 
       <v-card-text>
@@ -106,12 +107,18 @@ export default Vue.extend({
     plural(this: any) {
       return this.selection.length > 1 ? 's' : '';
     },
+
+    detail(this: any) {
+      return this.selection.length === 1 ? ` (${this.selection[0]})` : '';
+    },
   },
 
   watch: {
     dialog() {
       if (this.dialog) {
         this.confirmationPhrase = randomPhrase();
+      } else {
+        this.$emit('closed');
       }
     },
   },
@@ -122,9 +129,7 @@ export default Vue.extend({
         selection,
       } = this;
 
-      selection.forEach(async (ws) => {
-        await api.deleteWorkspace(ws);
-      });
+      await Promise.all(selection.map((ws) => api.deleteWorkspace(ws)));
 
       // Seems to be required due to a race condition with the server
       await new Promise((resolve) => setTimeout(resolve, 500));

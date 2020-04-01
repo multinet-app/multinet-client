@@ -1,30 +1,40 @@
 <template>
   <v-list
     class="item-panel"
-    :data-title="title"
+    data-title="Networks"
     subheader
   >
     <v-subheader class="px-0">
-      <h2 class="black--text">{{title}}</h2>
+      <h2 class="black--text">Networks</h2>
 
       <v-spacer />
 
       <div class="actions mr-2 pr-3">
-        <slot name="downloader"
+        <download-dialog
+          ref="downloader"
           :selection="selection"
           :workspace="workspace"
-        ></slot>
+          download-type="graph"
+        />
 
-        <slot name="deleter"
+        <delete-graph-dialog
+          ref="deleter"
           :selection="selection"
           :workspace="workspace"
-        ></slot>
+          @closed="cleanup"
+        />
       </div>
-      <slot></slot>
+
+      <graph-dialog
+        :workspace="workspace"
+        :node-tables="nodeTables"
+        :edge-tables="edgeTables"
+        @success="cleanup"
+      />
 
     </v-subheader>
 
-    <v-divider></v-divider>
+    <v-divider />
 
     <template v-if="items.length > 0">
       <v-list-item-group color="primary">
@@ -36,13 +46,13 @@
             active-class="grey lighten-4"
             ripple
             slot-scope="{ hover }"
-            :to="`/workspaces/${workspace}/${routeType}/${item}`"
+            :to="`/workspaces/${workspace}/graph/${item}`"
           >
             <v-list-item-action @click.prevent>
               <v-icon
                 class="item-icon"
                 v-if="!hover && !checkbox[item]"
-              >{{icon}}</v-icon>
+              >timeline</v-icon>
 
               <v-checkbox
                 class="ws-detail-checkbox"
@@ -59,20 +69,22 @@
               @click.prevent
               v-if="hover"
             >
-              <v-btn
-                icon
-              >
-                <v-icon color="primary">save_alt</v-icon>
+              <v-btn icon>
+                <v-icon
+                  color="primary"
+                  @click="downloadItem(item)"
+                >save_alt</v-icon>
               </v-btn>
             </v-list-item-action>
             <v-list-item-action class="mx-0 my-0"
               @click.prevent
               v-if="hover"
             >
-              <v-btn
-                icon
-              >
-                <v-icon color="red accent-3">delete</v-icon>
+              <v-btn icon>
+                <v-icon
+                  color="red accent-3"
+                  @click="deleteItem(item)"
+                >delete</v-icon>
               </v-btn>
             </v-list-item-action>
           </v-list-item>
@@ -80,8 +92,8 @@
       </v-list-item-group>
     </template>
     <div
-      class="ws-detail-empty-list"
       v-else
+      class="ws-detail-empty-list"
     >
       <v-icon color="blue lighten-1">info</v-icon> There's nothing here yet...
     </div>
@@ -89,38 +101,42 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import TableDialog from '@/components/TableDialog.vue';
+import Vue, { PropType } from 'vue';
+import DeleteGraphDialog from '@/components/DeleteGraphDialog.vue';
 import GraphDialog from '@/components/GraphDialog.vue';
+import DownloadDialog from '@/components/DownloadDialog.vue';
 
 export default Vue.extend({
-  name: 'ItemPanel',
+  name: 'GraphPanel',
+
   components: {
+    DeleteGraphDialog,
     GraphDialog,
-    TableDialog,
+    DownloadDialog,
   },
+
   props: {
-    title: {
-      type: String,
-      required: true,
-    },
-    items: {
-      type: Array,
-      required: true,
-    },
     workspace: {
-      type: String,
+      type: String as PropType<string>,
       required: true,
     },
-    routeType: {
-      type: String,
+
+    items: {
+      type: Array as PropType<string[]>,
       required: true,
     },
-    icon: {
-      type: String,
+
+    nodeTables: {
+      type: Array as PropType<string[]>,
+      required: true,
+    },
+
+    edgeTables: {
+      type: Array as PropType<string[]>,
       required: true,
     },
   },
+
   data() {
     interface CheckboxTable {
       [index: string]: boolean;
@@ -128,23 +144,65 @@ export default Vue.extend({
 
     return {
       checkbox: {} as CheckboxTable,
+      singleSelected: null as string | null,
+      deleterDialog: false,
+      downloaderDialog: false,
     };
   },
+
   computed: {
-    selection(): string[] {
+    checked(): string[] {
       return Object.keys(this.checkbox)
         .filter((d) => !!this.checkbox[d]);
     },
+
+    selection(): string[] {
+      const {
+        singleSelected,
+        checked,
+      } = this;
+
+      let result: string[] = [];
+
+      if (singleSelected !== null) {
+        result = result.concat([singleSelected]);
+      } else {
+        result = result.concat(checked);
+      }
+
+      return result;
+    },
+
     anySelected(): boolean {
       return this.selection.length > 0;
     },
   },
 
   methods: {
+    deleteItem(item: string) {
+      this.singleSelected = item;
+      (this.$refs.deleter as any).dialog = true;
+    },
+
+    downloadItem(item: string) {
+      this.singleSelected = item;
+      (this.$refs.downloader as any).dialog = true;
+    },
+
     clearCheckboxes() {
       Object.keys(this.checkbox).forEach((key) => {
         this.checkbox[key] = false;
       });
+    },
+
+    cleanup(deleted?: string[]) {
+      this.singleSelected = null;
+
+      if (deleted) {
+        deleted.forEach((item) => this.checkbox[item] = false);
+      }
+
+      this.$emit('update');
     },
   },
 });

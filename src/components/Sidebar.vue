@@ -49,9 +49,11 @@
         <v-spacer />
 
           <delete-workspace-dialog
+            ref="dws"
             :somethingChecked="somethingChecked"
             :selection="selection"
             @deleted="workspaceDeleted"
+            @closed="singleSelected = null"
           />
 
       </v-subheader>
@@ -95,7 +97,11 @@
                   icon
                   small
                 >
-                  <v-icon color="red accent-3" size="18">delete</v-icon>
+                  <v-icon
+                    color="red accent-3"
+                    size="18"
+                    @click="deleteWorkspace(space)"
+                  >delete</v-icon>
                 </v-btn>
               </v-list-item-action>
             </v-list-item>
@@ -126,6 +132,7 @@ export default Vue.extend({
     return {
       newWorkspace: '',
       checkbox: {} as CheckboxTable,
+      singleSelected: null as string | null,
     };
   },
 
@@ -139,15 +146,28 @@ export default Vue.extend({
     workspaces: () => store.state.workspaces,
     somethingChecked(): boolean {
       return Object.values(this.checkbox)
-        .some((d) => !!d);
+        .some(Boolean);
     },
 
-    selection(): string[] {
+    checked(): string[] {
       const {
         checkbox,
       } = this;
 
       return Object.keys(checkbox).filter((d) => !!checkbox[d]);
+    },
+
+    selection(): string[] {
+      const {
+        checked,
+        singleSelected,
+      } = this;
+
+      if (singleSelected) {
+        return [singleSelected];
+      }
+
+      return checked;
     },
   },
 
@@ -159,6 +179,11 @@ export default Vue.extend({
     workspaceDeleted() {
       this.checkbox = {};
       this.$router.replace({ name: 'home' });
+    },
+
+    deleteWorkspace(ws: string) {
+      this.singleSelected = ws;
+      (this.$refs.dws as any).dialog = true;
     },
   },
 
