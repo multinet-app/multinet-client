@@ -65,6 +65,8 @@ const {
     },
     async fetchWorkspace(context, workspace: string) {
       const { commit } = rootActionContext(context);
+      commit.setCurrentWorkspace({ name: workspace, nodeTables: [], edgeTables: [], graphs: [] });
+
       const nodeTables = await api.tables(workspace, { type: 'node' });
       const edgeTables = await api.tables(workspace, { type: 'edge' });
       const graphs = await api.graphs(workspace);
