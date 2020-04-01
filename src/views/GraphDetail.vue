@@ -298,7 +298,6 @@
 import Vue, { PropType } from 'vue';
 
 import api from '@/api';
-import store from '@/store';
 import { App } from '@/types';
 
 export default Vue.extend({
