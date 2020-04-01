@@ -3,13 +3,19 @@ import Vuex, { Store } from 'vuex';
 import { createDirectStore } from 'direct-vuex';
 
 import api from '@/api';
-import { WorkspaceSpec } from '@/types';
 
 Vue.use(Vuex);
 
+export interface WorkspaceState {
+  name: string;
+  nodeTables: string[];
+  edgeTables: string[];
+  graphs: string[];
+}
+
 interface State {
   workspaces: string[];
-  currentWorkspace: WorkspaceSpec | null;
+  currentWorkspace: WorkspaceState | null;
 }
 
 const {
@@ -47,7 +53,7 @@ const {
     setWorkspaces(state, workspaces: string[]) {
       state.workspaces = workspaces;
     },
-    setCurrentWorkspace(state, workspace: WorkspaceSpec) {
+    setCurrentWorkspace(state, workspace: WorkspaceState) {
       state.currentWorkspace = workspace;
     },
     setEmptyWorkspace(state, name: string) {

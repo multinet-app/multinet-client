@@ -5,13 +5,6 @@ export interface App {
   url: string;
 }
 
-export interface WorkspaceSpec {
-  name: string;
-  nodeTables?: string[];
-  edgeTables?: string[];
-  graphs?: string[];
-}
-
 export interface KeyValue {
   key: string;
   value: any;
