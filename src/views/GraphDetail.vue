@@ -295,10 +295,11 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { PropType } from 'vue';
 
 import api from '@/api';
 import store from '@/store';
+import { App } from '@/types';
 
 export default Vue.extend({
   name: 'GraphDetail',
@@ -307,7 +308,11 @@ export default Vue.extend({
       return `${url}/?workspace=${this.workspace}&graph=${this.graph}`;
     },
   },
-  props: ['workspace', 'graph', 'apps'],
+  props: {
+    workspace: String as PropType<string>,
+    graph: String as PropType<string>,
+    apps: Array as PropType<App[]>,
+  },
   data() {
     const visItems = ['Network Overview'];
     return {

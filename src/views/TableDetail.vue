@@ -84,7 +84,7 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { PropType } from 'vue';
 
 import api from '@/api';
 import { KeyValue, TableRow } from '@/types';
@@ -100,7 +100,10 @@ interface DataPagination {
 
 export default Vue.extend({
   name: 'TableDetail',
-  props: ['workspace', 'table'],
+  props: {
+    workspace: String as PropType<string>,
+    table: String as PropType<string>,
+  },
   data() {
     return {
       rowKeys: [] as KeyValue[][],

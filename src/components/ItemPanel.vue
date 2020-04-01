@@ -9,17 +9,17 @@
 
       <v-spacer />
 
-      <slot name="downloader"
-        :selection="selection"
-        :workspace="workspace"
-      >
-      </slot>
-      <slot name="deleter"
-        :selection="selection"
-        :workspace="workspace"
-      >
-      </slot>
+      <div class="actions mr-2 pr-3">
+        <slot name="downloader"
+          :selection="selection"
+          :workspace="workspace"
+        ></slot>
 
+        <slot name="deleter"
+          :selection="selection"
+          :workspace="workspace"
+        ></slot>
+      </div>
       <slot></slot>
 
     </v-subheader>
@@ -27,34 +27,57 @@
     <v-divider></v-divider>
 
     <template v-if="items.length > 0">
-      <v-hover
-        v-for="item in items"
-        :key="item"
-      >
-        <v-list-item
-          active-class="grey lighten-4"
-          ripple
-          slot-scope="{ hover }"
-          :to="`/workspaces/${workspace}/${routeType}/${item}`"
+      <v-list-item-group color="primary">
+        <v-hover
+          v-for="item in items"
+          :key="item"
         >
-          <v-list-item-action @click.prevent>
-            <v-icon
-              color="blue lighten-1"
-              v-if="!hover && !checkbox[item]"
-            >{{icon}}</v-icon>
+          <v-list-item
+            active-class="grey lighten-4"
+            ripple
+            slot-scope="{ hover }"
+            :to="`/workspaces/${workspace}/${routeType}/${item}`"
+          >
+            <v-list-item-action @click.prevent>
+              <v-icon
+                class="item-icon"
+                v-if="!hover && !checkbox[item]"
+              >{{icon}}</v-icon>
 
-            <v-checkbox
-              class="ws-detail-checkbox"
-              v-else
-              v-model="checkbox[item]"
-            ></v-checkbox>
-          </v-list-item-action>
+              <v-checkbox
+                class="ws-detail-checkbox"
+                v-else
+                v-model="checkbox[item]"
+              ></v-checkbox>
+            </v-list-item-action>
 
-          <v-list-item-content>
-            <v-list-item-title>{{item}}</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-hover>
+            <v-list-item-content>
+              <v-list-item-title>{{item}}</v-list-item-title>
+            </v-list-item-content>
+
+            <v-list-item-action class="mx-0 my-0"
+              @click.prevent
+              v-if="hover"
+            >
+              <v-btn
+                icon
+              >
+                <v-icon color="primary">save_alt</v-icon>
+              </v-btn>
+            </v-list-item-action>
+            <v-list-item-action class="mx-0 my-0"
+              @click.prevent
+              v-if="hover"
+            >
+              <v-btn
+                icon
+              >
+                <v-icon color="red accent-3">delete</v-icon>
+              </v-btn>
+            </v-list-item-action>
+          </v-list-item>
+        </v-hover>
+      </v-list-item-group>
     </template>
     <div
       class="ws-detail-empty-list"
@@ -135,5 +158,13 @@ export default Vue.extend({
 .ws-detail-empty-list {
   padding: 40px 40px 55px;
   text-align: center;
+}
+
+.item-icon {
+  opacity: .4;
+}
+
+.actions {
+  border-right: 1px solid #ccc;
 }
 </style>

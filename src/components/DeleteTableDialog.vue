@@ -10,13 +10,13 @@
         <template v-slot:activator="{ on: tooltip }">
           <v-scroll-x-transition>
             <v-btn
+              class="ml-1"
               icon
               small
-              text
               @click="dialog.click"
               v-on="tooltip"
               >
-              <v-icon color="red accent-3" size="22px">delete_sweep</v-icon>
+              <v-icon color="red accent-3" size="20px">delete_sweep</v-icon>
             </v-btn>
           </v-scroll-x-transition>
         </template>
