@@ -271,7 +271,7 @@ export default Vue.extend({
     async update(this: any) {
       this.loading = true;
 
-      store.dispatch.fetchWorkspace(this.workspace);
+      await store.dispatch.fetchWorkspace(this.workspace);
       if (Object.keys(this.$refs).length) {
         this.$refs.graphPanel.clearCheckboxes();
         this.$refs.tablePanel.clearCheckboxes();
