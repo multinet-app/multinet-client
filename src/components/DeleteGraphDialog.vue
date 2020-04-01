@@ -124,9 +124,7 @@ export default Vue.extend({
         workspace,
       } = this;
 
-      selection.forEach(async (graph) => {
-        await api.deleteGraph(workspace, graph);
-      });
+      await Promise.all(selection.map((graph) => api.deleteGraph(workspace, graph)));
 
       this.$emit('closed', [...selection]);
       this.dialog = false;
