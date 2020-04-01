@@ -277,6 +277,7 @@ export default Vue.extend({
         this.$refs.tablePanel.clearCheckboxes();
       }
 
+      this.localWorkspace = this.workspace;
       this.loading = false;
     },
   },
