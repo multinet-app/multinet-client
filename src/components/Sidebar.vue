@@ -109,7 +109,6 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapState } from 'vuex';
 
 import api from '@/api';
 import store from '@/store';
@@ -137,7 +136,7 @@ export default Vue.extend({
   },
 
   computed: {
-    ...mapState(['workspaces']),
+    workspaces: () => store.state.workspaces,
     somethingChecked(): boolean {
       return Object.values(this.checkbox)
         .some((d) => !!d);
@@ -163,7 +162,7 @@ export default Vue.extend({
     },
   },
 
-  async created() {
+  created() {
     store.dispatch.fetchWorkspaces();
   },
 });
