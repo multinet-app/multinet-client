@@ -204,22 +204,8 @@ export default Vue.extend({
   },
 
   computed: {
-    // ...mapGetters(['nodeTables, edgeTables, graphs']),
-    nodeTables(): string[] {
-      return this.currentWorkspace && this.currentWorkspace.nodeTables
-        ? this.currentWorkspace.nodeTables
-        : [];
-    },
-    edgeTables(): string[] {
-      return this.currentWorkspace && this.currentWorkspace.edgeTables
-        ? this.currentWorkspace.edgeTables
-        : [];
-    },
-    graphs(): string[] {
-      return this.currentWorkspace && this.currentWorkspace.graphs
-        ? this.currentWorkspace.graphs
-        : [];
-    },
+    // TODO: Find a better way to map these that includes typing
+    ...mapGetters(['nodeTables', 'edgeTables', 'graphs']),
     nameErrorMessages(this: any): string[] {
       const { requestError } = this;
       const errors = [
@@ -237,7 +223,6 @@ export default Vue.extend({
 
       return nodeTables.concat(edgeTables);
     },
-    currentWorkspace: () => store.state.currentWorkspace,
   },
 
   watch: {
