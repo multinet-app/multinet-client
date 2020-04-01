@@ -185,10 +185,6 @@ export default Vue.extend({
     },
 
     cleanup(deleted?: string[]) {
-      const {
-        singleSelected,
-      } = this;
-
       this.singleSelected = null;
 
       if (deleted) {
