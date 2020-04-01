@@ -70,7 +70,6 @@ const {
   },
 });
 
-
 export default store;
 export {
   rootActionContext,
