@@ -36,12 +36,14 @@ const {
       }
       return [];
     },
+
     edgeTables(state: State): string[] {
       if (state.currentWorkspace !== null && state.currentWorkspace.edgeTables) {
         return state.currentWorkspace.edgeTables;
       }
       return [];
     },
+
     graphs(state: State) {
       if (state.currentWorkspace !== null && state.currentWorkspace.graphs) {
         return state.currentWorkspace.graphs;
@@ -53,9 +55,11 @@ const {
     setWorkspaces(state, workspaces: string[]) {
       state.workspaces = workspaces;
     },
+
     setCurrentWorkspace(state, workspace: WorkspaceState) {
       state.currentWorkspace = workspace;
     },
+
     setEmptyWorkspace(state, name: string) {
       state.currentWorkspace = {
         name,
@@ -71,6 +75,7 @@ const {
       const workspaces = await api.workspaces();
       commit.setWorkspaces(workspaces);
     },
+
     async fetchWorkspace(context, workspace: string) {
       const { commit } = rootActionContext(context);
       commit.setEmptyWorkspace(workspace);
