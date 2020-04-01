@@ -206,7 +206,7 @@ export default Vue.extend({
     nodeTables: () => store.getters.nodeTables,
     edgeTables: () => store.getters.edgeTables,
     graphs: () => store.getters.graphs,
-    nameErrorMessages(this: any): string[] {
+    nameErrorMessages(): string[] {
       const { requestError } = this;
       const errors = [
         ...workspaceNameRules.map((rule) => rule(this.localWorkspace as string)),
@@ -215,7 +215,7 @@ export default Vue.extend({
 
       return errors.filter((res): res is string => typeof res === 'string');
     },
-    tables(this: any): string[] {
+    tables(): string[] {
       const {
         nodeTables,
         edgeTables,
@@ -226,21 +226,21 @@ export default Vue.extend({
   },
 
   watch: {
-    workspace(this: any) {
+    workspace() {
       this.update();
     },
-    localWorkspace(this: any) {
+    localWorkspace() {
       // Once the user types, clears the error returned on sending the rename API call.
       this.requestError = null;
     },
   },
   methods: {
-    cancelRename(this: any) {
+    cancelRename() {
       this.requestError = null;
       this.localWorkspace = this.workspace;
       this.editing = false;
     },
-    async renameWorkspace(this: any) {
+    async renameWorkspace() {
       if (this.nameErrorMessages.length) {
         return;
       }
