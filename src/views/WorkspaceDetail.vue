@@ -204,8 +204,9 @@ export default Vue.extend({
   },
 
   computed: {
-    // TODO: Find a better way to map these that includes typing
-    ...mapGetters(['nodeTables', 'edgeTables', 'graphs']),
+    nodeTables: () => store.getters.nodeTables,
+    edgeTables: () => store.getters.edgeTables,
+    graphs: () => store.getters.graphs,
     nameErrorMessages(this: any): string[] {
       const { requestError } = this;
       const errors = [
