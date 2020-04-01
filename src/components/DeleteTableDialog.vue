@@ -153,6 +153,8 @@ export default Vue.extend({
         } else {
           this.confirmationPhrase = randomPhrase();
         }
+      } else {
+        this.$emit('closed');
       }
     },
   },
@@ -166,7 +168,7 @@ export default Vue.extend({
 
       await Promise.all(selection.map((table) => api.deleteTable(workspace, table)));
 
-      this.$emit('deleted');
+      this.$emit('closed', [...selection]);
       this.dialog = false;
     },
 

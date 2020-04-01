@@ -111,6 +111,8 @@ export default Vue.extend({
     dialog() {
       if (this.dialog) {
         this.confirmationPhrase = randomPhrase();
+      } else {
+        this.$emit('closed');
       }
     },
   },
@@ -124,7 +126,7 @@ export default Vue.extend({
 
       await Promise.all(selection.map((graph) => api.deleteGraph(workspace, graph)));
 
-      this.$emit('deleted');
+      this.$emit('closed', [...selection]);
       this.dialog = false;
     },
   },
