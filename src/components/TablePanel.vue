@@ -189,9 +189,7 @@ export default Vue.extend({
         singleSelected,
       } = this;
 
-      if (singleSelected !== null) {
-        this.singleSelected = null;
-      }
+      this.singleSelected = null;
 
       if (deleted) {
         deleted.forEach((item) => this.checkbox[item] = false);
