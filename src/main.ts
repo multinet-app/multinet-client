@@ -11,6 +11,7 @@ Vue.config.productionTip = false;
 new Vue({
   render: (h) => h(App),
   router,
+  // Necessary to correctly use direct-vuex
   store: store.original,
   vuetify,
 }).$mount('#app');
