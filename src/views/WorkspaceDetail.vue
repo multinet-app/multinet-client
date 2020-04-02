@@ -113,7 +113,7 @@ import DeleteGraphDialog from '@/components/DeleteGraphDialog.vue';
 import TableDialog from '@/components/TableDialog.vue';
 import DeleteTableDialog from '@/components/DeleteTableDialog.vue';
 import DownloadDialog from '@/components/DownloadDialog.vue';
-
+import store from '@/store';
 
 const surroundingWhitespace = /^\s+|\s+$/;
 const workspaceNameRules: Array<(x: string) => string|boolean> = [
@@ -139,15 +139,15 @@ export default Vue.extend({
     return {
       localWorkspace: null as string | null,
       editing: false,
-      nodeTables: [] as string[],
-      edgeTables: [] as string[],
-      graphs: [] as string[],
       requestError: null as string | null,
       loading: false,
     };
   },
 
   computed: {
+    nodeTables: () => store.getters.nodeTables,
+    edgeTables: () => store.getters.edgeTables,
+    graphs: () => store.getters.graphs,
     nameErrorMessages(): string[] {
       const { requestError } = this;
       const errors = [
@@ -211,30 +211,13 @@ export default Vue.extend({
       }
     },
     async update(this: any) {
-      // Get lists of node and edge tables.
-      let nodeTables;
-      let edgeTables;
+      this.loading = true;
 
-      try {
-        this.loading = true;
-        nodeTables = await api.tables(this.workspace, { type: 'node' });
-        edgeTables = await api.tables(this.workspace, { type: 'edge' });
-      } catch (err) {
-        this.loading = false;
-        if (err.status === 404 && err.statusText === 'Workspace Not Found') {
-          this.$router.replace({name: 'home'});
-        } else {
-          throw err;
-        }
-
-        return;
+      await store.dispatch.fetchWorkspace(this.workspace);
+      if (Object.keys(this.$refs).length) {
+        this.$refs.graphPanel.clearCheckboxes();
+        this.$refs.tablePanel.clearCheckboxes();
       }
-
-      this.nodeTables = nodeTables;
-      this.edgeTables = edgeTables;
-
-      // Get list of graphs.
-      this.graphs = await api.graphs(this.workspace);
 
       this.localWorkspace = this.workspace;
       this.loading = false;

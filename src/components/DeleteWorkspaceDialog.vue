@@ -77,6 +77,8 @@
 import Vue, { PropType } from 'vue';
 
 import api from '@/api';
+import store from '@/store';
+
 import { randomPhrase } from '@/utils/randomPhrase';
 
 export default Vue.extend({
@@ -129,7 +131,9 @@ export default Vue.extend({
 
       await Promise.all(selection.map((ws) => api.deleteWorkspace(ws)));
 
+      store.dispatch.fetchWorkspaces();
       this.$emit('deleted');
+
       this.dialog = false;
     },
   },
