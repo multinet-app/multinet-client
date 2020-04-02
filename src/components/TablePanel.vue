@@ -15,6 +15,7 @@
           :selection="selection"
           :workspace="workspace"
           download-type="table"
+          @downloaded="cleanup"
         />
 
         <delete-table-dialog
@@ -184,11 +185,11 @@ export default Vue.extend({
       });
     },
 
-    cleanup(deleted?: string[]) {
+    cleanup(selection?: string[]) {
       this.singleSelected = null;
 
-      if (deleted) {
-        deleted.forEach((item) => this.checkbox[item] = false);
+      if (selection) {
+        selection.forEach((item) => this.checkbox[item] = false);
       }
 
       this.$emit('update');

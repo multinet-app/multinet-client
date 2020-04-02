@@ -15,6 +15,7 @@
           :selection="selection"
           :workspace="workspace"
           download-type="graph"
+          @downloaded="cleanup"
         />
 
         <delete-graph-dialog
@@ -195,11 +196,11 @@ export default Vue.extend({
       });
     },
 
-    cleanup(deleted?: string[]) {
+    cleanup(selection?: string[]) {
       this.singleSelected = null;
 
-      if (deleted) {
-        deleted.forEach((item) => this.checkbox[item] = false);
+      if (selection) {
+        selection.forEach((item) => this.checkbox[item] = false);
       }
 
       this.$emit('update');

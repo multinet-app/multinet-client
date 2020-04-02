@@ -170,7 +170,7 @@ export default Vue.extend({
         URL.revokeObjectURL(link.href);
       }
 
-      this.$emit('downloaded');
+      this.$emit('downloaded', selection);
       this.loading = false;
       this.dialog = false;
     },

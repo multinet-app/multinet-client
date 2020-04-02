@@ -112,7 +112,6 @@ import GraphDialog from '@/components/GraphDialog.vue';
 import DeleteGraphDialog from '@/components/DeleteGraphDialog.vue';
 import TableDialog from '@/components/TableDialog.vue';
 import DeleteTableDialog from '@/components/DeleteTableDialog.vue';
-import DownloadDialog from '@/components/DownloadDialog.vue';
 import store from '@/store';
 
 const surroundingWhitespace = /^\s+|\s+$/;
@@ -130,7 +129,6 @@ export default Vue.extend({
     DeleteGraphDialog,
     TableDialog,
     DeleteTableDialog,
-    DownloadDialog,
   },
   props: {
     workspace: String as PropType<string>,
