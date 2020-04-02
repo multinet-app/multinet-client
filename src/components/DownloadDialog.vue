@@ -1,21 +1,25 @@
 <template>
-
   <v-dialog
+    v-if="nonZeroSelection"
     v-model="dialog"
     width="400"
-    v-if="nonZeroSelection"
   >
-    <template v-slot:activator="{ on: dialog }">
+    <template v-slot:activator="{ on: button }">
       <v-tooltip left>
         <template v-slot:activator="{ on: tooltip }">
           <v-scroll-x-transition>
             <v-btn
               icon
               small
-              @click="dialog.click"
+              @click="button.click"
               v-on="tooltip"
             >
-              <v-icon color="primary" size="20px">save_alt</v-icon>
+              <v-icon
+                color="primary"
+                size="20px"
+              >
+                save_alt
+              </v-icon>
             </v-btn>
           </v-scroll-x-transition>
         </template>
@@ -28,7 +32,9 @@
         class="pa-4"
         primary-title
       >
-        Download the following {{ selection.length > 1 ? selection.length : '' }} {{downloadType}}{{plural}}?
+        Download the following
+        {{ selection.length > 1 ? selection.length : '' }}
+        {{ downloadType }}{{ plural }}?
       </v-card-title>
 
       <v-card-text class="pa-0">
@@ -38,7 +44,7 @@
           dense
         >
           <template v-for="item in selection">
-            <v-divider />
+            <v-divider :key="`${item}-divider`" />
             <v-list-item :key="item">
               <v-list-item-icon>
                 <v-icon
@@ -51,20 +57,22 @@
               {{ item }}
             </v-list-item>
           </template>
-
         </v-list>
       </v-card-text>
 
       <v-divider />
-      <v-progress-linear indeterminate :active="loading" />
+      <v-progress-linear
+        indeterminate
+        :active="loading"
+      />
 
       <v-card-actions class="px-4 py-3">
         <v-spacer />
         <v-btn
           depressed
           color="primary"
-          @click="execute"
           :disabled="disabled"
+          @click="execute"
         >
           yes
         </v-btn>
@@ -76,11 +84,8 @@
           cancel
         </v-btn>
       </v-card-actions>
-
     </v-card>
-
   </v-dialog>
-
 </template>
 
 <script lang="ts">
@@ -117,6 +122,7 @@ export default Vue.extend({
 
   computed: {
     // This workaround is necessary because of https://github.com/vuejs/vue/issues/10455
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     plural(this: any) {
       return this.selection.length > 1 ? 's' : '';
     },
@@ -129,11 +135,9 @@ export default Vue.extend({
       switch (this.downloadType) {
         case 'table':
           return api.downloadTable.bind(api);
-          break;
         case 'network':
         default:
           return api.downloadGraph.bind(api);
-          break;
       }
     },
   },
@@ -156,9 +160,9 @@ export default Vue.extend({
 
       this.loading = true;
       for (const name of selection) {
-        const { data, headers: {'content-type': contentType } } = await this.downloadEnpoint(workspace, name);
+        const { data, headers: { 'content-type': contentType } } = await this.downloadEnpoint(workspace, name);
         const blobData = data instanceof Object ? JSON.stringify(data, null, 2) : data;
-        const blob = new Blob([blobData], {type: contentType});
+        const blob = new Blob([blobData], { type: contentType });
 
         const extension = contentType.split('/')[1];
         const filename = `${name}.${extension}`;
