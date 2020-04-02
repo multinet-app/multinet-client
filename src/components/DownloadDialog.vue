@@ -159,7 +159,8 @@ export default Vue.extend({
 
 
       this.loading = true;
-      for (const name of selection) {
+
+      const downloads = await Promise.all(selection.map(async (name) => {
         const { data, headers: { 'content-type': contentType } } = await this.downloadEnpoint(workspace, name);
         const blobData = data instanceof Object ? JSON.stringify(data, null, 2) : data;
         const blob = new Blob([blobData], { type: contentType });
@@ -170,9 +171,14 @@ export default Vue.extend({
 
         link.href = URL.createObjectURL(blob);
         link.download = filename;
+
+        return link;
+      }));
+
+      downloads.forEach((link) => {
         link.click();
         URL.revokeObjectURL(link.href);
-      }
+      });
 
       this.$emit('downloaded');
       this.loading = false;
