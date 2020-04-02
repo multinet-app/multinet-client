@@ -168,6 +168,12 @@ export default Vue.extend({
     },
   },
 
+  watch: {
+    workspace() {
+      this.clearCheckboxes();
+    },
+  },
+
   methods: {
     deleteItem(item: string) {
       this.singleSelected = item;
