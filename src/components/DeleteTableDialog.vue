@@ -194,7 +194,7 @@ export default Vue.extend({
       const graphNames = await api.graphs(workspace);
 
       const using = [] as Array<{graph: string; tables: string[]}>;
-      graphNames.forEach((graph) => {
+      graphNames.forEach(async (graph) => {
         const data = await api.graph(workspace, graph);
 
         const tables = [];
