@@ -6,7 +6,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint --no-fix",
-    "fix": "vue-cli-service lint",
+    "lint:fix": "vue-cli-service lint",
     "lint:test": "eslint test/**/*.test.js",
     "test": "tape -r esm test/**/*.test.js | tap-spec",
     "test:client:down": "sh ./scripts/stop.sh",
