@@ -14,7 +14,7 @@
 import Sidebar from '@/components/Sidebar.vue';
 import Vue from 'vue';
 
-import apps from './appregistry.json';
+const apps = require('./appregistry.json');
 
 export default Vue.extend({
   name: 'App',
