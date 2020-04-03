@@ -197,7 +197,7 @@ export default Vue.extend({
       graphNames.forEach(async (graph) => {
         const data = await api.graph(workspace, graph);
 
-        const tables = [];
+        const tables: string[] = [];
         selection.forEach((table) => {
           if (table === data.edgeTable || data.nodeTables.indexOf(table) > -1) {
             tables.push(table);
