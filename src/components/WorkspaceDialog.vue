@@ -8,7 +8,7 @@
     origin="center center"
     transition="scale-transition"
   >
-    <template v-slot:activator>
+    <template v-slot:activator="{ }">
       <v-dialog
         v-model="dialog"
         class="ws-dialogue"
