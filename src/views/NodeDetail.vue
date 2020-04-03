@@ -336,9 +336,9 @@ export default Vue.extend({
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const table: { [key: string]: any } = {};
-      for (const entry of attributes) {
+      attributes.forEach((entry) => {
         table[entry.key] = entry.value;
-      }
+      });
 
       return table;
     },

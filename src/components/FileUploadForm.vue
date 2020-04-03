@@ -196,12 +196,9 @@ export default Vue.extend({
       const [fileName, ...extensions] = file.name.split('.');
       const extension = extensions[extensions.length - 1];
 
-      for (const type of this.types) {
-        if (type.extension.includes(extension) && validUploadType(type.queryCall)) {
-          return [fileName, type];
-        }
-      }
-      return null;
+      const found = this.types.find((type) => type.extension.includes(extension) && validUploadType(type.queryCall));
+
+      return found === undefined ? null : [fileName, found];
     },
   },
 });

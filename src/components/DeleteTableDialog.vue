@@ -194,15 +194,15 @@ export default Vue.extend({
       const graphNames = await api.graphs(workspace);
 
       const using = [] as Array<{graph: string; tables: string[]}>;
-      for (const graph of graphNames) {
+      graphNames.forEach((graph) => {
         const data = await api.graph(workspace, graph);
 
         const tables = [];
-        for (const table of selection) {
+        selection.forEach((table) => {
           if (table === data.edgeTable || data.nodeTables.indexOf(table) > -1) {
             tables.push(table);
           }
-        }
+        });
 
         if (tables.length > 0) {
           using.push({
@@ -210,7 +210,7 @@ export default Vue.extend({
             tables,
           });
         }
-      }
+      });
 
       return using;
     },
