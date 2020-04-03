@@ -91,7 +91,7 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { PropType } from 'vue';
 
 import api from '@/api';
 import { FileType } from '@/types';
@@ -103,7 +103,7 @@ export default Vue.extend({
 
   props: {
     workspace: {
-      type: String as string,
+      type: String as PropType<string>,
       required: true,
     },
   },

@@ -52,7 +52,7 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { PropType } from 'vue';
 
 import GraphCreateForm from '@/components/GraphCreateForm.vue';
 import FileUploadForm from '@/components/FileUploadForm.vue';
@@ -65,12 +65,12 @@ export default Vue.extend({
   },
   props: {
     edgeTables: {
-      type: Array as string[],
+      type: Array as PropType<string[]>,
       required: true,
     },
 
     workspace: {
-      type: String as string,
+      type: String as PropType<string>,
       required: true,
     },
   },
