@@ -19,10 +19,10 @@
           <v-divider />
 
           <v-list-item
-            v-for="table in tables"
-            :key="table"
+            v-for="t in tables"
+            :key="t"
             ripple
-            :to="`/workspaces/${workspace}/table/${table}`"
+            :to="`/workspaces/${workspace}/table/${t}`"
           >
             <v-list-item-action>
               <v-icon color="primary">
@@ -31,7 +31,7 @@
             </v-list-item-action>
 
             <v-list-item-content>
-              <v-list-item-title>{{ table }}</v-list-item-title>
+              <v-list-item-title>{{ t }}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list>
@@ -69,7 +69,7 @@
               class="mr-3"
               color="grey lighten-1"
             >table_chart</v-icon>
-            {{ `${this.table}` }}
+            {{ table }}
           </span>
         </v-toolbar-title>
 
@@ -116,8 +116,15 @@ interface DataPagination {
 export default Vue.extend({
   name: 'TableDetail',
   props: {
-    workspace: String as PropType<string>,
-    table: String as PropType<string>,
+    workspace: {
+      type: String as PropType<string>,
+      required: true,
+    },
+
+    table: {
+      type: String as PropType<string>,
+      required: true,
+    },
   },
   data() {
     return {
@@ -130,6 +137,7 @@ export default Vue.extend({
     };
   },
   computed: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     dataTableHeaders(this: any) {
       const {
         headers,
@@ -195,7 +203,7 @@ export default Vue.extend({
         rows.forEach((row) => {
           const rowData: KeyValue[] = [];
           Object.entries(row)
-            .filter(([key, value]) => key !== '_rev')
+            .filter(([key]) => key !== '_rev')
             .forEach(([key, value]) => {
               rowData.push({
                 key,

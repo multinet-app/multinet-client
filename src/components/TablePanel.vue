@@ -181,11 +181,15 @@ export default Vue.extend({
   methods: {
     deleteItem(item: string) {
       this.singleSelected = item;
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.$refs.deleter as any).dialog = true;
     },
 
     downloadItem(item: string) {
       this.singleSelected = item;
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.$refs.downloader as any).dialog = true;
     },
 
@@ -199,7 +203,7 @@ export default Vue.extend({
       this.singleSelected = null;
 
       if (deleted) {
-        deleted.forEach((item) => this.checkbox[item] = false);
+        deleted.forEach((item) => (this.checkbox[item] = false));
       }
 
       this.$emit('update');

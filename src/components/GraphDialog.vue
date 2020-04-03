@@ -54,7 +54,6 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import api from '@/api';
 import GraphCreateForm from '@/components/GraphCreateForm.vue';
 import FileUploadForm from '@/components/FileUploadForm.vue';
 
@@ -65,8 +64,15 @@ export default Vue.extend({
     FileUploadForm,
   },
   props: {
-    edgeTables: Array,
-    workspace: String,
+    edgeTables: {
+      type: Array as string[],
+      required: true,
+    },
+
+    workspace: {
+      type: String as string,
+      required: true,
+    },
   },
   data() {
     return {

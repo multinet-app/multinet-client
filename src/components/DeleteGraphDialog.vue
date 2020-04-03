@@ -4,7 +4,7 @@
     v-model="dialog"
     width="700"
   >
-    <template v-slot:activator="{ on: dialog }">
+    <template v-slot:activator="{ on: button }">
       <v-tooltip left>
         <template v-slot:activator="{ on: tooltip }">
           <v-scroll-x-transition>
@@ -12,7 +12,7 @@
               class="ml-1"
               icon
               small
-              @click="dialog.click"
+              @click="button.click"
               v-on="tooltip"
             >
               <v-icon
@@ -103,6 +103,8 @@ export default Vue.extend({
 
   computed: {
     // This workaround is necessary because of https://github.com/vuejs/vue/issues/10455
+    //
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     plural(this: any) {
       return this.selection.length > 1 ? 's' : '';
     },

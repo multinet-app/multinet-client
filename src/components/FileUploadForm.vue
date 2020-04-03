@@ -164,9 +164,13 @@ export default Vue.extend({
         throw new Error('Valid file must be selected.');
       }
 
+      if (selectedType === null) {
+        throw new Error('`selectedType` is null, which is impossible');
+      }
+
       try {
         await api.uploadTable(workspace, fileName, {
-          type: selectedType!.queryCall as UploadType,
+          type: selectedType.queryCall as UploadType,
           data: file,
         });
 

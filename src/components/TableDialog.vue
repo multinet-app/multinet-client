@@ -102,7 +102,10 @@ export default Vue.extend({
   name: 'TableDialog',
 
   props: {
-    workspace: String,
+    workspace: {
+      type: String as string,
+      required: true,
+    },
   },
   data() {
     return {

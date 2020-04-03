@@ -14,22 +14,25 @@
 import Sidebar from '@/components/Sidebar.vue';
 import Vue from 'vue';
 
+import apps from './appregistry.json';
+
 export default Vue.extend({
   name: 'App',
+
   components: {
     Sidebar,
   },
+
   data() {
     return {
-      apps: [],
+      apps,
     };
   },
-  created() {
-    this.apps = require('./appregistry.json');
-  },
+
   methods: {
     // TODO: REMOVE THIS REF AND METHOD WHEN VUEX IS ADDED
     update() {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const sidebar = this.$refs.sidebar as any;
       sidebar.refresh();
     },

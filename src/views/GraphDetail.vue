@@ -323,9 +323,18 @@ export default Vue.extend({
     },
   },
   props: {
-    workspace: String as PropType<string>,
-    graph: String as PropType<string>,
-    apps: Array as PropType<App[]>,
+    workspace: {
+      type: String as PropType<string>,
+      required: true,
+    },
+    graph: {
+      type: String as PropType<string>,
+      required: true,
+    },
+    apps: {
+      type: Array as PropType<App[]>,
+      required: true,
+    },
   },
   data() {
     const visItems = ['Network Overview'];

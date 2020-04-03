@@ -49,8 +49,15 @@ import api from '@/api';
 export default Vue.extend({
   name: 'GraphCreateForm',
   props: {
-    edgeTables: Array,
-    workspace: String,
+    edgeTables: {
+      type: Array as string[],
+      required: true,
+    },
+
+    workspace: {
+      type: String as string,
+      required: true,
+    },
   },
   data() {
     return {

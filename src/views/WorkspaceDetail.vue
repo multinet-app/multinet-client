@@ -135,11 +135,6 @@ import Vue, { PropType } from 'vue';
 import api from '@/api';
 import TablePanel from '@/components/TablePanel.vue';
 import NetworkPanel from '@/components/NetworkPanel.vue';
-import GraphDialog from '@/components/GraphDialog.vue';
-import DeleteGraphDialog from '@/components/DeleteGraphDialog.vue';
-import TableDialog from '@/components/TableDialog.vue';
-import DeleteTableDialog from '@/components/DeleteTableDialog.vue';
-import DownloadDialog from '@/components/DownloadDialog.vue';
 import store from '@/store';
 
 const surroundingWhitespace = /^\s+|\s+$/;
@@ -153,14 +148,12 @@ export default Vue.extend({
   components: {
     TablePanel,
     NetworkPanel,
-    GraphDialog,
-    DeleteGraphDialog,
-    TableDialog,
-    DeleteTableDialog,
-    DownloadDialog,
   },
   props: {
-    workspace: String as PropType<string>,
+    workspace: {
+      type: String as PropType<string>,
+      required: true,
+    },
   },
   data() {
     return {
@@ -224,7 +217,7 @@ export default Vue.extend({
 
       if (this.localWorkspace !== null) {
         try {
-          const { status, data } = await api.renameWorkspace(this.workspace, this.localWorkspace);
+          const { data } = await api.renameWorkspace(this.workspace, this.localWorkspace);
           this.$router.push(`/workspaces/${data}`);
           this.editing = false;
           this.requestError = null;
@@ -240,6 +233,8 @@ export default Vue.extend({
         }
       }
     },
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async update(this: any) {
       this.loading = true;
 

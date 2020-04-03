@@ -124,7 +124,6 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import api from '@/api';
 import store from '@/store';
 
 import WorkspaceDialog from '@/components/WorkspaceDialog.vue';
@@ -195,6 +194,8 @@ export default Vue.extend({
 
     deleteWorkspace(ws: string) {
       this.singleSelected = ws;
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.$refs.dws as any).dialog = true;
     },
   },

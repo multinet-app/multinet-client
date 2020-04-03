@@ -99,6 +99,7 @@ export default Vue.extend({
       return GIT_SHA;
     },
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     gitShaURL(this: any): string {
       const {
         gitSha,

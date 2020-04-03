@@ -261,10 +261,25 @@ type EdgeType = 'incoming' | 'outgoing';
 export default Vue.extend({
   name: 'NodeDetail',
   props: {
-    workspace: String as PropType<string>,
-    graph: String as PropType<string>,
-    type: String as PropType<string>,
-    node: String as PropType<string>,
+    workspace: {
+      type: String as PropType<string>,
+      required: true,
+    },
+
+    graph: {
+      type: String as PropType<string>,
+      required: true,
+    },
+
+    type: {
+      type: String as PropType<string>,
+      required: true,
+    },
+
+    node: {
+      type: String as PropType<string>,
+      required: true,
+    },
   },
   data() {
     return {
@@ -319,6 +334,7 @@ export default Vue.extend({
         attributes,
       } = this;
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const table: { [key: string]: any } = {};
       for (const entry of attributes) {
         table[entry.key] = entry.value;
