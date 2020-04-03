@@ -203,7 +203,9 @@ export default Vue.extend({
       this.singleSelected = null;
 
       if (deleted) {
-        deleted.forEach((item) => (this.checkbox[item] = false));
+        deleted.forEach((item) => {
+          this.checkbox[item] = false;
+        });
       }
 
       this.$emit('update');
