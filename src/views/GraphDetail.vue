@@ -419,6 +419,7 @@ export default Vue.extend({
 
       this.nodeTypes = graph.nodeTables;
       this.edgeTypes = [graph.edgeTable];
+      // eslint-disable-next-line no-underscore-dangle
       this.nodes = nodes.nodes.map((d) => d._id);
       this.totalNodes = nodes.count;
       this.totalEdges = edges.reduce((acc, val) => acc + val, 0);
