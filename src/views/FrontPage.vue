@@ -51,12 +51,10 @@
                     class="align-center d-flex py-1"
                     cols="6"
                   >
-                    <img
+                    <v-img
                       :src="collab.logo"
-                      alt=""
-                      width="100%"
-                      height="auto"
-                    >
+                      width="100vh"
+                    />
                   </v-col>
                 </v-row>
               </v-card-text>
