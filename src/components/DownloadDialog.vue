@@ -131,7 +131,7 @@ export default Vue.extend({
       return this.selection.length > 0;
     },
 
-    downloadEnpoint() {
+    downloadEndpoint() {
       switch (this.downloadType) {
         case 'table':
           return api.downloadTable.bind(api);
@@ -161,7 +161,7 @@ export default Vue.extend({
       this.loading = true;
 
       const downloads = await Promise.all(selection.map(async (name) => {
-        const { data, headers: { 'content-type': contentType } } = await this.downloadEnpoint(workspace, name);
+        const { data, headers: { 'content-type': contentType } } = await this.downloadEndpoint(workspace, name);
         const blobData = data instanceof Object ? JSON.stringify(data, null, 2) : data;
         const blob = new Blob([blobData], { type: contentType });
 
