@@ -1,9 +1,8 @@
 <template>
-
   <v-dialog
+    v-if="nonZeroSelection"
     v-model="dialog"
     width="700"
-    v-if="nonZeroSelection"
   >
     <template v-slot:activator="{ on: dialog }">
       <v-tooltip left>
@@ -15,8 +14,13 @@
               small
               @click="dialog.click"
               v-on="tooltip"
+            >
+              <v-icon
+                color="red accent-3"
+                size="20px"
               >
-              <v-icon color="red accent-3" size="20px">delete_sweep</v-icon>
+                delete_sweep
+              </v-icon>
             </v-btn>
           </v-scroll-x-transition>
         </template>
@@ -28,12 +32,12 @@
       <v-card-title
         class="headline pb-0 pt-3 px-5"
         primary-title
-        >
+      >
         Delete Networks
       </v-card-title>
 
       <v-card-text class="px-5 py-4">
-        You are about to delete {{ selection.length }} network{{plural}}. Type
+        You are about to delete {{ selection.length }} network{{ plural }}. Type
         the following phrase to confirm: <strong>{{ confirmationPhrase }}</strong>
       </v-card-text>
 
@@ -53,20 +57,21 @@
         <v-btn
           depressed
           color="error"
-          @click="execute"
           :disabled="confirmation !== confirmationPhrase"
-        >yes</v-btn>
+          @click="execute"
+        >
+          yes
+        </v-btn>
 
         <v-btn
           depressed
           @click="dialog = false"
-          >cancel</v-btn>
+        >
+          cancel
+        </v-btn>
       </v-card-actions>
-
     </v-card>
-
   </v-dialog>
-
 </template>
 
 <script lang="ts">

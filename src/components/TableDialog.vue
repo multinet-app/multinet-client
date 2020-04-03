@@ -11,7 +11,9 @@
         medium
         v-on="on"
       >
-        <v-icon dark>add_circle</v-icon>
+        <v-icon dark>
+          add_circle
+        </v-icon>
       </v-btn>
     </template>
     <v-card>
@@ -26,7 +28,6 @@
           <v-layout wrap>
             <v-flex>
               <v-file-input
-                @change="handleFileInput"
                 :error-messages="fileUploadError"
                 label="Upload File"
                 prepend-inner-icon="attach_file"
@@ -35,6 +36,7 @@
                 clearable
                 dense
                 outlined
+                @change="handleFileInput"
               />
             </v-flex>
           </v-layout>
@@ -55,9 +57,9 @@
                 v-model="key"
                 label="Key Column"
                 append-icon="restore"
-                @click:append="restoreKeyField"
                 outlined
                 dense
+                @click:append="restoreKeyField"
               />
             </v-col>
             <v-col cols="4">
@@ -72,11 +74,14 @@
           </v-row>
         </v-card-text>
 
-        <v-divider></v-divider>
+        <v-divider />
 
         <v-card-actions class="px-4 py-3">
-          <v-spacer></v-spacer>
-          <v-btn :disabled="createDisabled" @click="createTable">
+          <v-spacer />
+          <v-btn
+            :disabled="createDisabled"
+            @click="createTable"
+          >
             Create
           </v-btn>
         </v-card-actions>
@@ -121,9 +126,9 @@ export default Vue.extend({
   computed: {
     createDisabled(): boolean {
       return (
-        !this.file ||
-        !this.fileName ||
-        !!this.fileUploadError
+        !this.file
+        || !this.fileName
+        || !!this.fileUploadError
       );
     },
   },

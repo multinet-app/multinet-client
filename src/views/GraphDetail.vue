@@ -15,7 +15,9 @@
         <v-icon
           class="ml-4 mr-5"
           color="grey lighten-1"
-        >library_books</v-icon>
+        >
+          library_books
+        </v-icon>
 
         <span class="breadcrumbs">
           <router-link
@@ -23,12 +25,17 @@
               name: 'workspaceDetail',
               params: { workspace }
             }"
-          >{{workspace}}</router-link>
-          <v-icon class="mx-4" color="grey lighten-2">chevron_right</v-icon>
-          <v-icon class="mr-3" color="grey lighten-1">timeline</v-icon>
-          {{graph}}
+          >{{ workspace }}</router-link>
+          <v-icon
+            class="mx-4"
+            color="grey lighten-2"
+          >chevron_right</v-icon>
+          <v-icon
+            class="mr-3"
+            color="grey lighten-1"
+          >timeline</v-icon>
+          {{ graph }}
         </span>
-
       </v-toolbar-title>
 
       <v-spacer />
@@ -50,12 +57,12 @@
           <v-list>
             <v-list-item>
               <v-list-item-title>
-                Nodes: {{totalNodes}}
+                Nodes: {{ totalNodes }}
               </v-list-item-title>
             </v-list-item>
             <v-list-item>
               <v-list-item-title>
-                Edges: {{totalEdges}}
+                Edges: {{ totalEdges }}
               </v-list-item-title>
             </v-list-item>
           </v-list>
@@ -71,8 +78,8 @@
               <v-divider />
               <div class="grey lighten-4 pa-3">
                 <v-select
-                  :items="visItems"
                   v-model="selectedVis"
+                  :items="visItems"
                   background-color="white"
                   dense
                   hide-details
@@ -83,20 +90,24 @@
               </div>
               <v-divider />
               <v-list-item
-                class="pl-2"
-                :key="app.name"
-                :href="`${app.url}/?workspace=${workspace}&graph=${graph}`"
                 v-for="app in apps"
+                :key="app.name"
+                class="pl-2"
+                :href="`${app.url}/?workspace=${workspace}&graph=${graph}`"
                 target="_blank"
               >
                 <v-list-item-avatar class="mr-3">
-                  <v-icon color="blue lighten-3">exit_to_app</v-icon>
+                  <v-icon color="blue lighten-3">
+                    exit_to_app
+                  </v-icon>
                 </v-list-item-avatar>
                 <v-list-item-title>
-                  {{app.name}}
+                  {{ app.name }}
                 </v-list-item-title>
                 <v-list-item-icon>
-                  <v-icon color="blue lighten-3">chevron_right</v-icon>
+                  <v-icon color="blue lighten-3">
+                    chevron_right
+                  </v-icon>
                 </v-list-item-icon>
               </v-list-item>
             </v-list>
@@ -126,10 +137,10 @@
                   dense
                 >
                   <v-list-item
-                    class="pl-2"
-                    :key="table.name"
-                    :to="`/workspaces/${workspace}/table/${table}`"
                     v-for="table in nodeTypes"
+                    :key="table.name"
+                    class="pl-2"
+                    :to="`/workspaces/${workspace}/table/${table}`"
                   >
                     <v-list-item-avatar class="my-0">
                       <v-icon
@@ -140,10 +151,12 @@
                       </v-icon>
                     </v-list-item-avatar>
                     <v-list-item-title>
-                      {{table}}
+                      {{ table }}
                     </v-list-item-title>
                     <v-list-item-icon>
-                      <v-icon color="grey lighten-1">chevron_right</v-icon>
+                      <v-icon color="grey lighten-1">
+                        chevron_right
+                      </v-icon>
                     </v-list-item-icon>
                   </v-list-item>
                 </v-list>
@@ -174,10 +187,10 @@
                   dense
                 >
                   <v-list-item
-                    class="pl-2"
-                    :key="table.name"
-                    :to="`/workspaces/${workspace}/table/${table}`"
                     v-for="table in edgeTypes"
+                    :key="table.name"
+                    class="pl-2"
+                    :to="`/workspaces/${workspace}/table/${table}`"
                   >
                     <v-list-item-avatar class="my-0">
                       <v-icon
@@ -188,10 +201,12 @@
                       </v-icon>
                     </v-list-item-avatar>
                     <v-list-item-title>
-                      {{table}}
+                      {{ table }}
                     </v-list-item-title>
                     <v-list-item-icon>
-                      <v-icon color="grey lighten-1">chevron_right</v-icon>
+                      <v-icon color="grey lighten-1">
+                        chevron_right
+                      </v-icon>
                     </v-list-item-icon>
                   </v-list-item>
                 </v-list>
@@ -220,7 +235,7 @@
                     icon
                     small
                     :disabled="!prev"
-                    v-on:click="firstPage()"
+                    @click="firstPage()"
                   >
                     <v-icon>skip_previous</v-icon>
                   </v-btn>
@@ -229,7 +244,7 @@
                     icon
                     small
                     :disabled="!prev"
-                    v-on:click="turnPage(false)"
+                    @click="turnPage(false)"
                   >
                     <v-icon>chevron_left</v-icon>
                   </v-btn>
@@ -238,7 +253,7 @@
                     icon
                     small
                     :disabled="!next"
-                    v-on:click="turnPage(true)"
+                    @click="turnPage(true)"
                   >
                     <v-icon>chevron_right</v-icon>
                   </v-btn>
@@ -247,7 +262,7 @@
                     icon
                     small
                     :disabled="!next"
-                    v-on:click="lastPage()"
+                    @click="lastPage()"
                   >
                     <v-icon>skip_next</v-icon>
                   </v-btn>
@@ -265,7 +280,7 @@
                     :to="`/workspaces/${workspace}/graph/${graph}/node/${node}`"
                   >
                     <v-list-item-title>
-                      {{node}}
+                      {{ node }}
                     </v-list-item-title>
                   </v-list-item>
                 </v-list>
@@ -339,7 +354,7 @@ export default Vue.extend({
       return this.highestOffset !== this.offset;
     },
     prev(): boolean {
-      return 0 !== this.offset;
+      return this.offset !== 0;
     },
     nodeColsClasses(): string {
       const {
@@ -358,6 +373,23 @@ export default Vue.extend({
     drawerIcon(): string {
       return this.panelOpen ? 'expand_more' : 'expand_less';
     },
+  },
+  watch: {
+    offset() {
+      this.update();
+    },
+    limit() {
+      this.update();
+    },
+    workspace() {
+      this.update();
+    },
+    graph() {
+      this.update();
+    },
+  },
+  created() {
+    this.update();
   },
   methods: {
     toggle() {
@@ -391,23 +423,6 @@ export default Vue.extend({
     firstPage() {
       this.offset = 0;
     },
-  },
-  watch: {
-    offset() {
-      this.update();
-    },
-    limit() {
-      this.update();
-    },
-    workspace() {
-      this.update();
-    },
-    graph() {
-      this.update();
-    },
-  },
-  created() {
-    this.update();
   },
 });
 </script>

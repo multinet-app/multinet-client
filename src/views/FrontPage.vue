@@ -1,5 +1,8 @@
 <template>
-  <v-container class="pa-0" fluid>
+  <v-container
+    class="pa-0"
+    fluid
+  >
     <v-content>
       <!-- BANNER -->
       <v-responsive
@@ -22,13 +25,17 @@
               <v-card-title>Welcome to Multinet!</v-card-title>
               <v-divider />
               <v-card-text>
-                <p>Check out the featured datasets and visualizations below! You
-                can also create your own workspace and upload your own data with
-                the <strong>New Workspace</strong> button to the left, or
-                explore data others have uploaded.</p>
-                <p>This project is a joint research and development effort between
-                the University of Utah and Kitware Inc., funded by the National
-                Science Foundation.</p>
+                <p>
+                  Check out the featured datasets and visualizations below! You
+                  can also create your own workspace and upload your own data with
+                  the <strong>New Workspace</strong> button to the left, or
+                  explore data others have uploaded.
+                </p>
+                <p>
+                  This project is a joint research and development effort between
+                  the University of Utah and Kitware Inc., funded by the National
+                  Science Foundation.
+                </p>
               </v-card-text>
             </v-card>
             <v-card
@@ -39,12 +46,17 @@
               <v-card-text>
                 <v-row class="px-4">
                   <v-col
+                    v-for="collab in collabs"
+                    :key="collab.logo"
                     class="align-center d-flex py-1"
                     cols="6"
-                    :key="collab.logo"
-                    v-for="collab in collabs"
                   >
-                    <img :src="collab.logo" alt="" width="100%" height="auto">
+                    <img
+                      :src="collab.logo"
+                      alt=""
+                      width="100%"
+                      height="auto"
+                    >
                   </v-col>
                 </v-row>
               </v-card-text>
@@ -57,9 +69,9 @@
       <v-container>
         <v-row>
           <v-col
-            cols="4"
             v-for="sample in samples"
             :key="sample.title"
+            cols="4"
           >
             <v-hover>
               <template v-slot:default="{ hover }">
@@ -85,7 +97,7 @@
                           color="primary"
                           :href="sample.href"
                           target="_blank"
-                          >
+                        >
                           Open in New Window
                         </v-btn>
                       </div>
@@ -97,7 +109,6 @@
           </v-col>
         </v-row>
       </v-container>
-
     </v-content>
   </v-container>
 </template>
@@ -105,7 +116,7 @@
 <script lang="ts">
 import Vue from 'vue';
 
-export default Vue.extend ({
+export default Vue.extend({
   data() {
     return {
       collabs: [

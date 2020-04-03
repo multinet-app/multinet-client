@@ -19,7 +19,11 @@
         >
           <v-row class="mx-0 align-center">
             <v-col class="app-logo pb-0 pt-2 px-0">
-              <img src="../assets/logo/app_logo.svg" alt="Multinet" width="100%">
+              <img
+                src="../assets/logo/app_logo.svg"
+                alt="Multinet"
+                width="100%"
+              >
             </v-col>
             <v-col class="text-left">
               Multinet
@@ -36,7 +40,9 @@
           color="grey lighten-4"
           size="36px"
         >
-          <v-icon color="grey">account_circle</v-icon>
+          <v-icon color="grey">
+            account_circle
+          </v-icon>
         </v-avatar>
       </v-btn>
     </v-toolbar>
@@ -48,17 +54,16 @@
         Your Workspaces
         <v-spacer />
 
-          <delete-workspace-dialog
-            ref="dws"
-            :somethingChecked="somethingChecked"
-            :selection="selection"
-            @deleted="workspaceDeleted"
-            @closed="singleSelected = null"
-          />
-
+        <delete-workspace-dialog
+          ref="dws"
+          :something-checked="somethingChecked"
+          :selection="selection"
+          @deleted="workspaceDeleted"
+          @closed="singleSelected = null"
+        />
       </v-subheader>
 
-      <v-divider></v-divider>
+      <v-divider />
 
       <div class="workspaces">
         <v-list-item-group color="primary">
@@ -67,31 +72,33 @@
             :key="space"
           >
             <v-list-item
-              ripple
               slot-scope="{ hover }"
+              ripple
               :to="`/workspaces/${space}/`"
             >
               <v-list-item-action @click.prevent>
                 <v-icon
-                  class="workspace-icon"
                   v-if="!hover && !checkbox[space]"
-                >library_books</v-icon>
+                  class="workspace-icon"
+                >
+                  library_books
+                </v-icon>
 
                 <v-checkbox
-                  class="ws-checkbox"
                   v-else
                   v-model="checkbox[space]"
-                ></v-checkbox>
+                  class="ws-checkbox"
+                />
               </v-list-item-action>
 
               <v-list-item-content>
-                <v-list-item-title>{{space}}</v-list-item-title>
+                <v-list-item-title>{{ space }}</v-list-item-title>
               </v-list-item-content>
 
               <v-list-item-action
+                v-if="hover"
                 class="mx-0 my-0"
                 @click.prevent
-                v-if="hover"
               >
                 <v-btn
                   icon
@@ -101,7 +108,9 @@
                     color="red accent-3"
                     size="18"
                     @click="deleteWorkspace(space)"
-                  >delete</v-icon>
+                  >
+                    delete
+                  </v-icon>
                 </v-btn>
               </v-list-item-action>
             </v-list-item>
@@ -109,7 +118,6 @@
         </v-list-item-group>
       </div>
     </v-list>
-
   </v-navigation-drawer>
 </template>
 
@@ -128,18 +136,18 @@ interface CheckboxTable {
 }
 
 export default Vue.extend({
+
+  components: {
+    DeleteWorkspaceDialog,
+    WorkspaceDialog,
+    AboutDialog,
+  },
   data() {
     return {
       newWorkspace: '',
       checkbox: {} as CheckboxTable,
       singleSelected: null as string | null,
     };
-  },
-
-  components: {
-    DeleteWorkspaceDialog,
-    WorkspaceDialog,
-    AboutDialog,
   },
 
   computed: {
@@ -171,6 +179,10 @@ export default Vue.extend({
     },
   },
 
+  created() {
+    store.dispatch.fetchWorkspaces();
+  },
+
   methods: {
     route(workspace: string) {
       this.$router.push(`/workspaces/${workspace}`);
@@ -185,10 +197,6 @@ export default Vue.extend({
       this.singleSelected = ws;
       (this.$refs.dws as any).dialog = true;
     },
-  },
-
-  created() {
-    store.dispatch.fetchWorkspaces();
   },
 });
 </script>

@@ -1,9 +1,8 @@
 <template>
-
   <v-dialog
+    v-if="nonZeroSelection"
     v-model="dialog"
     width="700"
-    v-if="nonZeroSelection"
   >
     <template v-slot:activator="{ on: dialog }">
       <v-tooltip left>
@@ -15,8 +14,13 @@
               small
               @click="dialog.click"
               v-on="tooltip"
+            >
+              <v-icon
+                color="red accent-3"
+                size="20px"
               >
-              <v-icon color="red accent-3" size="20px">delete_sweep</v-icon>
+                delete_sweep
+              </v-icon>
             </v-btn>
           </v-scroll-x-transition>
         </template>
@@ -28,12 +32,12 @@
       <v-card-title
         class="headline pb-0 pt-3 px-5"
         primary-title
-        >
+      >
         Delete Tables
       </v-card-title>
 
       <v-card-text class="px-5 py-4">
-        You are about to delete {{ selection.length }} table{{plural}}. Type the
+        You are about to delete {{ selection.length }} table{{ plural }}. Type the
         following phrase to confirm: <strong>{{ confirmationPhrase }}?</strong>
       </v-card-text>
 
@@ -53,21 +57,25 @@
         <v-btn
           depressed
           color="error"
-          @click="execute"
           :disabled="confirmation !== confirmationPhrase"
-        >yes</v-btn>
+          @click="execute"
+        >
+          yes
+        </v-btn>
 
         <v-btn
           depressed
           @click="dialog = false"
-          >cancel</v-btn>
+        >
+          cancel
+        </v-btn>
       </v-card-actions>
     </v-card>
     <v-card v-else>
       <v-card-title
         class="headline pb-0 pt-3 px-5"
         primary-title
-        >
+      >
         Delete Tables
       </v-card-title>
 
@@ -92,12 +100,12 @@
         <v-btn
           depressed
           @click="dialog = false"
-          >ok</v-btn>
+        >
+          ok
+        </v-btn>
       </v-card-actions>
     </v-card>
-
   </v-dialog>
-
 </template>
 
 <script lang="ts">
@@ -124,7 +132,7 @@ export default Vue.extend({
       dialog: false,
       confirmationPhrase: '',
       confirmation: '',
-      using: [] as Array<{graph: string, tables: string[]}>,
+      using: [] as Array<{graph: string; tables: string[]}>,
     };
   },
 
@@ -180,7 +188,7 @@ export default Vue.extend({
 
       const graphNames = await api.graphs(workspace);
 
-      const using = [] as Array<{graph: string, tables: string[]}>;
+      const using = [] as Array<{graph: string; tables: string[]}>;
       for (const graph of graphNames) {
         const data = await api.graph(workspace, graph);
 

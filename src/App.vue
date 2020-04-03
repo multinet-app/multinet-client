@@ -3,7 +3,10 @@
     <!-- TODO: REMOVE THIS REF WHEN VUEX IS ADDED -->
     <sidebar ref="sidebar" />
     <!-- TODO: REMOVE THIS UPDATE WHEN VUEX IS ADDED -->
-    <router-view :apps='apps' @update="update"/>
+    <router-view
+      :apps="apps"
+      @update="update"
+    />
   </v-app>
 </template>
 
@@ -12,7 +15,7 @@ import Sidebar from '@/components/Sidebar.vue';
 import Vue from 'vue';
 
 export default Vue.extend({
-  name: 'app',
+  name: 'App',
   components: {
     Sidebar,
   },

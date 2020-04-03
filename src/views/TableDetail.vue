@@ -1,5 +1,8 @@
 <template>
-  <v-container fluid class="pa-0">
+  <v-container
+    fluid
+    class="pa-0"
+  >
     <v-navigation-drawer
       app
       clipped
@@ -13,34 +16,41 @@
             All Tables
           </v-subheader>
 
-          <v-divider></v-divider>
+          <v-divider />
 
           <v-list-item
-            ripple
             v-for="table in tables"
             :key="table"
+            ripple
             :to="`/workspaces/${workspace}/table/${table}`"
           >
             <v-list-item-action>
-              <v-icon color="primary">table_chart</v-icon>
+              <v-icon color="primary">
+                table_chart
+              </v-icon>
             </v-list-item-action>
 
             <v-list-item-content>
-              <v-list-item-title>{{table}}</v-list-item-title>
+              <v-list-item-title>{{ table }}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list>
       </v-list>
     </v-navigation-drawer>
     <v-content class="ma-0">
-      <v-app-bar app clipped-right>
+      <v-app-bar
+        app
+        clipped-right
+      >
         <v-toolbar-title
           class="ws-detail-title"
         >
           <v-icon
             class="ml-4 mr-5"
             color="grey lighten-1"
-          >library_books</v-icon>
+          >
+            library_books
+          </v-icon>
 
           <span class="breadcrumbs">
             <router-link
@@ -49,13 +59,18 @@
                 params: { workspace }
               }"
             >
-              {{workspace}}
+              {{ workspace }}
             </router-link>
-            <v-icon class="mx-4" color="grey lighten-2">chevron_right</v-icon>
-            <v-icon class="mr-3" color="grey lighten-1">table_chart</v-icon>
-            {{`${this.table}`}}
+            <v-icon
+              class="mx-4"
+              color="grey lighten-2"
+            >chevron_right</v-icon>
+            <v-icon
+              class="mr-3"
+              color="grey lighten-1"
+            >table_chart</v-icon>
+            {{ `${this.table}` }}
           </span>
-
         </v-toolbar-title>
 
         <v-spacer />
@@ -141,6 +156,18 @@ export default Vue.extend({
       return result;
     },
   },
+  watch: {
+    workspace() {
+      this.update();
+    },
+    table() {
+      this.update();
+    },
+
+    pagination() {
+      this.update();
+    },
+  },
   methods: {
     rowClassName(index: number): 'even-row' | 'odd-row' {
       return index % 2 === 0 ? 'even-row' : 'odd-row';
@@ -189,18 +216,6 @@ export default Vue.extend({
       this.tables = await api.tables(this.workspace, {
         type: 'all',
       });
-    },
-  },
-  watch: {
-    workspace() {
-      this.update();
-    },
-    table() {
-      this.update();
-    },
-
-    pagination() {
-      this.update();
     },
   },
 });
