@@ -19,5 +19,8 @@ module.exports = {
     quotes: ['error', 'single'],
     indent: ['error', 2],
     'no-trailing-spaces': 'error',
+    'no-plusplus': ['error', {
+      'allowForLoopAfterthoughts': true,
+    }],
   },
 };
