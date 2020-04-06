@@ -9,7 +9,9 @@
           <v-icon
             class="ml-4 mr-5"
             color="grey lighten-1"
-          >library_books</v-icon>
+          >
+            library_books
+          </v-icon>
 
           <span class="breadcrumbs">
             <router-link
@@ -17,7 +19,7 @@
                 name: 'workspaceDetail',
                 params: { workspace }
               }"
-            >{{workspace}}</router-link>
+            >{{ workspace }}</router-link>
             <v-icon
               class="mx-4"
               color="grey lighten-2"
@@ -36,7 +38,7 @@
                 params: { graph }
               }"
             >
-              {{graph}}
+              {{ graph }}
             </router-link>
             <v-icon
               class="mx-4"
@@ -44,9 +46,8 @@
             >
               chevron_right
             </v-icon>
-            {{type}}/{{node}}
+            {{ type }}/{{ node }}
           </span>
-
         </v-toolbar-title>
 
         <v-spacer />
@@ -82,23 +83,26 @@
                     class="pt-0"
                     color="transparent"
                   >
-                    <v-container fluid pa-0>
+                    <v-container
+                      fluid
+                      pa-0
+                    >
                       <v-row>
                         <v-col
-                          class="py-0"
-                          cols="3"
                           v-for="field in attributes"
                           :key="field.key"
+                          class="py-0"
+                          cols="3"
                         >
                           <v-list-item style="display: block;">
                             <v-list-item-subtitle
                               class="pt-3 pb-1"
                               style="font-size: 11px;"
                             >
-                              {{field.key}}
+                              {{ field.key }}
                             </v-list-item-subtitle>
                             <v-list-item-title class="pb-3">
-                              {{field.value}}
+                              {{ field.value }}
                             </v-list-item-title>
                             <v-divider />
                           </v-list-item>
@@ -119,33 +123,36 @@
                   <v-btn
                     icon
                     :disabled="!prevIncoming"
-                    v-on:click="firstPage('incoming')"
+                    @click="firstPage('incoming')"
                   >
                     <v-icon>skip_previous</v-icon>
                   </v-btn>
                   <v-btn
                     icon
                     :disabled="!prevIncoming"
-                    v-on:click="turnPage('incoming', false)"
+                    @click="turnPage('incoming', false)"
                   >
                     <v-icon>chevron_left</v-icon>
                   </v-btn>
 
-                  <span class="overline" style="vertical-align: middle;">
+                  <span
+                    class="overline"
+                    style="vertical-align: middle;"
+                  >
                     {{ currentIncomingPageNumber }} of {{ lastIncomingPageNumber }}
                   </span>
 
                   <v-btn
                     icon
                     :disabled="!nextIncoming"
-                    v-on:click="turnPage('incoming', true)"
+                    @click="turnPage('incoming', true)"
                   >
                     <v-icon>chevron_right</v-icon>
                   </v-btn>
                   <v-btn
                     icon
                     :disabled="!nextIncoming"
-                    v-on:click="lastPage('incoming')"
+                    @click="lastPage('incoming')"
                   >
                     <v-icon>skip_next</v-icon>
                   </v-btn>
@@ -159,7 +166,7 @@
                     :to="`/workspaces/${workspace}/graph/${graph}/node/${edge.node}`"
                   >
                     <v-list-item-content>
-                      {{edge.node}}
+                      {{ edge.node }}
                     </v-list-item-content>
                   </v-list-item>
                 </v-list>
@@ -175,33 +182,36 @@
                   <v-btn
                     icon
                     :disabled="!prevOutgoing"
-                    v-on:click="firstPage('outgoing')"
+                    @click="firstPage('outgoing')"
                   >
                     <v-icon>skip_previous</v-icon>
                   </v-btn>
                   <v-btn
                     icon
                     :disabled="!prevOutgoing"
-                    v-on:click="turnPage('outgoing', false)"
+                    @click="turnPage('outgoing', false)"
                   >
                     <v-icon>chevron_left</v-icon>
                   </v-btn>
 
-                  <span class="overline" style="vertical-align: middle;">
+                  <span
+                    class="overline"
+                    style="vertical-align: middle;"
+                  >
                     {{ currentOutgoingPageNumber }} of {{ lastOutgoingPageNumber }}
                   </span>
 
                   <v-btn
                     icon
                     :disabled="!nextOutgoing"
-                    v-on:click="turnPage('outgoing', true)"
+                    @click="turnPage('outgoing', true)"
                   >
                     <v-icon>chevron_right</v-icon>
                   </v-btn>
                   <v-btn
                     icon
                     :disabled="!nextOutgoing"
-                    v-on:click="lastPage('outgoing')"
+                    @click="lastPage('outgoing')"
                   >
                     <v-icon>skip_next</v-icon>
                   </v-btn>
@@ -215,16 +225,14 @@
                     :to="`/workspaces/${workspace}/graph/${graph}/node/${edge.node}`"
                   >
                     <v-list-item-content>
-                      {{edge.node}}
+                      {{ edge.node }}
                     </v-list-item-content>
                   </v-list-item>
                 </v-list>
               </v-card-text>
             </v-card>
           </v-col>
-
         </v-row>
-
       </v-container>
     </v-content>
   </v-container>
@@ -253,10 +261,25 @@ type EdgeType = 'incoming' | 'outgoing';
 export default Vue.extend({
   name: 'NodeDetail',
   props: {
-    workspace: String as PropType<string>,
-    graph: String as PropType<string>,
-    type: String as PropType<string>,
-    node: String as PropType<string>,
+    workspace: {
+      type: String as PropType<string>,
+      required: true,
+    },
+
+    graph: {
+      type: String as PropType<string>,
+      required: true,
+    },
+
+    type: {
+      type: String as PropType<string>,
+      required: true,
+    },
+
+    node: {
+      type: String as PropType<string>,
+      required: true,
+    },
   },
   data() {
     return {
@@ -284,10 +307,10 @@ export default Vue.extend({
       return this.lastOutgoingPage !== this.offsetOutgoing;
     },
     prevIncoming(): boolean {
-      return 0 !== this.offsetIncoming;
+      return this.offsetIncoming !== 0;
     },
     prevOutgoing(): boolean {
-      return 0 !== this.offsetOutgoing;
+      return this.offsetOutgoing !== 0;
     },
 
     currentIncomingPageNumber(): number {
@@ -311,13 +334,40 @@ export default Vue.extend({
         attributes,
       } = this;
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const table: { [key: string]: any } = {};
-      for (const entry of attributes) {
+      attributes.forEach((entry) => {
         table[entry.key] = entry.value;
-      }
+      });
 
       return table;
     },
+  },
+  watch: {
+    workspace() {
+      this.update();
+    },
+    graph() {
+      this.update();
+    },
+    type() {
+      this.update();
+    },
+    node() {
+      this.update();
+    },
+    offsetIncoming() {
+      this.update();
+    },
+    offsetOutgoing() {
+      this.update();
+    },
+    pageCount() {
+      this.update();
+    },
+  },
+  created() {
+    this.update();
   },
   methods: {
     async update() {
@@ -338,8 +388,8 @@ export default Vue.extend({
         value,
       }));
 
-      this.incoming = incoming.edges.map((edge: Edge) => ({id: edge.edge, node: edge.from}));
-      this.outgoing = outgoing.edges.map((edge: Edge) => ({id: edge.edge, node: edge.to}));
+      this.incoming = incoming.edges.map((edge: Edge) => ({ id: edge.edge, node: edge.from }));
+      this.outgoing = outgoing.edges.map((edge: Edge) => ({ id: edge.edge, node: edge.to }));
       this.totalIncoming = incoming.count;
       this.totalOutgoing = outgoing.count;
     },
@@ -368,32 +418,6 @@ export default Vue.extend({
     computePageNumber(offset: number) {
       return Math.floor(offset / this.pageCount);
     },
-  },
-  watch: {
-    workspace() {
-      this.update();
-    },
-    graph() {
-      this.update();
-    },
-    type() {
-      this.update();
-    },
-    node() {
-      this.update();
-    },
-    offsetIncoming() {
-      this.update();
-    },
-    offsetOutgoing() {
-      this.update();
-    },
-    pageCount() {
-      this.update();
-    },
-  },
-  created() {
-    this.update();
   },
 });
 </script>

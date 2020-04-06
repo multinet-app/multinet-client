@@ -5,7 +5,9 @@
     subheader
   >
     <v-subheader class="px-0">
-      <h2 class="black--text">Networks</h2>
+      <h2 class="black--text">
+        Networks
+      </h2>
 
       <v-spacer />
 
@@ -32,7 +34,6 @@
         :edge-tables="edgeTables"
         @success="cleanup"
       />
-
     </v-subheader>
 
     <v-divider />
@@ -44,48 +45,56 @@
           :key="item"
         >
           <v-list-item
+            slot-scope="{ hover }"
             active-class="grey lighten-4"
             ripple
-            slot-scope="{ hover }"
             :to="`/workspaces/${workspace}/graph/${item}`"
           >
             <v-list-item-action @click.prevent>
               <v-icon
-                class="item-icon"
                 v-if="!hover && !checkbox[item]"
-              >timeline</v-icon>
+                class="item-icon"
+              >
+                timeline
+              </v-icon>
 
               <v-checkbox
-                class="ws-detail-checkbox"
                 v-else
                 v-model="checkbox[item]"
-              ></v-checkbox>
+                class="ws-detail-checkbox"
+              />
             </v-list-item-action>
 
             <v-list-item-content>
-              <v-list-item-title>{{item}}</v-list-item-title>
+              <v-list-item-title>{{ item }}</v-list-item-title>
             </v-list-item-content>
 
-            <v-list-item-action class="mx-0 my-0"
-              @click.prevent
+            <v-list-item-action
               v-if="hover"
+              class="mx-0 my-0"
+              @click.prevent
             >
               <v-btn icon>
                 <v-icon
                   color="primary"
                   @click="downloadItem(item)"
-                >save_alt</v-icon>
+                >
+                  save_alt
+                </v-icon>
               </v-btn>
             </v-list-item-action>
-            <v-list-item-action class="mx-0 my-0"
-              @click.prevent
+            <v-list-item-action
               v-if="hover"
+              class="mx-0 my-0"
+              @click.prevent
             >
               <v-btn icon>
                 <v-icon
                   color="red accent-3"
                   @click="deleteItem(item)"
-                >delete</v-icon>
+                >
+                  delete
+                </v-icon>
               </v-btn>
             </v-list-item-action>
           </v-list-item>
@@ -96,7 +105,9 @@
       v-else
       class="ws-detail-empty-list"
     >
-      <v-icon color="blue lighten-1">info</v-icon> There's nothing here yet...
+      <v-icon color="blue lighten-1">
+        info
+      </v-icon> There's nothing here yet...
     </div>
   </v-list>
 </template>
@@ -188,11 +199,15 @@ export default Vue.extend({
   methods: {
     deleteItem(item: string) {
       this.singleSelected = item;
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.$refs.deleter as any).dialog = true;
     },
 
     downloadItem(item: string) {
       this.singleSelected = item;
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.$refs.downloader as any).dialog = true;
     },
 
@@ -206,7 +221,9 @@ export default Vue.extend({
       this.singleSelected = null;
 
       if (selection) {
-        selection.forEach((item) => this.checkbox[item] = false);
+        selection.forEach((item) => {
+          this.checkbox[item] = false;
+        });
       }
 
       this.$emit('update');

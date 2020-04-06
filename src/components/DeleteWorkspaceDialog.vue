@@ -1,24 +1,27 @@
 <template>
-
   <v-dialog
     v-model="dialog"
     width="700"
-    >
-
-    <template v-slot:activator="{ on: dialog }">
+  >
+    <template v-slot:activator="{ on: button }">
       <v-tooltip left>
         <template v-slot:activator="{ on: tooltip }">
           <v-scroll-x-transition>
             <v-btn
-              id="delete-workspaces"
               v-if="somethingChecked"
+              id="delete-workspaces"
               icon
               small
               text
-              @click="dialog.click"
+              @click="button.click"
               v-on="tooltip"
+            >
+              <v-icon
+                color="red accent-3"
+                size="22px"
               >
-              <v-icon color="red accent-3" size="22px">delete_sweep</v-icon>
+                delete_sweep
+              </v-icon>
             </v-btn>
           </v-scroll-x-transition>
         </template>
@@ -30,13 +33,13 @@
       <v-card-title
         class="headline pb-0 pt-3 px-5"
         primary-title
-        >
+      >
         Delete Workspaces
       </v-card-title>
 
       <v-card-text class="px-5 py-4">
         You are about to delete {{ selection.length }}
-        workspace{{plural}}{{ detail }}. Type the following phrase to confirm:
+        workspace{{ plural }}{{ detail }}. Type the following phrase to confirm:
         <strong>{{ confirmationPhrase }}</strong>
       </v-card-text>
 
@@ -57,20 +60,21 @@
           id="delete-workspace-yes"
           depressed
           color="error"
-          @click="execute"
           :disabled="confirmation !== confirmationPhrase"
-        >yes</v-btn>
+          @click="execute"
+        >
+          yes
+        </v-btn>
 
         <v-btn
           depressed
           @click="dialog = false"
-          >cancel</v-btn>
+        >
+          cancel
+        </v-btn>
       </v-card-actions>
-
     </v-card>
-
   </v-dialog>
-
 </template>
 
 <script lang="ts">
@@ -104,10 +108,13 @@ export default Vue.extend({
 
   computed: {
     // This workaround is necessary because of https://github.com/vuejs/vue/issues/10455
+    //
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     plural(this: any) {
       return this.selection.length > 1 ? 's' : '';
     },
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     detail(this: any) {
       return this.selection.length === 1 ? ` (${this.selection[0]})` : '';
     },

@@ -11,7 +11,9 @@
         medium
         v-on="on"
       >
-        <v-icon dark>add_circle</v-icon>
+        <v-icon dark>
+          add_circle
+        </v-icon>
       </v-btn>
     </template>
     <v-card>
@@ -26,10 +28,10 @@
 
           <v-tab-item>
             <file-upload-form
-              fileTypeSelector
-              namePlaceholder="Network name"
-              fileInputPlaceholder="Select network file"
-              createButtonText="Upload"
+              file-type-selector
+              name-placeholder="Network name"
+              file-input-placeholder="Select network file"
+              create-button-text="Upload"
               :workspace="workspace"
               :types="uploadFiletypes"
               @success="graphDialogSuccess"
@@ -37,7 +39,11 @@
           </v-tab-item>
 
           <v-tab-item>
-            <graph-create-form :edge-tables="edgeTables" :workspace="workspace" @success="graphDialogSuccess"/>
+            <graph-create-form
+              :edge-tables="edgeTables"
+              :workspace="workspace"
+              @success="graphDialogSuccess"
+            />
           </v-tab-item>
         </v-tabs>
       </v-card>
@@ -46,21 +52,27 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { PropType } from 'vue';
 
-import api from '@/api';
 import GraphCreateForm from '@/components/GraphCreateForm.vue';
 import FileUploadForm from '@/components/FileUploadForm.vue';
 
 export default Vue.extend({
   name: 'GraphDialog',
-  props: {
-    edgeTables: Array,
-    workspace: String,
-  },
   components: {
     GraphCreateForm,
     FileUploadForm,
+  },
+  props: {
+    edgeTables: {
+      type: Array as PropType<string[]>,
+      required: true,
+    },
+
+    workspace: {
+      type: String as PropType<string>,
+      required: true,
+    },
   },
   data() {
     return {

@@ -7,6 +7,8 @@ export interface App {
 
 export interface KeyValue {
   key: string;
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any;
 }
 
@@ -14,6 +16,8 @@ export interface TableRow {
   _key: string;
   _id: string;
   _rev: string;
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 }
 

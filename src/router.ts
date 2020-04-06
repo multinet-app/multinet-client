@@ -1,12 +1,13 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-Vue.use(VueRouter);
 
 import FrontPage from '@/views/FrontPage.vue';
 import WorkspaceDetail from '@/views/WorkspaceDetail.vue';
 import TableDetail from '@/views/TableDetail.vue';
 import GraphDetail from '@/views/GraphDetail.vue';
 import NodeDetail from '@/views/NodeDetail.vue';
+
+Vue.use(VueRouter);
 
 const routes = [
   {
@@ -44,6 +45,6 @@ const routes = [
   },
 ];
 
-const router = new VueRouter({routes});
+const router = new VueRouter({ routes });
 
 export default router;

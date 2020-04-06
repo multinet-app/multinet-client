@@ -20,12 +20,16 @@ const url = `http://${host}:${port}/`;
 const debug = !!process.env.DEBUG;
 
 // Opens the chromium window
-function browser(width, height) {
+function browser(w, h) {
   return puppeteer.launch({
     headless: !debug,
-    args: [`--window-size=${width},${height}`],
+    args: [`--window-size=${w},${h}`],
     slowMo: debug ? 250 : 0,
   });
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 // Sets up the browser with some default settings
@@ -47,11 +51,7 @@ async function setup() {
   return [b, p];
 }
 
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-async function get_element_coords(p, selector) {
+async function getElementCoords(p, selector) {
   const el = await p.$(selector);
   const bb = await el.boundingBox();
 
@@ -62,7 +62,7 @@ async function get_element_coords(p, selector) {
 }
 
 // Clicks the add workspace button, types a name, and clicks the button
-async function create_workspace(p, name) {
+async function createWorkspace(p, name) {
   await p.waitForSelector('#add-workspace');
   await p.click('#add-workspace');
   await p.waitForSelector('#workspace-name');
@@ -71,10 +71,10 @@ async function create_workspace(p, name) {
   await p.click('#create-workspace');
 }
 
-async function delete_workspace(p, name) {
+async function deleteWorkspace(p, name) {
   // Move the mouse over the workspace entry to make the checkbox appear.
   const entry = `a[href="#/workspaces/${name}/"]`;
-  const coords = await get_element_coords(p, entry);
+  const coords = await getElementCoords(p, entry);
   await p.mouse.move(coords.x, coords.y);
 
   // Click on the checkbox, then on the delete icon.
@@ -91,50 +91,44 @@ async function delete_workspace(p, name) {
   await p.click('#delete-workspace-yes');
 }
 
-async function get_workspace_names(p) {
+async function getWorkspaceNames(p) {
   return p.evaluate(() => {
-    let titles = [];
-    let doc_nodes = document.querySelectorAll('.v-list-item__title');
-    for (let node of doc_nodes) {
+    const titles = [];
+    const docNodes = document.querySelectorAll('.v-list-item__title');
+    docNodes.forEach((node) => {
       titles.push(node.innerText);
-    }
+    });
     return titles;
   });
 }
 
 // Checks that a workspace exists in the left pane
-async function workspace_exists(p, name) {
-  const workspaces = await get_workspace_names(p);
+async function workspaceExists(p, name) {
+  const workspaces = await getWorkspaceNames(p);
 
   return workspaces.includes(name);
 }
 
 // Get the names of either all tables or all graphs in the current workspace
-async function get_element_names(element_type, p) {
-  let tables;
-
+async function getElementNames(elementType, p) {
   // Search for the text of the table or graph elements
-  await p.waitForSelector(`[data-title="${element_type}"] .ws-detail-empty-list`);
-  tables = await p.evaluate(element_type => {
-    let titles = [];
-    let doc_nodes = document.querySelectorAll(`[data-title="${element_type}"] .ws-detail-empty-list`);
-    for (let node of doc_nodes) {
+  await p.waitForSelector(`[data-title="${elementType}"] .ws-detail-empty-list`);
+  const tables = await p.evaluate((elType) => {
+    const titles = [];
+    const docNodes = document.querySelectorAll(`[data-title="${elType}"] .ws-detail-empty-list`);
+    docNodes.forEach((node) => {
       titles.push(node.innerText);
-    }
+    });
     return titles;
-  }, element_type);
+  }, elementType);
 
   return tables;
 }
 
 // Checks if no tables or graphs exist in the current workspace
-async function elements_empty(element_type, p) {
-  let list_is_empty, tables;
-
-  tables = await get_element_names(element_type, p);
-
-  list_is_empty = tables.includes('info There\'s nothing here yet...');
-  return list_is_empty;
+async function elementsEmpty(elementType, p) {
+  const tables = await getElementNames(elementType, p);
+  return tables.includes('info There\'s nothing here yet...');
 }
 
 // Declare global variables for the browser and page objects.
@@ -146,7 +140,7 @@ test('Create a valid workspace', async (t) => {
   [b, p] = await setup();
 
   // First, figure out a name we can use for the workspace.
-  const workspaces = await get_workspace_names(p);
+  const workspaces = await getWorkspaceNames(p);
   let name;
   const limit = 1000;
   let i;
@@ -161,31 +155,31 @@ test('Create a valid workspace', async (t) => {
   }
 
   // Create the workspace.
-  await create_workspace(p, name);
+  await createWorkspace(p, name);
   await sleep(500);
 
   // Check that the new workspace now exists.
-  const exists = await workspace_exists(p, name);
+  const exists = await workspaceExists(p, name);
   t.ok(exists, `Workspace "${name}" was created`);
 
   // Check that the new workspace has no tables or networks.
-  const tables = await elements_empty('Tables', p);
+  const tables = await elementsEmpty('Tables', p);
   t.ok(tables, 'The new workspace has no tables');
 
-  const networks = await elements_empty('Networks', p);
+  const networks = await elementsEmpty('Networks', p);
   t.ok(networks, 'The new workspace has no networks');
 
   // Delete the workspace.
-  await delete_workspace(p, name);
+  await deleteWorkspace(p, name);
   await sleep(1000);
-  const deleted = !await workspace_exists(p, name);
+  const deleted = !await workspaceExists(p, name);
   t.ok(deleted, `Workspace "${name}" was deleted`);
 
   t.end();
 });
 
 test('Create a workspace with an invalid name (consisting of numbers)', async (t) => {
-  const workspaces = await get_workspace_names(p);
+  const workspaces = await getWorkspaceNames(p);
   let name;
   const limit = 1000;
   for (name = 123; name < limit; name++) {
@@ -198,32 +192,32 @@ test('Create a workspace with an invalid name (consisting of numbers)', async (t
   }
   name = `${name}`;
 
-  await create_workspace(p, name);
+  await createWorkspace(p, name);
   await p.click('#workspace-name', {
     clickCount: 3,
   });
   await p.click('#add-workspace');
 
-  const workspaces2 = await get_workspace_names(p);
+  const workspaces2 = await getWorkspaceNames(p);
   t.ok(!workspaces2.includes(name), `Workspace with invalid name "${name}" was not created`);
 
   t.end();
 });
 
 test('Create a workspace with an invalid name (consisting of punctuation)', async (t) => {
-  const workspaces = await get_workspace_names(p);
+  const workspaces = await getWorkspaceNames(p);
   const name = '++--==__';
   if (workspaces.includes(name)) {
     throw new Error('fatal: could not find an unused name');
   }
 
-  await create_workspace(p, name);
+  await createWorkspace(p, name);
   await p.click('#workspace-name', {
     clickCount: 3,
   });
   await p.click('#add-workspace');
 
-  const workspaces2 = await get_workspace_names(p);
+  const workspaces2 = await getWorkspaceNames(p);
   t.ok(!workspaces2.includes(name), `Workspace with invalid name "${name}" was not created`);
 
   await b.close();

@@ -4,16 +4,21 @@
       <v-app-bar app>
         <v-hover>
           <v-toolbar-title
-            class="ws-detail-title"
             slot-scope="{ hover }"
+            class="ws-detail-title"
           >
             <v-icon
+              v-if="!hover && !editing"
               class="ml-4 mr-5"
               color="grey lighten-1"
-              v-if="!hover && !editing"
-            >library_books</v-icon>
+            >
+              library_books
+            </v-icon>
 
-            <v-tooltip left v-if="!editing && hover">
+            <v-tooltip
+              v-if="!editing && hover"
+              left
+            >
               <template v-slot:activator="{ on }">
                 <div>
                   <v-btn
@@ -25,7 +30,9 @@
                     <v-icon
                       color="grey darken-3"
                       size="20px"
-                    >edit</v-icon>
+                    >
+                      edit
+                    </v-icon>
                   </v-btn>
                 </div>
               </template>
@@ -41,31 +48,36 @@
                 color="grey darken-3"
                 size="20px"
                 @click="cancelRename"
-              >close</v-icon>
+              >
+                close
+              </v-icon>
             </v-btn>
 
             <v-text-field
               v-if="editing"
+              v-model="localWorkspace"
               autofocus
               background-color="transparent"
               class="ws-rename"
               text
-              @focus="$event.target.select()"
               solo
               flat
               dense
-              v-model="localWorkspace"
+              :error-messages="nameErrorMessages"
+              @focus="$event.target.select()"
               @keydown.enter="renameWorkspace"
               @keydown.esc="cancelRename"
-              :error-messages="nameErrorMessages"
-            >
-            </v-text-field>
+            />
 
-            <span v-else>{{workspace}}</span>
-
+            <span v-else>{{ workspace }}</span>
           </v-toolbar-title>
         </v-hover>
-        <v-progress-linear v-if="loading" indeterminate absolute bottom/>
+        <v-progress-linear
+          v-if="loading"
+          indeterminate
+          absolute
+          bottom
+        />
         <v-spacer />
         <v-btn icon>
           <v-icon>more_vert</v-icon>
@@ -75,8 +87,16 @@
       <v-layout
         wrap
       >
-        <v-flex md6 px-5 py-3>
-          <v-card color="transparent" flat text>
+        <v-flex
+          md6
+          px-5
+          py-3
+        >
+          <v-card
+            color="transparent"
+            flat
+            text
+          >
             <network-panel
               :workspace="workspace"
               :items="graphs"
@@ -87,8 +107,16 @@
           </v-card>
         </v-flex>
 
-        <v-flex md6 px-5 py-3>
-          <v-card color="transparent" flat text>
+        <v-flex
+          md6
+          px-5
+          py-3
+        >
+          <v-card
+            color="transparent"
+            flat
+            text
+          >
             <table-panel
               :workspace="workspace"
               :items="tables"
@@ -96,7 +124,6 @@
             />
           </v-card>
         </v-flex>
-
       </v-layout>
     </v-content>
   </v-container>
@@ -108,10 +135,6 @@ import Vue, { PropType } from 'vue';
 import api from '@/api';
 import TablePanel from '@/components/TablePanel.vue';
 import NetworkPanel from '@/components/NetworkPanel.vue';
-import GraphDialog from '@/components/GraphDialog.vue';
-import DeleteGraphDialog from '@/components/DeleteGraphDialog.vue';
-import TableDialog from '@/components/TableDialog.vue';
-import DeleteTableDialog from '@/components/DeleteTableDialog.vue';
 import store from '@/store';
 
 const surroundingWhitespace = /^\s+|\s+$/;
@@ -125,13 +148,12 @@ export default Vue.extend({
   components: {
     TablePanel,
     NetworkPanel,
-    GraphDialog,
-    DeleteGraphDialog,
-    TableDialog,
-    DeleteTableDialog,
   },
   props: {
-    workspace: String as PropType<string>,
+    workspace: {
+      type: String as PropType<string>,
+      required: true,
+    },
   },
   data() {
     return {
@@ -174,6 +196,9 @@ export default Vue.extend({
       this.requestError = null;
     },
   },
+  created() {
+    this.update();
+  },
   methods: {
     cancelRename() {
       this.requestError = null;
@@ -192,7 +217,7 @@ export default Vue.extend({
 
       if (this.localWorkspace !== null) {
         try {
-          const { status, data } = await api.renameWorkspace(this.workspace, this.localWorkspace);
+          const { data } = await api.renameWorkspace(this.workspace, this.localWorkspace);
           this.$router.push(`/workspaces/${data}`);
           this.editing = false;
           this.requestError = null;
@@ -208,6 +233,8 @@ export default Vue.extend({
         }
       }
     },
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async update(this: any) {
       this.loading = true;
 
@@ -220,9 +247,6 @@ export default Vue.extend({
       this.localWorkspace = this.workspace;
       this.loading = false;
     },
-  },
-  created() {
-    this.update();
   },
 
 });

@@ -4,11 +4,11 @@
       <v-layout wrap>
         <v-flex>
           <v-select
+            v-model="graphEdgeTable"
             dense
             :items="edgeTables"
             label="Choose edge table"
             outlined
-            v-model="graphEdgeTable"
           />
         </v-flex>
       </v-layout>
@@ -16,39 +16,48 @@
       <v-layout wrap>
         <v-flex>
           <v-text-field
+            v-model="newGraph"
             dense
             :error-messages="graphCreationErrors"
             label="Network name"
             outlined
-            v-model="newGraph"
           />
         </v-flex>
       </v-layout>
     </v-card-text>
 
-    <v-divider></v-divider>
+    <v-divider />
 
     <v-card-actions class="px-4 py-3">
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn
         depressed
         :disabled="graphCreateDisabled"
         @click="createGraph"
-      >create network</v-btn>
+      >
+        create network
+      </v-btn>
     </v-card-actions>
   </v-card>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { PropType } from 'vue';
 
 import api from '@/api';
 
 export default Vue.extend({
   name: 'GraphCreateForm',
   props: {
-    edgeTables: Array,
-    workspace: String,
+    edgeTables: {
+      type: Array as PropType<string[]>,
+      required: true,
+    },
+
+    workspace: {
+      type: String as PropType<string>,
+      required: true,
+    },
   },
   data() {
     return {

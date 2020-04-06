@@ -79,7 +79,9 @@ const {
       const edgeTables = await api.tables(workspace, { type: 'edge' });
       const graphs = await api.graphs(workspace);
 
-      commit.setCurrentWorkspace({ name: workspace, nodeTables, edgeTables, graphs });
+      commit.setCurrentWorkspace({
+        name: workspace, nodeTables, edgeTables, graphs,
+      });
     },
   },
 });

@@ -1,11 +1,10 @@
 <template>
-
   <v-dialog
+    v-if="nonZeroSelection"
     v-model="dialog"
     width="700"
-    v-if="nonZeroSelection"
   >
-    <template v-slot:activator="{ on: dialog }">
+    <template v-slot:activator="{ on: button }">
       <v-tooltip left>
         <template v-slot:activator="{ on: tooltip }">
           <v-scroll-x-transition>
@@ -13,10 +12,15 @@
               class="ml-1"
               icon
               small
-              @click="dialog.click"
+              @click="button.click"
               v-on="tooltip"
+            >
+              <v-icon
+                color="red accent-3"
+                size="20px"
               >
-              <v-icon color="red accent-3" size="20px">delete_sweep</v-icon>
+                delete_sweep
+              </v-icon>
             </v-btn>
           </v-scroll-x-transition>
         </template>
@@ -28,12 +32,12 @@
       <v-card-title
         class="headline pb-0 pt-3 px-5"
         primary-title
-        >
+      >
         Delete Tables
       </v-card-title>
 
       <v-card-text class="px-5 py-4">
-        You are about to delete {{ selection.length }} table{{plural}}. Type the
+        You are about to delete {{ selection.length }} table{{ plural }}. Type the
         following phrase to confirm: <strong>{{ confirmationPhrase }}?</strong>
       </v-card-text>
 
@@ -53,28 +57,35 @@
         <v-btn
           depressed
           color="error"
-          @click="execute"
           :disabled="confirmation !== confirmationPhrase"
-        >yes</v-btn>
+          @click="execute"
+        >
+          yes
+        </v-btn>
 
         <v-btn
           depressed
           @click="dialog = false"
-          >cancel</v-btn>
+        >
+          cancel
+        </v-btn>
       </v-card-actions>
     </v-card>
     <v-card v-else>
       <v-card-title
         class="headline pb-0 pt-3 px-5"
         primary-title
-        >
+      >
         Delete Tables
       </v-card-title>
 
       <v-card-text class="px-5 py-4">
         The following networks are using these tables:
         <ul>
-          <li v-for="graph in using">
+          <li
+            v-for="(graph, index) in using"
+            :key="index"
+          >
             {{ graph.graph }} ({{ graph.tables.join(', ') }})
           </li>
         </ul>
@@ -92,12 +103,12 @@
         <v-btn
           depressed
           @click="dialog = false"
-          >ok</v-btn>
+        >
+          ok
+        </v-btn>
       </v-card-actions>
     </v-card>
-
   </v-dialog>
-
 </template>
 
 <script lang="ts">
@@ -124,12 +135,14 @@ export default Vue.extend({
       dialog: false,
       confirmationPhrase: '',
       confirmation: '',
-      using: [] as Array<{graph: string, tables: string[]}>,
+      using: [] as Array<{graph: string; tables: string[]}>,
     };
   },
 
   computed: {
     // This workaround is necessary because of https://github.com/vuejs/vue/issues/10455
+    //
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     plural(this: any) {
       return this.selection.length > 1 ? 's' : '';
     },
@@ -180,16 +193,16 @@ export default Vue.extend({
 
       const graphNames = await api.graphs(workspace);
 
-      const using = [] as Array<{graph: string, tables: string[]}>;
-      for (const graph of graphNames) {
+      const using = [] as Array<{graph: string; tables: string[]}>;
+      graphNames.forEach(async (graph) => {
         const data = await api.graph(workspace, graph);
 
-        const tables = [];
-        for (const table of selection) {
+        const tables: string[] = [];
+        selection.forEach((table) => {
           if (table === data.edgeTable || data.nodeTables.indexOf(table) > -1) {
             tables.push(table);
           }
-        }
+        });
 
         if (tables.length > 0) {
           using.push({
@@ -197,7 +210,7 @@ export default Vue.extend({
             tables,
           });
         }
-      }
+      });
 
       return using;
     },

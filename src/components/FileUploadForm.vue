@@ -4,24 +4,30 @@
       <v-layout wrap>
         <v-flex>
           <v-file-input
-            @change="handleFileInput"
+            id="file-selector"
             clearable
             dense
             :error-messages="fileUploadError"
-            id="file-selector"
             :label="fileInputPlaceholder"
             outlined
             prepend-icon=""
             prepend-inner-icon="attach_file"
             single-line
+            @change="handleFileInput"
           />
         </v-flex>
-        <v-flex xs6 class="pl-2" v-if="fileTypeSelector">
+        <v-flex
+          v-if="fileTypeSelector"
+          xs6
+          class="pl-2"
+        >
           <v-select
+            v-if="types.length"
+            id="file-type"
+            v-model="selectedType"
             class="file-type"
             dense
             :hint="selectedType ? selectedType.hint : null"
-            id="file-type"
             :items="types"
             item-text="displayName"
             item-value="displayName"
@@ -29,31 +35,33 @@
             outlined
             persistent-hint
             return-object
-            v-if="types.length"
-            v-model="selectedType"
           />
         </v-flex>
       </v-layout>
       <v-layout wrap>
         <v-flex>
           <v-text-field
+            id="table-name"
+            v-model="fileName"
             dense
             :error-messages="tableCreationError"
-            id="table-name"
             :label="namePlaceholder"
             outlined
-            v-model="fileName"
           />
         </v-flex>
       </v-layout>
     </v-card-text>
 
-    <v-divider></v-divider>
+    <v-divider />
 
     <v-card-actions class="px-4 py-3">
-      <v-spacer></v-spacer>
-      <v-btn id="create-table" :disabled="createDisabled" @click="createTable">
-        {{createButtonText}}
+      <v-spacer />
+      <v-btn
+        id="create-table"
+        :disabled="createDisabled"
+        @click="createTable"
+      >
+        {{ createButtonText }}
       </v-btn>
     </v-card-actions>
   </v-card>
@@ -114,10 +122,10 @@ export default Vue.extend({
   computed: {
     createDisabled(): boolean {
       return (
-        !this.file ||
-        !this.fileName ||
-        !this.selectedType ||
-        !!this.fileUploadError
+        !this.file
+        || !this.fileName
+        || !this.selectedType
+        || !!this.fileUploadError
       );
     },
   },
@@ -156,9 +164,13 @@ export default Vue.extend({
         throw new Error('Valid file must be selected.');
       }
 
+      if (selectedType === null) {
+        throw new Error('`selectedType` is null, which is impossible');
+      }
+
       try {
         await api.uploadTable(workspace, fileName, {
-          type: selectedType!.queryCall as UploadType,
+          type: selectedType.queryCall as UploadType,
           data: file,
         });
 
@@ -184,12 +196,9 @@ export default Vue.extend({
       const [fileName, ...extensions] = file.name.split('.');
       const extension = extensions[extensions.length - 1];
 
-      for (const type of this.types) {
-        if (type.extension.includes(extension) && validUploadType(type.queryCall)) {
-          return [fileName, type];
-        }
-      }
-      return null;
+      const found = this.types.find((type) => type.extension.includes(extension) && validUploadType(type.queryCall));
+
+      return found === undefined ? null : [fileName, found];
     },
   },
 });

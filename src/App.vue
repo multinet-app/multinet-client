@@ -3,7 +3,10 @@
     <!-- TODO: REMOVE THIS REF WHEN VUEX IS ADDED -->
     <sidebar ref="sidebar" />
     <!-- TODO: REMOVE THIS UPDATE WHEN VUEX IS ADDED -->
-    <router-view :apps='apps' @update="update"/>
+    <router-view
+      :apps="apps"
+      @update="update"
+    />
   </v-app>
 </template>
 
@@ -11,22 +14,26 @@
 import Sidebar from '@/components/Sidebar.vue';
 import Vue from 'vue';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const apps = require('./appregistry.json');
+
 export default Vue.extend({
-  name: 'app',
+  name: 'App',
+
   components: {
     Sidebar,
   },
+
   data() {
     return {
-      apps: [],
+      apps,
     };
   },
-  created() {
-    this.apps = require('./appregistry.json');
-  },
+
   methods: {
     // TODO: REMOVE THIS REF AND METHOD WHEN VUEX IS ADDED
     update() {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const sidebar = this.$refs.sidebar as any;
       sidebar.refresh();
     },

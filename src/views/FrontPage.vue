@@ -1,5 +1,8 @@
 <template>
-  <v-container class="pa-0" fluid>
+  <v-container
+    class="pa-0"
+    fluid
+  >
     <v-content>
       <!-- BANNER -->
       <v-responsive
@@ -22,13 +25,17 @@
               <v-card-title>Welcome to Multinet!</v-card-title>
               <v-divider />
               <v-card-text>
-                <p>Check out the featured datasets and visualizations below! You
-                can also create your own workspace and upload your own data with
-                the <strong>New Workspace</strong> button to the left, or
-                explore data others have uploaded.</p>
-                <p>This project is a joint research and development effort between
-                the University of Utah and Kitware Inc., funded by the National
-                Science Foundation.</p>
+                <p>
+                  Check out the featured datasets and visualizations below! You
+                  can also create your own workspace and upload your own data with
+                  the <strong>New Workspace</strong> button to the left, or
+                  explore data others have uploaded.
+                </p>
+                <p>
+                  This project is a joint research and development effort between
+                  the University of Utah and Kitware Inc., funded by the National
+                  Science Foundation.
+                </p>
               </v-card-text>
             </v-card>
             <v-card
@@ -39,12 +46,15 @@
               <v-card-text>
                 <v-row class="px-4">
                   <v-col
+                    v-for="collab in collabs"
+                    :key="collab.logo"
                     class="align-center d-flex py-1"
                     cols="6"
-                    :key="collab.logo"
-                    v-for="collab in collabs"
                   >
-                    <img :src="collab.logo" alt="" width="100%" height="auto">
+                    <v-img
+                      :src="collab.logo"
+                      width="100vh"
+                    />
                   </v-col>
                 </v-row>
               </v-card-text>
@@ -57,9 +67,9 @@
       <v-container>
         <v-row>
           <v-col
-            cols="4"
             v-for="sample in samples"
             :key="sample.title"
+            cols="4"
           >
             <v-hover>
               <template v-slot:default="{ hover }">
@@ -85,7 +95,7 @@
                           color="primary"
                           :href="sample.href"
                           target="_blank"
-                          >
+                        >
                           Open in New Window
                         </v-btn>
                       </div>
@@ -97,7 +107,6 @@
           </v-col>
         </v-row>
       </v-container>
-
     </v-content>
   </v-container>
 </template>
@@ -105,44 +114,52 @@
 <script lang="ts">
 import Vue from 'vue';
 
-export default Vue.extend ({
+export default Vue.extend({
   data() {
     return {
       collabs: [
         {
+          // eslint-disable-next-line global-require
           logo: require('../assets/logo/utah_logo.png'),
         },
         {
+          // eslint-disable-next-line global-require
           logo: require('../assets/logo/Kitware_Logo.png'),
         },
         {
+          // eslint-disable-next-line global-require
           logo: require('../assets/logo/vdl_logo.png'),
         },
         {
+          // eslint-disable-next-line global-require
           logo: require('../assets/logo/nsf_logo.png'),
         },
       ],
       samples: [
         {
           title: 'Paul Revere - Node Link Diagram',
+          // eslint-disable-next-line global-require
           image: require('../assets/placard/boston.jpg'),
           text: 'Explore the Paul Revere dataset using an interactive and beautiful node-link diagram. Discover the figures coordinating a pivotal event in history!',
           href: '/nodelink/?workspace=boston&graph=boston',
         },
         {
           title: 'Les Miserables - Adjacency Matrix',
+          // eslint-disable-next-line global-require
           image: require('../assets/placard/miserables.jpg'),
           text: 'Explore the Les Miserables dataset using an interactive adjacency matrix. See the factions and relationships for yourself!',
           href: '/adjmatrix/?workspace=miserables&graph=miserables',
         },
         {
           title: 'Les Miserables - Node Link Diagram',
+          // eslint-disable-next-line global-require
           image: require('../assets/placard/miserables2.jpg'),
           text: 'The characters of Les Miserables, laid out in a colorful and interactive node link diagram.',
           href: '/nodelink/?workspace=miserables&graph=miserables',
         },
         {
           title: 'Paul Revere - Adjacency Matrix',
+          // eslint-disable-next-line global-require
           image: require('../assets/placard/boston2.jpg'),
           text: 'See the relationships between Paul Revere and his contemporaries through an adjacency matrix layout.',
           href: '/adjmatrix/?workspace=boston&graph=boston',

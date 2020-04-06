@@ -1,21 +1,22 @@
 <template>
   <v-menu
+    v-model="popover"
     class="get-started"
     :close-on-content-click="false"
     max-width="275"
     offset-x
     origin="center center"
     transition="scale-transition"
-    v-model="popover"
   >
-    <template v-slot:activator="{ on }">
+    <template v-slot:activator="{ }">
       <v-dialog
-        class="ws-dialogue"
         v-model="dialog"
+        class="ws-dialogue"
         width="500"
       >
         <template v-slot:activator="{ on }">
           <v-btn
+            id="add-workspace"
             class="ws-btn ma-0 px-4 py-5"
             block
             color="grey darken-3"
@@ -23,7 +24,6 @@
             depressed
             large
             v-on="on"
-            id="add-workspace"
           >
             New Workspace
             <v-spacer />
@@ -31,7 +31,9 @@
               right
               dark
               size="20px"
-            >add_circle</v-icon>
+            >
+              add_circle
+            </v-icon>
           </v-btn>
         </template>
 
@@ -46,19 +48,19 @@
           <v-card-text class="px-4 pt-4 pb-1">
             <v-text-field
               id="workspace-name"
+              v-model="newWorkspace"
               autofocus
               dense
               outlined
               label="Workspace name"
-              v-model="newWorkspace"
               :error-messages="error ? [error] : []"
             />
           </v-card-text>
 
-          <v-divider></v-divider>
+          <v-divider />
 
           <v-card-actions class="px-4 py-3">
-            <v-spacer></v-spacer>
+            <v-spacer />
             <v-btn
               id="create-workspace"
               color="grey darken-3"
@@ -73,7 +75,9 @@
       </v-dialog>
     </template>
     <v-card>
-      <v-card-title class="get-started-title pb-2">Getting Started</v-card-title>
+      <v-card-title class="get-started-title pb-2">
+        Getting Started
+      </v-card-title>
       <v-card-text class="pb-5">
         Click <strong>NEW WORKSPACE</strong> to create a workspace or select an existing one from the Workpaces list.
       </v-card-text>
@@ -83,8 +87,8 @@
         <v-btn
           id="got-it"
           color="primary"
-          @click="popover = false"
           small
+          @click="popover = false"
         >
           Got it!
         </v-btn>
