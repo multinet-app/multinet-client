@@ -28,25 +28,21 @@
       <v-card-text
         class="px-4 pt-4 pb-1"
       >
-        Multinet is a system for storing and processing <a-ext
-          href="https://vdl.sci.utah.edu/mvnv/"
-        >
-          multivariate networks
-        </a-ext>. Learn more and explore the code
-        at <a-ext href="https://github.com/multinet-app/multinet">
-          GitHub
-        </a-ext>.
+        <a href="">hello</a>
+        Multinet is a system for storing and processing
+        <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
+        <a-ext href="https://vdl.sci.utah.edu/mvnv/">multivariate networks</a-ext>.
+        Learn more and explore the code at
+        <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
+        <a-ext href="https://github.com/multinet-app/multinet">GitHub</a-ext>.
       </v-card-text>
 
       <v-card-text class="px-4 pt-4 pb-1">
-        Check out the Multinet project <a-ext
-          href="https://multinet-app.readthedocs.io"
-        >
-          documentation
-        </a-ext>, or
-        the <a-ext href="/apidocs">
-          API docs
-        </a-ext>.
+        Check out the Multinet project
+        <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
+        <a-ext href="https://multinet-app.readthedocs.io">documentation</a-ext>,
+        <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
+        or the <a-ext href="/apidocs">API docs</a-ext>.
       </v-card-text>
 
       <v-card-text
@@ -54,9 +50,8 @@
         class="px-4 pt-4 pb-1"
       >
         This instance of Multinet was built from Git SHA
-        <a-ext :href="gitShaURL">
-          {{ gitSha.slice(0, 6) }}
-        </a-ext>.
+        <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
+        <a-ext :href="gitShaURL">{{ gitSha.slice(0, 6) }}</a-ext>.
       </v-card-text>
 
       <v-divider />
