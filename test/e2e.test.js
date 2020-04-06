@@ -95,9 +95,9 @@ async function getWorkspaceNames(p) {
   return p.evaluate(() => {
     const titles = [];
     const docNodes = document.querySelectorAll('.v-list-item__title');
-    for (const node of docNodes) {
+    docNodes.forEach((node) => {
       titles.push(node.innerText);
-    }
+    });
     return titles;
   });
 }
@@ -116,9 +116,9 @@ async function getElementNames(elementType, p) {
   const tables = await p.evaluate((elType) => {
     const titles = [];
     const docNodes = document.querySelectorAll(`[data-title="${elType}"] .ws-detail-empty-list`);
-    for (const node of docNodes) {
+    docNodes.forEach((node) => {
       titles.push(node.innerText);
-    }
+    });
     return titles;
   }, elementType);
 
