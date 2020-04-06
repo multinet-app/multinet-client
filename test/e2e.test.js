@@ -48,7 +48,7 @@ async function setup() {
 }
 
 function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 async function get_element_coords(p, selector) {
@@ -93,9 +93,9 @@ async function delete_workspace(p, name) {
 
 async function get_workspace_names(p) {
   return p.evaluate(() => {
-    let titles = [];
-    let doc_nodes = document.querySelectorAll('.v-list-item__title');
-    for (let node of doc_nodes) {
+    const titles = [];
+    const doc_nodes = document.querySelectorAll('.v-list-item__title');
+    for (const node of doc_nodes) {
       titles.push(node.innerText);
     }
     return titles;
@@ -115,10 +115,10 @@ async function get_element_names(element_type, p) {
 
   // Search for the text of the table or graph elements
   await p.waitForSelector(`[data-title="${element_type}"] .ws-detail-empty-list`);
-  tables = await p.evaluate(element_type => {
-    let titles = [];
-    let doc_nodes = document.querySelectorAll(`[data-title="${element_type}"] .ws-detail-empty-list`);
-    for (let node of doc_nodes) {
+  tables = await p.evaluate((element_type) => {
+    const titles = [];
+    const doc_nodes = document.querySelectorAll(`[data-title="${element_type}"] .ws-detail-empty-list`);
+    for (const node of doc_nodes) {
       titles.push(node.innerText);
     }
     return titles;
@@ -129,7 +129,8 @@ async function get_element_names(element_type, p) {
 
 // Checks if no tables or graphs exist in the current workspace
 async function elements_empty(element_type, p) {
-  let list_is_empty, tables;
+  let list_is_empty;
+  let tables;
 
   tables = await get_element_names(element_type, p);
 

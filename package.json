@@ -8,6 +8,7 @@
     "lint": "vue-cli-service lint --no-fix",
     "lint:fix": "vue-cli-service lint",
     "lint:test": "eslint test/**/*.test.js",
+    "lint:test:fix": "eslint --fix test/**/*.test.js",
     "test": "tape -r esm test/**/*.test.js | tap-spec",
     "test:client:down": "sh ./scripts/stop.sh",
     "test:client:restart": "yarn test:client:down; yarn test:client:up",
