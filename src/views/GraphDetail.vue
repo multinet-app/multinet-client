@@ -541,7 +541,7 @@ export default Vue.extend({
       const recommenderData = res.data;
       this.stats = recommenderData.stats;
       const cats = recommenderData.cats;
-      this.recommender_url = `http://localhost:4000/mvnv/?size=${cats.size}&type=${cats.type}&nrNodeAtts=${cats.nrNodeAtts}&typeNodeAtts=${cats.typeNodeAtts}&nrEdgeAtts=${cats.nrEdgeAtts}&typeEdgeAtts=${cats.typeEdgeAtts}`;
+      this.recommender_url = `http://localhost:4000/mvnv/?size=${cats.size}&type=${cats.type}&node_attr_size=${cats.nrNodeAtts}&node_attr_type=${cats.typeNodeAtts}&edge_attr_size=${cats.nrEdgeAtts}&edge_attr_type=${cats.typeEdgeAtts}`;
 
       // recommender part end
     },
