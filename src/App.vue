@@ -14,8 +14,7 @@
 import Sidebar from '@/components/Sidebar.vue';
 import Vue from 'vue';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const apps = require('./appregistry.json');
+import apps from './appregistry.json';
 
 export default Vue.extend({
   name: 'App',
