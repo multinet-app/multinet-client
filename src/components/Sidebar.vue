@@ -35,16 +35,7 @@
         </router-link>
       </v-toolbar-title>
       <v-spacer />
-      <v-btn icon>
-        <v-avatar
-          color="grey lighten-4"
-          size="36px"
-        >
-          <v-icon color="grey">
-            account_circle
-          </v-icon>
-        </v-avatar>
-      </v-btn>
+      <loginMenu />
     </v-toolbar>
 
     <WorkspaceDialog />
@@ -129,6 +120,7 @@ import store from '@/store';
 import WorkspaceDialog from '@/components/WorkspaceDialog.vue';
 import DeleteWorkspaceDialog from '@/components/DeleteWorkspaceDialog.vue';
 import AboutDialog from '@/components/AboutDialog.vue';
+import loginMenu from '@/components/loginMenu.vue';
 
 interface CheckboxTable {
   [index: string]: boolean;
@@ -140,6 +132,7 @@ export default Vue.extend({
     DeleteWorkspaceDialog,
     WorkspaceDialog,
     AboutDialog,
+    loginMenu,
   },
   data() {
     return {
