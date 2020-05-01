@@ -1,10 +1,10 @@
 [
     {
         "name": "Node-Link Diagram",
-        "url": "https://multinet-nodelink.netlify.com"
+        "url": "https://nodelink.multinet.app"
     },
     {
         "name": "Adjacency Matrix",
-        "url": "http://multinet-adjmatrix.netlify.com"
+        "url": "http://adjmatrix.multinet.app"
     }
 ]
