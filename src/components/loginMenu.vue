@@ -27,6 +27,7 @@
               class="google-sign-in"
               dark
               :ripple="false"
+              :href="loginLink"
             >
               <span class="google-logo">
                 <img
@@ -45,11 +46,34 @@
   </v-menu>
 </template>
 
-<script>
+<script lang="ts">
+import { host } from '@/environment';
+
 export default {
   data: () => ({
     menu: false,
+    location: '',
   }),
+
+  computed: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    loginLink(this: any): string {
+      const {
+        location,
+      } = this;
+
+      return `${host}/user/oauth/google/login?return_url=${location}`;
+    },
+  },
+
+  watch: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    menu(this: any, menu: boolean) {
+      if (menu) {
+        this.location = window.location.href;
+      }
+    },
+  },
 };
 </script>
 
