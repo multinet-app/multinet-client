@@ -119,6 +119,7 @@ export default {
   font-weight: 500;
   height: 38px;
   padding: 0;
+  text-transform: none;
 }
 .v-list-item.sign-in-item .v-list-item__action {
   margin: 0 !important;
