@@ -35,7 +35,7 @@
         </router-link>
       </v-toolbar-title>
       <v-spacer />
-      <loginMenu />
+      <login-menu />
     </v-toolbar>
 
     <WorkspaceDialog />
@@ -120,7 +120,7 @@ import store from '@/store';
 import WorkspaceDialog from '@/components/WorkspaceDialog.vue';
 import DeleteWorkspaceDialog from '@/components/DeleteWorkspaceDialog.vue';
 import AboutDialog from '@/components/AboutDialog.vue';
-import loginMenu from '@/components/loginMenu.vue';
+import LoginMenu from '@/components/LoginMenu.vue';
 
 interface CheckboxTable {
   [index: string]: boolean;
@@ -132,7 +132,7 @@ export default Vue.extend({
     DeleteWorkspaceDialog,
     WorkspaceDialog,
     AboutDialog,
-    loginMenu,
+    LoginMenu,
   },
   data() {
     return {
