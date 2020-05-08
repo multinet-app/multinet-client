@@ -28,7 +28,6 @@
       <v-card-text
         class="px-4 pt-4 pb-1"
       >
-        <a href="">hello</a>
         Multinet is a system for storing and processing
         <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
         <a-ext href="https://vdl.sci.utah.edu/mvnv/">multivariate networks</a-ext>.
