@@ -12,7 +12,11 @@
           color="grey lighten-4"
           size="36px"
         >
-          <v-icon color="grey">
+          <span v-if="userInfo">{{ userInitials }}</span>
+          <v-icon
+            v-else
+            color="grey"
+          >
             account_circle
           </v-icon>
         </v-avatar>
@@ -48,6 +52,8 @@
 
 <script lang="ts">
 import { host } from '@/environment';
+import store from '@/store';
+import { UserInfo } from '@/types';
 
 export default {
   data: () => ({
@@ -56,6 +62,8 @@ export default {
   }),
 
   computed: {
+    userInfo: (): UserInfo | null => store.state.userInfo,
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     loginLink(this: any): string {
       const {
@@ -63,6 +71,17 @@ export default {
       } = this;
 
       return `${host}/user/oauth/google/login?return_url=${location}`;
+    },
+
+    userInitials(): string {
+      const {
+        userInfo,
+      } = this;
+
+      if (userInfo !== null) {
+        return `${(userInfo as unknown as UserInfo).given_name[0]}${(userInfo as unknown as UserInfo).family_name[0]}`;
+      }
+      return '';
     },
   },
 
