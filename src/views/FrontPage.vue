@@ -156,7 +156,7 @@ export default Vue.extend({
           // eslint-disable-next-line global-require
           image: require('../assets/placard/miserables.jpg'),
           text: 'Explore the Les Miserables dataset using an interactive adjacency matrix. See the factions and relationships for yourself!',
-          href: `${this.apps.filter((d) => d.name === 'Adjacency Matrix')[0].url}?workspace=miserables&graph=miserables`,
+          href: `${this.apps.filter((d) => d.name === 'Adjacency Matrix')[0].url}/?workspace=miserables&graph=miserables`,
         },
         {
           title: 'Les Miserables - Node Link Diagram',
