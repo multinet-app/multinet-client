@@ -112,9 +112,17 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { PropType } from 'vue';
+import { App } from '@/types';
 
 export default Vue.extend({
+  props: {
+    apps: {
+      type: Array as PropType<App[]>,
+      required: true,
+    },
+  },
+
   data() {
     return {
       collabs: [
@@ -141,28 +149,28 @@ export default Vue.extend({
           // eslint-disable-next-line global-require
           image: require('../assets/placard/boston.jpg'),
           text: 'Explore the Paul Revere dataset using an interactive and beautiful node-link diagram. Discover the figures coordinating a pivotal event in history!',
-          href: '/nodelink/?workspace=boston&graph=boston',
+          href: `${this.apps.filter((d) => d.name === 'Node-Link Diagram')[0].url}/?workspace=boston&graph=boston`,
         },
         {
           title: 'Les Miserables - Adjacency Matrix',
           // eslint-disable-next-line global-require
           image: require('../assets/placard/miserables.jpg'),
           text: 'Explore the Les Miserables dataset using an interactive adjacency matrix. See the factions and relationships for yourself!',
-          href: '/adjmatrix/?workspace=miserables&graph=miserables',
+          href: `${this.apps.filter((d) => d.name === 'Adjacency Matrix')[0].url}?workspace=miserables&graph=miserables`,
         },
         {
           title: 'Les Miserables - Node Link Diagram',
           // eslint-disable-next-line global-require
           image: require('../assets/placard/miserables2.jpg'),
           text: 'The characters of Les Miserables, laid out in a colorful and interactive node link diagram.',
-          href: '/nodelink/?workspace=miserables&graph=miserables',
+          href: `${this.apps.filter((d) => d.name === 'Node-Link Diagram')[0].url}/?workspace=miserables&graph=miserables`,
         },
         {
           title: 'Paul Revere - Adjacency Matrix',
           // eslint-disable-next-line global-require
           image: require('../assets/placard/boston2.jpg'),
           text: 'See the relationships between Paul Revere and his contemporaries through an adjacency matrix layout.',
-          href: '/adjmatrix/?workspace=boston&graph=boston',
+          href: `${this.apps.filter((d) => d.name === 'Adjacency Matrix')[0].url}/?workspace=boston&graph=boston`,
         },
       ],
     };
