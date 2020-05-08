@@ -16,4 +16,8 @@ export async function getUserInfo(): Promise<UserInfo | null> {
   return null;
 }
 
+export function logout() {
+  return fetch(`${host}/user/logout`);
+}
+
 export default api;

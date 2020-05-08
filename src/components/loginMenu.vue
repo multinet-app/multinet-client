@@ -28,6 +28,15 @@
         <v-list-item class="sign-in-item">
           <v-list-item-action>
             <v-btn
+              v-if="userInfo"
+              dark
+              @click="logout"
+            >
+              Log out
+            </v-btn>
+
+            <v-btn
+              v-else
               class="google-sign-in"
               dark
               :ripple="false"
@@ -92,6 +101,10 @@ export default {
         this.location = window.location.href;
       }
     },
+  },
+
+  methods: {
+    logout: () => store.dispatch.logout(),
   },
 };
 </script>

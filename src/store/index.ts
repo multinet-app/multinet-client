@@ -2,7 +2,7 @@ import Vue from 'vue';
 import Vuex, { Store } from 'vuex';
 import { createDirectStore } from 'direct-vuex';
 
-import api, { getUserInfo } from '@/api';
+import api, { getUserInfo, logout } from '@/api';
 import { UserInfo } from '@/types';
 
 Vue.use(Vuex);
@@ -96,6 +96,13 @@ const {
 
       const info = await getUserInfo();
       commit.setUserInfo(info);
+    },
+
+    async logout(context) {
+      const { commit } = rootActionContext(context);
+
+      await logout();
+      commit.setUserInfo(null);
     },
   },
 });
