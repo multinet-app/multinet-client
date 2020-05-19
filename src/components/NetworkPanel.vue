@@ -120,7 +120,6 @@ import DownloadDialog from '@/components/DownloadDialog.vue';
 
 import store from '@/store';
 
-
 export default Vue.extend({
   name: 'GraphPanel',
 
