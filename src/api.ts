@@ -5,7 +5,7 @@ import { UserInfo } from '@/types';
 const api = multinetApi(`${host}/api`);
 
 export async function getUserInfo(): Promise<UserInfo | null> {
-  const resp = await fetch(`${host}/user/info`, {
+  const resp = await fetch(`${host}/api/user/info`, {
     credentials: 'include',
   });
 
@@ -17,7 +17,7 @@ export async function getUserInfo(): Promise<UserInfo | null> {
 }
 
 export function logout() {
-  return fetch(`${host}/user/logout`);
+  return fetch(`${host}/api/user/logout`);
 }
 
 export default api;

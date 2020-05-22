@@ -79,7 +79,7 @@ export default {
         location,
       } = this;
 
-      return `${host}/user/oauth/google/login?return_url=${location}`;
+      return `${host}/api/user/oauth/google/login?return_url=${location}`;
     },
 
     userInitials(): string {
