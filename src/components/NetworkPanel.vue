@@ -118,6 +118,8 @@ import DeleteGraphDialog from '@/components/DeleteGraphDialog.vue';
 import GraphDialog from '@/components/GraphDialog.vue';
 import DownloadDialog from '@/components/DownloadDialog.vue';
 
+import store from '@/store';
+
 export default Vue.extend({
   name: 'GraphPanel',
 
@@ -217,7 +219,7 @@ export default Vue.extend({
       });
     },
 
-    cleanup(selection?: string[]) {
+    async cleanup(selection?: string[]) {
       this.singleSelected = null;
 
       if (selection) {
@@ -226,7 +228,8 @@ export default Vue.extend({
         });
       }
 
-      this.$emit('update');
+      await store.dispatch.fetchWorkspace(this.workspace);
+      this.clearCheckboxes();
     },
   },
 });

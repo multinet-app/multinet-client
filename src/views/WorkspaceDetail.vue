@@ -102,7 +102,6 @@
               :items="graphs"
               :node-tables="nodeTables"
               :edge-tables="edgeTables"
-              @update="update"
             />
           </v-card>
         </v-flex>
@@ -120,7 +119,6 @@
             <table-panel
               :workspace="workspace"
               :items="tables"
-              @update="update"
             />
           </v-card>
         </v-flex>
@@ -222,8 +220,7 @@ export default Vue.extend({
           this.editing = false;
           this.requestError = null;
 
-          // TODO: REMOVE THIS REF WHEN VUEX IS ADDED
-          this.$emit('update');
+          store.dispatch.fetchWorkspaces();
         } catch (err) {
           if (err.response.status === 409) {
             this.requestError = 'A workspace by that name already exists';
@@ -238,13 +235,9 @@ export default Vue.extend({
     async update(this: any) {
       this.loading = true;
 
-      await store.dispatch.fetchWorkspace(this.workspace);
-      if (Object.keys(this.$refs).length) {
-        this.$refs.graphPanel.clearCheckboxes();
-        this.$refs.tablePanel.clearCheckboxes();
-      }
-
       this.localWorkspace = this.workspace;
+      await store.dispatch.fetchWorkspace(this.workspace);
+
       this.loading = false;
     },
   },
