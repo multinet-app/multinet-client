@@ -1,0 +1,9 @@
+[build]
+  publish = "dist"
+  command = "yarn build"
+
+[context.deploy-preview.environment]
+  VUE_APP_MULTINET_HOST = "https://multinet-app-testing.herokuapp.com"
+
+[context.production.environment]
+  VUE_APP_MULTINET_HOST = "https://api.multinet.app"
