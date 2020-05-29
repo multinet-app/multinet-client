@@ -30,6 +30,7 @@
             <v-btn
               v-if="userInfo"
               dark
+              color="grey darken-3"
               @click="logout"
             >
               Log out
