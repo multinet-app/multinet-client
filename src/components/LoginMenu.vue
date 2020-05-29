@@ -83,12 +83,12 @@ export default {
     },
 
     userInitials(): string {
-      const {
-        userInfo,
-      } = this;
+      // Required due to poor Vue TS support. See
+      // https://github.com/multinet-app/multinet-client/pull/80#discussion_r422401040
+      const userInfo = this.userInfo as unknown as UserInfo | null;
 
       if (userInfo !== null) {
-        return `${(userInfo as unknown as UserInfo).given_name[0]}${(userInfo as unknown as UserInfo).family_name[0]}`;
+        return `${userInfo.given_name[0]}${userInfo.family_name[0]}`;
       }
       return '';
     },
