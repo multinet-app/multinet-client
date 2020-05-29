@@ -2,7 +2,8 @@ import Vue from 'vue';
 import Vuex, { Store } from 'vuex';
 import { createDirectStore } from 'direct-vuex';
 
-import api from '@/api';
+import api, { getUserInfo, logout } from '@/api';
+import { UserInfo } from '@/types';
 
 Vue.use(Vuex);
 
@@ -16,6 +17,7 @@ export interface WorkspaceState {
 interface State {
   workspaces: string[];
   currentWorkspace: WorkspaceState | null;
+  userInfo: UserInfo | null;
 }
 
 const {
@@ -28,6 +30,7 @@ const {
   state: {
     workspaces: [],
     currentWorkspace: null,
+    userInfo: null,
   } as State,
   getters: {
     nodeTables(state: State): string[] {
@@ -63,6 +66,10 @@ const {
     unsetCurrentWorkspace(state) {
       state.currentWorkspace = null;
     },
+
+    setUserInfo(state, userInfo: UserInfo | null) {
+      state.userInfo = userInfo;
+    },
   },
   actions: {
     async fetchWorkspaces(context) {
@@ -82,6 +89,20 @@ const {
       commit.setCurrentWorkspace({
         name: workspace, nodeTables, edgeTables, graphs,
       });
+    },
+
+    async fetchUserInfo(context) {
+      const { commit } = rootActionContext(context);
+
+      const info = await getUserInfo();
+      commit.setUserInfo(info);
+    },
+
+    async logout(context) {
+      const { commit } = rootActionContext(context);
+
+      await logout();
+      commit.setUserInfo(null);
     },
   },
 });
