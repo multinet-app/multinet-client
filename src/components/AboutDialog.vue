@@ -41,7 +41,7 @@
         <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
         <a-ext href="https://multinet-app.readthedocs.io">documentation</a-ext>,
         <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-        or the <a-ext href="/apidocs">API docs</a-ext>.
+        or the <a-ext href="https://api.multinet.app/apidocs">API docs</a-ext>.
       </v-card-text>
 
       <v-card-text
