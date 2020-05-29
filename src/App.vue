@@ -1,12 +1,7 @@
 <template>
   <v-app id="app">
-    <!-- TODO: REMOVE THIS REF WHEN VUEX IS ADDED -->
-    <sidebar ref="sidebar" />
-    <!-- TODO: REMOVE THIS UPDATE WHEN VUEX IS ADDED -->
-    <router-view
-      :apps="apps"
-      @update="update"
-    />
+    <sidebar />
+    <router-view :apps="apps" />
   </v-app>
 </template>
 
@@ -28,19 +23,6 @@ export default Vue.extend({
     return {
       apps,
     };
-  },
-
-  created() {
-    store.dispatch.fetchUserInfo();
-  },
-
-  methods: {
-    // TODO: REMOVE THIS REF AND METHOD WHEN VUEX IS ADDED
-    update() {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const sidebar = this.$refs.sidebar as any;
-      sidebar.refresh();
-    },
   },
 });
 </script>
