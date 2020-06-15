@@ -8,6 +8,7 @@
 <script lang="ts">
 import Sidebar from '@/components/Sidebar.vue';
 import Vue from 'vue';
+import store from '@/store';
 
 import apps from './appregistry.json';
 
@@ -22,6 +23,10 @@ export default Vue.extend({
     return {
       apps,
     };
+  },
+
+  created() {
+    store.dispatch.fetchUserInfo();
   },
 });
 </script>
