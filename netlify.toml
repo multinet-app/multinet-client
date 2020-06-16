@@ -2,6 +2,9 @@
 publish = "dist"
 command = "yarn build"
 
+  [build.environment]
+  VUE_APP_GA_TAG = "UA-157426670-1"
+
 [context.deploy-preview.environment]
 VUE_APP_MULTINET_HOST = "https://multinet-app-testing.herokuapp.com"
 
