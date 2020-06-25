@@ -2,7 +2,6 @@ import Vue from 'vue';
 import Vuex, { Store } from 'vuex';
 import { createDirectStore } from 'direct-vuex';
 
-import router from '@/router';
 import api, { getUserInfo, logout } from '@/api';
 import { UserInfo } from '@/types';
 
@@ -108,10 +107,6 @@ const {
 
       // Refresh the workspace list to account for lost privileges upon logout.
       await dispatch.fetchWorkspaces();
-
-      // Redirect the user to the front page, so as to hide any workspace they
-      // may have been looking at (that they may no longer have read access to).
-      router.push('home');
     },
   },
 });
