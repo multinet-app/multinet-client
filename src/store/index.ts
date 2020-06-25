@@ -99,10 +99,14 @@ const {
     },
 
     async logout(context) {
-      const { commit } = rootActionContext(context);
+      const { commit, dispatch } = rootActionContext(context);
 
+      // Perform the server logout.
       await logout();
       commit.setUserInfo(null);
+
+      // Refresh the workspace list to account for lost privileges upon logout.
+      dispatch.fetchWorkspaces();
     },
   },
 });
