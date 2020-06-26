@@ -79,26 +79,6 @@
         </v-card>
       </v-dialog>
     </template>
-    <v-card>
-      <v-card-title class="get-started-title pb-2">
-        Getting Started
-      </v-card-title>
-      <v-card-text class="pb-5">
-        Click <strong>NEW WORKSPACE</strong> to create a workspace or select an existing one from the Workpaces list.
-      </v-card-text>
-      <v-divider />
-      <v-card-actions>
-        <v-spacer />
-        <v-btn
-          id="got-it"
-          color="primary"
-          small
-          @click="popover = false"
-        >
-          Got it!
-        </v-btn>
-      </v-card-actions>
-    </v-card>
   </v-menu>
 </template>
 
