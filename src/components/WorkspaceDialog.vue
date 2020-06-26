@@ -15,12 +15,17 @@
         width="500"
       >
         <template v-slot:activator="{ on }">
+          <!-- See
+            https://github.com/vuetifyjs/vuetify/issues/4482#issuecomment-476689473
+            for why the `dark` prop is tied to the disabled state of the button.
+          -->
           <v-btn
             id="add-workspace"
+            :disabled="userInfo == null"
             class="ws-btn ma-0 px-4 py-5"
             block
             color="grey darken-3"
-            dark
+            :dark="!!userInfo"
             depressed
             large
             v-on="on"
@@ -111,6 +116,10 @@ export default Vue.extend({
       popover: true,
       error: '',
     };
+  },
+
+  computed: {
+    userInfo: () => store.state.userInfo,
   },
 
   watch: {
