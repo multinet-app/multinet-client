@@ -1,6 +1,5 @@
 <template>
   <v-menu
-    v-model="popover"
     class="get-started"
     :close-on-content-click="false"
     max-width="275"
@@ -93,7 +92,6 @@ export default Vue.extend({
     return {
       dialog: false,
       newWorkspace: '',
-      popover: true,
       error: '',
     };
   },
