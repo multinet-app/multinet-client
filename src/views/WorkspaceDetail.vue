@@ -79,9 +79,35 @@
           bottom
         />
         <v-spacer />
-        <v-btn icon>
-          <v-icon>more_vert</v-icon>
-        </v-btn>
+        <v-menu
+          v-model="actionsMenu"
+          class="actions-menu"
+          max-width="275"
+          offset-y
+          origin="center center"
+          transition="scale-transition"
+        >
+          <template v-slot:activator="{ }">
+            <v-btn
+              icon
+              @click="actionsMenu = true"
+            >
+              <v-icon>more_vert</v-icon>
+            </v-btn>
+          </template>
+          <v-card>
+            <v-list dense>
+              <v-list-item>
+                <v-list-item-icon>
+                  <v-icon>vpn_key</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  Permissions
+                </v-list-item-content>
+              </v-list-item>
+            </v-list>
+          </v-card>
+        </v-menu>
       </v-app-bar>
 
       <v-layout
@@ -159,6 +185,7 @@ export default Vue.extend({
       editing: false,
       requestError: null as string | null,
       loading: false,
+      actionsMenu: false,
     };
   },
 
