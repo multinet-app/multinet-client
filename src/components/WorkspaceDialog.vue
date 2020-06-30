@@ -20,7 +20,7 @@
           -->
           <v-btn
             id="add-workspace"
-            :disabled="userInfo == null"
+            :disabled="userInfo === null"
             class="ws-btn ma-0 px-4 py-5"
             block
             color="grey darken-3"
