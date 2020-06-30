@@ -105,7 +105,18 @@ export default {
   },
 
   methods: {
-    logout: () => store.dispatch.logout(),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async logout(this: any) {
+      // Perform the logout action, then redirect the user to the home page.
+      // This is to prevent the logged-out user from continuing to look at, e.g.,
+      // workspaces or tables they may have been viewing at the time of logout.
+      await store.dispatch.logout();
+
+      // Avoid illegal duplicate navigation if we are already on the Home view.
+      if (this.$router.currentRoute.name !== 'home') {
+        this.$router.push('home');
+      }
+    },
   },
 };
 </script>
