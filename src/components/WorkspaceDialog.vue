@@ -1,6 +1,5 @@
 <template>
   <v-menu
-    v-model="popover"
     class="get-started"
     :close-on-content-click="false"
     max-width="275"
@@ -15,12 +14,17 @@
         width="500"
       >
         <template v-slot:activator="{ on }">
+          <!-- See
+            https://github.com/vuetifyjs/vuetify/issues/4482#issuecomment-476689473
+            for why the `dark` prop is tied to the disabled state of the button.
+          -->
           <v-btn
             id="add-workspace"
+            :disabled="userInfo === null"
             class="ws-btn ma-0 px-4 py-5"
             block
             color="grey darken-3"
-            dark
+            :dark="!!userInfo"
             depressed
             large
             v-on="on"
@@ -74,26 +78,6 @@
         </v-card>
       </v-dialog>
     </template>
-    <v-card>
-      <v-card-title class="get-started-title pb-2">
-        Getting Started
-      </v-card-title>
-      <v-card-text class="pb-5">
-        Click <strong>NEW WORKSPACE</strong> to create a workspace or select an existing one from the Workpaces list.
-      </v-card-text>
-      <v-divider />
-      <v-card-actions>
-        <v-spacer />
-        <v-btn
-          id="got-it"
-          color="primary"
-          small
-          @click="popover = false"
-        >
-          Got it!
-        </v-btn>
-      </v-card-actions>
-    </v-card>
   </v-menu>
 </template>
 
@@ -108,9 +92,12 @@ export default Vue.extend({
     return {
       dialog: false,
       newWorkspace: '',
-      popover: true,
       error: '',
     };
+  },
+
+  computed: {
+    userInfo: () => store.state.userInfo,
   },
 
   watch: {
