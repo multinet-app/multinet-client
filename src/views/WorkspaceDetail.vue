@@ -397,7 +397,9 @@ export default Vue.extend({
     nodeTables: () => store.getters.nodeTables,
     edgeTables: () => store.getters.edgeTables,
     graphs: () => store.getters.graphs,
-    nameErrorMessages(): string[] {
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    nameErrorMessages(this: any): string[] {
       const { requestError } = this;
       const errors = [
         ...workspaceNameRules.map((rule) => rule(this.localWorkspace as string)),
@@ -414,7 +416,9 @@ export default Vue.extend({
 
       return nodeTables.concat(edgeTables);
     },
-    swapPermIcon() {
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    swapPermIcon(this: any) {
       return this.privacyToggle ? 'lock' : 'lock_open';
     },
   },
@@ -423,7 +427,9 @@ export default Vue.extend({
     workspace() {
       this.update();
     },
-    localWorkspace() {
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    localWorkspace(this: any) {
       // Once the user types, clears the error returned on sending the rename API call.
       this.requestError = null;
     },
@@ -432,12 +438,15 @@ export default Vue.extend({
     this.update();
   },
   methods: {
-    cancelRename() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    cancelRename(this: any) {
       this.requestError = null;
       this.localWorkspace = this.workspace;
       this.editing = false;
     },
-    async renameWorkspace() {
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async renameWorkspace(this: any) {
       if (this.nameErrorMessages.length) {
         return;
       }
