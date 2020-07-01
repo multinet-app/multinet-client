@@ -182,10 +182,9 @@
                   <v-tooltip right>
                     <template v-slot:activator="{ on }">
                       <v-btn
-                        color="grey"
+                        color="grey lighten-1"
                         dark
                         fab
-                        medium
                         outlined
                         v-on="on"
                       >
