@@ -296,6 +296,7 @@
                   color="grey darken-2"
                   large
                   text
+                  @click="permDialog = false"
                 >
                   Cancel
                 </v-btn>
