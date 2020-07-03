@@ -6,6 +6,7 @@ import WorkspaceDetail from '@/views/WorkspaceDetail.vue';
 import TableDetail from '@/views/TableDetail.vue';
 import GraphDetail from '@/views/GraphDetail.vue';
 import NodeDetail from '@/views/NodeDetail.vue';
+import AQLWizard from '@/views/AQLWizard.vue';
 
 Vue.use(VueRouter);
 
@@ -19,6 +20,12 @@ const routes = [
     path: '/workspaces/:workspace',
     name: 'workspaceDetail',
     component: WorkspaceDetail,
+    props: true,
+  },
+  {
+    path: '/workspaces/:workspace/aql',
+    name: 'aqlWizard',
+    component: AQLWizard,
     props: true,
   },
   {
