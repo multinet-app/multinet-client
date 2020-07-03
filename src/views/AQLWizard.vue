@@ -62,9 +62,36 @@
           >
             Run Query
           </v-btn>
-          <v-btn color="success">
-            Create Table
-          </v-btn>
+
+          <v-menu
+            v-model="createTableMenu"
+            offset-y
+            :close-on-content-click="false"
+          >
+            <template v-slot:activator="{ on }">
+              <v-btn
+                class="ml-2"
+                color="success"
+                v-on="on"
+              >
+                Create Table
+              </v-btn>
+            </template>
+            <v-card class="px-2 pt-2">
+              <v-text-field
+                v-model="createTableName"
+                solo
+                flat
+                label="Table Name"
+                append-icon="publish"
+                :error-messages="createTableErrorMessage"
+                :hide-details="!createTableErrorMessage"
+                @input="createTableErrorMessage = null"
+                @click:append="createTable"
+                @keydown.enter="createTable"
+              />
+            </v-card>
+          </v-menu>
         </v-card-actions>
       </v-card>
       <v-card
@@ -112,6 +139,9 @@ export default {
       lastQueryResults: null as null | Array<JsonArray>,
       loading: false,
       queryErrorMessage: '',
+      createTableMenu: false,
+      createTableErrorMessage: null as null | string,
+      createTableName: null as null | string,
     };
   },
   computed: {
@@ -128,7 +158,7 @@ export default {
   },
   watch: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    nodeTables(this: any, val) {
+    nodeTables(this: any, val: string[]) {
       // Populate text area with example query
       if (val) {
         this.query = `FOR doc in ${this.nodeTables[0]} RETURN doc`;
@@ -140,6 +170,22 @@ export default {
     store.dispatch.fetchWorkspace(this.workspace);
   },
   methods: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async createTable(this: any) {
+      const { workspace, query, createTableName } = this;
+
+      try {
+        await api.createAQLTable(workspace, createTableName, query);
+        this.createTableMenu = false;
+        store.dispatch.fetchWorkspace(this.workspace);
+      } catch (error) {
+        if (error.status === 409) {
+          this.createTableErrorMessage = 'Table Already Exists';
+        } else {
+          this.createTableErrorMessage = error.data;
+        }
+      }
+    },
     doNothing() {
       // TODO: Remove
       // Title says all.
