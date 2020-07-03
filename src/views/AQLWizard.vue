@@ -18,7 +18,7 @@
           focusable
         >
           <v-expansion-panel
-            v-for="{ title, data } in workspaceInfo"
+            v-for="{ title, data, graph } in workspaceInfo"
             :key="title"
           >
             <v-expansion-panel-header>{{ title }}</v-expansion-panel-header>
@@ -32,7 +32,7 @@
                   :key="name"
                   dense
                   style="min-height: 30px;"
-                  @click="doNothing"
+                  :to="detailLink(name, graph)"
                 >
                   {{ name }}
                 </v-list-item>
@@ -152,7 +152,7 @@ export default {
       return [
         { title: 'Node Tables', data: this.nodeTables },
         { title: 'Edge Tables', data: this.edgeTables },
-        { title: 'Graphs', data: this.graphs },
+        { title: 'Graphs', data: this.graphs, graph: true },
       ];
     },
   },
@@ -170,6 +170,13 @@ export default {
     store.dispatch.fetchWorkspace(this.workspace);
   },
   methods: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    detailLink(this: any, name: string, graph: boolean) {
+      const { workspace } = this;
+      const route = graph ? 'graphDetail' : 'tableDetail';
+
+      return { name: route, params: { workspace, table: name, graph: name } };
+    },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async createTable(this: any) {
       const { workspace, query, createTableName } = this;
