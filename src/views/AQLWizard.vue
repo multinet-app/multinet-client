@@ -52,9 +52,14 @@
           solo
           :loading="loading"
           :error-messages="queryErrorMessage"
-          @input="handleTextInput"
         />
         <v-card-actions>
+          <v-btn
+            color="error"
+            @click="query=''"
+          >
+            Clear
+          </v-btn>
           <v-spacer />
           <v-btn
             color="primary"
@@ -135,7 +140,7 @@ export default {
   },
   data() {
     return {
-      query: '',
+      query: this.$route.query.query || '',
       lastQueryResults: null as null | Array<JsonArray>,
       loading: false,
       queryErrorMessage: '',
@@ -158,10 +163,26 @@ export default {
   },
   watch: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    nodeTables(this: any, val: string[]) {
+    nodeTables(this: any, nodeTables: string[]) {
       // Populate text area with example query
-      if (val) {
-        this.query = `FOR doc in ${this.nodeTables[0]} RETURN doc`;
+      if (nodeTables.length && !this.query) {
+        this.query = `FOR doc in ${nodeTables[0]} RETURN doc`;
+      }
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    query(this: any, query: string) {
+      if (this.queryErrorMessage) { this.queryErrorMessage = ''; }
+
+      if (query !== this.$route.query) {
+        const route = {
+          ...this.$route,
+          query: {
+            ...this.$route.query,
+            query: query || undefined,
+          },
+        };
+
+        this.$router.replace(route);
       }
     },
   },
@@ -196,10 +217,6 @@ export default {
     doNothing() {
       // TODO: Remove
       // Title says all.
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    handleTextInput(this: any) {
-      if (this.queryErrorMessage) { this.queryErrorMessage = ''; }
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async runQuery(this: any) {
