@@ -138,7 +138,8 @@ export default {
       required: true,
     },
   },
-  data() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data(this: any) {
     return {
       query: this.$route.query.query || '',
       lastQueryResults: null as null | Array<JsonArray>,
