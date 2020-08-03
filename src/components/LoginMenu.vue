@@ -61,9 +61,9 @@
 </template>
 
 <script lang="ts">
+import { UserSpec } from 'multinet';
 import { host } from '@/environment';
 import store from '@/store';
-import { UserInfo } from '@/types';
 
 export default {
   data: () => ({
@@ -72,7 +72,7 @@ export default {
   }),
 
   computed: {
-    userInfo: (): UserInfo | null => store.state.userInfo,
+    userInfo: (): UserSpec | null => store.state.userInfo,
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     loginLink(this: any): string {
@@ -86,7 +86,7 @@ export default {
     userInitials(): string {
       // Required due to poor Vue TS support. See
       // https://github.com/multinet-app/multinet-client/pull/80#discussion_r422401040
-      const userInfo = this.userInfo as unknown as UserInfo | null;
+      const userInfo = this.userInfo as unknown as UserSpec | null;
 
       if (userInfo !== null) {
         return `${userInfo.given_name[0]}${userInfo.family_name[0]}`;

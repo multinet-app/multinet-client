@@ -31,12 +31,3 @@ export interface FileType {
 export interface FileTypeTable {
   [key: string]: FileType;
 }
-
-export interface UserInfo {
-  family_name: string;
-  given_name: string;
-  name: string;
-  picture: string;
-  email: string;
-  sub: string;
-}
