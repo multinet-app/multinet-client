@@ -25,9 +25,7 @@
           <v-col cols="8">
             Permissions for&nbsp;<strong>{{ workspace }}</strong>
           </v-col>
-          <v-col
-            cols="3"
-          >
+          <v-col cols="3">
             <v-tooltip top>
               <template v-slot:activator="{ on }">
                 <v-switch
@@ -106,7 +104,7 @@
               </v-col>
               <v-col class="user-list-all-select pa-0">
                 <v-select
-                  :items="['owner','maintainer','writer','reader']"
+                  :items="assignableRoleListing"
                   class="no-border ma-0 pa-0"
                   hide-details
                   dense
@@ -117,65 +115,29 @@
             </v-row>
           </v-subheader>
           <v-divider />
-          <v-list-item class="px-0">
+          <v-list-item
+            v-for="{ user, role } in userPermissionsList"
+            :key="user.sub"
+            class="px-0"
+          >
             <v-list-item-avatar>
               <v-icon>account_circle</v-icon>
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title class="blue--text text--darken-2">
-                jakey.nesby@kitware.com
+                {{ user.email }}
               </v-list-item-title>
             </v-list-item-content>
             <v-list-item-action class="user-list-individual-select">
               <v-select
-                :items="['owner','maintainer','writer','reader']"
+                :items="role === 'owner' ? totalRoleListing : assignableRoleListing"
                 class="no-border ma-0 pa-0"
                 hide-details
                 dense
-                value="owner"
+                :value="pluralRoleToSingular(role)"
+                :disabled="role === 'owner'"
                 prepend-icon="lock"
-              />
-            </v-list-item-action>
-          </v-list-item>
-          <v-divider />
-          <v-list-item class="px-0">
-            <v-list-item-avatar>
-              <v-icon>account_circle</v-icon>
-            </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-title class="blue--text text--darken-2">
-                maca_roni.chowdery@kitware.com
-              </v-list-item-title>
-            </v-list-item-content>
-            <v-list-item-action class="user-list-individual-select">
-              <v-select
-                :items="['owner','maintainer','writer','reader']"
-                class="no-border ma-0 pa-0"
-                hide-details
-                dense
-                value="maintainer"
-                prepend-icon="lock"
-              />
-            </v-list-item-action>
-          </v-list-item>
-          <v-divider />
-          <v-list-item class="px-0">
-            <v-list-item-avatar>
-              <v-icon>account_circle</v-icon>
-            </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-title class="blue--text text--darken-2">
-                jarred.tomatoes@kitware.com
-              </v-list-item-title>
-            </v-list-item-content>
-            <v-list-item-action class="user-list-individual-select">
-              <v-select
-                :items="['owner','maintainer','writer','reader']"
-                class="no-border ma-0 pa-0"
-                hide-details
-                dense
-                value="reader"
-                prepend-icon="lock"
+                @input="setRoleForUser(user, role, singularRoleToPlural($event))"
               />
             </v-list-item-action>
           </v-list-item>
@@ -187,7 +149,7 @@
             color="grey darken-2"
             large
             text
-            @click="permDialog = false"
+            @click="cancelChange"
           >
             Cancel
           </v-btn>
@@ -195,6 +157,7 @@
             color="primary"
             depressed
             large
+            @click="setPermissions"
           >
             Save Permissions
           </v-btn>
@@ -205,9 +168,23 @@
 </template>
 
 <script lang="ts">
-
 import Vue, { PropType } from 'vue';
+import api from '@/api';
+import { WorkspacePermissionsSpec, UserSpec } from 'multinet';
+import { cloneDeep } from 'lodash';
 
+import {
+  Role,
+  SingularRole,
+} from '@/utils/permissions';
+
+export interface UserPermissionSpec {
+  role: Role;
+  user: UserSpec;
+}
+
+const assignableRoleListing: SingularRole[] = ['maintainer', 'writer', 'reader'];
+const totalRoleListing: SingularRole[] = [...assignableRoleListing, 'owner'];
 
 export default Vue.extend({
   name: 'PermissionsDialog',
@@ -219,14 +196,125 @@ export default Vue.extend({
   },
   data() {
     return {
+      assignableRoleListing,
+      totalRoleListing,
       permDialog: false,
-      privacyToggle: true,
+      privacyToggle: false,
+      mutablePermissions: null as WorkspacePermissionsSpec | null,
     };
   },
   computed: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     swapPermIcon(this: any) {
       return this.privacyToggle ? 'lock' : 'lock_open';
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    filteredWorkspacePermissions(this: any) {
+      // Used to remove the `public` field in the permissions object.
+      if (this.mutablePermissions === null) { return null; }
+
+      const {
+        owner, maintainers, readers, writers,
+      } = this.mutablePermissions as WorkspacePermissionsSpec;
+
+      return {
+        owner,
+        maintainers,
+        readers,
+        writers,
+      };
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    userPermissionsList(this: any): UserPermissionSpec[] {
+      const userPermissionList: UserPermissionSpec[] = [];
+      if (this.filteredWorkspacePermissions === null) return userPermissionList;
+
+      const roles = Object.keys(
+        this.filteredWorkspacePermissions,
+      ) as Role[];
+
+      roles.forEach((role) => {
+        const roleUsers = this.filteredWorkspacePermissions[role];
+
+        if (roleUsers) {
+          if (role === 'owner') {
+            userPermissionList.push({ role, user: roleUsers });
+          } else {
+            roleUsers.forEach((user: UserSpec) => {
+              userPermissionList.push({ role, user });
+            });
+          }
+        }
+      });
+
+      return userPermissionList;
+    },
+  },
+  asyncComputed: {
+    permissions: {
+      async get(): Promise<WorkspacePermissionsSpec> {
+        return api.getWorkspacePermissions(this.workspace);
+      },
+      default: null,
+    },
+  },
+  watch: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    permissions(this: any, val: WorkspacePermissionsSpec) {
+      if (val !== null) {
+        this.initMutableData(val);
+      }
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    privacyToggle(this: any, val: boolean) {
+      if (this.mutablePermissions) {
+        this.mutablePermissions.public = !val;
+      }
+    },
+  },
+  methods: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    initMutableData(this: any, permissions: WorkspacePermissionsSpec) {
+      this.mutablePermissions = cloneDeep(permissions);
+      this.privacyToggle = !this.permissions.public;
+    },
+    singularRoleToPlural(role: SingularRole): Role {
+      if (role === 'owner') { return role; }
+
+      return `${role}s` as Role;
+    },
+    pluralRoleToSingular(role: Role): SingularRole {
+      if (role === 'owner') { return role; }
+
+      return role.slice(0, -1) as SingularRole;
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    setRoleForUser(this: any, user: UserSpec, currentRole: Role, newRole: Role) {
+      const mutablePermissions = this.mutablePermissions as WorkspacePermissionsSpec;
+
+      // Currently don't allow changing owners
+      if (newRole !== currentRole && newRole !== 'owner' && currentRole !== 'owner') {
+        mutablePermissions[newRole].push(user);
+        mutablePermissions[currentRole] = mutablePermissions[currentRole].filter((x) => x.sub !== user.sub);
+      }
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // setRoleForAllUsers(this: any, role: string) {
+    //   // Put all of these users into this.mutablePermissions["role"]
+    // },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async setPermissions(this: any) {
+      try {
+        await api.setWorkspacePermissions(this.workspace, this.mutablePermissions);
+        this.permDialog = false;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    cancelChange(this: any) {
+      this.permDialog = false;
+      this.initMutableData(this.permissions);
     },
   },
 });
@@ -282,7 +370,7 @@ export default Vue.extend({
 
 .global-perm-select.v-text-field > .v-input__control > .v-input__slot:before,
 .global-perm-select.v-text-field > .v-input__control > .v-input__slot:after {
-    border-width: 0;
-    border-color: transparent;
+  border-width: 0;
+  border-color: transparent;
 }
 </style>

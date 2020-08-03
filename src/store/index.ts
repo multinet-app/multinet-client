@@ -14,7 +14,7 @@ export interface WorkspaceState {
   graphs: string[];
 }
 
-interface State {
+export interface State {
   workspaces: string[];
   currentWorkspace: WorkspaceState | null;
   userInfo: UserInfo | null;
