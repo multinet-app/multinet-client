@@ -57,18 +57,24 @@
             cols="10"
           >
             <v-autocomplete
-              :items="['jarred.tomatoes@kitware.com', 'jakey.nesby@kitware.com', 'maca_roni.chowdery@kitware.com']"
-              append-icon=""
-              chips
-              class="px-0"
-              deletable-chips
+              v-model="newUserSelection"
+              :items="userSearchResults"
               label="Give permissions by email"
+              class="px-0"
+              item-text="listing"
+              chips
+              deletable-chips
               full-width
+              return-object
+              multiple
+              outlined
               hide-details
               hide-no-data
               hide-selected
-              multiple
-              outlined
+              :search-input.sync="userSearchString"
+              @update:search-input="throttledUserSearch"
+              @change="userSearchString = null"
+              @keypress.enter="addSelectedUsers"
             />
           </v-col>
           <v-col class="py-0">
@@ -80,6 +86,7 @@
                   fab
                   outlined
                   v-on="on"
+                  @click="addSelectedUsers"
                 >
                   <v-icon>add</v-icon>
                 </v-btn>
@@ -182,7 +189,7 @@
 import Vue, { PropType } from 'vue';
 import api from '@/api';
 import { WorkspacePermissionsSpec, UserSpec } from 'multinet';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, debounce } from 'lodash';
 
 import store from '@/store';
 import {
@@ -196,6 +203,10 @@ export interface UserPermissionSpec {
   user: UserSpec;
 }
 
+export interface UserSearchResult extends UserSpec {
+  listing: string;
+}
+
 const assignableRoleListing: SingularRole[] = ['maintainer', 'writer', 'reader'];
 const totalRoleListing: SingularRole[] = [...assignableRoleListing, 'owner'];
 
@@ -207,13 +218,18 @@ export default Vue.extend({
       required: true,
     },
   },
-  data() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data(this: any) {
     return {
       assignableRoleListing,
       totalRoleListing,
       permDialog: false,
       privacyToggle: false,
       mutablePermissions: null as WorkspacePermissionsSpec | null,
+      throttledUserSearch: debounce(this.searchUsers, 200),
+      userSearchString: null as string | null,
+      userSearchResults: [] as UserSearchResult[],
+      newUserSelection: [] as UserSpec[],
     };
   },
   computed: {
@@ -356,6 +372,36 @@ export default Vue.extend({
     cancelChange(this: any) {
       this.permDialog = false;
       this.initMutableData(this.permissions);
+      this.resetUserSearch();
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async searchUsers(this: any, query: string) {
+      if (!this.userSearchString) { return; }
+
+      const userPermissionList = this.userPermissionsList as UserPermissionSpec[];
+      const userInWorkspace = (user: UserSpec) => (userPermissionList.find((userPerm) => userPerm.user.sub === user.sub));
+
+      const result = await api.searchUsers(query);
+      const mappedResults: UserSearchResult[] = result
+        .map((user) => ({ ...user, listing: `${user.name} (${user.email})` }))
+        .filter((user) => !userInWorkspace(user));
+
+      this.userSearchResults = mappedResults;
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resetUserSearch(this: any) {
+      this.newUserSelection = [];
+      this.userSearchResults = [];
+      this.userSearchString = null;
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    addSelectedUsers(this: any) {
+      const mutablePermissions = this.mutablePermissions as WorkspacePermissionsSpec;
+      const newUserSelection = this.newUserSelection as UserSpec[];
+
+      mutablePermissions.readers.push(...newUserSelection);
+
+      this.resetUserSearch();
     },
   },
 });
