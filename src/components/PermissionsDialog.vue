@@ -142,6 +142,15 @@
                 @input="setRoleForUser(user, role, singularRoleToPlural($event))"
               />
             </v-list-item-action>
+            <v-list-item-action>
+              <v-btn
+                icon
+                :disabled="role === 'owner'"
+                @click="removeUserPermissions(user, role)"
+              >
+                <v-icon>close</v-icon>
+              </v-btn>
+            </v-list-item-action>
           </v-list-item>
           <v-divider />
         </v-list>
@@ -326,6 +335,15 @@ export default Vue.extend({
       };
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    removeUserPermissions(this: any, user: UserSpec, currentRole: Role) {
+      if (currentRole === 'owner') return;
+
+      const mutablePermissions = this.mutablePermissions as WorkspacePermissionsSpec;
+      const newRoleList = mutablePermissions[currentRole].filter((x) => x.sub !== user.sub);
+
+      mutablePermissions[currentRole] = newRoleList;
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async setPermissions(this: any) {
       try {
         await api.setWorkspacePermissions(this.workspace, this.mutablePermissions);
@@ -349,7 +367,7 @@ export default Vue.extend({
 }
 
 .user-list-individual-select {
-  max-width: 175px;
+  max-width: 150px;
 }
 
 .v-dialog > .v-card > .v-card__title.perm-title {
