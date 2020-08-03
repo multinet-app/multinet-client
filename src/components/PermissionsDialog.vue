@@ -110,6 +110,7 @@
                   dense
                   placeholder="change all to"
                   prepend-icon="more_horiz"
+                  @input="setRoleForAllUsers(singularRoleToPlural($event))"
                 />
               </v-col>
             </v-row>
@@ -299,9 +300,20 @@ export default Vue.extend({
       }
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    // setRoleForAllUsers(this: any, role: string) {
-    //   // Put all of these users into this.mutablePermissions["role"]
-    // },
+    setRoleForAllUsers(this: any, role: Role) {
+      const userList: UserSpec[] = (this.userPermissionsList as UserPermissionSpec[])
+        .filter((user: UserPermissionSpec) => user.role !== 'owner')
+        .map((user) => user.user);
+
+      this.mutablePermissions = {
+        owner: this.mutablePermissions.owner,
+        public: this.mutablePermissions.public,
+        maintainers: [],
+        writers: [],
+        readers: [],
+        [role]: userList,
+      };
+    },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async setPermissions(this: any) {
       try {
