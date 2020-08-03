@@ -6,6 +6,7 @@
     <template v-slot:activator="{ on }">
       <v-list-item
         ripple
+        :disabled="!workspacePermissionsEditable"
         v-on="on"
       >
         <v-list-item-icon class="mr-3">
@@ -174,9 +175,11 @@ import api from '@/api';
 import { WorkspacePermissionsSpec, UserSpec } from 'multinet';
 import { cloneDeep } from 'lodash';
 
+import store from '@/store';
 import {
   Role,
   SingularRole,
+  canChangeWorkspacePermissions,
 } from '@/utils/permissions';
 
 export interface UserPermissionSpec {
@@ -205,6 +208,10 @@ export default Vue.extend({
     };
   },
   computed: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    workspacePermissionsEditable(this: any) {
+      return canChangeWorkspacePermissions(store.state.userInfo, this.permissions);
+    },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     swapPermIcon(this: any) {
       return this.privacyToggle ? 'lock' : 'lock_open';
@@ -253,8 +260,12 @@ export default Vue.extend({
   },
   asyncComputed: {
     permissions: {
-      async get(): Promise<WorkspacePermissionsSpec> {
-        return api.getWorkspacePermissions(this.workspace);
+      async get(): Promise<WorkspacePermissionsSpec | null> {
+        try {
+          return api.getWorkspacePermissions(this.workspace);
+        } catch (error) {
+          return null;
+        }
       },
       default: null,
     },

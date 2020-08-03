@@ -1,15 +1,12 @@
-import { WorkspacePermissionsSpec } from 'multinet';
-import { State } from '@/store';
-
+import { WorkspacePermissionsSpec, UserSpec } from 'multinet';
 
 export type Role = 'owner' | 'maintainers' | 'writers' | 'readers';
 export type SingularRole = 'owner' | 'maintainer' | 'writer' | 'reader';
 
+export function canChangeWorkspacePermissions(userInfo: UserSpec | null, permissions: WorkspacePermissionsSpec | null): boolean {
+  if (!userInfo || !permissions) { return false; }
 
-export function canChangeWorkspacePermissions(state: State, permissions: WorkspacePermissionsSpec) {
-  if (state.userInfo === null) { return false; }
-
-  const userSub = state.userInfo.sub;
+  const userSub = userInfo.sub;
   const ownerSub = permissions.owner.sub;
   const maintainerSubs = permissions.maintainers.map((user) => user.sub);
 
