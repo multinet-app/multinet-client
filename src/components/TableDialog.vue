@@ -85,6 +85,10 @@
             Create
           </v-btn>
         </v-card-actions>
+        <v-progress-linear
+          v-if="uploading"
+          :value="uploadProgress"
+        />
       </v-card>
     </v-card>
   </v-dialog>
@@ -124,6 +128,8 @@ export default Vue.extend({
       tableCreationError: null as string | null,
       key: defaultKeyField,
       overwrite: false,
+      uploading: false,
+      uploadProgress: null as number | null,
     };
   },
   computed: {
@@ -139,6 +145,7 @@ export default Vue.extend({
     restoreKeyField() {
       this.key = defaultKeyField;
     },
+
     handleFileInput(file: File) {
       this.file = file;
 
@@ -151,6 +158,11 @@ export default Vue.extend({
         this.fileUploadError = null;
       }
     },
+
+    handleUploadProgress(evt: { loaded: number; total: number; [key: string]: unknown }) {
+      this.uploadProgress = (evt.loaded / evt.total) * 100;
+    },
+
     async createTable() {
       const {
         file,
@@ -164,12 +176,16 @@ export default Vue.extend({
         return;
       }
 
+      this.uploading = true;
+
       try {
         await api.uploadTable(workspace, fileName, {
           type: 'csv',
           data: file,
           key,
           overwrite,
+        }, {
+          onUploadProgress: this.handleUploadProgress,
         });
 
         this.tableCreationError = null;
@@ -177,6 +193,9 @@ export default Vue.extend({
         this.$emit('success');
       } catch (err) {
         this.tableCreationError = err.statusText;
+      } finally {
+        this.uploading = false;
+        this.uploadProgress = null;
       }
     },
   },
