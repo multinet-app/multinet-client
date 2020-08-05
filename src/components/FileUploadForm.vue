@@ -64,6 +64,10 @@
         {{ createButtonText }}
       </v-btn>
     </v-card-actions>
+    <v-progress-linear
+      v-if="uploading"
+      :value="uploadProgress"
+    />
   </v-card>
 </template>
 
@@ -116,6 +120,8 @@ export default Vue.extend({
       fileName: null as string | null,
       selectedType: null as FileType | null,
       file: null as File | null,
+      uploading: false,
+      uploadProgress: null as number | null,
     };
   },
 
@@ -131,6 +137,10 @@ export default Vue.extend({
   },
 
   methods: {
+    handleUploadProgress(event: { loaded: number; total: number; [key: string]: unknown }) {
+      this.uploadProgress = (event.loaded / event.total) * 100;
+    },
+
     handleFileInput(file: File) {
       this.file = file;
 
@@ -168,10 +178,14 @@ export default Vue.extend({
         throw new Error('`selectedType` is null, which is impossible');
       }
 
+      this.uploading = true;
+
       try {
         await api.uploadTable(workspace, fileName, {
           type: selectedType.queryCall as UploadType,
           data: file,
+        }, {
+          onUploadProgress: this.handleUploadProgress,
         });
 
         this.tableCreationError = null;
@@ -185,6 +199,9 @@ export default Vue.extend({
           this.tableCreationError = 'Unknown error; please see developer console for details';
           throw err;
         }
+      } finally {
+        this.uploading = false;
+        this.uploadProgress = null;
       }
     },
 
