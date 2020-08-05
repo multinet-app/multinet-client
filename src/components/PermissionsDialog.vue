@@ -26,22 +26,6 @@
           <v-col cols="8">
             Permissions for&nbsp;<strong>{{ workspace }}</strong>
           </v-col>
-          <v-col cols="3">
-            <v-tooltip top>
-              <template v-slot:activator="{ on }">
-                <v-switch
-                  v-model="privacyToggle"
-                  :append-icon="swapPermIcon"
-                  class="no-label ma-0 pa-0 ml-2"
-                  hide-details
-                  inset
-                  v-on="on"
-                />
-              </template>
-              <span v-if="privacyToggle">Make public</span>
-              <span v-else>Make private</span>
-            </v-tooltip>
-          </v-col>
         </v-row>
       </v-card-title>
       <v-card
@@ -162,6 +146,13 @@
           <v-divider />
         </v-list>
         <v-card-actions class="pt-4">
+          <v-checkbox
+            v-model="publicToggle"
+            class="ma-0 mb-2"
+            label="Public"
+            hide-details
+            dense
+          />
           <v-spacer />
           <v-btn
             color="grey darken-2"
@@ -224,7 +215,7 @@ export default Vue.extend({
       assignableRoleListing,
       totalRoleListing,
       permDialog: false,
-      privacyToggle: false,
+      publicToggle: true,
       mutablePermissions: null as WorkspacePermissionsSpec | null,
       throttledUserSearch: debounce(this.searchUsers, 200),
       userSearchString: null as string | null,
@@ -236,10 +227,6 @@ export default Vue.extend({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     workspacePermissionsEditable(this: any) {
       return canChangeWorkspacePermissions(store.state.userInfo, this.permissions);
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    swapPermIcon(this: any) {
-      return this.privacyToggle ? 'lock' : 'lock_open';
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     filteredWorkspacePermissions(this: any) {
@@ -303,9 +290,9 @@ export default Vue.extend({
       }
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    privacyToggle(this: any, val: boolean) {
+    publicToggle(this: any, val: boolean) {
       if (this.mutablePermissions) {
-        this.mutablePermissions.public = !val;
+        this.mutablePermissions.public = val;
       }
     },
   },
@@ -313,7 +300,7 @@ export default Vue.extend({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     initMutableData(this: any, permissions: WorkspacePermissionsSpec) {
       this.mutablePermissions = cloneDeep(permissions);
-      this.privacyToggle = !this.permissions.public;
+      this.publicToggle = this.permissions.public;
     },
     singularRoleToPlural(role: SingularRole): Role {
       if (role === 'owner') { return role; }
