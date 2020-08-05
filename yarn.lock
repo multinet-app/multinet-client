@@ -5459,12 +5459,7 @@ lodash.uniq@^4.5.0:
   resolved "https://registry.yarnpkg.com/lodash.uniq/-/lodash.uniq-4.5.0.tgz#d0225373aeb652adc1bc82e4945339a842754773"
   integrity sha1-0CJTc662Uq3BvILklFM5qEJ1R3M=
 
-lodash@^4.17.10, lodash@^4.17.11, lodash@^4.17.12, lodash@^4.17.13, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.3, lodash@^4.17.4:
-  version "4.17.19"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.19.tgz#e48ddedbe30b3321783c5b4301fbd353bc1e4a4b"
-  integrity sha512-JNvd8XER9GQX0v2qJgsaN/mzFCNA5BRe/j8JN9d+tWyGLSodKQHKFicdwNYzWwI3wjRnaKPsGj1XkBjx/F96DQ==
-
-lodash@^4.17.19:
+lodash@^4.17.10, lodash@^4.17.11, lodash@^4.17.12, lodash@^4.17.13, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.19, lodash@^4.17.3, lodash@^4.17.4:
   version "4.17.19"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.19.tgz#e48ddedbe30b3321783c5b4301fbd353bc1e4a4b"
   integrity sha512-JNvd8XER9GQX0v2qJgsaN/mzFCNA5BRe/j8JN9d+tWyGLSodKQHKFicdwNYzWwI3wjRnaKPsGj1XkBjx/F96DQ==
@@ -5844,10 +5839,10 @@ multimatch@^2.1.0:
     arrify "^1.0.0"
     minimatch "^3.0.0"
 
-multinet@0.15.0:
-  version "0.15.0"
-  resolved "https://registry.yarnpkg.com/multinet/-/multinet-0.15.0.tgz#2315c7e077e1301e36f52dd58c03c4c0f019dcb1"
-  integrity sha512-mFoIqicVLVwQ5Dbmhx7TucCldL0Usr2rln07glNjAVxdYsrMZ9unq93aBwijgcgVPvU0NZA8CEC1rtfImWWFZQ==
+multinet@0.16.0:
+  version "0.16.0"
+  resolved "https://registry.yarnpkg.com/multinet/-/multinet-0.16.0.tgz#7361fc87fbc84745f82f45bb8dd5ccd4d6a1f39b"
+  integrity sha512-aqbuRPG5XwGgK1ChhQwGmKkMJcrefbB7H0bKtLIU3OJp1iDwKSWhQ+wdfzPHvPweRt4f798suXdybN1v/uf8hw==
   dependencies:
     axios "^0.19.0"
 
