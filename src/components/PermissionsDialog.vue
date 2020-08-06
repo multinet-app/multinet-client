@@ -149,10 +149,32 @@
           <v-checkbox
             v-model="publicToggle"
             class="ma-0 mb-2"
-            label="Public"
+            label="Make this workspace public"
             hide-details
             dense
           />
+          <v-menu
+            offset-y
+            top
+            left
+            open-on-hover
+          >
+            <template v-slot:activator="{ on }">
+              <v-icon
+                small
+                class="ml-2 mb-1"
+                v-on="on"
+              >
+                help
+              </v-icon>
+            </template>
+            <v-card width="20vw">
+              <v-card-text>
+                Public workspaces are readable by all users, even those who are not logged in.
+                You can revoke this at any time by unchecking the box.
+              </v-card-text>
+            </v-card>
+          </v-menu>
           <v-spacer />
           <v-btn
             color="grey darken-2"
