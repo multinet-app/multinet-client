@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container fluid>
     <v-content>
       <v-navigation-drawer
         right
@@ -49,6 +49,7 @@
           solo
           :loading="loading"
           :error-messages="queryErrorMessage"
+          style="font-family: monospace; font-size: 0.9em;"
         />
         <v-card-actions>
           <v-btn
