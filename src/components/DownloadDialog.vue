@@ -157,7 +157,6 @@ export default Vue.extend({
         workspace,
       } = this;
 
-
       this.loading = true;
 
       const downloads = await Promise.all(selection.map(async (name) => {
