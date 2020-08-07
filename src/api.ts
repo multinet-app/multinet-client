@@ -1,10 +1,9 @@
-import { multinetApi } from 'multinet';
+import { multinetApi, UserSpec } from 'multinet';
 import { host } from '@/environment';
-import { UserInfo } from '@/types';
 
 const api = multinetApi(`${host}/api`);
 
-export async function getUserInfo(): Promise<UserInfo | null> {
+export async function getUserInfo(): Promise<UserSpec | null> {
   const resp = await fetch(`${host}/api/user/info`, {
     credentials: 'include',
   });

@@ -1,9 +1,9 @@
 import Vue from 'vue';
 import Vuex, { Store } from 'vuex';
 import { createDirectStore } from 'direct-vuex';
+import { UserSpec } from 'multinet';
 
 import api, { getUserInfo, logout } from '@/api';
-import { UserInfo } from '@/types';
 
 Vue.use(Vuex);
 
@@ -14,10 +14,10 @@ export interface WorkspaceState {
   graphs: string[];
 }
 
-interface State {
+export interface State {
   workspaces: string[];
   currentWorkspace: WorkspaceState | null;
-  userInfo: UserInfo | null;
+  userInfo: UserSpec | null;
 }
 
 const {
@@ -67,7 +67,7 @@ const {
       state.currentWorkspace = null;
     },
 
-    setUserInfo(state, userInfo: UserInfo | null) {
+    setUserInfo(state, userInfo: UserSpec | null) {
       state.userInfo = userInfo;
     },
   },

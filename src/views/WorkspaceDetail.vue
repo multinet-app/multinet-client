@@ -79,9 +79,32 @@
           bottom
         />
         <v-spacer />
-        <v-btn icon>
-          <v-icon>more_vert</v-icon>
-        </v-btn>
+
+        <v-menu
+          v-model="actionsMenu"
+          max-width="275"
+          offset-y
+          origin="center center"
+          transition="scale-transition"
+        >
+          <template v-slot:activator="{ on }">
+            <v-btn
+              icon
+              v-on="on"
+            >
+              <v-icon>more_vert</v-icon>
+            </v-btn>
+          </template>
+          <v-card>
+            <v-list
+              dense
+              width="224"
+            >
+              <!-- Each listing here should contain a v-list-item -->
+              <PermissionsDialog :workspace="workspace" />
+            </v-list>
+          </v-card>
+        </v-menu>
       </v-app-bar>
 
       <v-layout
@@ -133,6 +156,7 @@ import Vue, { PropType } from 'vue';
 import api from '@/api';
 import TablePanel from '@/components/TablePanel.vue';
 import NetworkPanel from '@/components/NetworkPanel.vue';
+import PermissionsDialog from '@/components/PermissionsDialog.vue';
 import store from '@/store';
 
 const surroundingWhitespace = /^\s+|\s+$/;
@@ -146,6 +170,7 @@ export default Vue.extend({
   components: {
     TablePanel,
     NetworkPanel,
+    PermissionsDialog,
   },
   props: {
     workspace: {
@@ -159,6 +184,7 @@ export default Vue.extend({
       editing: false,
       requestError: null as string | null,
       loading: false,
+      actionsMenu: false,
     };
   },
 
@@ -166,7 +192,9 @@ export default Vue.extend({
     nodeTables: () => store.getters.nodeTables,
     edgeTables: () => store.getters.edgeTables,
     graphs: () => store.getters.graphs,
-    nameErrorMessages(): string[] {
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    nameErrorMessages(this: any): string[] {
       const { requestError } = this;
       const errors = [
         ...workspaceNameRules.map((rule) => rule(this.localWorkspace as string)),
@@ -189,7 +217,9 @@ export default Vue.extend({
     workspace() {
       this.update();
     },
-    localWorkspace() {
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    localWorkspace(this: any) {
       // Once the user types, clears the error returned on sending the rename API call.
       this.requestError = null;
     },
@@ -198,12 +228,15 @@ export default Vue.extend({
     this.update();
   },
   methods: {
-    cancelRename() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    cancelRename(this: any) {
       this.requestError = null;
       this.localWorkspace = this.workspace;
       this.editing = false;
     },
-    async renameWorkspace() {
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async renameWorkspace(this: any) {
       if (this.nameErrorMessages.length) {
         return;
       }
