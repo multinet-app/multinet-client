@@ -10,36 +10,33 @@
           {{ workspace }}
         </h2>
         <v-divider />
-        <v-expansion-panels
-          accordion
-          multiple
-          class="mx-2"
+        <v-card
+          v-for="{ title, data, graph } in workspaceInfo"
+          :key="title"
           flat
-          focusable
         >
-          <v-expansion-panel
-            v-for="{ title, data, graph } in workspaceInfo"
-            :key="title"
-          >
-            <v-expansion-panel-header>{{ title }}</v-expansion-panel-header>
-            <v-expansion-panel-content>
-              <v-list
+          <v-card-title>
+            {{ title }}
+          </v-card-title>
+          <v-divider />
+          <v-card-text>
+            <v-list
+              nav
+              max-height="20vh"
+              style="overflow-y: auto;"
+            >
+              <v-list-item
+                v-for="name in data"
+                :key="name"
                 dense
-                nav
+                style="min-height: 30px;"
+                :to="detailLink(name, graph)"
               >
-                <v-list-item
-                  v-for="name in data"
-                  :key="name"
-                  dense
-                  style="min-height: 30px;"
-                  :to="detailLink(name, graph)"
-                >
-                  {{ name }}
-                </v-list-item>
-              </v-list>
-            </v-expansion-panel-content>
-          </v-expansion-panel>
-        </v-expansion-panels>
+                {{ name }}
+              </v-list-item>
+            </v-list>
+          </v-card-text>
+        </v-card>
       </v-navigation-drawer>
       <v-card flat>
         <v-card-title>Run AQL Query</v-card-title>
@@ -56,6 +53,7 @@
         <v-card-actions>
           <v-btn
             color="error"
+            text
             @click="query=''"
           >
             Clear
@@ -76,7 +74,7 @@
             <template v-slot:activator="{ on }">
               <v-btn
                 class="ml-2"
-                color="success"
+                color="secondary"
                 v-on="on"
               >
                 Create Table
@@ -207,6 +205,8 @@ export default {
         await api.createAQLTable(workspace, createTableName, query);
         this.createTableMenu = false;
         store.dispatch.fetchWorkspace(this.workspace);
+
+        this.$router.push({ name: 'tableDetail', params: { workspace, table: createTableName } });
       } catch (error) {
         if (error.status === 409) {
           this.createTableErrorMessage = 'Table Already Exists';
@@ -214,10 +214,6 @@ export default {
           this.createTableErrorMessage = error.data;
         }
       }
-    },
-    doNothing() {
-      // TODO: Remove
-      // Title says all.
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async runQuery(this: any) {
