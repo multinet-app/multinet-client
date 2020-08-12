@@ -102,6 +102,14 @@
             >
               <!-- Each listing here should contain a v-list-item -->
               <PermissionsDialog :workspace="workspace" />
+              <v-list-item :to="{ name: 'aqlWizard' }">
+                <v-list-item-icon class="mr-3">
+                  <v-icon>search</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  AQL Wizard
+                </v-list-item-content>
+              </v-list-item>
             </v-list>
           </v-card>
         </v-menu>

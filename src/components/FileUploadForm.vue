@@ -78,7 +78,6 @@ import Vue, { PropType } from 'vue';
 import api from '@/api';
 import { FileType } from '@/types';
 
-
 export default Vue.extend({
   name: 'FileUploadForm',
 
