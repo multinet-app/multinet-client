@@ -32,6 +32,11 @@
                 style="min-height: 30px;"
                 :to="detailLink(name, graph)"
               >
+                <v-list-item-icon class="ma-0 mt-1">
+                  <v-icon small>
+                    {{ graph ? "timeline" : "table_chart" }}
+                  </v-icon>
+                </v-list-item-icon>
                 {{ name }}
               </v-list-item>
             </v-list>
