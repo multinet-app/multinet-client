@@ -6,66 +6,71 @@
     <v-content>
       <!-- BANNER -->
       <v-responsive
-        class="mb-5 pt-5"
+        class="mb-5"
       >
-        <v-container class="d-flex align-center">
-          <v-sheet
-            class="d-flex pa-5"
-            color="primary"
-            dark
-            flat
-            height="100%"
-          >
-            <v-card
-              class="pr-5"
-              color="transparent"
-              flat
-              width="74%"
-            >
-              <v-card-title>Welcome to Multinet!</v-card-title>
-              <v-divider />
-              <v-card-text>
-                <p>
-                  Check out the featured datasets and visualizations below! You
-                  can also create your own workspace and upload your own data with
-                  the <strong>New Workspace</strong> button to the left, or
-                  explore data others have uploaded.
-                </p>
-                <p>
-                  This project is a joint research and development effort between
-                  the University of Utah and Kitware Inc., funded by the National
-                  Science Foundation.
-                </p>
-              </v-card-text>
-            </v-card>
-            <v-card
-              class="d-flex align-center"
-              light
-              width="26%"
-            >
-              <v-card-text>
-                <v-row class="px-4">
-                  <v-col
-                    v-for="collab in collabs"
-                    :key="collab.logo"
-                    class="align-center d-flex py-1"
-                    cols="6"
-                  >
-                    <v-img
-                      :src="collab.logo"
-                      width="100vh"
-                    />
-                  </v-col>
-                </v-row>
-              </v-card-text>
-            </v-card>
-          </v-sheet>
-        </v-container>
+        <v-sheet
+          class="pa-6"
+          color="primary"
+          dark
+          flat
+          height="100%"
+        >
+          <v-row>
+            <v-col cols="9">
+              <v-card
+                class="pr-6"
+                color="transparent"
+                flat
+                height="0%"
+              >
+                <v-card-title class="text-h4">
+                  Welcome to Multinet!
+                </v-card-title>
+                <v-divider />
+                <v-card-text class="welcome-text">
+                  <p>
+                    Check out the featured datasets and visualizations below! You
+                    can also create your own workspace and upload your own data with
+                    the <strong>New Workspace</strong> button to the left, or
+                    explore data others have uploaded.
+                  </p>
+                  <p>
+                    This project is a joint research and development effort between
+                    the University of Utah and Kitware Inc., funded by the National
+                    Science Foundation.
+                  </p>
+                </v-card-text>
+              </v-card>
+            </v-col>
+            <v-col cols="3">
+              <v-card
+                class="d-flex align-center"
+                light
+              >
+                <v-card-text>
+                  <v-row class="px-4">
+                    <v-col
+                      v-for="collab in collabs"
+                      :key="collab.logo"
+                      class="align-center d-flex py-1"
+                      cols="6"
+                    >
+                      <v-img
+                        :src="collab.logo"
+                        width="100vh"
+                      />
+                    </v-col>
+                  </v-row>
+                </v-card-text>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-sheet>
       </v-responsive>
 
       <!-- COLUMNS -->
-      <v-container>
-        <v-row>
+      <div class="px-6 py-2">
+        <v-row class="px-5 pb-6">
           <v-col
             v-for="sample in samples"
             :key="sample.title"
@@ -106,7 +111,7 @@
             </v-hover>
           </v-col>
         </v-row>
-      </v-container>
+      </div>
     </v-content>
   </v-container>
 </template>
@@ -199,5 +204,8 @@ export default Vue.extend({
 }
 .overlay-text {
   padding: 48px;
+}
+.welcome-text p {
+  font-size: 18px;
 }
 </style>
