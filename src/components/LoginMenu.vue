@@ -79,8 +79,8 @@ export default {
       const {
         location,
       } = this;
-
-      return `${host}/api/user/oauth/google/login?return_url=${location}`;
+      const encodedLocation = encodeURIComponent(location);
+      return `${host}/api/user/oauth/google/login?return_url=${encodedLocation}`;
     },
 
     userInitials(): string {
@@ -114,7 +114,7 @@ export default {
 
       // Avoid illegal duplicate navigation if we are already on the Home view.
       if (this.$router.currentRoute.name !== 'home') {
-        this.$router.push('home');
+        this.$router.push({ name: 'home' });
       }
     },
   },
