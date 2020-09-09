@@ -1,24 +1,13 @@
-import { multinetApi, UserSpec } from 'multinet';
+import { multinetApi } from 'multinet';
 import { host } from '@/environment';
+import { getLoginToken, deleteLoginToken } from '@/utils/localStorage';
 
-const api = multinetApi(`${host}/api`);
-
-export async function getUserInfo(): Promise<UserSpec | null> {
-  const resp = await fetch(`${host}/api/user/info`, {
-    credentials: 'include',
-  });
-
-  if (resp.ok) {
-    return resp.json();
-  }
-
-  return null;
-}
+const storedLoginToken = getLoginToken();
+const api = multinetApi(`${host}/api`, storedLoginToken);
 
 export function logout() {
-  return fetch(`${host}/api/user/logout`, {
-    credentials: 'include',
-  });
+  api.logout();
+  deleteLoginToken();
 }
 
 export default api;
