@@ -107,7 +107,8 @@ export default {
     },
   },
 
-  created() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  created(this: any) {
     store.dispatch.fetchUserInfo();
     this.checkUrlForLogin();
   },
@@ -131,7 +132,8 @@ export default {
      * for this fragment, and if it exists, it pops that token from the URL, saves
      * it in localStorage, and re-fetches app info, using this new token.
      */
-    checkUrlForLogin() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    checkUrlForLogin(this: any) {
       if (this.$route.hash) {
         const result = this.$route.hash.match(loginTokenRegex);
 
