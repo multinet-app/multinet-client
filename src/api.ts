@@ -2,8 +2,7 @@ import { multinetApi } from 'multinet';
 import { host } from '@/environment';
 import { getLoginToken, deleteLoginToken } from '@/utils/localStorage';
 
-const storedLoginToken = getLoginToken();
-const api = multinetApi(`${host}/api`, storedLoginToken);
+const api = multinetApi(`${host}/api`, getLoginToken());
 
 export function logout() {
   api.logout();

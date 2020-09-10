@@ -1,4 +1,4 @@
-export const localStorageLoginTokenKey = 'loginToken';
+const localStorageLoginTokenKey = 'loginToken';
 
 export function getLoginToken(): string | null {
   return localStorage.getItem(localStorageLoginTokenKey);

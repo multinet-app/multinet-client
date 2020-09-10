@@ -140,14 +140,13 @@ export default {
         if (result && result.length >= 2) {
           const loginToken = result[1];
           api.client.setAuthToken(loginToken);
-
-          const currentRouteName = this.$route.name;
-          const name = currentRouteName || 'home';
-
-          this.$router.replace({ name });
           saveLoginToken(loginToken);
+
           store.dispatch.fetchUserInfo();
           store.dispatch.fetchWorkspaces();
+
+          const name = this.$route.name || 'home';
+          this.$router.replace({ name });
         }
       }
     },
