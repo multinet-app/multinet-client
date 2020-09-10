@@ -67,7 +67,7 @@ import store from '@/store';
 import api from '@/api';
 import { saveLoginToken } from '@/utils/localStorage';
 
-const loginTokenRegex = /^#loginToken=(\S+)$/;
+const loginTokenRegex = /#loginToken=(\S+)/;
 export default {
   data: () => ({
     menu: false,
@@ -135,18 +135,19 @@ export default {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     checkUrlForLogin(this: any) {
       if (this.$route.hash) {
-        const result = this.$route.hash.match(loginTokenRegex);
+        const result = loginTokenRegex.exec(this.$route.fullPath);
 
-        if (result && result.length >= 2) {
-          const loginToken = result[1];
+        if (result !== null) {
+          const { index, 1: loginToken } = result;
+
           api.setAuthToken(loginToken);
           saveLoginToken(loginToken);
 
           store.dispatch.fetchUserInfo();
           store.dispatch.fetchWorkspaces();
 
-          const name = this.$route.name || 'home';
-          this.$router.replace({ name });
+          const newPath = this.$route.fullPath.slice(0, index);
+          this.$router.replace(newPath);
         }
       }
     },
