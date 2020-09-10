@@ -139,7 +139,7 @@ export default {
 
         if (result && result.length >= 2) {
           const loginToken = result[1];
-          api.client.setAuthToken(loginToken);
+          api.setAuthToken(loginToken);
           saveLoginToken(loginToken);
 
           store.dispatch.fetchUserInfo();
