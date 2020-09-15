@@ -3,7 +3,7 @@ import Vuex, { Store } from 'vuex';
 import { createDirectStore } from 'direct-vuex';
 import { UserSpec } from 'multinet';
 
-import api, { getUserInfo, logout } from '@/api';
+import api, { logout } from '@/api';
 
 Vue.use(Vuex);
 
@@ -94,7 +94,7 @@ const {
     async fetchUserInfo(context) {
       const { commit } = rootActionContext(context);
 
-      const info = await getUserInfo();
+      const info = await api.userInfo();
       commit.setUserInfo(info);
     },
 
