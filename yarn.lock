@@ -5852,10 +5852,10 @@ multimatch@^2.1.0:
     arrify "^1.0.0"
     minimatch "^3.0.0"
 
-multinet@0.16.0:
-  version "0.16.0"
-  resolved "https://registry.yarnpkg.com/multinet/-/multinet-0.16.0.tgz#7361fc87fbc84745f82f45bb8dd5ccd4d6a1f39b"
-  integrity sha512-aqbuRPG5XwGgK1ChhQwGmKkMJcrefbB7H0bKtLIU3OJp1iDwKSWhQ+wdfzPHvPweRt4f798suXdybN1v/uf8hw==
+multinet@0.17.0:
+  version "0.17.0"
+  resolved "https://registry.yarnpkg.com/multinet/-/multinet-0.17.0.tgz#05b30b85d29af8cb877bed502d8cacdabe8796ed"
+  integrity sha512-EC+ALY7ciwSmbkC49NE5A0OmFYxjt/QrTPQf7sXDeL6FUi74UKaammlN3E11T4Pur3kNx686AycmKSbgCkPHNA==
   dependencies:
     axios "^0.19.0"
 
