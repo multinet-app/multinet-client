@@ -93,7 +93,7 @@
                 v-for="app in apps"
                 :key="app.name"
                 class="pl-2"
-                :href="`${app.url}/?workspace=${workspace}&graph=${graph}${loginToken}`"
+                :href="`${app.url}/?workspace=${workspace}&graph=${graph}#${loginToken}`"
                 target="_blank"
               >
                 <v-list-item-avatar class="mr-3">
@@ -387,7 +387,7 @@ export default Vue.extend({
       const token = getLoginToken();
 
       if (token !== null) {
-        return `&loginToken=${token}`;
+        return `loginToken=${token}`;
       }
 
       return '';
