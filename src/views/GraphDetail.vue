@@ -93,7 +93,7 @@
                 v-for="app in apps"
                 :key="app.name"
                 class="pl-2"
-                :href="`${app.url}/?workspace=${workspace}&graph=${graph}`"
+                :href="`${app.url}/?workspace=${workspace}&graph=${graph}${loginToken}`"
                 target="_blank"
               >
                 <v-list-item-avatar class="mr-3">
@@ -314,6 +314,7 @@ import Vue, { PropType } from 'vue';
 
 import api from '@/api';
 import { App } from '@/types';
+import { getLoginToken } from '@/utils/localStorage';
 
 export default Vue.extend({
   name: 'GraphDetail',
@@ -381,6 +382,15 @@ export default Vue.extend({
     },
     drawerIcon(): string {
       return this.panelOpen ? 'expand_more' : 'expand_less';
+    },
+    loginToken(): string {
+      const token = getLoginToken();
+
+      if (token !== null) {
+        return `#loginToken=${token}`;
+      }
+
+      return '';
     },
   },
   watch: {
