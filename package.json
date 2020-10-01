@@ -25,6 +25,7 @@
     "lodash": "^4.17.19",
     "material-design-icons-iconfont": "^5.0.1",
     "multinet": "0.17.0",
+    "papaparse": "^5.3.0",
     "vue": "^2.6.10",
     "vue-async-computed": "^3.8.2",
     "vue-gtag": "^1.2.1",
