@@ -96,6 +96,7 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
+import Papa, { ParseResult } from 'papaparse';
 
 import api from '@/api';
 import { FileType } from '@/types';
@@ -157,6 +158,50 @@ export default Vue.extend({
         this.fileName = this.fileName || getFileName(file);
         this.fileUploadError = null;
       }
+
+      interface TypeScore {
+        strings: Set<string>;
+        number: number;
+        date: number;
+        total: number;
+      }
+      const columnTypes = new Map<string, TypeScore>();
+
+      Papa.parse(file, {
+        header: true,
+        skipEmptyLines: true,
+        step(row: ParseResult<{}>) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const data = row.data as { [key: string]: any };
+
+          Object.keys(data).forEach((key: string) => {
+            if (!columnTypes.has(key)) {
+              columnTypes.set(key, {
+                strings: new Set(),
+                number: 0,
+                date: 0,
+                total: 0,
+              });
+            }
+
+            const entry = columnTypes.get(key);
+            if (entry === undefined) {
+              throw new Error('impossible');
+            }
+
+            const value = data[key];
+            entry.total += 1;
+            entry.strings.add(value);
+            if (value !== '' && !Number.isNaN(Number(value))) {
+              entry.number += 1;
+            }
+          });
+        },
+
+        complete() {
+          console.log(columnTypes);
+        },
+      });
     },
 
     handleUploadProgress(evt: { loaded: number; total: number; [key: string]: unknown }) {
