@@ -72,6 +72,20 @@
               />
             </v-col>
           </v-row>
+
+          <v-row>
+            <v-col
+              v-for="(type, field) in columnType"
+              :key="field"
+              cols="2"
+            >
+              <v-select
+                v-model="columnType[field]"
+                :label="field"
+                :items="multinetTypes"
+              />
+            </v-col>
+          </v-row>
         </v-card-text>
 
         <v-divider />
@@ -102,6 +116,8 @@ import api from '@/api';
 import { FileType } from '@/types';
 import { validFileType, fileName as getFileName } from '@/utils/files';
 
+type MultinetType = 'label' | 'category' | 'number' | 'date';
+
 const defaultKeyField = '_key';
 export default Vue.extend({
   name: 'TableDialog',
@@ -129,6 +145,7 @@ export default Vue.extend({
       tableCreationError: null as string | null,
       key: defaultKeyField,
       overwrite: false,
+      columnType: {} as { [key: string]: MultinetType },
       uploading: false,
       uploadProgress: null as number | null,
     };
@@ -141,13 +158,24 @@ export default Vue.extend({
         || !!this.fileUploadError
       );
     },
+
+    multinetTypes(): MultinetType[] {
+      return [
+        'label',
+        'category',
+        'number',
+        'date',
+      ];
+    },
   },
+
   methods: {
     restoreKeyField() {
       this.key = defaultKeyField;
     },
 
-    handleFileInput(file: File) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    handleFileInput(this: any, file: File) {
       this.file = file;
 
       if (!file) {
@@ -198,8 +226,7 @@ export default Vue.extend({
           });
         },
 
-        complete() {
-          type MultinetType = 'label' | 'category' | 'number' | 'date';
+        complete: () => {
           const typeRecs = new Map<string, MultinetType>();
 
           columnTypes.forEach((entry, field) => {
@@ -219,7 +246,10 @@ export default Vue.extend({
             typeRecs.set(field, rec);
           });
 
-          console.log(typeRecs);
+          this.columnType = {};
+          typeRecs.forEach((type, field) => {
+            this.$set(this.columnType, field, type);
+          });
         },
       });
     },
