@@ -177,7 +177,7 @@ export default Vue.extend({
           Object.keys(data).forEach((key: string) => {
             if (!columnTypes.has(key)) {
               columnTypes.set(key, {
-                strings: new Set(),
+                strings: new Set<string>(),
                 number: 0,
                 date: 0,
                 total: 0,
@@ -199,7 +199,27 @@ export default Vue.extend({
         },
 
         complete() {
-          console.log(columnTypes);
+          type MultinetType = 'label' | 'category' | 'number' | 'date';
+          const typeRecs = new Map<string, MultinetType>();
+
+          columnTypes.forEach((entry, field) => {
+            const category = entry.strings.size <= 10;
+            const number = entry.number === entry.total;
+            const date = entry.date === entry.total;
+
+            let rec: MultinetType = 'label';
+            if (category && !number && !date) {
+              rec = 'category';
+            } else if (date) {
+              rec = 'date';
+            } else if (number) {
+              rec = 'number';
+            }
+
+            typeRecs.set(field, rec);
+          });
+
+          console.log(typeRecs);
         },
       });
     },
