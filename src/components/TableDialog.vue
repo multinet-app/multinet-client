@@ -111,6 +111,7 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 import Papa, { ParseResult } from 'papaparse';
+import dayjs from 'dayjs';
 
 import api from '@/api';
 import { FileType } from '@/types';
@@ -230,6 +231,11 @@ export default Vue.extend({
             // convert to 0, so those are excluded specifically.
             if (value !== '' && !Number.isNaN(Number(value))) {
               entry.number += 1;
+            }
+
+            // See if the value looks like a date.
+            if (dayjs(value).isValid()) {
+              entry.date += 1;
             }
           });
         },
