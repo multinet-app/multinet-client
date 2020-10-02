@@ -21,6 +21,7 @@
   "dependencies": {
     "axios": "^0.18.1",
     "core-js": "^2.6.5",
+    "dayjs": "^1.9.1",
     "direct-vuex": "^0.10.4",
     "lodash": "^4.17.19",
     "material-design-icons-iconfont": "^5.0.1",
