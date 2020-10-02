@@ -217,9 +217,17 @@ export default Vue.extend({
               throw new Error('impossible');
             }
 
+            // Pass the value through a gauntlet of heuristics to see what types
+            // it can convert to.
             const value = data[key];
             entry.total += 1;
+
+            // Test for categoriness by counting up all the unique strings in
+            // the column.
             entry.strings.add(value);
+
+            // See if the value can be converted to a number. Empty strings
+            // convert to 0, so those are excluded specifically.
             if (value !== '' && !Number.isNaN(Number(value))) {
               entry.number += 1;
             }
