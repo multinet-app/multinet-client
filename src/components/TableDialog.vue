@@ -251,10 +251,10 @@ export default Vue.extend({
             let rec: MultinetType = 'label';
             if (category && !number && !date) {
               rec = 'category';
-            } else if (date) {
-              rec = 'date';
             } else if (number) {
               rec = 'number';
+            } else if (date) {
+              rec = 'date';
             }
 
             typeRecs.set(field, rec);
