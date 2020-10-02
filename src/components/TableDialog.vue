@@ -244,12 +244,15 @@ export default Vue.extend({
           const typeRecs = new Map<string, MultinetType>();
 
           columnTypes.forEach((entry, field) => {
+            const isKey = field === '_key' || field === '_from' || field === '_to';
             const category = entry.strings.size <= 10;
             const number = entry.number === entry.total;
             const date = entry.date === entry.total;
 
             let rec: MultinetType = 'label';
-            if (category && !number && !date) {
+            if (isKey) {
+              rec = 'label';
+            } else if (category && !number && !date) {
               rec = 'category';
             } else if (number) {
               rec = 'number';
