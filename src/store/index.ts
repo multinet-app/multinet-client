@@ -3,7 +3,7 @@ import Vuex, { Store } from 'vuex';
 import { createDirectStore } from 'direct-vuex';
 import { UserSpec } from 'multinet';
 
-import api, { logout } from '@/api';
+import api from '@/api';
 
 Vue.use(Vuex);
 
@@ -102,7 +102,7 @@ const {
       const { commit, dispatch } = rootActionContext(context);
 
       // Perform the server logout.
-      await logout();
+      await api.logout();
       commit.setUserInfo(null);
 
       // Refresh the workspace list to account for lost privileges upon logout.

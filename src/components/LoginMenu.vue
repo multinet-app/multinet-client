@@ -64,10 +64,7 @@
 import { UserSpec } from 'multinet';
 import { host } from '@/environment';
 import store from '@/store';
-import api from '@/api';
-import { saveLoginToken } from '@/utils/localStorage';
 
-const loginTokenRegex = /#loginToken=(\S+)/;
 export default {
   data: () => ({
     menu: false,
@@ -110,7 +107,6 @@ export default {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   created(this: any) {
     store.dispatch.fetchUserInfo();
-    this.checkUrlForLogin();
   },
 
   methods: {
@@ -124,31 +120,6 @@ export default {
       // Avoid illegal duplicate navigation if we are already on the Home view.
       if (this.$router.currentRoute.name !== 'home') {
         this.$router.push({ name: 'home' });
-      }
-    },
-    /**
-     * When login is completed, the server will redirect the browser back here,
-     * with an appended url fragment of `loginToken=<token>`. This function checks
-     * for this fragment, and if it exists, it pops that token from the URL, saves
-     * it in localStorage, and re-fetches app info, using this new token.
-     */
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    checkUrlForLogin(this: any) {
-      if (this.$route.hash) {
-        const result = loginTokenRegex.exec(this.$route.fullPath);
-
-        if (result !== null) {
-          const { index, 1: loginToken } = result;
-
-          api.setAuthToken(loginToken);
-          saveLoginToken(loginToken);
-
-          store.dispatch.fetchUserInfo();
-          store.dispatch.fetchWorkspaces();
-
-          const newPath = this.$route.fullPath.slice(0, index);
-          this.$router.replace(newPath);
-        }
       }
     },
   },
