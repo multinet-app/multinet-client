@@ -81,6 +81,7 @@
             >
               <v-select
                 v-model="columnType[field]"
+                outlined
                 :label="field"
                 :items="multinetTypes"
               />
