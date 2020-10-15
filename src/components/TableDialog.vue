@@ -177,12 +177,16 @@ export default Vue.extend({
     },
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    handleFileInput(this: any, file: File) {
-      this.file = file;
+    handleFileInput(this: any, file: File | undefined) {
+      this.file = file || null;
 
       if (!file) {
         this.fileUploadError = null;
-      } else if (!validFileType(file, this.types)) {
+        this.columnType = {};
+        return;
+      }
+
+      if (!validFileType(file, this.types)) {
         this.fileUploadError = 'Invalid file type';
       } else {
         this.fileName = this.fileName || getFileName(file);
