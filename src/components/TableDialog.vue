@@ -77,11 +77,12 @@
             <v-col
               v-for="(type, field) in columnType"
               :key="field"
-              cols="2"
+              cols="3"
             >
               <v-select
                 v-model="columnType[field]"
                 outlined
+                dense
                 :label="field"
                 :items="multinetTypes"
               />
