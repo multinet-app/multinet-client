@@ -229,8 +229,10 @@ export default Vue.extend({
             entry.strings.add(value);
 
             // See if the value can be converted to a number. Empty strings
-            // convert to 0, so those are excluded specifically.
-            if (value !== '' && !Number.isNaN(Number(value))) {
+            // convert to 0, so those are excluded specifically. Trim the string
+            // here and not above to preserve its literal string value in case
+            // it's not a number.
+            if (value.trim() !== '' && !Number.isNaN(Number(value.trim()))) {
               entry.number += 1;
             }
 
