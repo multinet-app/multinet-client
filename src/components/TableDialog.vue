@@ -112,14 +112,10 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
-import Papa, { ParseResult } from 'papaparse';
-import dayjs from 'dayjs';
 
 import api from '@/api';
-import { FileType } from '@/types';
-import { validFileType, fileName as getFileName } from '@/utils/files';
-
-type MultinetType = 'label' | 'category' | 'number' | 'date';
+import { FileType, CSVColumnType } from '@/types';
+import { validFileType, fileName as getFileName, csvFileTypeRecommendations } from '@/utils/files';
 
 const defaultKeyField = '_key';
 export default Vue.extend({
@@ -148,7 +144,7 @@ export default Vue.extend({
       tableCreationError: null as string | null,
       key: defaultKeyField,
       overwrite: false,
-      columnType: {} as { [key: string]: MultinetType },
+      columnType: {} as { [key: string]: CSVColumnType },
       uploading: false,
       uploadProgress: null as number | null,
     };
@@ -162,7 +158,7 @@ export default Vue.extend({
       );
     },
 
-    multinetTypes(): MultinetType[] {
+    multinetTypes(): CSVColumnType[] {
       return [
         'label',
         'category',
@@ -178,7 +174,7 @@ export default Vue.extend({
     },
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    handleFileInput(this: any, file: File | undefined) {
+    async handleFileInput(this: any, file: File | undefined) {
       this.file = file || null;
 
       if (!file) {
@@ -194,89 +190,10 @@ export default Vue.extend({
         this.fileUploadError = null;
       }
 
-      interface TypeScore {
-        strings: Set<string>;
-        number: number;
-        date: number;
-        total: number;
-      }
-      const columnTypes = new Map<string, TypeScore>();
-
-      Papa.parse(file, {
-        header: true,
-        skipEmptyLines: true,
-        step(row: ParseResult<{}>) {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const data = row.data as { [key: string]: any };
-
-          Object.keys(data).forEach((key: string) => {
-            if (!columnTypes.has(key)) {
-              columnTypes.set(key, {
-                strings: new Set<string>(),
-                number: 0,
-                date: 0,
-                total: 0,
-              });
-            }
-
-            const entry = columnTypes.get(key);
-            if (entry === undefined) {
-              throw new Error('impossible');
-            }
-
-            // Pass the value through a gauntlet of heuristics to see what types
-            // it can convert to.
-            const value = data[key];
-            entry.total += 1;
-
-            // Test for categoriness by counting up all the unique strings in
-            // the column.
-            entry.strings.add(value);
-
-            // See if the value can be converted to a number. Empty strings
-            // convert to 0, so those are excluded specifically. Trim the string
-            // here and not above to preserve its literal string value in case
-            // it's not a number.
-            if (value.trim() !== '' && !Number.isNaN(Number(value.trim()))) {
-              entry.number += 1;
-            }
-
-            // See if the value looks like a date.
-            if (dayjs(value).isValid()) {
-              entry.date += 1;
-            }
-          });
-        },
-
-        complete: () => {
-          const typeRecs = new Map<string, MultinetType>();
-
-          columnTypes.forEach((entry, field) => {
-            const isKey = field === '_key' || field === '_from' || field === '_to';
-            const category = entry.strings.size <= 10;
-            const number = entry.number === entry.total;
-            const date = entry.date === entry.total;
-
-            let rec: MultinetType = 'label';
-            if (isKey) {
-              rec = 'label';
-            } else if (category && !number && !date) {
-              rec = 'category';
-            } else if (number) {
-              rec = 'number';
-            } else if (date) {
-              rec = 'date';
-            }
-
-            typeRecs.set(field, rec);
-          });
-
-          this.columnType = {};
-          typeRecs.forEach((type, field) => {
-            this.$set(this.columnType, field, type);
-          });
-        },
-      });
+      const typeRecs = await csvFileTypeRecommendations(file);
+      this.columnType = Array.from(typeRecs.keys()).reduce(
+        (acc, key) => ({ ...acc, [key]: typeRecs.get(key) }), {},
+      );
     },
 
     handleUploadProgress(evt: { loaded: number; total: number; [key: string]: unknown }) {
