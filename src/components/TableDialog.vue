@@ -72,6 +72,22 @@
               />
             </v-col>
           </v-row>
+
+          <v-row>
+            <v-col
+              v-for="(type, field) in columnType"
+              :key="field"
+              cols="3"
+            >
+              <v-select
+                v-model="columnType[field]"
+                outlined
+                dense
+                :label="field"
+                :items="multinetTypes"
+              />
+            </v-col>
+          </v-row>
         </v-card-text>
 
         <v-divider />
@@ -98,8 +114,8 @@
 import Vue, { PropType } from 'vue';
 
 import api from '@/api';
-import { FileType } from '@/types';
-import { validFileType, fileName as getFileName } from '@/utils/files';
+import { FileType, CSVColumnType } from '@/types';
+import { validFileType, fileName as getFileName, csvFileTypeRecommendations } from '@/utils/files';
 
 const defaultKeyField = '_key';
 export default Vue.extend({
@@ -128,6 +144,7 @@ export default Vue.extend({
       tableCreationError: null as string | null,
       key: defaultKeyField,
       overwrite: false,
+      columnType: {} as { [key: string]: CSVColumnType },
       uploading: false,
       uploadProgress: null as number | null,
     };
@@ -140,23 +157,43 @@ export default Vue.extend({
         || !!this.fileUploadError
       );
     },
+
+    multinetTypes(): CSVColumnType[] {
+      return [
+        'label',
+        'category',
+        'number',
+        'date',
+      ];
+    },
   },
+
   methods: {
     restoreKeyField() {
       this.key = defaultKeyField;
     },
 
-    handleFileInput(file: File) {
-      this.file = file;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async handleFileInput(this: any, file: File | undefined) {
+      this.file = file || null;
 
       if (!file) {
         this.fileUploadError = null;
-      } else if (!validFileType(file, this.types)) {
+        this.columnType = {};
+        return;
+      }
+
+      if (!validFileType(file, this.types)) {
         this.fileUploadError = 'Invalid file type';
       } else {
         this.fileName = this.fileName || getFileName(file);
         this.fileUploadError = null;
       }
+
+      const typeRecs = await csvFileTypeRecommendations(file);
+      this.columnType = Array.from(typeRecs.keys()).reduce(
+        (acc, key) => ({ ...acc, [key]: typeRecs.get(key) }), {},
+      );
     },
 
     handleUploadProgress(evt: { loaded: number; total: number; [key: string]: unknown }) {
