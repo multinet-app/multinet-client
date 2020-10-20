@@ -54,7 +54,7 @@
           <v-row no-gutters>
             <v-col cols="4">
               <v-text-field
-                v-model="key"
+                v-model="keyField"
                 label="Key Column"
                 append-icon="restore"
                 outlined
@@ -229,7 +229,7 @@ export default defineComponent({
       handleFileInput,
       createTable,
       restoreKeyField,
-      key: keyField,
+      keyField,
       overwrite,
     };
   },
