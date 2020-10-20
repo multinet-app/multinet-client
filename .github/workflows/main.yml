@@ -34,6 +34,9 @@ jobs:
         if: steps.client-cache.outputs.cache-hit != 'true'
         run: yarn install
 
+      - name: Populate app registry
+        run: yarn init-appregistry
+
       - run: yarn lint
       - run: yarn lint:test
       - run: yarn build
