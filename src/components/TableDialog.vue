@@ -120,6 +120,7 @@ import { FileType, CSVColumnType } from '@/types';
 import { validFileType, fileName as getFileName, csvFileTypeRecommendations } from '@/utils/files';
 
 const defaultKeyField = '_key';
+const multinetTypes: readonly CSVColumnType[] = ['label', 'category', 'number', 'date'];
 const fileTypes: readonly FileType[] = [
   {
     extension: ['csv'],
@@ -140,7 +141,6 @@ export default defineComponent({
   setup(props, { emit }) {
     // Type recommendation
     const columnType: Ref<{[key: string]: CSVColumnType}> = ref({});
-    const multinetTypes: readonly CSVColumnType[] = ['label', 'category', 'number', 'date'];
 
     // File selection
     const selectedFile = ref<File | null>(null);
