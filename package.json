@@ -5,6 +5,8 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
+    "build:prod": "yarn init-appregistry && yarn build",
+    "init-appregistry": "cp src/assets/prod.appregistry.json src/assets/appregistry.json",
     "lint": "vue-cli-service lint --max-warnings=0 --no-fix",
     "lint:fix": "vue-cli-service lint",
     "lint:test": "eslint test/**/*.test.js",
