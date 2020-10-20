@@ -9,7 +9,7 @@
 import Vue from 'vue';
 
 import Sidebar from '@/components/Sidebar.vue';
-import apps from './appregistry.json';
+import apps from '@/assets/appregistry.json';
 
 export default Vue.extend({
   name: 'App',

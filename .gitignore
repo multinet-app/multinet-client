@@ -24,3 +24,5 @@ yarn-error.log*
 # Deployment files
 git-sha
 ga-tag
+
+appregistry.json
