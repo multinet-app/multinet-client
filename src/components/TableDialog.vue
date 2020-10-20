@@ -120,7 +120,7 @@ import { FileType, CSVColumnType } from '@/types';
 import { validFileType, fileName as getFileName, csvFileTypeRecommendations } from '@/utils/files';
 
 const defaultKeyField = '_key';
-const fileTypes: FileType[] = [
+const fileTypes: readonly FileType[] = [
   {
     extension: ['csv'],
     queryCall: 'csv',
