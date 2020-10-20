@@ -146,14 +146,16 @@ export default defineComponent({
     const selectedFile = ref<File | null>(null);
     const fileName = ref<string | null>(null);
     const fileUploadError = ref<string | null>(null);
-    async function handleFileInput(file: File) {
-      selectedFile.value = file;
-
-      if (!file) {
+    async function handleFileInput(file: File | undefined) {
+      if (file === undefined) {
         fileUploadError.value = null;
+        selectedFile.value = null;
         columnType.value = {};
+
         return;
       }
+
+      selectedFile.value = file;
 
       if (!validFileType(file, fileTypes)) {
         fileUploadError.value = 'Invalid file type';
