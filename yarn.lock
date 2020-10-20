@@ -1103,6 +1103,13 @@
   optionalDependencies:
     prettier "^1.18.2"
 
+"@vue/composition-api@^1.0.0-beta.16":
+  version "1.0.0-beta.16"
+  resolved "https://registry.yarnpkg.com/@vue/composition-api/-/composition-api-1.0.0-beta.16.tgz#9f7202125214e9398f68018c1162b57b14fd0bdc"
+  integrity sha512-FZgmL2qb2Hy3TGFKCEXHwaddFdTfG17GoA1YFCNGTg5mD3+GfWVchsKKR7XxHIAwOaXiHK/djWWsviSD1NeFFw==
+  dependencies:
+    tslib "^2.0.1"
+
 "@vue/eslint-config-airbnb@^5.0.2":
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/@vue/eslint-config-airbnb/-/eslint-config-airbnb-5.1.0.tgz#6a72e166af18ac821120ff36aae8b76b940f28aa"
@@ -5864,10 +5871,10 @@ multimatch@^2.1.0:
     arrify "^1.0.0"
     minimatch "^3.0.0"
 
-multinet@0.17.0:
-  version "0.17.0"
-  resolved "https://registry.yarnpkg.com/multinet/-/multinet-0.17.0.tgz#05b30b85d29af8cb877bed502d8cacdabe8796ed"
-  integrity sha512-EC+ALY7ciwSmbkC49NE5A0OmFYxjt/QrTPQf7sXDeL6FUi74UKaammlN3E11T4Pur3kNx686AycmKSbgCkPHNA==
+multinet@0.18.0:
+  version "0.18.0"
+  resolved "https://registry.yarnpkg.com/multinet/-/multinet-0.18.0.tgz#bc88f0fc980ddce18ba781962ef597788a1c26ec"
+  integrity sha512-rLO+5EH67kbiosN2DnEZLaKUa6VSNy/pm372EfZkn8JSMkwNK1SL7si6zpTfuXFA/QZIShlJmzRpD92+LZ6GQg==
   dependencies:
     axios "^0.19.0"
 
@@ -8608,6 +8615,11 @@ tslib@^1.8.0, tslib@^1.8.1, tslib@^1.9.0:
   version "1.13.0"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.13.0.tgz#c881e13cc7015894ed914862d276436fa9a47043"
   integrity sha512-i/6DQjL8Xf3be4K/E6Wgpekn5Qasl1usyw++dAA35Ue5orEn65VIxOA+YvNNl9HV3qv70T7CNwjODHZrLwvd1Q==
+
+tslib@^2.0.1:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.0.3.tgz#8e0741ac45fc0c226e58a17bfc3e64b9bc6ca61c"
+  integrity sha512-uZtkfKblCEQtZKBF6EBXVZeQNl82yqtDQdv+eck8u7tdPxjLu2/lp5/uPW+um2tpuxINHWy3GhiccY7QgEaVHQ==
 
 tslint@^5.15.0:
   version "5.20.1"

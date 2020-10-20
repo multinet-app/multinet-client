@@ -19,6 +19,7 @@
     "test:server:up": "cd .. && PIPENV_DONT_LOAD_ENV=1 pipenv run test-server-up"
   },
   "dependencies": {
+    "@vue/composition-api": "^1.0.0-beta.16",
     "axios": "^0.18.1",
     "core-js": "^2.6.5",
     "dayjs": "^1.9.1",
