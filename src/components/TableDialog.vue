@@ -54,7 +54,7 @@
           <v-row no-gutters>
             <v-col cols="4">
               <v-text-field
-                v-model="key"
+                v-model="keyField"
                 label="Key Column"
                 append-icon="restore"
                 outlined
@@ -111,130 +111,127 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from 'vue';
+import {
+  defineComponent, ref, Ref, computed,
+} from '@vue/composition-api';
 
 import api from '@/api';
 import { FileType, CSVColumnType } from '@/types';
 import { validFileType, fileName as getFileName, csvFileTypeRecommendations } from '@/utils/files';
 
 const defaultKeyField = '_key';
-export default Vue.extend({
-  name: 'TableDialog',
+const multinetTypes: readonly CSVColumnType[] = ['label', 'category', 'number', 'date'];
+const fileTypes: readonly FileType[] = [
+  {
+    extension: ['csv'],
+    queryCall: 'csv',
+    hint: 'Comma Separated Value file',
+    displayName: 'CSV',
+  },
+];
 
+export default defineComponent({
+  name: 'TableDialog',
   props: {
     workspace: {
-      type: String as PropType<string>,
+      type: String,
       required: true,
     },
   },
-  data() {
-    return {
-      tableDialog: false,
-      types: [
-        {
-          extension: ['csv'],
-          queryCall: 'csv',
-          hint: 'Comma Separated Value file',
-          displayName: 'CSV',
-        },
-      ] as FileType[],
-      file: null as File | null,
-      fileName: null as string | null,
-      fileUploadError: null as string | null,
-      tableCreationError: null as string | null,
-      key: defaultKeyField,
-      overwrite: false,
-      columnType: {} as { [key: string]: CSVColumnType },
-      uploading: false,
-      uploadProgress: null as number | null,
-    };
-  },
-  computed: {
-    createDisabled(): boolean {
-      return (
-        !this.file
-        || !this.fileName
-        || !!this.fileUploadError
-      );
-    },
+  setup(props, { emit }) {
+    // Type recommendation
+    const columnType: Ref<{[key: string]: CSVColumnType}> = ref({});
 
-    multinetTypes(): CSVColumnType[] {
-      return [
-        'label',
-        'category',
-        'number',
-        'date',
-      ];
-    },
-  },
+    // File selection
+    const selectedFile = ref<File | null>(null);
+    const fileName = ref<string | null>(null);
+    const fileUploadError = ref<string | null>(null);
+    async function handleFileInput(file: File | undefined) {
+      if (file === undefined) {
+        fileUploadError.value = null;
+        selectedFile.value = null;
+        columnType.value = {};
 
-  methods: {
-    restoreKeyField() {
-      this.key = defaultKeyField;
-    },
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async handleFileInput(this: any, file: File | undefined) {
-      this.file = file || null;
-
-      if (!file) {
-        this.fileUploadError = null;
-        this.columnType = {};
         return;
       }
 
-      if (!validFileType(file, this.types)) {
-        this.fileUploadError = 'Invalid file type';
+      selectedFile.value = file;
+
+      if (!validFileType(file, fileTypes)) {
+        fileUploadError.value = 'Invalid file type';
       } else {
-        this.fileName = this.fileName || getFileName(file);
-        this.fileUploadError = null;
+        fileName.value = fileName.value || getFileName(file);
+        fileUploadError.value = null;
       }
 
       const typeRecs = await csvFileTypeRecommendations(file);
-      this.columnType = Array.from(typeRecs.keys()).reduce(
+      columnType.value = Array.from(typeRecs.keys()).reduce(
         (acc, key) => ({ ...acc, [key]: typeRecs.get(key) }), {},
       );
-    },
+    }
 
-    handleUploadProgress(evt: { loaded: number; total: number; [key: string]: unknown }) {
-      this.uploadProgress = (evt.loaded / evt.total) * 100;
-    },
+    // Upload options
+    const overwrite = ref(false);
+    const keyField = ref<string>(defaultKeyField);
+    const restoreKeyField = () => { keyField.value = defaultKeyField; };
 
-    async createTable() {
-      const {
-        file,
-        workspace,
-        fileName,
-        key,
-        overwrite,
-      } = this;
+    // Upload state
+    const uploading = ref(false);
+    const uploadProgress = ref<number | null>(null);
+    function handleUploadProgress(evt: { loaded: number; total: number; [key: string]: unknown }) {
+      uploadProgress.value = (evt.loaded / evt.total) * 100;
+    }
 
-      if (file === null || fileName === null) {
+    // Table creation state
+    const tableDialog = ref(false);
+    const tableCreationError = ref<string | null>(null);
+    const createDisabled = computed(() => !selectedFile.value || !fileName.value || fileUploadError.value);
+    async function createTable() {
+      if (selectedFile.value === null || fileName.value === null) {
         return;
       }
 
-      this.uploading = true;
+      const { workspace } = props;
+      uploading.value = true;
 
       try {
-        await api.uploadTable(workspace, fileName, {
+        await api.uploadTable(workspace, fileName.value, {
           type: 'csv',
-          data: file,
-          key,
-          overwrite,
+          data: selectedFile.value,
+          key: keyField.value,
+          overwrite: overwrite.value,
         }, {
-          onUploadProgress: this.handleUploadProgress,
+          onUploadProgress: handleUploadProgress,
         });
 
-        this.tableCreationError = null;
-        this.tableDialog = false;
-        this.$emit('success');
+        tableCreationError.value = null;
+        tableDialog.value = false;
+
+        emit('success');
       } catch (err) {
-        this.tableCreationError = err.statusText;
+        tableCreationError.value = err.statusText;
       } finally {
-        this.uploading = false;
-        this.uploadProgress = null;
+        uploading.value = false;
+        uploadProgress.value = null;
       }
-    },
+    }
+
+    return {
+      columnType,
+      multinetTypes,
+      fileName,
+      fileUploadError,
+      tableDialog,
+      tableCreationError,
+      uploading,
+      uploadProgress,
+      createDisabled,
+      handleFileInput,
+      createTable,
+      restoreKeyField,
+      keyField,
+      overwrite,
+    };
   },
 });
 </script>
