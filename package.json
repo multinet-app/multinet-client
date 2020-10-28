@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "build": "yarn init-appregistry && vue-cli-service build",
+    "init-appregistry": "cp -n src/assets/prod.appregistry.json src/assets/appregistry.json",
     "lint": "vue-cli-service lint --max-warnings=0 --no-fix",
     "lint:fix": "vue-cli-service lint",
     "lint:test": "eslint test/**/*.test.js",
