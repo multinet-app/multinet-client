@@ -21,8 +21,16 @@ function isBoolean(strings: Set<string>) {
   const candidates: Array<[string, string]> = [
     ['0', '1'],
     ['no', 'yes'],
+    ['No', 'Yes'],
+    ['NO', 'YES'],
+    ['n', 'y'],
+    ['N', 'Y'],
     ['false', 'true'],
+    ['False', 'True'],
+    ['FALSE', 'TRUE'],
     ['off', 'on'],
+    ['Off', 'On'],
+    ['OFF', 'ON'],
   ];
 
   // Consider the string set to be compatible with the "boolean" semantic type
