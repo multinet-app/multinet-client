@@ -1,6 +1,6 @@
 import { UploadType } from 'multinet';
 
-export type CSVColumnType = 'label' | 'category' | 'number' | 'date';
+export type CSVColumnType = 'label' | 'boolean' | 'category' | 'number' | 'date';
 
 export interface App {
   name: string;

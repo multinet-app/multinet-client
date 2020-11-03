@@ -11,6 +11,34 @@ function validFileType(file: File, allowedTypes: readonly FileType[]) {
   return allowedTypes.some((type) => type.extension.includes(extension) && validUploadType(type.queryCall));
 }
 
+function isBoolean(strings: Set<string>) {
+  // This function tests whether both elements of an array belong to the string
+  // set.
+  const hasPair = ([a, b]: [string, string]) => strings.has(a) && strings.has(b);
+
+  // This is a list of two-element arrays containing valid false/true value
+  // pairs.
+  const candidates: Array<[string, string]> = [
+    ['0', '1'],
+    ['no', 'yes'],
+    ['No', 'Yes'],
+    ['NO', 'YES'],
+    ['n', 'y'],
+    ['N', 'Y'],
+    ['false', 'true'],
+    ['False', 'True'],
+    ['FALSE', 'TRUE'],
+    ['off', 'on'],
+    ['Off', 'On'],
+    ['OFF', 'ON'],
+  ];
+
+  // Consider the string set to be compatible with the "boolean" semantic type
+  // if it contains exactly two unique values, and that pair of values is
+  // precisely one of the candidate pairs above.
+  return strings.size === 2 && candidates.some(hasPair);
+}
+
 interface TypeScore {
   strings: Set<string>;
   number: number;
@@ -72,6 +100,7 @@ async function csvFileTypeRecommendations(file: File): Promise<Map<string, CSVCo
       complete: () => {
         columnTypes.forEach((entry, field) => {
           const isKey = field === '_key' || field === '_from' || field === '_to';
+          const boolean = isBoolean(entry.strings);
           const category = entry.strings.size <= 10;
           const number = entry.number === entry.total;
           const date = entry.date === entry.total;
@@ -79,6 +108,8 @@ async function csvFileTypeRecommendations(file: File): Promise<Map<string, CSVCo
           let rec: CSVColumnType = 'label';
           if (isKey) {
             rec = 'label';
+          } else if (boolean) {
+            rec = 'boolean';
           } else if (category && !number && !date) {
             rec = 'category';
           } else if (number) {
