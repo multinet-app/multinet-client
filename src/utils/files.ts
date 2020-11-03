@@ -12,7 +12,7 @@ function validFileType(file: File, allowedTypes: readonly FileType[]) {
 }
 
 function isBoolean(strings: Set<string>) {
-  // This function tests wehther both elements of an array belong to the string
+  // This function tests whether both elements of an array belong to the string
   // set.
   const hasPair = ([a, b]: [string, string]) => strings.has(a) && strings.has(b);
 
