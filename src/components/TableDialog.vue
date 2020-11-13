@@ -97,22 +97,6 @@
                     />
                   </v-col>
                 </v-row>
-
-                <v-row>
-                  <v-col
-                    v-for="(type, field) in columnType"
-                    :key="field"
-                    cols="3"
-                  >
-                    <v-select
-                      v-model="columnType[field]"
-                      outlined
-                      dense
-                      :label="field"
-                      :items="multinetTypes"
-                    />
-                  </v-col>
-                </v-row>
               </v-card-text>
 
               <v-divider />
@@ -136,7 +120,31 @@
         </v-stepper-content>
 
         <v-stepper-content step="2">
-          <h1>hii</h1>
+          <v-data-table
+            fixed-header
+            :headers="headers"
+            hide-default-header
+            :items="rowSample"
+          >
+            <template v-slot:header="{ props: { headers } }">
+              <thead>
+                <tr>
+                  <th
+                    v-for="(header, i) in headers"
+                    :key="i"
+                  >
+                    {{ header.text }}
+                    <v-select
+                      v-model="columnType[header.text]"
+                      outlined
+                      dense
+                      :items="multinetTypes"
+                    />
+                  </th>
+                </tr>
+              </thead>
+            </template>
+          </v-data-table>
 
           <v-btn
             color="primary"
@@ -205,6 +213,19 @@ export default defineComponent({
   setup(props, { emit }) {
     // Stepper control
     const step: Ref<number> = ref(1);
+    const rowSample: Ref<Array<{}>> = ref([]);
+    const headers = computed(() => {
+      if (rowSample.value.length === 0) {
+        return [];
+      }
+
+      const keys = Object.keys(rowSample.value[0]);
+
+      return keys.map((key) => ({
+        text: key,
+        value: key,
+      }));
+    });
 
     // Type recommendation
     const columnType: Ref<{[key: string]: CSVColumnType}> = ref({});
@@ -232,9 +253,11 @@ export default defineComponent({
       }
 
       const typeRecs = await csvFileTypeRecommendations(file);
-      columnType.value = Array.from(typeRecs.keys()).reduce(
-        (acc, key) => ({ ...acc, [key]: typeRecs.get(key) }), {},
+      columnType.value = Array.from(typeRecs.typeRecs.keys()).reduce(
+        (acc, key) => ({ ...acc, [key]: typeRecs.typeRecs.get(key) }), {},
       );
+
+      rowSample.value = [...typeRecs.rowSample];
     }
 
     // Upload options
@@ -285,6 +308,8 @@ export default defineComponent({
 
     return {
       step,
+      headers,
+      rowSample,
       columnType,
       multinetTypes,
       fileName,

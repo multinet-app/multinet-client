@@ -46,10 +46,16 @@ interface TypeScore {
   total: number;
 }
 
-async function csvFileTypeRecommendations(file: File): Promise<Map<string, CSVColumnType>> {
-  const parsePromise: Promise<Map<string, CSVColumnType>> = new Promise((resolve) => {
+interface Recommendation {
+  typeRecs: Map<string, CSVColumnType>;
+  rowSample: Array<{}>;
+}
+
+async function csvFileTypeRecommendations(file: File): Promise<Recommendation> {
+  const parsePromise: Promise<Recommendation> = new Promise((resolve) => {
     const columnTypes = new Map<string, TypeScore>();
     const typeRecs = new Map<string, CSVColumnType>();
+    const rowSample = [] as Array<{}>;
 
     Papa.parse(file, {
       header: true,
@@ -57,6 +63,10 @@ async function csvFileTypeRecommendations(file: File): Promise<Map<string, CSVCo
       step(row: ParseResult<{}>) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const data = row.data as { [key: string]: any };
+
+        if (rowSample.length !== 30) {
+          rowSample.push({ ...data });
+        }
 
         Object.keys(data).forEach((key: string) => {
           if (!columnTypes.has(key)) {
@@ -121,7 +131,10 @@ async function csvFileTypeRecommendations(file: File): Promise<Map<string, CSVCo
           typeRecs.set(field, rec);
         });
 
-        resolve(typeRecs);
+        resolve({
+          typeRecs,
+          rowSample,
+        });
       },
     });
   });
