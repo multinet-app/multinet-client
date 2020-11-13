@@ -16,6 +16,84 @@
         </v-icon>
       </v-btn>
     </template>
+
+    <v-stepper v-model="step">
+      <v-stepper-header>
+        <v-stepper-step
+          :complete="step > 1"
+          step="1"
+        >
+          Select Dataset
+        </v-stepper-step>
+
+        <v-divider />
+
+        <v-stepper-step
+          :complete="step > 2"
+          step="2"
+        >
+          Set Column Types
+        </v-stepper-step>
+
+        <v-divider />
+
+        <v-stepper-step
+          :complete="step > 3"
+          step="3"
+        >
+          Finish
+        </v-stepper-step>
+      </v-stepper-header>
+
+      <v-stepper-items>
+        <v-stepper-content step="1">
+          <h1>hi</h1>
+
+          <v-btn
+            color="primary"
+            @click="step = 2"
+          >
+            Next
+          </v-btn>
+        </v-stepper-content>
+
+        <v-stepper-content step="2">
+          <h1>hii</h1>
+
+          <v-btn
+            color="primary"
+            @click="step = 1"
+          >
+            Back
+          </v-btn>
+
+          <v-btn
+            color="primary"
+            @click="step = 3"
+          >
+            Next
+          </v-btn>
+        </v-stepper-content>
+
+        <v-stepper-content step="3">
+          <h1>hiii</h1>
+
+          <v-btn
+            color="primary"
+            @click="step = 2"
+          >
+            Back
+          </v-btn>
+
+          <v-btn
+            color="primary"
+          >
+            Finish
+          </v-btn>
+        </v-stepper-content>
+      </v-stepper-items>
+    </v-stepper>
+
     <v-card>
       <v-card-title
         class="headline pb-0 pt-3"
@@ -139,6 +217,9 @@ export default defineComponent({
     },
   },
   setup(props, { emit }) {
+    // Stepper control
+    const step: Ref<number> = ref(1);
+
     // Type recommendation
     const columnType: Ref<{[key: string]: CSVColumnType}> = ref({});
 
@@ -217,6 +298,7 @@ export default defineComponent({
     }
 
     return {
+      step,
       columnType,
       multinetTypes,
       fileName,
