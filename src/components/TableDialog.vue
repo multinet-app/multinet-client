@@ -34,15 +34,6 @@
         >
           Set Column Types
         </v-stepper-step>
-
-        <v-divider />
-
-        <v-stepper-step
-          :complete="step > 3"
-          step="3"
-        >
-          Finish
-        </v-stepper-step>
       </v-stepper-header>
 
       <v-stepper-items>
@@ -155,26 +146,9 @@
 
           <v-btn
             color="primary"
-            @click="step = 3"
+            @click="createTable"
           >
-            Next
-          </v-btn>
-        </v-stepper-content>
-
-        <v-stepper-content step="3">
-          <h1>hiii</h1>
-
-          <v-btn
-            color="primary"
-            @click="step = 2"
-          >
-            Back
-          </v-btn>
-
-          <v-btn
-            color="primary"
-          >
-            Finish
+            Create Table
           </v-btn>
         </v-stepper-content>
       </v-stepper-items>
