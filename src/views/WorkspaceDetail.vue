@@ -1,6 +1,6 @@
 <template>
   <v-container fluid>
-    <v-content>
+    <v-main>
       <v-app-bar app>
         <v-hover>
           <v-toolbar-title
@@ -154,7 +154,7 @@
           </v-card>
         </v-flex>
       </v-layout>
-    </v-content>
+    </v-main>
   </v-container>
 </template>
 
