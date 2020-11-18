@@ -27,7 +27,7 @@
     "direct-vuex": "^0.10.4",
     "lodash": "^4.17.19",
     "material-design-icons-iconfont": "^5.0.1",
-    "multinet": "0.18.0",
+    "multinet": "0.17.0-10-gdd226e8",
     "papaparse": "^5.3.0",
     "vue": "^2.6.10",
     "vue-async-computed": "^3.8.2",
