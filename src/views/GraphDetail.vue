@@ -44,7 +44,7 @@
         <v-icon>more_vert</v-icon>
       </v-btn>
     </v-app-bar>
-    <v-content class="fill-height">
+    <v-main class="fill-height">
       <v-container
         align-stretch
         d-flex
@@ -305,7 +305,7 @@
           </v-btn>
         </div>
       </v-container>
-    </v-content>
+    </v-main>
   </v-container>
 </template>
 

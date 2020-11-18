@@ -3,7 +3,7 @@
     class="node-container"
     fluid
   >
-    <v-content>
+    <v-main>
       <v-app-bar app>
         <v-toolbar-title class="ws-detail-title">
           <v-icon
@@ -234,7 +234,7 @@
           </v-col>
         </v-row>
       </v-container>
-    </v-content>
+    </v-main>
   </v-container>
 </template>
 
