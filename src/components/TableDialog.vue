@@ -95,7 +95,9 @@
               <v-card-actions class="px-4 py-3">
                 <v-spacer />
                 <v-btn
+                  class="mt-3"
                   :disabled="createDisabled"
+                  color="primary"
                   @click="step = 2"
                 >
                   Next
