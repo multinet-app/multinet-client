@@ -37,7 +37,7 @@
         </v-list>
       </v-list>
     </v-navigation-drawer>
-    <v-content class="ma-0">
+    <v-main class="ma-0">
       <v-app-bar
         app
         clipped-right
@@ -94,7 +94,7 @@
           :options.sync="pagination"
         />
       </div>
-    </v-content>
+    </v-main>
   </v-container>
 </template>
 

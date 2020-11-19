@@ -1,6 +1,6 @@
 <template>
   <v-container fluid>
-    <v-content>
+    <v-main>
       <v-navigation-drawer
         right
         app
@@ -113,7 +113,7 @@
           highlight-mouseover-node
         />
       </v-card>
-    </v-content>
+    </v-main>
   </v-container>
 </template>
 
