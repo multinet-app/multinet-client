@@ -264,6 +264,7 @@ export default defineComponent({
           data: selectedFile.value,
           key: keyField.value,
           overwrite: overwrite.value,
+          columnTypes: columnType.value,
         }, {
           onUploadProgress: handleUploadProgress,
         });
