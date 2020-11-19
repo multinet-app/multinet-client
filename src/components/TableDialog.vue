@@ -122,6 +122,7 @@
             :headers="headers"
             hide-default-header
             :items="sampleRows"
+            height="65vh"
           >
             <template v-slot:header="{ props: { headers } }">
               <thead dark>
