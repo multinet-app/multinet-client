@@ -163,7 +163,7 @@ import {
 
 import api from '@/api';
 import { FileType, CSVColumnType } from '@/types';
-import { validFileType, fileName as getFileName, csvFileTypeRecommendations } from '@/utils/files';
+import { validFileType, fileName as getFileName, analyzeCSV } from '@/utils/files';
 
 const defaultKeyField = '_key';
 const multinetTypes: readonly CSVColumnType[] = ['label', 'boolean', 'category', 'number', 'date'];
@@ -221,12 +221,12 @@ export default defineComponent({
         fileUploadError.value = null;
       }
 
-      const typeRecs = await csvFileTypeRecommendations(file);
-      columnType.value = Array.from(typeRecs.typeRecs.keys()).reduce(
-        (acc, key) => ({ ...acc, [key]: typeRecs.typeRecs.get(key) }), {},
+      const analysis = await analyzeCSV(file);
+      columnType.value = Array.from(analysis.typeRecs.keys()).reduce(
+        (acc, key) => ({ ...acc, [key]: analysis.typeRecs.get(key) }), {},
       );
 
-      sampleRows.value = [...typeRecs.sampleRows];
+      sampleRows.value = [...analysis.sampleRows];
     }
 
     // Upload options

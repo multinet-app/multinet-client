@@ -46,13 +46,13 @@ interface TypeScore {
   total: number;
 }
 
-interface Recommendation {
+interface CSVAnalysis {
   typeRecs: Map<string, CSVColumnType>;
   sampleRows: Array<{}>;
 }
 
-async function csvFileTypeRecommendations(file: File): Promise<Recommendation> {
-  const parsePromise: Promise<Recommendation> = new Promise((resolve) => {
+async function analyzeCSV(file: File): Promise<CSVAnalysis> {
+  const parsePromise: Promise<CSVAnalysis> = new Promise((resolve) => {
     const columnTypes = new Map<string, TypeScore>();
     const typeRecs = new Map<string, CSVColumnType>();
     const sampleRows = [] as Array<{}>;
@@ -145,5 +145,5 @@ async function csvFileTypeRecommendations(file: File): Promise<Recommendation> {
 export {
   fileName,
   validFileType,
-  csvFileTypeRecommendations,
+  analyzeCSV,
 };
