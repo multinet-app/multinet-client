@@ -1,7 +1,7 @@
 <template>
   <v-dialog
     v-model="tableDialog"
-    width="800"
+    :width="dialogWidth"
   >
     <template v-slot:activator="{ on }">
       <v-btn
@@ -199,6 +199,13 @@ export default defineComponent({
   setup(props, { emit }) {
     // Stepper control
     const step: Ref<number> = ref(1);
+    const dialogWidth = computed(() => {
+      if (step.value === 2) {
+        return 'unset';
+      }
+      return '35vw';
+    });
+
     const sampleRows: Ref<Array<{}>> = ref([]);
     const headers = computed(() => {
       const keys = Object.keys(sampleRows.value[0] || {});
@@ -290,6 +297,7 @@ export default defineComponent({
 
     return {
       step,
+      dialogWidth,
       headers,
       sampleRows,
       columnType,
