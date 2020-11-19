@@ -115,7 +115,7 @@
             fixed-header
             :headers="headers"
             hide-default-header
-            :items="rowSample"
+            :items="sampleRows"
           >
             <template v-slot:header="{ props: { headers } }">
               <thead>
@@ -187,9 +187,9 @@ export default defineComponent({
   setup(props, { emit }) {
     // Stepper control
     const step: Ref<number> = ref(1);
-    const rowSample: Ref<Array<{}>> = ref([]);
+    const sampleRows: Ref<Array<{}>> = ref([]);
     const headers = computed(() => {
-      const keys = Object.keys(rowSample.value[0] || {});
+      const keys = Object.keys(sampleRows.value[0] || {});
       return keys.map((key) => ({
         text: key,
         value: key,
@@ -226,7 +226,7 @@ export default defineComponent({
         (acc, key) => ({ ...acc, [key]: typeRecs.typeRecs.get(key) }), {},
       );
 
-      rowSample.value = [...typeRecs.rowSample];
+      sampleRows.value = [...typeRecs.sampleRows];
     }
 
     // Upload options
@@ -279,7 +279,7 @@ export default defineComponent({
     return {
       step,
       headers,
-      rowSample,
+      sampleRows,
       columnType,
       multinetTypes,
       fileName,
