@@ -189,12 +189,7 @@ export default defineComponent({
     const step: Ref<number> = ref(1);
     const rowSample: Ref<Array<{}>> = ref([]);
     const headers = computed(() => {
-      if (rowSample.value.length === 0) {
-        return [];
-      }
-
-      const keys = Object.keys(rowSample.value[0]);
-
+      const keys = Object.keys(rowSample.value[0] || {});
       return keys.map((key) => ({
         text: key,
         value: key,
