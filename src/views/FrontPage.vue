@@ -3,7 +3,7 @@
     class="pa-0"
     fluid
   >
-    <v-content>
+    <v-main>
       <!-- BANNER -->
       <v-responsive
         class="mb-5"
@@ -112,7 +112,7 @@
           </v-col>
         </v-row>
       </div>
-    </v-content>
+    </v-main>
   </v-container>
 </template>
 

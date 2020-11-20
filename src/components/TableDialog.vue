@@ -1,7 +1,7 @@
 <template>
   <v-dialog
     v-model="tableDialog"
-    width="700"
+    width="800"
   >
     <template v-slot:activator="{ on }">
       <v-btn
@@ -110,25 +110,32 @@
           </v-card>
         </v-stepper-content>
 
-        <v-stepper-content step="2">
+        <v-stepper-content
+          class="pa-0"
+          step="2"
+        >
           <v-data-table
+            class="upload-preview"
             fixed-header
             :headers="headers"
             hide-default-header
             :items="sampleRows"
           >
             <template v-slot:header="{ props: { headers } }">
-              <thead>
+              <thead dark>
                 <tr>
                   <th
                     v-for="(header, i) in headers"
                     :key="i"
+                    class="pt-2 pb-4"
                   >
                     {{ header.text }}
                     <v-select
                       v-model="columnType[header.text]"
                       outlined
+                      dark
                       dense
+                      hide-details
                       :items="multinetTypes"
                     />
                   </th>
@@ -137,19 +144,24 @@
             </template>
           </v-data-table>
 
-          <v-btn
-            color="primary"
-            @click="step = 1"
-          >
-            Back
-          </v-btn>
+          <v-footer class="py-3">
+            <v-spacer />
+            <v-btn
+              color="primary"
+              text
+              @click="step = 1"
+            >
+              Back
+            </v-btn>
 
-          <v-btn
-            color="primary"
-            @click="createTable"
-          >
-            Create Table
-          </v-btn>
+            <v-btn
+              color="primary"
+              depressed
+              @click="createTable"
+            >
+              Create Table
+            </v-btn>
+          </v-footer>
         </v-stepper-content>
       </v-stepper-items>
     </v-stepper>
@@ -303,5 +315,9 @@ export default defineComponent({
 .new-button {
   margin: 49px 10px 0 0;
   z-index: 1;
+}
+.upload-preview table th {
+  background-color: #1976d2 !important;
+  color: #fff !important;
 }
 </style>
