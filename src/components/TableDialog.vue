@@ -119,7 +119,7 @@
             fixed-header
             :headers="headers"
             hide-default-header
-            :items="rowSample"
+            :items="sampleRows"
           >
             <template v-slot:header="{ props: { headers } }">
               <thead dark>
@@ -175,7 +175,7 @@ import {
 
 import api from '@/api';
 import { FileType, CSVColumnType } from '@/types';
-import { validFileType, fileName as getFileName, csvFileTypeRecommendations } from '@/utils/files';
+import { validFileType, fileName as getFileName, analyzeCSV } from '@/utils/files';
 
 const defaultKeyField = '_key';
 const multinetTypes: readonly CSVColumnType[] = ['label', 'boolean', 'category', 'number', 'date'];
@@ -199,14 +199,9 @@ export default defineComponent({
   setup(props, { emit }) {
     // Stepper control
     const step: Ref<number> = ref(1);
-    const rowSample: Ref<Array<{}>> = ref([]);
+    const sampleRows: Ref<Array<{}>> = ref([]);
     const headers = computed(() => {
-      if (rowSample.value.length === 0) {
-        return [];
-      }
-
-      const keys = Object.keys(rowSample.value[0]);
-
+      const keys = Object.keys(sampleRows.value[0] || {});
       return keys.map((key) => ({
         text: key,
         value: key,
@@ -238,12 +233,12 @@ export default defineComponent({
         fileUploadError.value = null;
       }
 
-      const typeRecs = await csvFileTypeRecommendations(file);
-      columnType.value = Array.from(typeRecs.typeRecs.keys()).reduce(
-        (acc, key) => ({ ...acc, [key]: typeRecs.typeRecs.get(key) }), {},
+      const analysis = await analyzeCSV(file);
+      columnType.value = Array.from(analysis.typeRecs.keys()).reduce(
+        (acc, key) => ({ ...acc, [key]: analysis.typeRecs.get(key) }), {},
       );
 
-      rowSample.value = [...typeRecs.rowSample];
+      sampleRows.value = [...analysis.sampleRows];
     }
 
     // Upload options
@@ -276,6 +271,7 @@ export default defineComponent({
           data: selectedFile.value,
           key: keyField.value,
           overwrite: overwrite.value,
+          columnTypes: columnType.value,
         }, {
           onUploadProgress: handleUploadProgress,
         });
@@ -295,7 +291,7 @@ export default defineComponent({
     return {
       step,
       headers,
-      rowSample,
+      sampleRows,
       columnType,
       multinetTypes,
       fileName,

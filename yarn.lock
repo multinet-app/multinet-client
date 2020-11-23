@@ -5871,10 +5871,10 @@ multimatch@^2.1.0:
     arrify "^1.0.0"
     minimatch "^3.0.0"
 
-multinet@0.18.0:
-  version "0.18.0"
-  resolved "https://registry.yarnpkg.com/multinet/-/multinet-0.18.0.tgz#bc88f0fc980ddce18ba781962ef597788a1c26ec"
-  integrity sha512-rLO+5EH67kbiosN2DnEZLaKUa6VSNy/pm372EfZkn8JSMkwNK1SL7si6zpTfuXFA/QZIShlJmzRpD92+LZ6GQg==
+multinet@0.19.0:
+  version "0.19.0"
+  resolved "https://registry.yarnpkg.com/multinet/-/multinet-0.19.0.tgz#99d7d319da67ab49fa2e6f0980b7022ff845fdc0"
+  integrity sha512-kBoDdgRGRYxBeAB/8PcTJdozP+xQpFARzd27FNZLKcq+FkFJdhXMCI5DQdWod6I4w4fX/qCm6zXIVO55c4eZ2w==
   dependencies:
     axios "^0.19.0"
 
