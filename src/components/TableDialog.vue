@@ -1,7 +1,7 @@
 <template>
   <v-dialog
     v-model="tableDialog"
-    width="800"
+    :width="dialogWidth"
   >
     <template v-slot:activator="{ on }">
       <v-btn
@@ -95,7 +95,9 @@
               <v-card-actions class="px-4 py-3">
                 <v-spacer />
                 <v-btn
+                  class="mt-3"
                   :disabled="createDisabled"
+                  color="primary"
                   @click="step = 2"
                 >
                   Next
@@ -120,6 +122,7 @@
             :headers="headers"
             hide-default-header
             :items="sampleRows"
+            height="65vh"
           >
             <template v-slot:header="{ props: { headers } }">
               <thead dark>
@@ -199,6 +202,13 @@ export default defineComponent({
   setup(props, { emit }) {
     // Stepper control
     const step: Ref<number> = ref(1);
+    const dialogWidth = computed(() => {
+      if (step.value === 2) {
+        return 'unset';
+      }
+      return '35vw';
+    });
+
     const sampleRows: Ref<Array<{}>> = ref([]);
     const headers = computed(() => {
       const keys = Object.keys(sampleRows.value[0] || {});
@@ -290,6 +300,7 @@ export default defineComponent({
 
     return {
       step,
+      dialogWidth,
       headers,
       sampleRows,
       columnType,
