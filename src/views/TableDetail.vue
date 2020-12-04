@@ -185,15 +185,22 @@ export default Vue.extend({
   watch: {
     workspace() {
       this.update();
+      this.updateTypes();
     },
     table() {
       this.update();
+      this.updateTypes();
     },
 
     pagination() {
       this.update();
     },
   },
+
+  mounted() {
+    this.updateTypes();
+  },
+
   methods: {
     rowClassName(index: number): 'even-row' | 'odd-row' {
       return index % 2 === 0 ? 'even-row' : 'odd-row';
@@ -207,8 +214,6 @@ export default Vue.extend({
         offset: (pagination.page - 1) * pagination.itemsPerPage,
         limit: pagination.itemsPerPage,
       });
-
-      this.columnTypes = await api.tableColumnTypes(this.workspace, this.table);
 
       const {
         rows,
@@ -244,6 +249,10 @@ export default Vue.extend({
       this.tables = await api.tables(this.workspace, {
         type: 'all',
       });
+    },
+
+    async updateTypes() {
+      this.columnTypes = await api.tableColumnTypes(this.workspace, this.table);
     },
   },
 });
