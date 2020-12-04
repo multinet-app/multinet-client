@@ -85,6 +85,7 @@
           height="calc(100vh - 123px)"
           class="table-details"
           :headers="dataTableHeaders"
+          hide-default-header
           :items="dataTableRows"
           :footer-props="{
             itemsPerPageOptions: [10, 20, 50, 100],
@@ -92,7 +93,22 @@
           }"
           :server-items-length="tableSize"
           :options.sync="pagination"
-        />
+        >
+          <template v-slot:header>
+            <thead dark>
+              <tr>
+                <th
+                  v-for="(header, i) in dataTableHeaders"
+                  :key="i"
+                  class="pt-2 pb-4"
+                >
+                  {{ header.text }}
+                  <span>{{ columnTypes[header.text] ? `(${columnTypes[header.text]})` : "" }}</span>
+                </th>
+              </tr>
+            </thead>
+          </template>
+        </v-data-table>
       </div>
     </v-main>
   </v-container>
@@ -102,6 +118,7 @@
 import Vue, { PropType } from 'vue';
 
 import api from '@/api';
+import { ColumnTypes } from 'multinet';
 import { KeyValue, TableRow } from '@/types';
 
 interface DataPagination {
@@ -131,6 +148,7 @@ export default Vue.extend({
       rowKeys: [] as KeyValue[][],
       headers: [] as Array<keyof TableRow>,
       tables: [] as string[],
+      columnTypes: {} as ColumnTypes,
       editing: false,
       tableSize: 1,
       pagination: {} as DataPagination,
@@ -189,6 +207,8 @@ export default Vue.extend({
         offset: (pagination.page - 1) * pagination.itemsPerPage,
         limit: pagination.itemsPerPage,
       });
+
+      this.columnTypes = await api.tableColumnTypes(this.workspace, this.table);
 
       const {
         rows,
