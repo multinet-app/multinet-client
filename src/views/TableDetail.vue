@@ -103,7 +103,9 @@
                   class="pt-2 pb-4"
                 >
                   {{ header.text }}
-                  <span>{{ columnTypes[header.text] ? `(${columnTypes[header.text]})` : "" }}</span>
+                  <span v-if="columnTypes[header.text]">
+                    ({{ columnTypes[header.text] }})
+                  </span>
                 </th>
               </tr>
             </thead>
