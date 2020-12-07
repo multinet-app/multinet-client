@@ -120,7 +120,6 @@
 import Vue, { PropType } from 'vue';
 
 import api from '@/api';
-import { ColumnTypes } from 'multinet';
 import { KeyValue, TableRow } from '@/types';
 
 interface DataPagination {
@@ -150,7 +149,6 @@ export default Vue.extend({
       rowKeys: [] as KeyValue[][],
       headers: [] as Array<keyof TableRow>,
       tables: [] as string[],
-      columnTypes: {} as ColumnTypes,
       editing: false,
       tableSize: 1,
       pagination: {} as DataPagination,
@@ -169,12 +167,13 @@ export default Vue.extend({
       }));
     },
 
-    dataTableRows() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    dataTableRows(this: any) {
       const result = [] as TableRow[];
 
-      this.rowKeys.forEach((rowKey) => {
+      this.rowKeys.forEach((rowKey: KeyValue[]) => {
         const obj = {} as TableRow;
-        rowKey.forEach((entry) => {
+        rowKey.forEach((entry: KeyValue) => {
           obj[entry.key] = entry.value;
         });
 
@@ -184,30 +183,45 @@ export default Vue.extend({
       return result;
     },
   },
-  watch: {
-    workspace() {
-      this.update();
-      this.updateTypes();
-    },
-    table() {
-      this.update();
-      this.updateTypes();
-    },
 
-    pagination() {
-      this.update();
+  asyncComputed: {
+    columnTypes: {
+      async get() {
+        try {
+          return await api.tableColumnTypes(this.workspace, this.table);
+        } catch (err) {
+          return {};
+        }
+      },
+
+      default: {},
     },
   },
 
-  mounted() {
-    this.updateTypes();
+  watch: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    workspace(this: any) {
+      this.update();
+    },
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    table(this: any) {
+      this.update();
+    },
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    pagination(this: any) {
+      this.update();
+    },
   },
 
   methods: {
     rowClassName(index: number): 'even-row' | 'odd-row' {
       return index % 2 === 0 ? 'even-row' : 'odd-row';
     },
-    async update() {
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async update(this: any) {
       const {
         pagination,
       } = this;
@@ -251,10 +265,6 @@ export default Vue.extend({
       this.tables = await api.tables(this.workspace, {
         type: 'all',
       });
-    },
-
-    async updateTypes() {
-      this.columnTypes = await api.tableColumnTypes(this.workspace, this.table);
     },
   },
 });
