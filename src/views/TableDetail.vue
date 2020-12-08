@@ -85,6 +85,7 @@
           height="calc(100vh - 123px)"
           class="table-details"
           :headers="dataTableHeaders"
+          hide-default-header
           :items="dataTableRows"
           :footer-props="{
             itemsPerPageOptions: [10, 20, 50, 100],
@@ -92,7 +93,24 @@
           }"
           :server-items-length="tableSize"
           :options.sync="pagination"
-        />
+        >
+          <template v-slot:header>
+            <thead dark>
+              <tr>
+                <th
+                  v-for="(header, i) in dataTableHeaders"
+                  :key="i"
+                  class="pt-2 pb-2"
+                >
+                  {{ header.text }}
+                  <span v-if="columnTypes[header.text]">
+                    ({{ columnTypes[header.text] }})
+                  </span>
+                </th>
+              </tr>
+            </thead>
+          </template>
+        </v-data-table>
       </div>
     </v-main>
   </v-container>
@@ -149,12 +167,13 @@ export default Vue.extend({
       }));
     },
 
-    dataTableRows() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    dataTableRows(this: any) {
       const result = [] as TableRow[];
 
-      this.rowKeys.forEach((rowKey) => {
+      this.rowKeys.forEach((rowKey: KeyValue[]) => {
         const obj = {} as TableRow;
-        rowKey.forEach((entry) => {
+        rowKey.forEach((entry: KeyValue) => {
           obj[entry.key] = entry.value;
         });
 
@@ -164,23 +183,45 @@ export default Vue.extend({
       return result;
     },
   },
-  watch: {
-    workspace() {
-      this.update();
+
+  asyncComputed: {
+    columnTypes: {
+      async get() {
+        try {
+          return await api.tableColumnTypes(this.workspace, this.table);
+        } catch (err) {
+          return {};
+        }
+      },
+
+      default: {},
     },
-    table() {
+  },
+
+  watch: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    workspace(this: any) {
       this.update();
     },
 
-    pagination() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    table(this: any) {
+      this.update();
+    },
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    pagination(this: any) {
       this.update();
     },
   },
+
   methods: {
     rowClassName(index: number): 'even-row' | 'odd-row' {
       return index % 2 === 0 ? 'even-row' : 'odd-row';
     },
-    async update() {
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async update(this: any) {
       const {
         pagination,
       } = this;
