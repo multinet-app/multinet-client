@@ -100,7 +100,7 @@
                 <th
                   v-for="(header, i) in dataTableHeaders"
                   :key="i"
-                  class="pt-2 pb-4"
+                  class="pt-2 pb-2"
                 >
                   {{ header.text }}
                   <span v-if="columnTypes[header.text]">
