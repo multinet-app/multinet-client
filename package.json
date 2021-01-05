@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@vue/composition-api": "^1.0.0-beta.16",
-    "axios": "^0.18.1",
+    "axios": "^0.21.1",
     "core-js": "^2.6.5",
     "dayjs": "^1.9.1",
     "direct-vuex": "^0.10.4",
