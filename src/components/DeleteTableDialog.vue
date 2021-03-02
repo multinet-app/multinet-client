@@ -183,6 +183,8 @@ export default Vue.extend({
 
       this.$emit('closed', [...selection]);
       this.dialog = false;
+      this.confirmation = '';
+      this.confirmationPhrase = randomPhrase();
     },
 
     async findDependentGraphs() {
