@@ -263,6 +263,22 @@ export default defineComponent({
       uploadProgress.value = (evt.loaded / evt.total) * 100;
     }
 
+    // Reset component
+    function resetAllFields() {
+      step.value = 1;
+      columnType.value = {};
+
+      selectedFile.value = null;
+      fileName.value = null;
+      fileUploadError.value = null;
+
+      overwrite.value = false;
+      restoreKeyField();
+
+      uploading.value = false;
+      uploadProgress.value = null;
+    }
+
     // Table creation state
     const tableDialog = ref(false);
     const tableCreationError = ref<string | null>(null);
@@ -290,6 +306,7 @@ export default defineComponent({
         tableDialog.value = false;
 
         emit('success');
+        resetAllFields();
       } catch (err) {
         tableCreationError.value = err.statusText;
       } finally {
