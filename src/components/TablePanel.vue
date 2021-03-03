@@ -100,13 +100,21 @@
         </v-hover>
       </v-list-item-group>
     </template>
+
     <div
-      v-else
+      v-if="items.length === 0 && !loading"
       class="ws-detail-empty-list"
     >
       <v-icon color="blue lighten-1">
         info
       </v-icon> There's nothing here yet...
+    </div>
+
+    <div v-if="loading">
+      <v-skeleton-loader type="list-item" />
+      <v-skeleton-loader type="list-item" />
+      <v-skeleton-loader type="list-item" />
+      <v-skeleton-loader type="list-item" />
     </div>
   </v-list>
 </template>
@@ -136,6 +144,11 @@ export default Vue.extend({
 
     items: {
       type: Array as PropType<string[]>,
+      required: true,
+    },
+
+    loading: {
+      type: Boolean as PropType<boolean>,
       required: true,
     },
   },
