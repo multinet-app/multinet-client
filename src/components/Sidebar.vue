@@ -107,6 +107,18 @@
             </v-list-item>
           </v-hover>
         </v-list-item-group>
+
+        <div v-if="loading">
+          <v-skeleton-loader
+            type="list-item"
+          />
+          <v-skeleton-loader
+            type="list-item"
+          />
+          <v-skeleton-loader
+            type="list-item"
+          />
+        </div>
       </div>
     </v-list>
   </v-navigation-drawer>
@@ -138,6 +150,7 @@ export default Vue.extend({
     return {
       newWorkspace: '',
       checkbox: {} as CheckboxTable,
+      loading: true,
       singleSelected: null as string | null,
     };
   },
@@ -171,8 +184,12 @@ export default Vue.extend({
     },
   },
 
-  created() {
-    store.dispatch.fetchWorkspaces();
+  async created() {
+    try {
+      await store.dispatch.fetchWorkspaces();
+    } finally {
+      this.loading = false;
+    }
   },
 
   methods: {
