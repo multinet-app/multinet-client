@@ -167,18 +167,9 @@
               <v-card-text>
                 <v-list dense>
                   <div v-if="loading">
-                    <v-skeleton-loader
-                      type="list-item"
-                      tile
-                    />
-                    <v-skeleton-loader
-                      type="list-item"
-                      tile
-                    />
-                    <v-skeleton-loader
-                      type="list-item"
-                      tile
-                    />
+                    <v-skeleton-loader type="list-item" />
+                    <v-skeleton-loader type="list-item" />
+                    <v-skeleton-loader type="list-item" />
                   </div>
 
                   <v-list-item
@@ -241,18 +232,9 @@
               <v-card-text>
                 <v-list dense>
                   <div v-if="loading">
-                    <v-skeleton-loader
-                      type="list-item"
-                      tile
-                    />
-                    <v-skeleton-loader
-                      type="list-item"
-                      tile
-                    />
-                    <v-skeleton-loader
-                      type="list-item"
-                      tile
-                    />
+                    <v-skeleton-loader type="list-item" />
+                    <v-skeleton-loader type="list-item" />
+                    <v-skeleton-loader type="list-item" />
                   </div>
 
                   <v-list-item
