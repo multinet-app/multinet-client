@@ -3,6 +3,8 @@ import AsyncComputed from 'vue-async-computed';
 import VueCompositionApi from '@vue/composition-api';
 import Vue from 'vue';
 import App from './App.vue';
+import api from './api';
+import oauthClient from './oauth';
 import vuetify from './vuetify';
 import router from './router';
 import store from './store';
@@ -12,10 +14,14 @@ Vue.config.productionTip = false;
 Vue.use(AsyncComputed);
 Vue.use(VueCompositionApi);
 
-new Vue({
-  render: (h) => h(App),
-  router,
-  // Necessary to correctly use direct-vuex
-  store: store.original,
-  vuetify,
-}).$mount('#app');
+oauthClient.maybeRestoreLogin().then(() => {
+  Object.assign(api.client.axios.defaults.headers.common, oauthClient.authHeaders);
+
+  new Vue({
+    render: (h) => h(App),
+    router,
+    // Necessary to correctly use direct-vuex
+    store: store.original,
+    vuetify,
+  }).$mount('#app');
+});

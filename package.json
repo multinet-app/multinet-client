@@ -20,6 +20,7 @@
     "test:server:up": "cd .. && PIPENV_DONT_LOAD_ENV=1 pipenv run test-server-up"
   },
   "dependencies": {
+    "@girder/oauth-client": "^0.7.6",
     "@vue/composition-api": "^1.0.0-beta.16",
     "axios": "^0.18.1",
     "core-js": "^2.6.5",
