@@ -109,15 +109,9 @@
         </v-list-item-group>
 
         <div v-if="loading">
-          <v-skeleton-loader
-            type="list-item"
-          />
-          <v-skeleton-loader
-            type="list-item"
-          />
-          <v-skeleton-loader
-            type="list-item"
-          />
+          <v-skeleton-loader type="list-item" />
+          <v-skeleton-loader type="list-item" />
+          <v-skeleton-loader type="list-item" />
         </div>
       </div>
     </v-list>
