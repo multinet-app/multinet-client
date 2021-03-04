@@ -18,6 +18,12 @@
 
           <v-divider />
 
+          <div v-if="loading">
+            <v-skeleton-loader type="list-item" />
+            <v-skeleton-loader type="list-item" />
+            <v-skeleton-loader type="list-item" />
+          </div>
+
           <v-list-item
             v-for="t in tables"
             :key="t"
@@ -93,6 +99,7 @@
           }"
           :server-items-length="tableSize"
           :options.sync="pagination"
+          :loading="loading"
         >
           <template v-slot:header>
             <thead dark>
@@ -152,6 +159,7 @@ export default Vue.extend({
       editing: false,
       tableSize: 1,
       pagination: {} as DataPagination,
+      loading: true,
     };
   },
   computed: {
@@ -226,6 +234,8 @@ export default Vue.extend({
         pagination,
       } = this;
 
+      this.loading = true;
+
       const result = await api.table(this.workspace, this.table, {
         offset: (pagination.page - 1) * pagination.itemsPerPage,
         limit: pagination.itemsPerPage,
@@ -265,6 +275,8 @@ export default Vue.extend({
       this.tables = await api.tables(this.workspace, {
         type: 'all',
       });
+
+      this.loading = false;
     },
   },
 });
