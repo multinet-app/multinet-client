@@ -201,6 +201,8 @@ export default defineComponent({
     },
   },
   setup(props, { emit }) {
+    const { workspace } = props;
+
     // Stepper control
     const step: Ref<number> = ref(1);
     const dialogWidth = computed(() => {
@@ -296,7 +298,6 @@ export default defineComponent({
         return;
       }
 
-      const { workspace } = props;
       uploading.value = true;
 
       try {
