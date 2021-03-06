@@ -9,6 +9,7 @@
         color="blue darken-2"
         icon
         medium
+        :disabled="!hasPerms"
         v-on="on"
       >
         <v-icon dark>
@@ -49,8 +50,12 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 
+import { WorkspacePermissionsSpec } from 'multinet';
 import NetworkCreateForm from '@/components/NetworkCreateForm.vue';
 import NetworkUploadForm from '@/components/NetworkUploadForm.vue';
+import api from '@/api';
+import { canUpload } from '@/utils/permissions';
+import store from '@/store';
 
 export default Vue.extend({
   name: 'NetworkDialog',
@@ -74,7 +79,24 @@ export default Vue.extend({
       networkDialog: false,
     };
   },
-  computed: {},
+  computed: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    hasPerms(this: any) {
+      return canUpload(store.state.userInfo, this.permissions);
+    },
+  },
+  asyncComputed: {
+    permissions: {
+      async get(): Promise<WorkspacePermissionsSpec | null> {
+        try {
+          return api.getWorkspacePermissions(this.workspace);
+        } catch (error) {
+          return null;
+        }
+      },
+      default: null,
+    },
+  },
   methods: {
     networkDialogSuccess() {
       this.networkDialog = false;
