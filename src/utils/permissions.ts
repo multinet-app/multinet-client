@@ -8,3 +8,16 @@ export enum RoleLevel {
   reader = 1,
   none = 0,
 }
+
+export function canUpload(userInfo: UserSpec | null, permissions: WorkspacePermissionsSpec | null): boolean {
+  if (!userInfo || !permissions) { return false; }
+
+  const userSub = userInfo.sub;
+  const ownerSub = permissions.owner.sub;
+  const maintainerSubs = permissions.maintainers.map((user) => user.sub);
+  const writerSubs = permissions.writers.map((user) => user.sub);
+
+  return maintainerSubs.includes(userSub)
+    || writerSubs.includes(userSub)
+    || userSub === ownerSub;
+}
