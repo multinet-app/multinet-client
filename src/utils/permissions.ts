@@ -16,3 +16,16 @@ export function canChangeWorkspacePermissions(userInfo: UserSpec | null, permiss
 
   return false;
 }
+
+export function canUpload(userInfo: UserSpec | null, permissions: WorkspacePermissionsSpec | null): boolean {
+  if (!userInfo || !permissions) { return false; }
+
+  const userSub = userInfo.sub;
+  const ownerSub = permissions.owner.sub;
+  const maintainerSubs = permissions.maintainers.map((user) => user.sub);
+  const writerSubs = permissions.writers.map((user) => user.sub);
+
+  return maintainerSubs.includes(userSub)
+    || writerSubs.includes(userSub)
+    || userSub === ownerSub;
+}
