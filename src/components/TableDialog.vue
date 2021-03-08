@@ -207,10 +207,10 @@ export default defineComponent({
     const { workspace } = props;
 
     // Check for permissions
-    const permissions = computed(async () => api.getWorkspacePermissions(workspace));
     const hasPerms = ref(false);
     watchEffect(async () => {
-      hasPerms.value = canUpload(store.state.userInfo, await permissions.value);
+      const perms = await api.getWorkspacePermissions(workspace);
+      hasPerms.value = canUpload(store.state.userInfo, perms);
     });
 
     // Stepper control
