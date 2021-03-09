@@ -37,7 +37,23 @@
 
     <v-divider />
 
-    <template v-if="items.length > 0">
+    <div v-if="loading">
+      <v-skeleton-loader type="list-item" />
+      <v-skeleton-loader type="list-item" />
+      <v-skeleton-loader type="list-item" />
+      <v-skeleton-loader type="list-item" />
+    </div>
+
+    <div
+      v-else-if="items.length === 0"
+      class="ws-detail-empty-list"
+    >
+      <v-icon color="blue lighten-1">
+        info
+      </v-icon> There's nothing here yet...
+    </div>
+
+    <template v-else>
       <v-list-item-group color="primary">
         <v-hover
           v-for="item in items"
@@ -100,22 +116,6 @@
         </v-hover>
       </v-list-item-group>
     </template>
-
-    <div
-      v-if="items.length === 0 && !loading"
-      class="ws-detail-empty-list"
-    >
-      <v-icon color="blue lighten-1">
-        info
-      </v-icon> There's nothing here yet...
-    </div>
-
-    <div v-if="loading">
-      <v-skeleton-loader type="list-item" />
-      <v-skeleton-loader type="list-item" />
-      <v-skeleton-loader type="list-item" />
-      <v-skeleton-loader type="list-item" />
-    </div>
   </v-list>
 </template>
 
