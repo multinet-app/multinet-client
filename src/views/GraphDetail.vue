@@ -136,6 +136,11 @@
                   color="transparent"
                   dense
                 >
+                  <div v-if="loading">
+                    <v-skeleton-loader type="list-item" />
+                    <v-skeleton-loader type="list-item" />
+                  </div>
+
                   <v-list-item
                     v-for="table in nodeTypes"
                     :key="table.name"
@@ -186,6 +191,11 @@
                   color="transparent"
                   dense
                 >
+                  <div v-if="loading">
+                    <v-skeleton-loader type="list-item" />
+                    <v-skeleton-loader type="list-item" />
+                  </div>
+
                   <v-list-item
                     v-for="table in edgeTypes"
                     :key="table.name"
@@ -274,6 +284,11 @@
                   color="transparent"
                   dense
                 >
+                  <div v-if="loading">
+                    <v-skeleton-loader type="list-item" />
+                    <v-skeleton-loader type="list-item" />
+                  </div>
+
                   <v-list-item
                     v-for="node in nodes"
                     :key="node"
@@ -344,6 +359,7 @@ export default Vue.extend({
       nodes: [] as string[],
       offset: 0,
       limit: 10,
+      loading: true,
       totalNodes: 0,
       totalEdges: 0,
       visItems: [...visItems],
@@ -405,6 +421,7 @@ export default Vue.extend({
       this.panelOpen = !this.panelOpen;
     },
     async update() {
+      this.loading = true;
       const graph = await api.graph(this.workspace, this.graph);
       const nodes = await api.nodes(this.workspace, this.graph, {
         offset: this.offset,
@@ -423,6 +440,7 @@ export default Vue.extend({
       this.nodes = nodes.nodes.map((d) => d._id);
       this.totalNodes = nodes.count;
       this.totalEdges = edges.reduce((acc, val) => acc + val, 0);
+      this.loading = false;
     },
     turnPage(forward: number) {
       this.offset += forward ? this.limit : -this.limit;

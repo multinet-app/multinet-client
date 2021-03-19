@@ -66,7 +66,13 @@
             cols="12"
             pa-4
           >
+            <v-skeleton-loader
+              v-if="loading"
+              type="image"
+            />
+
             <v-card
+              v-else
               color="primary"
               dark
             >
@@ -160,6 +166,12 @@
               </v-card-title>
               <v-card-text>
                 <v-list dense>
+                  <div v-if="loading">
+                    <v-skeleton-loader type="list-item" />
+                    <v-skeleton-loader type="list-item" />
+                    <v-skeleton-loader type="list-item" />
+                  </div>
+
                   <v-list-item
                     v-for="(edge, index) in incoming"
                     :key="index"
@@ -219,6 +231,12 @@
               </v-card-title>
               <v-card-text>
                 <v-list dense>
+                  <div v-if="loading">
+                    <v-skeleton-loader type="list-item" />
+                    <v-skeleton-loader type="list-item" />
+                    <v-skeleton-loader type="list-item" />
+                  </div>
+
                   <v-list-item
                     v-for="(edge, index) in outgoing"
                     :key="index"
@@ -291,6 +309,7 @@ export default Vue.extend({
       pageCount: 20,
       totalIncoming: 0,
       totalOutgoing: 0,
+      loading: true,
     };
   },
   computed: {
@@ -371,6 +390,7 @@ export default Vue.extend({
   },
   methods: {
     async update() {
+      this.loading = true;
       const attributes = await api.attributes(this.workspace, this.graph, `${this.type}/${this.node}`);
       const incoming = await api.edges(this.workspace, this.graph, `${this.type}/${this.node}`, {
         direction: 'incoming',
@@ -392,6 +412,8 @@ export default Vue.extend({
       this.outgoing = outgoing.edges.map((edge: Edge) => ({ id: edge.edge, node: edge.to }));
       this.totalIncoming = incoming.count;
       this.totalOutgoing = outgoing.count;
+
+      this.loading = false;
     },
     turnPage(edgeType: EdgeType, forward: number) {
       if (edgeType === 'incoming') {

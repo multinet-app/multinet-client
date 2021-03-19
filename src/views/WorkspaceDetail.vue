@@ -133,6 +133,7 @@
               :items="graphs"
               :node-tables="nodeTables"
               :edge-tables="edgeTables"
+              :loading="loading"
             />
           </v-card>
         </v-flex>
@@ -150,6 +151,7 @@
             <table-panel
               :workspace="workspace"
               :items="tables"
+              :loading="loading"
             />
           </v-card>
         </v-flex>
