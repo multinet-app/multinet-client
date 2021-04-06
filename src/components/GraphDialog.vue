@@ -9,6 +9,7 @@
         color="blue darken-2"
         icon
         medium
+        :disabled="!hasPerms"
         v-on="on"
       >
         <v-icon dark>
@@ -56,6 +57,10 @@ import Vue, { PropType } from 'vue';
 
 import GraphCreateForm from '@/components/GraphCreateForm.vue';
 import FileUploadForm from '@/components/FileUploadForm.vue';
+import api from '@/api';
+import { WorkspacePermissionsSpec } from 'multinet';
+import { canUpload } from '@/utils/permissions';
+import store from '@/store';
 
 export default Vue.extend({
   name: 'GraphDialog',
@@ -99,7 +104,24 @@ export default Vue.extend({
       ],
     };
   },
-  computed: {},
+  computed: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    hasPerms(this: any) {
+      return canUpload(store.state.userInfo, this.permissions);
+    },
+  },
+  asyncComputed: {
+    permissions: {
+      async get(): Promise<WorkspacePermissionsSpec | null> {
+        try {
+          return api.getWorkspacePermissions(this.workspace);
+        } catch (error) {
+          return null;
+        }
+      },
+      default: null,
+    },
+  },
   methods: {
     graphDialogSuccess() {
       this.graphDialog = false;

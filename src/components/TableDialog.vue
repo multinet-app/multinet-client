@@ -9,6 +9,7 @@
         color="blue darken-2"
         icon
         medium
+        :disabled="!hasPerms"
         v-on="on"
       >
         <v-icon dark>
@@ -173,12 +174,14 @@
 
 <script lang="ts">
 import {
-  defineComponent, ref, Ref, computed,
+  defineComponent, ref, Ref, computed, watchEffect,
 } from '@vue/composition-api';
 
 import api from '@/api';
 import { FileType, CSVColumnType } from '@/types';
 import { validFileType, fileName as getFileName, analyzeCSV } from '@/utils/files';
+import { canUpload } from '@/utils/permissions';
+import store from '@/store';
 
 const defaultKeyField = '_key';
 const multinetTypes: readonly CSVColumnType[] = ['label', 'boolean', 'category', 'number', 'date'];
@@ -200,6 +203,15 @@ export default defineComponent({
     },
   },
   setup(props, { emit }) {
+    const { workspace } = props;
+
+    // Check for permissions
+    const hasPerms = ref(false);
+    watchEffect(async () => {
+      const perms = await api.getWorkspacePermissions(workspace);
+      hasPerms.value = canUpload(store.state.userInfo, perms);
+    });
+
     // Stepper control
     const step: Ref<number> = ref(1);
     const dialogWidth = computed(() => {
@@ -288,7 +300,6 @@ export default defineComponent({
         return;
       }
 
-      const { workspace } = props;
       uploading.value = true;
 
       try {
@@ -316,6 +327,7 @@ export default defineComponent({
     }
 
     return {
+      hasPerms,
       step,
       dialogWidth,
       headers,
