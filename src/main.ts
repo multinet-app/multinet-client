@@ -15,7 +15,7 @@ Vue.use(AsyncComputed);
 Vue.use(VueCompositionApi);
 
 oauthClient.maybeRestoreLogin().then(() => {
-  Object.assign(api.client.axios.defaults.headers.common, oauthClient.authHeaders);
+  Object.assign(api.axios.defaults.headers.common, oauthClient.authHeaders);
 
   new Vue({
     render: (h) => h(App),
