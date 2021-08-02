@@ -242,11 +242,9 @@ export default Vue.extend({
       });
 
       const {
-        results,
+        results: rows,
         count,
       } = result;
-
-      const rows = results;
 
       this.tableSize = count;
 
