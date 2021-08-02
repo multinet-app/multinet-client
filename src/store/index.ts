@@ -76,7 +76,7 @@ const {
     async fetchWorkspaces(context) {
       const { commit } = rootActionContext(context);
       const workspaces = await api.workspaces();
-      commit.setWorkspaces(workspaces.results.map((h) => h.name));
+      commit.setWorkspaces(workspaces.results.map((w) => w.name));
     },
 
     async fetchWorkspace(context, workspace: string) {
@@ -90,9 +90,9 @@ const {
 
       commit.setCurrentWorkspace({
         name: workspace,
-        nodeTables: nodeTables.map((h) => h.name),
-        edgeTables: edgeTables.map((h) => h.name),
-        graphs: graphs.results.map((h) => h.name),
+        nodeTables: nodeTables.map((table) => table.name),
+        edgeTables: edgeTables.map((table) => table.name),
+        graphs: graphs.results.map((graph) => graph.name),
       });
     },
 
