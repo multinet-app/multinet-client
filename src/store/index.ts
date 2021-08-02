@@ -89,7 +89,10 @@ const {
       const edgeTables = tables.filter((table) => table.edge === true);
 
       commit.setCurrentWorkspace({
-        name: workspace, nodeTables: nodeTables.map((h) => h.name), edgeTables: edgeTables.map((h) => h.name), graphs: graphs.results.map((h) => h.name),
+        name: workspace,
+        nodeTables: nodeTables.map((h) => h.name),
+        edgeTables: edgeTables.map((h) => h.name),
+        graphs: graphs.results.map((h) => h.name),
       });
     },
 
