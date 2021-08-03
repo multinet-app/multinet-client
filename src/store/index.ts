@@ -76,27 +76,39 @@ const {
     async fetchWorkspaces(context) {
       const { commit } = rootActionContext(context);
       const workspaces = await api.workspaces();
-      commit.setWorkspaces(workspaces);
+      commit.setWorkspaces(workspaces.results.map((w) => w.name));
     },
 
     async fetchWorkspace(context, workspace: string) {
       const { commit } = rootActionContext(context);
       commit.unsetCurrentWorkspace();
 
-      const nodeTables = await api.tables(workspace, { type: 'node' });
-      const edgeTables = await api.tables(workspace, { type: 'edge' });
       const graphs = await api.graphs(workspace);
+      const tables = (await api.tables(workspace)).results;
+      const nodeTables = tables.filter((table) => table.edge === false);
+      const edgeTables = tables.filter((table) => table.edge === true);
 
       commit.setCurrentWorkspace({
-        name: workspace, nodeTables, edgeTables, graphs,
+        name: workspace,
+        nodeTables: nodeTables.map((table) => table.name),
+        edgeTables: edgeTables.map((table) => table.name),
+        graphs: graphs.results.map((graph) => graph.name),
       });
     },
 
     async fetchUserInfo(context) {
       const { commit } = rootActionContext(context);
 
-      const info = await api.userInfo();
-      commit.setUserInfo(info);
+      try {
+        const info = await api.userInfo();
+        commit.setUserInfo(info);
+      } catch (error) {
+        if (error.response.status === 401) {
+          commit.setUserInfo(null);
+        } else {
+          throw new Error(error);
+        }
+      }
     },
 
     async logout(context) {

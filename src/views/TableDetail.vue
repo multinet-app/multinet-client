@@ -242,7 +242,7 @@ export default Vue.extend({
       });
 
       const {
-        rows,
+        results: rows,
         count,
       } = result;
 
@@ -272,9 +272,9 @@ export default Vue.extend({
       this.headers = headers;
 
       // Roni to convert these lines to computed function
-      this.tables = await api.tables(this.workspace, {
+      this.tables = (await api.tables(this.workspace, {
         type: 'all',
-      });
+      })).results.map((table) => table.name);
 
       this.loading = false;
     },
