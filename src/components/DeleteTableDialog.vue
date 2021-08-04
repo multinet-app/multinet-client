@@ -193,15 +193,23 @@ export default Vue.extend({
         workspace,
       } = this;
 
-      const graphNames = await api.graphs(workspace);
-
+      const graphNames = (await api.graphs(workspace)).results.map((graph) => graph.name);
       const using = [] as Array<{graph: string; tables: string[]}>;
       graphNames.forEach(async (graph) => {
-        const data = await api.graph(workspace, graph);
+        const nodes = await api.nodes(workspace, graph, {});
+        // eslint-disable-next-line no-underscore-dangle
+        const edges = await api.edges(workspace, graph, nodes.results[0]._id, {
+          direction: 'all',
+        });
 
+        // eslint-disable-next-line no-underscore-dangle
+        const prelimNodes = nodes.results.map((node) => node._id.substring(0, node._id.indexOf('/')));
+        const nodeTables = prelimNodes.filter((node, index) => prelimNodes.indexOf(node) === index);
+        // eslint-disable-next-line no-underscore-dangle
+        const edgeTable = edges.results.length > 0 ? edges.results[0]._id.substring(0, edges.results[0]._id.indexOf('/')) : '';
         const tables: string[] = [];
         selection.forEach((table) => {
-          if (table === data.edgeTable || data.nodeTables.indexOf(table) > -1) {
+          if (table === edgeTable || nodeTables.indexOf(table) > -1) {
             tables.push(table);
           }
         });
