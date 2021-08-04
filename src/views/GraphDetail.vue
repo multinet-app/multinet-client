@@ -427,19 +427,22 @@ export default Vue.extend({
         offset: this.offset,
         limit: this.limit,
       });
-
-      const edgeQuery = `
-        FOR table in [${graph.edgeTable}]
-          RETURN LENGTH(table)
-      `;
-      const edges = await api.aql(this.workspace, edgeQuery);
-
-      this.nodeTypes = graph.nodeTables;
-      this.edgeTypes = [graph.edgeTable];
       // eslint-disable-next-line no-underscore-dangle
-      this.nodes = nodes.nodes.map((d) => d._id);
-      this.totalNodes = nodes.count;
-      this.totalEdges = edges.reduce((acc, val) => acc + val, 0);
+      const edges = await api.edges(this.workspace, this.graph, nodes.results[0]._id, {
+        offset: this.offset,
+        limit: this.limit,
+      });
+      this.totalNodes = graph.node_count;
+      this.totalEdges = graph.edge_count;
+
+      // eslint-disable-next-line no-underscore-dangle
+      const prelimNodes = nodes.results.map((node) => node._id.substring(0, node._id.indexOf('/')));
+      this.nodeTypes = prelimNodes.filter((node, index) => prelimNodes.indexOf(node) === index);
+      // eslint-disable-next-line no-underscore-dangle
+      this.edgeTypes = edges.results.length > 0 ? [edges.results[0]._id.substring(0, edges.results[0]._id.indexOf('/'))] : [];
+
+      // eslint-disable-next-line no-underscore-dangle
+      this.nodes = nodes.results.map((node) => node._id);
       this.loading = false;
     },
     turnPage(forward: number) {
