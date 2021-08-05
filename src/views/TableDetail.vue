@@ -267,7 +267,7 @@ export default Vue.extend({
           rowKeys.push(rowData);
         });
 
-        headers = Object.keys(rows[0]).filter((d) => d !== '_rev');
+        headers = rows.length > 0 ? Object.keys(rows[0]).filter((d) => d !== '_rev') : [];
       }
 
       this.rowKeys = rowKeys;
