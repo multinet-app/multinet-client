@@ -436,10 +436,14 @@ export default Vue.extend({
       this.totalEdges = graph.edge_count;
 
       // eslint-disable-next-line no-underscore-dangle
-      const prelimNodes = nodes.results.map((node) => node._id.substring(0, node._id.indexOf('/')));
-      this.nodeTypes = prelimNodes.filter((node, index) => prelimNodes.indexOf(node) === index);
+      const prelimNodes = nodes.results.map((node) => node._id.split('/')[0]);
+      prelimNodes.forEach((nodeType) => {
+        if (!this.nodeTypes.includes(nodeType)) {
+          this.nodeTypes.push(nodeType);
+        }
+      });
       // eslint-disable-next-line no-underscore-dangle
-      this.edgeTypes = edges.results.length > 0 ? [edges.results[0]._id.substring(0, edges.results[0]._id.indexOf('/'))] : [];
+      this.edgeTypes = edges.results.length > 0 ? [edges.results[0]._id.split('/')[0]] : [];
 
       // eslint-disable-next-line no-underscore-dangle
       this.nodes = nodes.results.map((node) => node._id);

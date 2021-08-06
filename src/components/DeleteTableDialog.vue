@@ -203,13 +203,18 @@ export default Vue.extend({
         });
 
         // eslint-disable-next-line no-underscore-dangle
-        const prelimNodes = nodes.results.map((node) => node._id.substring(0, node._id.indexOf('/')));
-        const nodeTables = prelimNodes.filter((node, index) => prelimNodes.indexOf(node) === index);
+        const prelimNodes = nodes.results.map((node) => node._id.split('/')[0]);
+        const nodeTables = [];
+        prelimNodes.forEach((table) => {
+          if (!nodeTables.includes(table)) {
+            nodeTables.push(table);
+          }
+        });
         // eslint-disable-next-line no-underscore-dangle
-        const edgeTable = edges.results.length > 0 ? edges.results[0]._id.substring(0, edges.results[0]._id.indexOf('/')) : '';
+        const edgeTable = edges.results.length > 0 ? edges.results[0]._id.split('/')[0] : '';
         const tables: string[] = [];
         selection.forEach((table) => {
-          if (table === edgeTable || nodeTables.indexOf(table) > -1) {
+          if (table === edgeTable || nodeTables.includes(table)) {
             tables.push(table);
           }
         });

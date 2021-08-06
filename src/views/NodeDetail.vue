@@ -393,7 +393,7 @@ export default Vue.extend({
       this.loading = true;
       const nodeTable = (await api.table(this.workspace, this.type, {})).results;
       // eslint-disable-next-line no-underscore-dangle
-      const node = nodeTable[nodeTable.map((table) => table._key).indexOf(this.node)];
+      const node = nodeTable.find((table) => table._key === this.node);
       const incoming = (await api.edges(this.workspace, this.graph, `${this.type}/${this.node}`, {
         direction: 'incoming',
         offset: this.offsetIncoming,
