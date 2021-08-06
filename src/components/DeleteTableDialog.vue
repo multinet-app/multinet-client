@@ -113,6 +113,7 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
+import { TableRow } from 'multinet';
 
 import api from '@/api';
 import { randomPhrase } from '@/utils/randomPhrase';
@@ -193,25 +194,27 @@ export default Vue.extend({
         workspace,
       } = this;
 
+      function tableName(table: TableRow) {
+        // eslint-disable-next-line no-underscore-dangle
+        return table._id.split('/')[0];
+      }
+
       const graphNames = (await api.graphs(workspace)).results.map((graph) => graph.name);
       const using = [] as Array<{graph: string; tables: string[]}>;
       graphNames.forEach(async (graph) => {
         const nodes = await api.nodes(workspace, graph, {});
-        // eslint-disable-next-line no-underscore-dangle
         const edges = await api.edges(workspace, graph, {
           direction: 'all',
         });
 
-        // eslint-disable-next-line no-underscore-dangle
-        const prelimNodes = nodes.results.map((node) => node._id.split('/')[0]);
+        const prelimNodes = nodes.results.map((node) => tableName(node));
         const nodeTables = [];
         prelimNodes.forEach((table) => {
           if (!nodeTables.includes(table)) {
             nodeTables.push(table);
           }
         });
-        // eslint-disable-next-line no-underscore-dangle
-        const edgeTable = edges.results.length > 0 ? edges.results[0]._id.split('/')[0] : '';
+        const edgeTable = edges.results.length > 0 ? tableName(edges.results[0]) : '';
         const tables: string[] = [];
         selection.forEach((table) => {
           if (table === edgeTable || nodeTables.includes(table)) {

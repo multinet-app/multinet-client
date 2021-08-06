@@ -326,6 +326,7 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
+import { EdgesSpec, TableRow } from 'multinet';
 
 import api from '@/api';
 import { App } from '@/types';
@@ -421,13 +422,16 @@ export default Vue.extend({
       this.panelOpen = !this.panelOpen;
     },
     async update() {
+      function tableName(table: TableRow | EdgesSpec) {
+        // eslint-disable-next-line no-underscore-dangle
+        return table._id.split('/')[0];
+      }
       this.loading = true;
       const graph = await api.graph(this.workspace, this.graph);
       const nodes = await api.nodes(this.workspace, this.graph, {
         offset: this.offset,
         limit: this.limit,
       });
-      // eslint-disable-next-line no-underscore-dangle
       const edges = await api.edges(this.workspace, this.graph, {
         offset: this.offset,
         limit: this.limit,
@@ -435,15 +439,13 @@ export default Vue.extend({
       this.totalNodes = graph.node_count;
       this.totalEdges = graph.edge_count;
 
-      // eslint-disable-next-line no-underscore-dangle
-      const prelimNodes = nodes.results.map((node) => node._id.split('/')[0]);
+      const prelimNodes = nodes.results.map((node) => tableName(node));
       prelimNodes.forEach((nodeType) => {
         if (!this.nodeTypes.includes(nodeType)) {
           this.nodeTypes.push(nodeType);
         }
       });
-      // eslint-disable-next-line no-underscore-dangle
-      this.edgeTypes = edges.results.length > 0 ? [edges.results[0]._id.split('/')[0]] : [];
+      this.edgeTypes = edges.results.length > 0 ? [tableName(edges.results[0])] : [];
 
       // eslint-disable-next-line no-underscore-dangle
       this.nodes = nodes.results.map((node) => node._id);
