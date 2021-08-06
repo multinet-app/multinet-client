@@ -428,7 +428,7 @@ export default Vue.extend({
         limit: this.limit,
       });
       // eslint-disable-next-line no-underscore-dangle
-      const edges = await api.edges(this.workspace, this.graph, nodes.results[0]._id, {
+      const edges = await api.edges(this.workspace, this.graph, {
         offset: this.offset,
         limit: this.limit,
       });

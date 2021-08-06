@@ -198,7 +198,7 @@ export default Vue.extend({
       graphNames.forEach(async (graph) => {
         const nodes = await api.nodes(workspace, graph, {});
         // eslint-disable-next-line no-underscore-dangle
-        const edges = await api.edges(workspace, graph, nodes.results[0]._id, {
+        const edges = await api.edges(workspace, graph, {
           direction: 'all',
         });
 

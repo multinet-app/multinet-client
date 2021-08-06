@@ -394,13 +394,13 @@ export default Vue.extend({
       const nodeTable = (await api.table(this.workspace, this.type, {})).results;
       // eslint-disable-next-line no-underscore-dangle
       const node = nodeTable.find((table) => table._key === this.node);
-      const incoming = (await api.edges(this.workspace, this.graph, `${this.type}/${this.node}`, {
+      const incoming = (await api.edges(this.workspace, this.graph, {
         direction: 'incoming',
         offset: this.offsetIncoming,
         limit: this.pageCount,
       // eslint-disable-next-line no-underscore-dangle
       })).results.filter((edge) => edge._to === `${this.type}/${this.node}`);
-      const outgoing = (await api.edges(this.workspace, this.graph, `${this.type}/${this.node}`, {
+      const outgoing = (await api.edges(this.workspace, this.graph, {
         direction: 'outgoing',
         offset: this.offsetOutgoing,
         limit: this.pageCount,
