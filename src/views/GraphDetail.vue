@@ -422,9 +422,9 @@ export default Vue.extend({
       this.panelOpen = !this.panelOpen;
     },
     async update() {
-      function tableName(table: TableRow | EdgesSpec) {
+      function tableName(tableRow: TableRow | EdgesSpec) {
         // eslint-disable-next-line no-underscore-dangle
-        return table._id.split('/')[0];
+        return tableRow._id.split('/')[0];
       }
       this.loading = true;
       const graph = await api.graph(this.workspace, this.graph);

@@ -194,9 +194,9 @@ export default Vue.extend({
         workspace,
       } = this;
 
-      function tableName(table: TableRow) {
+      function tableName(tableRow: TableRow) {
         // eslint-disable-next-line no-underscore-dangle
-        return table._id.split('/')[0];
+        return tableRow._id.split('/')[0];
       }
 
       const graphNames = (await api.graphs(workspace)).results.map((graph) => graph.name);
