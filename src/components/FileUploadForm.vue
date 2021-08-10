@@ -77,6 +77,7 @@ import Vue, { PropType } from 'vue';
 
 import api from '@/api';
 import { FileType } from '@/types';
+import { host } from '@/environment';
 
 export default Vue.extend({
   name: 'FileUploadForm',
@@ -180,9 +181,10 @@ export default Vue.extend({
       this.uploading = true;
 
       try {
-        await api.uploadTable(workspace, fileName, {
+        await api.uploadNetwork(workspace, fileName, {
           type: selectedType.queryCall as UploadType,
           data: file,
+          url: host,
         }, {
           onUploadProgress: this.handleUploadProgress,
         });
