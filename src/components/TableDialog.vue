@@ -219,6 +219,11 @@ export default defineComponent({
       }));
     });
 
+    const edgeTable = computed(() => {
+      const keys = Object.keys(sampleRows.value[0] || {});
+      return keys.includes('_from') && keys.includes('_to');
+    });
+
     // Type recommendation
     const columnType: Ref<{[key: string]: CSVColumnType}> = ref({});
 
@@ -296,6 +301,7 @@ export default defineComponent({
         await api.uploadTable(workspace, fileName.value, {
           type: 'csv',
           data: selectedFile.value,
+          edgeTable: edgeTable.value,
           key: keyField.value,
           overwrite: overwrite.value,
           columnTypes: columnType.value,
