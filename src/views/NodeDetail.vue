@@ -258,7 +258,7 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
-import { Edge } from 'multinet';
+import { EdgesSpec } from 'multinet';
 
 import api from '@/api';
 import { KeyValue } from '@/types';
@@ -391,27 +391,34 @@ export default Vue.extend({
   methods: {
     async update() {
       this.loading = true;
-      const attributes = await api.attributes(this.workspace, this.graph, `${this.type}/${this.node}`);
-      const incoming = await api.edges(this.workspace, this.graph, `${this.type}/${this.node}`, {
+      const nodeTable = (await api.table(this.workspace, this.type, {})).results;
+      // eslint-disable-next-line no-underscore-dangle
+      const node = nodeTable.find((table) => table._key === this.node);
+      const incoming = (await api.edges(this.workspace, this.graph, {
         direction: 'incoming',
         offset: this.offsetIncoming,
         limit: this.pageCount,
-      });
-      const outgoing = await api.edges(this.workspace, this.graph, `${this.type}/${this.node}`, {
+      // eslint-disable-next-line no-underscore-dangle
+      })).results.filter((edge) => edge._to === `${this.type}/${this.node}`);
+      const outgoing = (await api.edges(this.workspace, this.graph, {
         direction: 'outgoing',
         offset: this.offsetOutgoing,
         limit: this.pageCount,
-      });
+      // eslint-disable-next-line no-underscore-dangle
+      })).results.filter((edge) => edge._from === `${this.type}/${this.node}`);
 
-      this.attributes = Object.entries(attributes).map(([key, value]) => ({
+      // eslint-disable-next-line no-underscore-dangle
+      this.attributes = Object.entries(node).filter(([key]) => key !== '_rev').map(([key, value]) => ({
         key,
         value,
       }));
 
-      this.incoming = incoming.edges.map((edge: Edge) => ({ id: edge.edge, node: edge.from }));
-      this.outgoing = outgoing.edges.map((edge: Edge) => ({ id: edge.edge, node: edge.to }));
-      this.totalIncoming = incoming.count;
-      this.totalOutgoing = outgoing.count;
+      // eslint-disable-next-line no-underscore-dangle
+      this.incoming = incoming.map((edge: EdgesSpec) => ({ id: edge._id, node: edge._from }));
+      // eslint-disable-next-line no-underscore-dangle
+      this.outgoing = outgoing.map((edge: EdgesSpec) => ({ id: edge._id, node: edge._to }));
+      this.totalIncoming = this.incoming.length;
+      this.totalOutgoing = this.outgoing.length;
 
       this.loading = false;
     },

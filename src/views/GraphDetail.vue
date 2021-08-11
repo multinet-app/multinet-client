@@ -326,6 +326,7 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
+import { EdgesSpec, TableRow } from 'multinet';
 
 import api from '@/api';
 import { App } from '@/types';
@@ -421,25 +422,33 @@ export default Vue.extend({
       this.panelOpen = !this.panelOpen;
     },
     async update() {
+      function tableName(tableRow: TableRow | EdgesSpec) {
+        // eslint-disable-next-line no-underscore-dangle
+        return tableRow._id.split('/')[0];
+      }
       this.loading = true;
       const graph = await api.graph(this.workspace, this.graph);
       const nodes = await api.nodes(this.workspace, this.graph, {
         offset: this.offset,
         limit: this.limit,
       });
+      const edges = await api.edges(this.workspace, this.graph, {
+        offset: this.offset,
+        limit: this.limit,
+      });
+      this.totalNodes = graph.node_count;
+      this.totalEdges = graph.edge_count;
 
-      const edgeQuery = `
-        FOR table in [${graph.edgeTable}]
-          RETURN LENGTH(table)
-      `;
-      const edges = await api.aql(this.workspace, edgeQuery);
+      const prelimNodes = nodes.results.map((node) => tableName(node));
+      prelimNodes.forEach((nodeType) => {
+        if (!this.nodeTypes.includes(nodeType)) {
+          this.nodeTypes.push(nodeType);
+        }
+      });
+      this.edgeTypes = edges.results.length > 0 ? [tableName(edges.results[0])] : [];
 
-      this.nodeTypes = graph.nodeTables;
-      this.edgeTypes = [graph.edgeTable];
       // eslint-disable-next-line no-underscore-dangle
-      this.nodes = nodes.nodes.map((d) => d._id);
-      this.totalNodes = nodes.count;
-      this.totalEdges = edges.reduce((acc, val) => acc + val, 0);
+      this.nodes = nodes.results.map((node) => node._id);
       this.loading = false;
     },
     turnPage(forward: number) {
