@@ -179,7 +179,6 @@ import {
 import api from '@/api';
 import { FileType, CSVColumnType } from '@/types';
 import { validFileType, fileName as getFileName, analyzeCSV } from '@/utils/files';
-import { host } from '@/environment';
 
 const defaultKeyField = '_key';
 const multinetTypes: readonly CSVColumnType[] = ['label', 'boolean', 'category', 'number', 'date'];
@@ -305,7 +304,6 @@ export default defineComponent({
           key: keyField.value,
           overwrite: overwrite.value,
           columnTypes: columnType.value,
-          url: host,
         }, {
           onUploadProgress: handleUploadProgress,
         });
