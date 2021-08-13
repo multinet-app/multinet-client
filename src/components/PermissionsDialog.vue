@@ -371,8 +371,7 @@ export default Vue.extend({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async setPermissions(this: any) {
       try {
-        const requestData: WorkspacePermissionsSpec = this.mutablePermissions;
-        await api.setWorkspacePermissions(this.workspace, requestData);
+        await api.setWorkspacePermissions(this.workspace, this.mutablePermissions);
         this.permDialog = false;
       } catch (error) {
         console.log(error);
