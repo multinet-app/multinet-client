@@ -1,14 +1,6 @@
 name: CI
 
-on:
-  pull_request:
-    branches:
-      - master
-
-  push:
-    branches:
-      - master
-
+on: [push, pull_request]
 jobs:
   build-and-test:
     name: Build and test on Ubuntu - Node 10
