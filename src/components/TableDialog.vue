@@ -301,7 +301,6 @@ export default defineComponent({
 
       try {
         await api.uploadTable(workspace, fileName.value, {
-          type: 'csv',
           data: selectedFile.value,
           edgeTable: edgeTable.value,
           columnTypes: columnType.value,
