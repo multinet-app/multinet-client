@@ -408,10 +408,12 @@ export default Vue.extend({
       })).results.filter((edge) => edge._from === `${this.type}/${this.node}`);
 
       // eslint-disable-next-line no-underscore-dangle
-      this.attributes = Object.entries(node).filter(([key]) => key !== '_rev').map(([key, value]) => ({
-        key,
-        value,
-      }));
+      if (node) {
+        this.attributes = Object.entries(node).filter(([key]) => key !== '_rev').map(([key, value]) => ({
+          key,
+          value,
+        }));
+      }
 
       // eslint-disable-next-line no-underscore-dangle
       this.incoming = incoming.map((edge: EdgesSpec) => ({ id: edge._id, node: edge._from }));
