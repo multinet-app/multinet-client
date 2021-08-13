@@ -21,7 +21,7 @@
           class="pl-2"
         >
           <v-select
-            v-if="types.length"
+            v-if="fileTypes.length"
             id="file-type"
             v-model="selectedType"
             class="file-type"
