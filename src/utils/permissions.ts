@@ -1,4 +1,4 @@
-import { WorkspacePermissionsSpec, WorkspacePermissionRequestSpec, UserSpec } from 'multinet';
+import { WorkspacePermissionsSpec, UserSpec } from 'multinet';
 
 export type Role = 'owner' | 'maintainers' | 'writers' | 'readers';
 export type SingularRole = 'owner' | 'maintainer' | 'writer' | 'reader';
@@ -15,20 +15,4 @@ export function canChangeWorkspacePermissions(userInfo: UserSpec | null, permiss
   }
 
   return false;
-}
-
-export function buildPermissionsRequestData(permissions: WorkspacePermissionsSpec): WorkspacePermissionRequestSpec {
-  const owner = ({ username: permissions.owner.username });
-  const maintainers = permissions.maintainers.map((user) => ({ username: user.username }));
-  const writers = permissions.writers.map((user) => ({ username: user.username }));
-  const readers = permissions.readers.map((user) => ({ username: user.username }));
-
-  const permissionsRequestData: WorkspacePermissionRequestSpec = {
-    owner,
-    maintainers,
-    writers,
-    readers,
-    public: permissions.public,
-  };
-  return permissionsRequestData;
 }

@@ -201,7 +201,7 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 import api from '@/api';
-import { WorkspacePermissionsSpec, WorkspacePermissionRequestSpec, UserSpec } from 'multinet';
+import { WorkspacePermissionsSpec, UserSpec } from 'multinet';
 import { cloneDeep, debounce } from 'lodash';
 
 import store from '@/store';
@@ -209,7 +209,6 @@ import {
   Role,
   SingularRole,
   canChangeWorkspacePermissions,
-  buildPermissionsRequestData,
 } from '@/utils/permissions';
 
 export interface UserPermissionSpec {
@@ -372,7 +371,7 @@ export default Vue.extend({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async setPermissions(this: any) {
       try {
-        const requestData: WorkspacePermissionRequestSpec = buildPermissionsRequestData(this.mutablePermissions);
+        const requestData: WorkspacePermissionsSpec = this.mutablePermissions;
         await api.setWorkspacePermissions(this.workspace, requestData);
         this.permDialog = false;
       } catch (error) {
