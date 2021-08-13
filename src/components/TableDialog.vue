@@ -67,7 +67,8 @@
                     />
                   </v-flex>
                 </v-layout>
-                <v-row no-gutters>
+                <!-- TODO: Fix after https://github.com/multinet-app/multinetjs/issues/46 -->
+                <!-- <v-row no-gutters>
                   <v-col cols="4">
                     <v-text-field
                       v-model="keyField"
@@ -87,7 +88,7 @@
                       outlined
                     />
                   </v-col>
-                </v-row>
+                </v-row> -->
               </v-card-text>
 
               <v-divider />
@@ -177,12 +178,12 @@ import {
 } from '@vue/composition-api';
 
 import api from '@/api';
-import { FileType, CSVColumnType } from '@/types';
+import { TableFileType, CSVColumnType } from '@/types';
 import { validFileType, fileName as getFileName, analyzeCSV } from '@/utils/files';
 
 const defaultKeyField = '_key';
 const multinetTypes: readonly CSVColumnType[] = ['label', 'boolean', 'category', 'number', 'date'];
-const fileTypes: readonly FileType[] = [
+const fileTypes: readonly TableFileType[] = [
   {
     extension: ['csv'],
     queryCall: 'csv',
@@ -266,9 +267,9 @@ export default defineComponent({
     // Upload state
     const uploading = ref(false);
     const uploadProgress = ref<number | null>(null);
-    function handleUploadProgress(evt: { loaded: number; total: number; [key: string]: unknown }) {
-      uploadProgress.value = (evt.loaded / evt.total) * 100;
-    }
+    // function handleUploadProgress(evt: { loaded: number; total: number; [key: string]: unknown }) {
+    //   uploadProgress.value = (evt.loaded / evt.total) * 100;
+    // }
 
     // Reset component
     function resetAllFields() {
@@ -303,11 +304,7 @@ export default defineComponent({
           type: 'csv',
           data: selectedFile.value,
           edgeTable: edgeTable.value,
-          key: keyField.value,
-          overwrite: overwrite.value,
           columnTypes: columnType.value,
-        }, {
-          onUploadProgress: handleUploadProgress,
         });
 
         tableCreationError.value = null;
