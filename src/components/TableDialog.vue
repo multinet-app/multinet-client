@@ -218,10 +218,7 @@ export default defineComponent({
       }));
     });
 
-    const edgeTable = computed(() => {
-      const keys = Object.keys(sampleRows.value[0] || {});
-      return keys.includes('_from') && keys.includes('_to');
-    });
+    const edgeTable = computed(() => Object.prototype.hasOwnProperty.call(sampleRows.value[0], '_from') && Object.prototype.hasOwnProperty.call(sampleRows.value[0], '_to'));
 
     // Type recommendation
     const columnType: Ref<{[key: string]: CSVColumnType}> = ref({});
