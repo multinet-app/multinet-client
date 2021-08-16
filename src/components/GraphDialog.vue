@@ -27,13 +27,8 @@
           </v-tab>
 
           <v-tab-item>
-            <file-upload-form
-              file-type-selector
-              name-placeholder="Network name"
-              file-input-placeholder="Select network file"
-              create-button-text="Upload"
+            <graph-upload-form
               :workspace="workspace"
-              :types="uploadFiletypes"
               @success="graphDialogSuccess"
             />
           </v-tab-item>
@@ -55,13 +50,13 @@
 import Vue, { PropType } from 'vue';
 
 import GraphCreateForm from '@/components/GraphCreateForm.vue';
-import FileUploadForm from '@/components/FileUploadForm.vue';
+import GraphUploadForm from '@/components/GraphUploadForm.vue';
 
 export default Vue.extend({
   name: 'GraphDialog',
   components: {
     GraphCreateForm,
-    FileUploadForm,
+    GraphUploadForm,
   },
   props: {
     edgeTables: {
@@ -77,26 +72,6 @@ export default Vue.extend({
   data() {
     return {
       graphDialog: false,
-      uploadFiletypes: [
-        {
-          displayName: 'D3 JSON (ext: .json)',
-          hint: 'JSON format compatible with d3-force',
-          queryCall: 'd3_json',
-          extension: ['json'],
-        },
-        {
-          displayName: 'Arbor Nested Tree (ext: .json)',
-          hint: 'JSON-encoded tree format used by the Arbor project',
-          queryCall: 'nested_json',
-          extension: ['json'],
-        },
-        {
-          displayName: 'Newick Tree (ext: .phy, .tree)',
-          hint: 'The Newick Standard for representing trees in computer-readable form',
-          queryCall: 'newick',
-          extension: ['phy', 'tree'],
-        },
-      ],
     };
   },
   computed: {},
