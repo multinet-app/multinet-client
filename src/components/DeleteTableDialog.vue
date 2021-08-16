@@ -208,7 +208,7 @@ export default Vue.extend({
         });
 
         const prelimNodes = nodes.results.map((node) => tableName(node));
-        const nodeTables = [];
+        const nodeTables: string[] = [];
         prelimNodes.forEach((table) => {
           if (!nodeTables.includes(table)) {
             nodeTables.push(table);

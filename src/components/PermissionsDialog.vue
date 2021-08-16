@@ -110,7 +110,7 @@
           <v-divider />
           <v-list-item
             v-for="{ user, role } in userPermissionsList"
-            :key="user.sub"
+            :key="user.id"
             class="px-0"
           >
             <v-list-item-avatar>
@@ -341,7 +341,7 @@ export default Vue.extend({
       // Currently don't allow changing owners
       if (newRole !== currentRole && newRole !== 'owner' && currentRole !== 'owner') {
         mutablePermissions[newRole].push(user);
-        mutablePermissions[currentRole] = mutablePermissions[currentRole].filter((x) => x.sub !== user.sub);
+        mutablePermissions[currentRole] = mutablePermissions[currentRole].filter((x) => x.id !== user.id);
       }
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -364,7 +364,7 @@ export default Vue.extend({
       if (currentRole === 'owner') return;
 
       const mutablePermissions = this.mutablePermissions as WorkspacePermissionsSpec;
-      const newRoleList = mutablePermissions[currentRole].filter((x) => x.sub !== user.sub);
+      const newRoleList = mutablePermissions[currentRole].filter((x) => x.id !== user.id);
 
       mutablePermissions[currentRole] = newRoleList;
     },
@@ -388,11 +388,11 @@ export default Vue.extend({
       if (!this.userSearchString) { return; }
 
       const userPermissionList = this.userPermissionsList as UserPermissionSpec[];
-      const userInWorkspace = (user: UserSpec) => (userPermissionList.find((userPerm) => userPerm.user.sub === user.sub));
+      const userInWorkspace = (user: UserSpec) => (userPermissionList.find((userPerm) => userPerm.user.id === user.id));
 
       const result = await api.searchUsers(query);
       const mappedResults: UserSearchResult[] = result
-        .map((user) => ({ ...user, listing: `${user.name} (${user.email})` }))
+        .map((user) => ({ ...user, listing: `${user.first_name} ${user.last_name} (${user.email})` }))
         .filter((user) => !userInWorkspace(user));
 
       this.userSearchResults = mappedResults;
