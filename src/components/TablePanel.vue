@@ -30,6 +30,7 @@
       </div>
 
       <table-dialog
+        v-if="editable"
         :workspace="workspace"
         @success="cleanup"
       />
@@ -99,7 +100,7 @@
               </v-btn>
             </v-list-item-action>
             <v-list-item-action
-              v-if="hover"
+              v-if="hover && editable"
               class="mx-0 my-0"
               @click.prevent
             >
@@ -148,6 +149,11 @@ export default Vue.extend({
     },
 
     loading: {
+      type: Boolean as PropType<boolean>,
+      required: true,
+    },
+
+    editable: {
       type: Boolean as PropType<boolean>,
       required: true,
     },

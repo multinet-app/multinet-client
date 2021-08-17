@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import { createDirectStore } from 'direct-vuex';
-import { UserSpec } from 'multinet';
+import { UserPermissionSpec, UserSpec } from 'multinet';
 
 import api from '@/api';
 import oauthClient from '@/oauth';
@@ -19,6 +19,7 @@ export interface State {
   workspaces: string[];
   currentWorkspace: WorkspaceState | null;
   userInfo: UserSpec | null;
+  permissionInfo: UserPermissionSpec | null;
 }
 
 const {
@@ -32,6 +33,7 @@ const {
     workspaces: [],
     currentWorkspace: null,
     userInfo: null,
+    permissionInfo: null,
   } as State,
   getters: {
     nodeTables(state: State): string[] {
@@ -54,6 +56,17 @@ const {
       }
       return [];
     },
+
+    hasWriterAccess(state: State): boolean {
+      if (!state.permissionInfo) {
+        return false;
+      }
+      const { permission } = state.permissionInfo;
+      if (permission === 'owner' || permission === 'maintainer' || permission === 'writer') {
+        return true;
+      }
+      return false;
+    },
   },
   mutations: {
     setWorkspaces(state, workspaces: string[]) {
@@ -70,6 +83,10 @@ const {
 
     setUserInfo(state, userInfo: UserSpec | null) {
       state.userInfo = userInfo;
+    },
+
+    setPermissionInfo(state, permissionInfo: UserPermissionSpec | null) {
+      state.permissionInfo = permissionInfo;
     },
   },
   actions: {
@@ -105,6 +122,21 @@ const {
       } catch (error) {
         if (error.response.status === 401) {
           commit.setUserInfo(null);
+        } else {
+          throw new Error(error);
+        }
+      }
+    },
+
+    async fetchPermissionsInfo(context, workspace: string) {
+      const { commit } = rootActionContext(context);
+
+      try {
+        const info = await api.getCurrentUserWorkspacePermissions(workspace);
+        commit.setPermissionInfo(info);
+      } catch (error) {
+        if (error.response.status === 401) {
+          commit.setPermissionInfo(null);
         } else {
           throw new Error(error);
         }
