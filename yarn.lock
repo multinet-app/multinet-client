@@ -3171,6 +3171,13 @@ direct-vuex@^0.10.4:
   resolved "https://registry.yarnpkg.com/direct-vuex/-/direct-vuex-0.10.4.tgz#905cfa24cd133b3aac9ae92ad8ff2ca0a9953466"
   integrity sha512-xCQKdyRsbE0QDtQKAy8JqZF//Z/yGlf7ihOJi3mKwV/RHEGZ3h5CxCaJCkcBJbbFokODXl3Ci6tng2QnCrvmrQ==
 
+django-s3-file-field@^0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/django-s3-file-field/-/django-s3-file-field-0.1.2.tgz#eeee3c4fcc9debca1c07f800d175fd8e559c076f"
+  integrity sha512-zo0YYIZCvH7efYFBKM44VtQLofLCe286dez7HnxB/gUTdbFfV0Zp9lBc+tQ9YVbpyJMLrCaVWvRqR7dkJUAVwg==
+  dependencies:
+    axios "^0.21.1"
+
 dns-equal@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/dns-equal/-/dns-equal-1.0.0.tgz#b39e7f1da6eb0a75ba9c17324b34753c47e0654d"
@@ -6054,12 +6061,13 @@ multimatch@^2.1.0:
     arrify "^1.0.0"
     minimatch "^3.0.0"
 
-multinet@0.20.1-5-girder4-gcf77c8a:
-  version "0.20.1-5-girder4-gcf77c8a"
-  resolved "https://registry.yarnpkg.com/multinet/-/multinet-0.20.1-5-girder4-gcf77c8a.tgz#ad825c98028c88b3d1052d5b34b951bc35a04d96"
-  integrity sha512-ImydM85muvHxFRTf+e84LNcVIc3Bo5FryMBLrG9Ypv5WoeOeCVvx+xcS1Erh/kusV54EI8eM+bHSLudbsl8d2A==
+multinet@0.21.0:
+  version "0.21.0"
+  resolved "https://registry.yarnpkg.com/multinet/-/multinet-0.21.0.tgz#b92c97ac6d307b1ce2fc93d9850e369f3fd85776"
+  integrity sha512-yzjX8/E9w+7wNeAO1LvM3KzztvelpctzL9HBCcH0ph8IwbLpDVNtWspZe4REuoPlTaPCKq749UWLIuHsw52N9Q==
   dependencies:
     axios "^0.21.1"
+    django-s3-file-field "^0.1.2"
     ts-jest "^26.5.4"
 
 mute-stream@0.0.7:
