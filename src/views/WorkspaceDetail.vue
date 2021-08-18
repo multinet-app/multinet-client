@@ -258,8 +258,8 @@ export default Vue.extend({
 
       if (this.localWorkspace !== null) {
         try {
-          const data = (await api.renameWorkspace(this.workspace, this.localWorkspace)).name;
-          this.$router.push(`/workspaces/${data}`);
+          const { name } = await api.renameWorkspace(this.workspace, this.localWorkspace);
+          this.$router.push(`/workspaces/${name}`);
           this.editing = false;
           this.requestError = null;
 
