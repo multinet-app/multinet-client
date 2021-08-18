@@ -29,6 +29,7 @@
       </div>
 
       <network-dialog
+        v-if="editable"
         :workspace="workspace"
         :node-tables="nodeTables"
         :edge-tables="edgeTables"
@@ -98,7 +99,7 @@
               </v-btn>
             </v-list-item-action>
             <v-list-item-action
-              v-if="hover"
+              v-if="hover && editable"
               class="mx-0 my-0"
               @click.prevent
             >
@@ -157,6 +158,11 @@ export default Vue.extend({
     },
 
     loading: {
+      type: Boolean as PropType<boolean>,
+      required: true,
+    },
+
+    editable: {
       type: Boolean as PropType<boolean>,
       required: true,
     },
@@ -230,15 +236,8 @@ export default Vue.extend({
       });
     },
 
-    async cleanup(selection?: string[]) {
+    async cleanup() {
       this.singleSelected = null;
-
-      if (selection) {
-        selection.forEach((item) => {
-          this.checkbox[item] = false;
-        });
-      }
-
       await store.dispatch.fetchWorkspace(this.workspace);
       this.clearCheckboxes();
     },

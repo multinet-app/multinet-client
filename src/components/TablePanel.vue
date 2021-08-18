@@ -24,7 +24,6 @@
           ref="deleter"
           :selection="selection"
           :workspace="workspace"
-          @deleted="cleanup"
           @closed="cleanup"
         />
       </div>
@@ -227,15 +226,8 @@ export default Vue.extend({
       });
     },
 
-    async cleanup(selection?: string[]) {
+    async cleanup() {
       this.singleSelected = null;
-
-      if (selection) {
-        selection.forEach((item) => {
-          this.checkbox[item] = false;
-        });
-      }
-
       await store.dispatch.fetchWorkspace(this.workspace);
       this.clearCheckboxes();
     },
