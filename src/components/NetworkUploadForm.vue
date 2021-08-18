@@ -71,13 +71,13 @@
 </template>
 
 <script lang="ts">
-import { GraphUploadType, validGraphUploadType } from 'multinet';
+import { NetworkUploadType, validNetworkUploadType } from 'multinet';
 import Vue from 'vue';
 
 import api from '@/api';
-import { GraphFileType } from '@/types';
+import { NetworkFileType } from '@/types';
 
-const fileTypes: GraphFileType[] = [
+const fileTypes: NetworkFileType[] = [
   {
     displayName: 'D3 JSON (ext: .json)',
     hint: 'JSON format compatible with d3-force',
@@ -99,7 +99,7 @@ const fileTypes: GraphFileType[] = [
 ];
 
 export default Vue.extend({
-  name: 'GraphUploadForm',
+  name: 'NetworkUploadForm',
 
   props: {
     workspace: {
@@ -114,7 +114,7 @@ export default Vue.extend({
       tableCreationError: null as string | null,
       fileUploadError: null as string | null,
       fileName: null as string | null,
-      selectedType: null as GraphFileType | null,
+      selectedType: null as NetworkFileType | null,
       file: null as File | null,
       uploading: false,
       uploadProgress: null as number | null,
@@ -178,7 +178,7 @@ export default Vue.extend({
 
       try {
         await api.uploadNetwork(workspace, fileName, {
-          type: selectedType.queryCall as GraphUploadType,
+          type: selectedType.queryCall as NetworkUploadType,
           data: file,
         });
 
@@ -199,7 +199,7 @@ export default Vue.extend({
       }
     },
 
-    fileInfo(file: File): [string, GraphFileType] | null {
+    fileInfo(file: File): [string, NetworkFileType] | null {
       if (!file) {
         return null;
       }
@@ -207,7 +207,7 @@ export default Vue.extend({
       const [fileName, ...extensions] = file.name.split('.');
       const extension = extensions[extensions.length - 1];
 
-      const found = this.fileTypes.find((type) => type.extension.includes(extension) && validGraphUploadType(type.queryCall));
+      const found = this.fileTypes.find((type) => type.extension.includes(extension) && validNetworkUploadType(type.queryCall));
 
       return found === undefined ? null : [fileName, found];
     },

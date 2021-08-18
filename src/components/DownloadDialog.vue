@@ -137,7 +137,7 @@ export default Vue.extend({
           return api.downloadTable.bind(api);
         case 'network':
         default:
-          return api.downloadGraph.bind(api);
+          return api.downloadNetwork.bind(api);
       }
     },
   },

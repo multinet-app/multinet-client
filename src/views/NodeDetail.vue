@@ -34,11 +34,11 @@
             </v-icon>
             <router-link
               :to="{
-                name: 'graphDetail',
-                params: { graph }
+                name: 'networkDetail',
+                params: { network }
               }"
             >
-              {{ graph }}
+              {{ network }}
             </router-link>
             <v-icon
               class="mx-4"
@@ -175,7 +175,7 @@
                   <v-list-item
                     v-for="(edge, index) in incoming"
                     :key="index"
-                    :to="`/workspaces/${workspace}/graph/${graph}/node/${edge.node}`"
+                    :to="`/workspaces/${workspace}/network/${network}/node/${edge.node}`"
                   >
                     <v-list-item-content>
                       {{ edge.node }}
@@ -240,7 +240,7 @@
                   <v-list-item
                     v-for="(edge, index) in outgoing"
                     :key="index"
-                    :to="`/workspaces/${workspace}/graph/${graph}/node/${edge.node}`"
+                    :to="`/workspaces/${workspace}/network/${network}/node/${edge.node}`"
                   >
                     <v-list-item-content>
                       {{ edge.node }}
@@ -284,7 +284,7 @@ export default Vue.extend({
       required: true,
     },
 
-    graph: {
+    network: {
       type: String as PropType<string>,
       required: true,
     },
@@ -366,7 +366,7 @@ export default Vue.extend({
     workspace() {
       this.update();
     },
-    graph() {
+    network() {
       this.update();
     },
     type() {
@@ -394,13 +394,13 @@ export default Vue.extend({
       const nodeTable = (await api.table(this.workspace, this.type, {})).results;
       // eslint-disable-next-line no-underscore-dangle
       const node = nodeTable.find((table) => table._key === this.node);
-      const incoming = (await api.edges(this.workspace, this.graph, {
+      const incoming = (await api.edges(this.workspace, this.network, {
         direction: 'incoming',
         offset: this.offsetIncoming,
         limit: this.pageCount,
       // eslint-disable-next-line no-underscore-dangle
       })).results.filter((edge) => edge._to === `${this.type}/${this.node}`);
-      const outgoing = (await api.edges(this.workspace, this.graph, {
+      const outgoing = (await api.edges(this.workspace, this.network, {
         direction: 'outgoing',
         offset: this.offsetOutgoing,
         limit: this.pageCount,

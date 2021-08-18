@@ -1,6 +1,6 @@
 <template>
   <v-container
-    class="graph-container"
+    class="network-container"
     fill-height
     fluid
     pa-0
@@ -34,7 +34,7 @@
             class="mr-3"
             color="grey lighten-1"
           >timeline</v-icon>
-          {{ graph }}
+          {{ network }}
         </span>
       </v-toolbar-title>
 
@@ -53,7 +53,7 @@
         fluid
         pa-0
       >
-        <div :class="graphVisClasses">
+        <div :class="networkVisClasses">
           <v-list>
             <v-list-item>
               <v-list-item-title>
@@ -93,7 +93,7 @@
                 v-for="app in apps"
                 :key="app.name"
                 class="pl-2"
-                :href="`${app.url}/?workspace=${workspace}&graph=${graph}`"
+                :href="`${app.url}/?workspace=${workspace}&network=${network}`"
                 target="_blank"
               >
                 <v-list-item-avatar class="mr-3">
@@ -292,7 +292,7 @@
                   <v-list-item
                     v-for="node in nodes"
                     :key="node"
-                    :to="`/workspaces/${workspace}/graph/${graph}/node/${node}`"
+                    :to="`/workspaces/${workspace}/network/${network}/node/${node}`"
                   >
                     <v-list-item-title>
                       {{ node }}
@@ -332,10 +332,10 @@ import api from '@/api';
 import { App } from '@/types';
 
 export default Vue.extend({
-  name: 'GraphDetail',
+  name: 'NetworkDetail',
   filters: {
     appendArgs(url: string) {
-      return `${url}/?workspace=${this.workspace}&graph=${this.graph}`;
+      return `${url}/?workspace=${this.workspace}&graph=${this.network}`;
     },
   },
   props: {
@@ -343,7 +343,7 @@ export default Vue.extend({
       type: String as PropType<string>,
       required: true,
     },
-    graph: {
+    network: {
       type: String as PropType<string>,
       required: true,
     },
@@ -389,12 +389,12 @@ export default Vue.extend({
 
       return `d-flex flex-row node-cols${panelOpen ? '' : ' node-cols-closed'}`;
     },
-    graphVisClasses(): string {
+    networkVisClasses(): string {
       const {
         panelOpen,
       } = this;
 
-      return `graph-vis${panelOpen ? '' : ' graph-vis-closed'}`;
+      return `network-vis${panelOpen ? '' : ' network-vis-closed'}`;
     },
     drawerIcon(): string {
       return this.panelOpen ? 'expand_more' : 'expand_less';
@@ -410,7 +410,7 @@ export default Vue.extend({
     workspace() {
       this.update();
     },
-    graph() {
+    network() {
       this.update();
     },
   },
@@ -427,17 +427,17 @@ export default Vue.extend({
         return tableRow._id.split('/')[0];
       }
       this.loading = true;
-      const graph = await api.graph(this.workspace, this.graph);
-      const nodes = await api.nodes(this.workspace, this.graph, {
+      const network = await api.network(this.workspace, this.network);
+      const nodes = await api.nodes(this.workspace, this.network, {
         offset: this.offset,
         limit: this.limit,
       });
-      const edges = await api.edges(this.workspace, this.graph, {
+      const edges = await api.edges(this.workspace, this.network, {
         offset: this.offset,
         limit: this.limit,
       });
-      this.totalNodes = graph.node_count;
-      this.totalEdges = graph.edge_count;
+      this.totalNodes = network.node_count;
+      this.totalEdges = network.edge_count;
 
       const prelimNodes = nodes.results.map((node) => tableName(node));
       prelimNodes.forEach((nodeType) => {
@@ -471,13 +471,13 @@ ul {
   text-align: left;
 }
 
-.graph-vis {
+.network-vis {
   height: calc(100vh - 314px);
   position: relative;
   z-index: 1;
 }
 
-.graph-vis-closed {
+.network-vis-closed {
   height: calc(100vh - 75px);
 }
 

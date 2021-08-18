@@ -1,4 +1,4 @@
-import { UploadType, TableUploadType, GraphUploadType } from 'multinet';
+import { UploadType, TableUploadType, NetworkUploadType } from 'multinet';
 
 export type CSVColumnType = 'label' | 'boolean' | 'category' | 'number' | 'date';
 
@@ -33,8 +33,8 @@ export interface FileType {
 export interface TableFileType extends FileType{
   queryCall: TableUploadType;
 }
-export interface GraphFileType extends FileType{
-  queryCall: GraphUploadType;
+export interface NetworkFileType extends FileType{
+  queryCall: NetworkUploadType;
 }
 
 export interface FileTypeTable {

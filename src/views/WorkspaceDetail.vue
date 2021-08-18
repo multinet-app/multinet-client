@@ -130,7 +130,7 @@
           >
             <network-panel
               :workspace="workspace"
-              :items="graphs"
+              :items="networks"
               :node-tables="nodeTables"
               :edge-tables="edgeTables"
               :loading="loading"
@@ -201,7 +201,7 @@ export default Vue.extend({
   computed: {
     nodeTables: () => store.getters.nodeTables,
     edgeTables: () => store.getters.edgeTables,
-    graphs: () => store.getters.graphs,
+    networks: () => store.getters.networks,
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     nameErrorMessages(this: any): string[] {
