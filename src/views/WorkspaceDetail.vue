@@ -152,7 +152,6 @@
               :workspace="workspace"
               :items="tables"
               :loading="loading"
-              :editable="false"
             />
           </v-card>
         </v-flex>
@@ -281,7 +280,6 @@ export default Vue.extend({
 
       this.localWorkspace = this.workspace;
       await store.dispatch.fetchWorkspace(this.workspace);
-      await store.dispatch.fetchPermissionsInfo(this.workspace);
       this.loading = false;
     },
   },

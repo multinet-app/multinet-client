@@ -208,7 +208,6 @@ import store from '@/store';
 import {
   Role,
   SingularRole,
-  canChangeWorkspacePermissions,
 } from '@/utils/permissions';
 
 export interface UserPermissionSpec {
@@ -248,7 +247,7 @@ export default Vue.extend({
   computed: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     workspacePermissionsEditable(this: any) {
-      return canChangeWorkspacePermissions(store.state.userInfo, this.permissions);
+      return store.getters.hasRequiredPermission('maintainer');
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     filteredWorkspacePermissions(this: any) {
