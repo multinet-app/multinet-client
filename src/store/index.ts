@@ -12,7 +12,7 @@ export interface WorkspaceState {
   name: string;
   nodeTables: string[];
   edgeTables: string[];
-  graphs: string[];
+  networks: string[];
 }
 
 export interface State {
@@ -48,9 +48,9 @@ const {
       return [];
     },
 
-    graphs(state: State) {
-      if (state.currentWorkspace !== null && state.currentWorkspace.graphs) {
-        return state.currentWorkspace.graphs;
+    networks(state: State) {
+      if (state.currentWorkspace !== null && state.currentWorkspace.networks) {
+        return state.currentWorkspace.networks;
       }
       return [];
     },
@@ -83,7 +83,7 @@ const {
       const { commit } = rootActionContext(context);
       commit.unsetCurrentWorkspace();
 
-      const graphs = await api.graphs(workspace);
+      const networks = await api.networks(workspace);
       const tables = (await api.tables(workspace)).results;
       const nodeTables = tables.filter((table) => table.edge === false);
       const edgeTables = tables.filter((table) => table.edge === true);
@@ -92,7 +92,7 @@ const {
         name: workspace,
         nodeTables: nodeTables.map((table) => table.name),
         edgeTables: edgeTables.map((table) => table.name),
-        graphs: graphs.results.map((graph) => graph.name),
+        networks: networks.results.map((network) => network.name),
       });
     },
 

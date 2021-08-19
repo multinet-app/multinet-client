@@ -28,7 +28,7 @@
       </v-tooltip>
     </template>
 
-    <v-card v-if="!dependentGraphs">
+    <v-card v-if="!dependentNetworks">
       <v-card-title
         class="headline pb-0 pt-3 px-5"
         primary-title
@@ -83,10 +83,10 @@
         The following networks are using these tables:
         <ul>
           <li
-            v-for="(graph, index) in using"
+            v-for="(network, index) in using"
             :key="index"
           >
-            {{ graph.graph }} ({{ graph.tables.join(', ') }})
+            {{ network.network }} ({{ network.tables.join(', ') }})
           </li>
         </ul>
       </v-card-text>
@@ -136,7 +136,7 @@ export default Vue.extend({
       dialog: false,
       confirmationPhrase: '',
       confirmation: '',
-      using: [] as Array<{graph: string; tables: string[]}>,
+      using: [] as Array<{network: string; tables: string[]}>,
     };
   },
 
@@ -152,7 +152,7 @@ export default Vue.extend({
       return this.selection.length > 0;
     },
 
-    dependentGraphs(): boolean {
+    dependentNetworks(): boolean {
       return this.using.length > 0;
     },
   },
@@ -161,7 +161,7 @@ export default Vue.extend({
     async dialog() {
       if (this.dialog) {
         this.using = [];
-        const using = await this.findDependentGraphs();
+        const using = await this.findDependentNetworks();
         if (using.length > 0) {
           this.using = using;
         } else {
@@ -188,7 +188,7 @@ export default Vue.extend({
       this.confirmationPhrase = randomPhrase();
     },
 
-    async findDependentGraphs() {
+    async findDependentNetworks() {
       const {
         selection,
         workspace,
@@ -199,11 +199,11 @@ export default Vue.extend({
         return tableRow._id.split('/')[0];
       }
 
-      const graphNames = (await api.graphs(workspace)).results.map((graph) => graph.name);
-      const using = [] as Array<{graph: string; tables: string[]}>;
-      graphNames.forEach(async (graph) => {
-        const nodes = await api.nodes(workspace, graph, {});
-        const edges = await api.edges(workspace, graph, {
+      const networkNames = (await api.networks(workspace)).results.map((network) => network.name);
+      const using = [] as Array<{network: string; tables: string[]}>;
+      networkNames.forEach(async (network) => {
+        const nodes = await api.nodes(workspace, network, {});
+        const edges = await api.edges(workspace, network, {
           direction: 'all',
         });
 
@@ -224,7 +224,7 @@ export default Vue.extend({
 
         if (tables.length > 0) {
           using.push({
-            graph,
+            network,
             tables,
           });
         }

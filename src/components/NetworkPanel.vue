@@ -16,11 +16,11 @@
           ref="downloader"
           :selection="selection"
           :workspace="workspace"
-          download-type="graph"
+          download-type="network"
           @downloaded="cleanup"
         />
 
-        <delete-graph-dialog
+        <delete-network-dialog
           ref="deleter"
           :selection="selection"
           :workspace="workspace"
@@ -28,7 +28,7 @@
         />
       </div>
 
-      <graph-dialog
+      <network-dialog
         :workspace="workspace"
         :node-tables="nodeTables"
         :edge-tables="edgeTables"
@@ -62,7 +62,7 @@
             slot-scope="{ hover }"
             active-class="grey lighten-4"
             ripple
-            :to="`/workspaces/${workspace}/graph/${item}`"
+            :to="`/workspaces/${workspace}/network/${item}`"
           >
             <v-list-item-action @click.prevent>
               <v-icon
@@ -120,18 +120,18 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
-import DeleteGraphDialog from '@/components/DeleteGraphDialog.vue';
-import GraphDialog from '@/components/GraphDialog.vue';
+import DeleteNetworkDialog from '@/components/DeleteNetworkDialog.vue';
+import NetworkDialog from '@/components/NetworkDialog.vue';
 import DownloadDialog from '@/components/DownloadDialog.vue';
 
 import store from '@/store';
 
 export default Vue.extend({
-  name: 'GraphPanel',
+  name: 'NetworkPanel',
 
   components: {
-    DeleteGraphDialog,
-    GraphDialog,
+    DeleteNetworkDialog,
+    NetworkDialog,
     DownloadDialog,
   },
 

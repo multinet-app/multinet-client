@@ -1,11 +1,11 @@
 <template>
   <v-dialog
-    v-model="graphDialog"
+    v-model="networkDialog"
     width="700"
   >
     <template v-slot:activator="{ on }">
       <v-btn
-        id="add-graph"
+        id="add-network"
         color="blue darken-2"
         icon
         medium
@@ -27,17 +27,17 @@
           </v-tab>
 
           <v-tab-item>
-            <graph-upload-form
+            <network-upload-form
               :workspace="workspace"
-              @success="graphDialogSuccess"
+              @success="networkDialogSuccess"
             />
           </v-tab-item>
 
           <v-tab-item>
-            <graph-create-form
+            <network-create-form
               :edge-tables="edgeTables"
               :workspace="workspace"
-              @success="graphDialogSuccess"
+              @success="networkDialogSuccess"
             />
           </v-tab-item>
         </v-tabs>
@@ -49,14 +49,14 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 
-import GraphCreateForm from '@/components/GraphCreateForm.vue';
-import GraphUploadForm from '@/components/GraphUploadForm.vue';
+import NetworkCreateForm from '@/components/NetworkCreateForm.vue';
+import NetworkUploadForm from '@/components/NetworkUploadForm.vue';
 
 export default Vue.extend({
-  name: 'GraphDialog',
+  name: 'NetworkDialog',
   components: {
-    GraphCreateForm,
-    GraphUploadForm,
+    NetworkCreateForm,
+    NetworkUploadForm,
   },
   props: {
     edgeTables: {
@@ -71,13 +71,13 @@ export default Vue.extend({
   },
   data() {
     return {
-      graphDialog: false,
+      networkDialog: false,
     };
   },
   computed: {},
   methods: {
-    graphDialogSuccess() {
-      this.graphDialog = false;
+    networkDialogSuccess() {
+      this.networkDialog = false;
       this.$emit('success');
     },
   },
