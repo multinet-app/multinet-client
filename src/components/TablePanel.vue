@@ -151,11 +151,6 @@ export default Vue.extend({
       type: Boolean as PropType<boolean>,
       required: true,
     },
-
-    editable: {
-      type: Boolean as PropType<boolean>,
-      required: true,
-    },
   },
 
   data() {
@@ -196,6 +191,10 @@ export default Vue.extend({
 
     anySelected(): boolean {
       return this.selection.length > 0;
+    },
+
+    editable(): boolean {
+      return this.$store.getters.hasRequiredPermission('writer');
     },
   },
 
