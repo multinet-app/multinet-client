@@ -1,10 +1,11 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import { createDirectStore } from 'direct-vuex';
-import { UserPermissionSpec, UserSpec } from 'multinet';
+import { SingleUserWorkspacePermissionSpec, UserSpec } from 'multinet';
 
 import api from '@/api';
 import oauthClient from '@/oauth';
+import { SingularRole, RoleOrdering } from '@/utils/permissions';
 
 Vue.use(Vuex);
 
@@ -19,7 +20,7 @@ export interface State {
   workspaces: string[];
   currentWorkspace: WorkspaceState | null;
   userInfo: UserSpec | null;
-  permissionInfo: UserPermissionSpec | null;
+  currentWorkspacePermissionInfo: SingleUserWorkspacePermissionSpec | null;
 }
 
 const {
@@ -33,7 +34,7 @@ const {
     workspaces: [],
     currentWorkspace: null,
     userInfo: null,
-    permissionInfo: null,
+    currentWorkspacePermissionInfo: null,
   } as State,
   getters: {
     nodeTables(state: State): string[] {
@@ -57,15 +58,28 @@ const {
       return [];
     },
 
-    hasWriterAccess(state: State): boolean {
-      if (!state.permissionInfo) {
+    canEditWorkspace(state: State): boolean {
+      if (!state.currentWorkspacePermissionInfo) {
         return false;
       }
-      const { permission } = state.permissionInfo;
-      if (permission === 'owner' || permission === 'maintainer' || permission === 'writer') {
-        return true;
+      const { permission } = state.currentWorkspacePermissionInfo;
+      switch (permission) {
+        case 'owner':
+        case 'maintainer':
+        case 'writer':
+          return true;
+        default:
+          return false;
       }
-      return false;
+    },
+
+    hasRequiredPermission: (state: State) => (minimumPermission: SingularRole) => {
+      if (!state.currentWorkspacePermissionInfo) {
+        return false;
+      }
+
+      const { permission } = state.currentWorkspacePermissionInfo;
+      return RoleOrdering[permission as SingularRole] >= RoleOrdering[minimumPermission];
     },
   },
   mutations: {
@@ -85,8 +99,8 @@ const {
       state.userInfo = userInfo;
     },
 
-    setPermissionInfo(state, permissionInfo: UserPermissionSpec | null) {
-      state.permissionInfo = permissionInfo;
+    setPermissionInfo(state, permissionInfo: SingleUserWorkspacePermissionSpec | null) {
+      state.currentWorkspacePermissionInfo = permissionInfo;
     },
   },
   actions: {
@@ -98,12 +112,16 @@ const {
 
     async fetchWorkspace(context, workspace: string) {
       const { commit } = rootActionContext(context);
+
       commit.unsetCurrentWorkspace();
 
       const networks = await api.networks(workspace);
       const tables = (await api.tables(workspace)).results;
       const nodeTables = tables.filter((table) => table.edge === false);
       const edgeTables = tables.filter((table) => table.edge === true);
+
+      const permissionsInfo = await api.getCurrentUserWorkspacePermissions(workspace);
+      commit.setPermissionInfo(permissionsInfo);
 
       commit.setCurrentWorkspace({
         name: workspace,
@@ -122,21 +140,6 @@ const {
       } catch (error) {
         if (error.response.status === 401) {
           commit.setUserInfo(null);
-        } else {
-          throw new Error(error);
-        }
-      }
-    },
-
-    async fetchPermissionsInfo(context, workspace: string) {
-      const { commit } = rootActionContext(context);
-
-      try {
-        const info = await api.getCurrentUserWorkspacePermissions(workspace);
-        commit.setPermissionInfo(info);
-      } catch (error) {
-        if (error.response.status === 401) {
-          commit.setPermissionInfo(null);
         } else {
           throw new Error(error);
         }
