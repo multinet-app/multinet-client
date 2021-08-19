@@ -333,11 +333,6 @@ import { App } from '@/types';
 
 export default Vue.extend({
   name: 'NetworkDetail',
-  filters: {
-    appendArgs(url: string) {
-      return `${url}/?workspace=${this.workspace}&graph=${this.network}`;
-    },
-  },
   props: {
     workspace: {
       type: String as PropType<string>,
