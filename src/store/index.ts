@@ -5,7 +5,7 @@ import { SingleUserWorkspacePermissionSpec, UserSpec } from 'multinet';
 
 import api from '@/api';
 import oauthClient from '@/oauth';
-import { SingularRole, RoleOrdering } from '@/utils/permissions';
+import { SingularRole, getRoleOrdinal } from '@/utils/permissions';
 
 Vue.use(Vuex);
 
@@ -58,28 +58,13 @@ const {
       return [];
     },
 
-    canEditWorkspace(state: State): boolean {
-      if (!state.currentWorkspacePermissionInfo) {
-        return false;
-      }
-      const { permission } = state.currentWorkspacePermissionInfo;
-      switch (permission) {
-        case 'owner':
-        case 'maintainer':
-        case 'writer':
-          return true;
-        default:
-          return false;
-      }
-    },
-
     hasRequiredPermission: (state: State) => (minimumPermission: SingularRole) => {
       if (!state.currentWorkspacePermissionInfo) {
         return false;
       }
 
       const { permission } = state.currentWorkspacePermissionInfo;
-      return RoleOrdering[permission as SingularRole] >= RoleOrdering[minimumPermission];
+      return getRoleOrdinal(permission as SingularRole) >= getRoleOrdinal(minimumPermission);
     },
   },
   mutations: {
