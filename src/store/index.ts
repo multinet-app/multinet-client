@@ -5,7 +5,7 @@ import { SingleUserWorkspacePermissionSpec, UserSpec } from 'multinet';
 
 import api from '@/api';
 import oauthClient from '@/oauth';
-import { SingularRole, getRoleOrdinal } from '@/utils/permissions';
+import { RoleLevel } from '@/utils/permissions';
 
 Vue.use(Vuex);
 
@@ -58,13 +58,13 @@ const {
       return [];
     },
 
-    hasRequiredPermission: (state: State) => (minimumPermission: SingularRole) => {
+    hasRequiredPermission: (state: State) => (minimumPermission: RoleLevel) => {
       if (!state.currentWorkspacePermissionInfo) {
         return false;
       }
 
       const { permission } = state.currentWorkspacePermissionInfo;
-      return getRoleOrdinal(permission as SingularRole) >= getRoleOrdinal(minimumPermission);
+      return permission && permission >= minimumPermission;
     },
   },
   mutations: {

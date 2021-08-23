@@ -126,6 +126,7 @@ import NetworkDialog from '@/components/NetworkDialog.vue';
 import DownloadDialog from '@/components/DownloadDialog.vue';
 
 import store from '@/store';
+import { RoleLevel } from '@/utils/permissions';
 
 export default Vue.extend({
   name: 'NetworkPanel',
@@ -204,7 +205,7 @@ export default Vue.extend({
     },
 
     editable(): boolean {
-      return this.$store.getters.hasRequiredPermission('writer');
+      return this.$store.getters.hasRequiredPermission(RoleLevel.writer);
     },
   },
 

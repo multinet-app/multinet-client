@@ -208,6 +208,7 @@ import store from '@/store';
 import {
   Role,
   SingularRole,
+  RoleLevel,
 } from '@/utils/permissions';
 
 export interface UserPermissionSpec {
@@ -247,7 +248,7 @@ export default Vue.extend({
   computed: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     workspacePermissionsEditable(this: any) {
-      return store.getters.hasRequiredPermission('maintainer');
+      return store.getters.hasRequiredPermission(RoleLevel.maintainer);
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     filteredWorkspacePermissions(this: any) {
