@@ -182,7 +182,6 @@ export default Vue.extend({
 
       await Promise.all(selection.map((table) => api.deleteTable(workspace, table)));
 
-      this.$emit('closed');
       this.dialog = false;
       this.confirmation = '';
       this.confirmationPhrase = randomPhrase();
