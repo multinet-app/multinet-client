@@ -1,10 +1,11 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import { createDirectStore } from 'direct-vuex';
-import { UserSpec } from 'multinet';
+import { SingleUserWorkspacePermissionSpec, UserSpec } from 'multinet';
 
 import api from '@/api';
 import oauthClient from '@/oauth';
+import { RoleLevel } from '@/utils/permissions';
 
 Vue.use(Vuex);
 
@@ -19,6 +20,7 @@ export interface State {
   workspaces: string[];
   currentWorkspace: WorkspaceState | null;
   userInfo: UserSpec | null;
+  currentWorkspacePermission: SingleUserWorkspacePermissionSpec | null;
 }
 
 const {
@@ -32,6 +34,7 @@ const {
     workspaces: [],
     currentWorkspace: null,
     userInfo: null,
+    currentWorkspacePermission: null,
   } as State,
   getters: {
     nodeTables(state: State): string[] {
@@ -54,6 +57,17 @@ const {
       }
       return [];
     },
+
+    permissionLevel(state: State): RoleLevel {
+      if (!state.currentWorkspacePermission) {
+        return RoleLevel.none;
+      }
+      const { permission } = state.currentWorkspacePermission;
+      if (!permission) {
+        return RoleLevel.none;
+      }
+      return permission as RoleLevel;
+    },
   },
   mutations: {
     setWorkspaces(state, workspaces: string[]) {
@@ -71,6 +85,10 @@ const {
     setUserInfo(state, userInfo: UserSpec | null) {
       state.userInfo = userInfo;
     },
+
+    setPermissionInfo(state, permissionInfo: SingleUserWorkspacePermissionSpec | null) {
+      state.currentWorkspacePermission = permissionInfo;
+    },
   },
   actions: {
     async fetchWorkspaces(context) {
@@ -81,12 +99,16 @@ const {
 
     async fetchWorkspace(context, workspace: string) {
       const { commit } = rootActionContext(context);
+
       commit.unsetCurrentWorkspace();
 
       const networks = await api.networks(workspace);
       const tables = (await api.tables(workspace)).results;
       const nodeTables = tables.filter((table) => table.edge === false);
       const edgeTables = tables.filter((table) => table.edge === true);
+
+      const permissionsInfo = await api.getCurrentUserWorkspacePermissions(workspace);
+      commit.setPermissionInfo(permissionsInfo);
 
       commit.setCurrentWorkspace({
         name: workspace,

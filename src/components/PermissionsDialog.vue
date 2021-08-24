@@ -200,15 +200,15 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
-import api from '@/api';
 import { WorkspacePermissionsSpec, UserSpec } from 'multinet';
 import { cloneDeep, debounce } from 'lodash';
+import api from '@/api';
 
 import store from '@/store';
 import {
   Role,
   SingularRole,
-  canChangeWorkspacePermissions,
+  RoleLevel,
 } from '@/utils/permissions';
 
 export interface UserPermissionSpec {
@@ -248,7 +248,7 @@ export default Vue.extend({
   computed: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     workspacePermissionsEditable(this: any) {
-      return canChangeWorkspacePermissions(store.state.userInfo, this.permissions);
+      return store.getters.permissionLevel >= RoleLevel.maintainer;
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     filteredWorkspacePermissions(this: any) {

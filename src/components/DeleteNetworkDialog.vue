@@ -132,8 +132,6 @@ export default Vue.extend({
       } = this;
 
       await Promise.all(selection.map((network) => api.deleteNetwork(workspace, network)));
-
-      this.$emit('closed', [...selection]);
       this.dialog = false;
     },
   },

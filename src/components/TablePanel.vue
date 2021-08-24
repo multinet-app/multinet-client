@@ -24,12 +24,12 @@
           ref="deleter"
           :selection="selection"
           :workspace="workspace"
-          @deleted="cleanup"
           @closed="cleanup"
         />
       </div>
 
       <table-dialog
+        v-if="editable"
         :workspace="workspace"
         @success="cleanup"
       />
@@ -99,7 +99,7 @@
               </v-btn>
             </v-list-item-action>
             <v-list-item-action
-              v-if="hover"
+              v-if="hover && editable"
               class="mx-0 my-0"
               @click.prevent
             >
@@ -126,6 +126,7 @@ import TableDialog from '@/components/TableDialog.vue';
 import DownloadDialog from '@/components/DownloadDialog.vue';
 
 import store from '@/store';
+import { RoleLevel } from '@/utils/permissions';
 
 export default Vue.extend({
   name: 'TablePanel',
@@ -192,6 +193,10 @@ export default Vue.extend({
     anySelected(): boolean {
       return this.selection.length > 0;
     },
+
+    editable(): boolean {
+      return store.getters.permissionLevel >= RoleLevel.writer;
+    },
   },
 
   watch: {
@@ -221,15 +226,8 @@ export default Vue.extend({
       });
     },
 
-    async cleanup(selection?: string[]) {
+    async cleanup() {
       this.singleSelected = null;
-
-      if (selection) {
-        selection.forEach((item) => {
-          this.checkbox[item] = false;
-        });
-      }
-
       await store.dispatch.fetchWorkspace(this.workspace);
       this.clearCheckboxes();
     },

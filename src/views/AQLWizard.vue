@@ -119,13 +119,12 @@
 
 <script lang="ts">
 
-import api from '@/api';
-import store from '@/store';
-import { PropType } from 'vue';
-
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import VueJsonPretty from 'vue-json-pretty';
+import { PropType } from 'vue';
+import api from '@/api';
+import store from '@/store';
 
 type AnyJson = boolean | number | string | null | JsonArray | JsonMap;
 interface JsonMap { [key: string]: AnyJson }

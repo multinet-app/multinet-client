@@ -6162,10 +6162,10 @@ multimatch@^2.1.0:
     arrify "^1.0.0"
     minimatch "^3.0.0"
 
-multinet@0.21.1:
-  version "0.21.1"
-  resolved "https://registry.yarnpkg.com/multinet/-/multinet-0.21.1.tgz#a16633a23a2bcbc7a998c2cda0c4cc5870d0fcad"
-  integrity sha512-XS92S4DOPGTzWUIesEdqQ4megekPyEI5EOBf3C+8t1rbmy51s4zqReXdll0+poS4YoUAQRxyoMSo9T6Ktwg1Fg==
+multinet@0.21.2:
+  version "0.21.2"
+  resolved "https://registry.yarnpkg.com/multinet/-/multinet-0.21.2.tgz#724d1dcae8b8b338a17d3ae717fb9f73e65a145d"
+  integrity sha512-EVbGYfW2VHhohSaUnUyCMSEF918Zn17Vo5wJcfMFA8+idyB/wbNqwr/ZC45aDXZJ/94BZbQigR1FcjbAOXM9NA==
   dependencies:
     axios "^0.21.1"
     django-s3-file-field "^0.1.2"

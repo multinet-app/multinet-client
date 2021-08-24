@@ -280,7 +280,6 @@ export default Vue.extend({
 
       this.localWorkspace = this.workspace;
       await store.dispatch.fetchWorkspace(this.workspace);
-
       this.loading = false;
     },
   },
