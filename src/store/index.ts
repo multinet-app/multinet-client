@@ -20,7 +20,7 @@ export interface State {
   workspaces: string[];
   currentWorkspace: WorkspaceState | null;
   userInfo: UserSpec | null;
-  currentWorkspacePermissionInfo: SingleUserWorkspacePermissionSpec | null;
+  currentWorkspacePermission: SingleUserWorkspacePermissionSpec | null;
 }
 
 const {
@@ -34,7 +34,7 @@ const {
     workspaces: [],
     currentWorkspace: null,
     userInfo: null,
-    currentWorkspacePermissionInfo: null,
+    currentWorkspacePermission: null,
   } as State,
   getters: {
     nodeTables(state: State): string[] {
@@ -58,13 +58,15 @@ const {
       return [];
     },
 
-    hasRequiredPermission: (state: State) => (minimumPermission: RoleLevel) => {
-      if (!state.currentWorkspacePermissionInfo) {
-        return false;
+    permissionLevel(state: State): RoleLevel {
+      if (!state.currentWorkspacePermission) {
+        return RoleLevel.none;
       }
-
-      const { permission } = state.currentWorkspacePermissionInfo;
-      return permission && permission >= minimumPermission;
+      const { permission } = state.currentWorkspacePermission;
+      if (!permission) {
+        return RoleLevel.none;
+      }
+      return permission as RoleLevel;
     },
   },
   mutations: {
@@ -85,7 +87,7 @@ const {
     },
 
     setPermissionInfo(state, permissionInfo: SingleUserWorkspacePermissionSpec | null) {
-      state.currentWorkspacePermissionInfo = permissionInfo;
+      state.currentWorkspacePermission = permissionInfo;
     },
   },
   actions: {

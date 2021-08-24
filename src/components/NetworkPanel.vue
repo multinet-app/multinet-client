@@ -205,7 +205,7 @@ export default Vue.extend({
     },
 
     editable(): boolean {
-      return this.$store.getters.hasRequiredPermission(RoleLevel.writer);
+      return store.getters.permissionLevel >= RoleLevel.writer;
     },
   },
 

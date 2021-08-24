@@ -6,4 +6,5 @@ export enum RoleLevel {
   maintainer = 3,
   writer = 2,
   reader = 1,
+  none = 0,
 }
