@@ -56,16 +56,23 @@ async function analyzeCSV(file: File): Promise<CSVAnalysis> {
     const columnTypes = new Map<string, TypeScore>();
     const typeRecs = new Map<string, CSVColumnType>();
     const sampleRows = [] as Array<{}>;
+    let rowsParsed = 0;
 
     Papa.parse(file, {
       header: true,
       skipEmptyLines: true,
-      step(row: ParseResult<{}>) {
+      step(row: ParseResult<{}>, parser) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const data = row.data as { [key: string]: any };
 
         if (sampleRows.length !== 30) {
           sampleRows.push({ ...data });
+        }
+
+        // Increment number of rows parsed and return if we've done 1000
+        rowsParsed += 1;
+        if (rowsParsed === 1000) {
+          parser.abort();
         }
 
         Object.keys(data).forEach((key: string) => {
