@@ -196,7 +196,7 @@ export default Vue.extend({
     columnTypes: {
       async get() {
         try {
-          return await api.tableColumnTypes(this.workspace, this.table);
+          return await api.columnTypes(this.workspace, this.table);
         } catch (err) {
           return {};
         }
