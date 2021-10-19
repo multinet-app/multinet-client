@@ -68,6 +68,10 @@ const {
       }
       return permission as RoleLevel;
     },
+
+    userCanEdit(state, getters) {
+      return getters.permissionLevel >= RoleLevel.writer;
+    },
   },
   mutations: {
     setWorkspaces(state, workspaces: string[]) {

@@ -98,7 +98,7 @@
               </v-btn>
             </v-list-item-action>
             <v-list-item-action
-              v-if="hover && editable"
+              v-if="hover && userCanEdit"
               class="mx-0 my-0"
               @click.prevent
             >
@@ -125,7 +125,6 @@ import NetworkDialog from '@/components/NetworkDialog.vue';
 import DownloadDialog from '@/components/DownloadDialog.vue';
 
 import store from '@/store';
-import { RoleLevel } from '@/utils/permissions';
 
 export default Vue.extend({
   name: 'NetworkPanel',
@@ -203,8 +202,8 @@ export default Vue.extend({
       return this.selection.length > 0;
     },
 
-    editable(): boolean {
-      return store.getters.permissionLevel >= RoleLevel.writer;
+    userCanEdit(): boolean {
+      return store.getters.userCanEdit;
     },
   },
 

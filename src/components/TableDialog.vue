@@ -9,7 +9,7 @@
         color="blue darken-2"
         icon
         medium
-        :disabled="!editable"
+        :disabled="!userCanEdit"
         v-on="on"
       >
         <v-icon dark>
@@ -181,7 +181,6 @@ import {
 import api from '@/api';
 import { TableFileType, CSVColumnType } from '@/types';
 import { validFileType, fileName as getFileName, analyzeCSV } from '@/utils/files';
-import { RoleLevel } from '@/utils/permissions';
 import store from '@/store';
 
 const defaultKeyField = '_key';
@@ -322,7 +321,7 @@ export default defineComponent({
       }
     }
 
-    const editable = computed(() => store.getters.permissionLevel >= RoleLevel.writer);
+    const userCanEdit = computed(() => store.getters.userCanEdit);
 
     return {
       step,
@@ -343,7 +342,7 @@ export default defineComponent({
       restoreKeyField,
       keyField,
       overwrite,
-      editable,
+      userCanEdit,
     };
   },
 });
