@@ -130,7 +130,7 @@
           >
             <network-panel
               :workspace="workspace"
-              :items="graphs"
+              :items="networks"
               :node-tables="nodeTables"
               :edge-tables="edgeTables"
               :loading="loading"
@@ -201,7 +201,7 @@ export default Vue.extend({
   computed: {
     nodeTables: () => store.getters.nodeTables,
     edgeTables: () => store.getters.edgeTables,
-    graphs: () => store.getters.graphs,
+    networks: () => store.getters.networks,
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     nameErrorMessages(this: any): string[] {
@@ -258,8 +258,8 @@ export default Vue.extend({
 
       if (this.localWorkspace !== null) {
         try {
-          const { data } = await api.renameWorkspace(this.workspace, this.localWorkspace);
-          this.$router.push(`/workspaces/${data}`);
+          const { name } = await api.renameWorkspace(this.workspace, this.localWorkspace);
+          this.$router.push(`/workspaces/${name}`);
           this.editing = false;
           this.requestError = null;
 
@@ -280,7 +280,6 @@ export default Vue.extend({
 
       this.localWorkspace = this.workspace;
       await store.dispatch.fetchWorkspace(this.workspace);
-
       this.loading = false;
     },
   },

@@ -41,7 +41,7 @@
               class="google-sign-in"
               dark
               :ripple="false"
-              :href="loginLink"
+              @click="login"
             >
               <span class="google-logo">
                 <img
@@ -62,7 +62,7 @@
 
 <script lang="ts">
 import { UserSpec } from 'multinet';
-import { host } from '@/environment';
+import oauthClient from '@/oauth';
 import store from '@/store';
 
 export default {
@@ -74,22 +74,13 @@ export default {
   computed: {
     userInfo: (): UserSpec | null => store.state.userInfo,
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    loginLink(this: any): string {
-      const {
-        location,
-      } = this;
-      const encodedLocation = encodeURIComponent(location);
-      return `${host}/api/user/oauth/google/login?return_url=${encodedLocation}`;
-    },
-
     userInitials(): string {
       // Required due to poor Vue TS support. See
       // https://github.com/multinet-app/multinet-client/pull/80#discussion_r422401040
       const userInfo = this.userInfo as unknown as UserSpec | null;
 
       if (userInfo !== null) {
-        return `${userInfo.given_name[0]}${userInfo.family_name[0]}`;
+        return `${userInfo.first_name[0]}${userInfo.last_name[0]}`;
       }
       return '';
     },
@@ -110,6 +101,10 @@ export default {
   },
 
   methods: {
+    login(): void {
+      oauthClient.redirectToLogin();
+    },
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async logout(this: any) {
       // Perform the logout action, then redirect the user to the home page.

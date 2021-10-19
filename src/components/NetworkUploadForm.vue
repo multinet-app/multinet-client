@@ -8,7 +8,7 @@
             clearable
             dense
             :error-messages="fileUploadError"
-            :label="fileInputPlaceholder"
+            label="Select network file"
             outlined
             prepend-icon=""
             prepend-inner-icon="attach_file"
@@ -17,18 +17,17 @@
           />
         </v-flex>
         <v-flex
-          v-if="fileTypeSelector"
           xs6
           class="pl-2"
         >
           <v-select
-            v-if="types.length"
+            v-if="fileTypes.length"
             id="file-type"
             v-model="selectedType"
             class="file-type"
             dense
             :hint="selectedType ? selectedType.hint : null"
-            :items="types"
+            :items="fileTypes"
             item-text="displayName"
             item-value="displayName"
             label="File type"
@@ -45,7 +44,7 @@
             v-model="fileName"
             dense
             :error-messages="tableCreationError"
-            :label="namePlaceholder"
+            label="Network name"
             outlined
           />
         </v-flex>
@@ -59,9 +58,9 @@
       <v-btn
         id="create-table"
         :disabled="createDisabled"
-        @click="createTable"
+        @click="createNetwork"
       >
-        {{ createButtonText }}
+        Upload
       </v-btn>
     </v-card-actions>
     <v-progress-linear
@@ -72,52 +71,50 @@
 </template>
 
 <script lang="ts">
-import { UploadType, validUploadType } from 'multinet';
-import Vue, { PropType } from 'vue';
+import { NetworkUploadType, validNetworkUploadType } from 'multinet';
+import Vue from 'vue';
 
 import api from '@/api';
-import { FileType } from '@/types';
+import { NetworkFileType } from '@/types';
+
+const fileTypes: NetworkFileType[] = [
+  {
+    displayName: 'D3 JSON (ext: .json)',
+    hint: 'JSON format compatible with d3-force',
+    queryCall: 'd3_json',
+    extension: ['json'],
+  },
+  {
+    displayName: 'Arbor Nested Tree (ext: .json)',
+    hint: 'JSON-encoded tree format used by the Arbor project',
+    queryCall: 'nested_json',
+    extension: ['json'],
+  },
+  {
+    displayName: 'Newick Tree (ext: .phy, .tree)',
+    hint: 'The Newick Standard for representing trees in computer-readable form',
+    queryCall: 'newick',
+    extension: ['phy', 'tree'],
+  },
+];
 
 export default Vue.extend({
-  name: 'FileUploadForm',
+  name: 'NetworkUploadForm',
 
   props: {
-    fileTypeSelector: {
-      type: Boolean,
-      default: false,
-      required: false,
-    },
-    namePlaceholder: {
-      type: String,
-      default: 'Table name',
-      required: false,
-    },
-    fileInputPlaceholder: {
-      type: String,
-      default: 'Upload file',
-      required: false,
-    },
-    createButtonText: {
-      type: String,
-      default: 'Create',
-      required: false,
-    },
     workspace: {
       type: String,
-      required: true,
-    },
-    types: {
-      type: Array as PropType<FileType[]>,
       required: true,
     },
   },
 
   data() {
     return {
+      fileTypes,
       tableCreationError: null as string | null,
       fileUploadError: null as string | null,
       fileName: null as string | null,
-      selectedType: null as FileType | null,
+      selectedType: null as NetworkFileType | null,
       file: null as File | null,
       uploading: false,
       uploadProgress: null as number | null,
@@ -161,7 +158,7 @@ export default Vue.extend({
       }
     },
 
-    async createTable() {
+    async createNetwork() {
       const {
         file,
         workspace,
@@ -180,11 +177,9 @@ export default Vue.extend({
       this.uploading = true;
 
       try {
-        await api.uploadTable(workspace, fileName, {
-          type: selectedType.queryCall as UploadType,
+        await api.uploadNetwork(workspace, fileName, {
+          type: selectedType.queryCall as NetworkUploadType,
           data: file,
-        }, {
-          onUploadProgress: this.handleUploadProgress,
         });
 
         this.tableCreationError = null;
@@ -204,7 +199,7 @@ export default Vue.extend({
       }
     },
 
-    fileInfo(file: File): [string, FileType] | null {
+    fileInfo(file: File): [string, NetworkFileType] | null {
       if (!file) {
         return null;
       }
@@ -212,7 +207,7 @@ export default Vue.extend({
       const [fileName, ...extensions] = file.name.split('.');
       const extension = extensions[extensions.length - 1];
 
-      const found = this.types.find((type) => type.extension.includes(extension) && validUploadType(type.queryCall));
+      const found = this.fileTypes.find((type) => type.extension.includes(extension) && validNetworkUploadType(type.queryCall));
 
       return found === undefined ? null : [fileName, found];
     },

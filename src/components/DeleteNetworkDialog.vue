@@ -131,9 +131,7 @@ export default Vue.extend({
         workspace,
       } = this;
 
-      await Promise.all(selection.map((graph) => api.deleteGraph(workspace, graph)));
-
-      this.$emit('closed', [...selection]);
+      await Promise.all(selection.map((network) => api.deleteNetwork(workspace, network)));
       this.dialog = false;
     },
   },

@@ -4,7 +4,7 @@
       <v-layout wrap>
         <v-flex>
           <v-select
-            v-model="graphEdgeTable"
+            v-model="networkEdgeTable"
             dense
             :items="edgeTables"
             label="Choose edge table"
@@ -16,9 +16,9 @@
       <v-layout wrap>
         <v-flex>
           <v-text-field
-            v-model="newGraph"
+            v-model="newNetwork"
             dense
-            :error-messages="graphCreationErrors"
+            :error-messages="networkCreationErrors"
             label="Network name"
             outlined
           />
@@ -32,8 +32,8 @@
       <v-spacer />
       <v-btn
         depressed
-        :disabled="graphCreateDisabled"
-        @click="createGraph"
+        :disabled="networkCreateDisabled"
+        @click="createNetwork"
       >
         create network
       </v-btn>
@@ -47,7 +47,7 @@ import Vue, { PropType } from 'vue';
 import api from '@/api';
 
 export default Vue.extend({
-  name: 'GraphCreateForm',
+  name: 'NetworkCreateForm',
   props: {
     edgeTables: {
       type: Array as PropType<string[]>,
@@ -61,33 +61,33 @@ export default Vue.extend({
   },
   data() {
     return {
-      graphCreationErrors: [] as string[],
-      graphEdgeTable: null as string | null,
-      newGraph: '',
+      networkCreationErrors: [] as string[],
+      networkEdgeTable: null as string | null,
+      newNetwork: '',
     };
   },
   computed: {
-    graphCreateDisabled(): boolean {
-      return !this.graphEdgeTable || !this.newGraph;
+    networkCreateDisabled(): boolean {
+      return !this.networkEdgeTable || !this.newNetwork;
     },
   },
   methods: {
-    async createGraph() {
-      const { workspace, newGraph } = this;
+    async createNetwork() {
+      const { workspace, newNetwork } = this;
 
-      if (this.graphEdgeTable === null) {
-        throw new Error('this.graphEdgeTable must not be null');
+      if (this.networkEdgeTable === null) {
+        throw new Error('this.networkEdgeTable must not be null');
       }
 
       try {
-        await api.createGraph(workspace, newGraph, {
-          edgeTable: this.graphEdgeTable,
+        await api.createNetwork(workspace, newNetwork, {
+          edgeTable: this.networkEdgeTable,
         });
-        this.graphCreationErrors = [];
+        this.networkCreationErrors = [];
         this.$emit('success');
       } catch (error) {
-        const message = `Network "${this.newGraph}" already exists.`;
-        this.graphCreationErrors = [message];
+        const message = `Network "${this.newNetwork}" already exists.`;
+        this.networkCreationErrors = [message];
       }
     },
   },

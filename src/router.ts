@@ -4,7 +4,7 @@ import VueRouter from 'vue-router';
 import FrontPage from '@/views/FrontPage.vue';
 import WorkspaceDetail from '@/views/WorkspaceDetail.vue';
 import TableDetail from '@/views/TableDetail.vue';
-import GraphDetail from '@/views/GraphDetail.vue';
+import NetworkDetail from '@/views/NetworkDetail.vue';
 import NodeDetail from '@/views/NodeDetail.vue';
 import AQLWizard from '@/views/AQLWizard.vue';
 
@@ -35,13 +35,13 @@ const routes = [
     props: true,
   },
   {
-    path: '/workspaces/:workspace/graph/:graph',
-    name: 'graphDetail',
-    component: GraphDetail,
+    path: '/workspaces/:workspace/network/:network',
+    name: 'networkDetail',
+    component: NetworkDetail,
     props: true,
   },
   {
-    path: '/workspaces/:workspace/graph/:graph/node/:type/:node',
+    path: '/workspaces/:workspace/network/:network/node/:type/:node',
     name: 'nodeDetail',
     component: NodeDetail,
     props: true,

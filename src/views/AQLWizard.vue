@@ -11,7 +11,7 @@
         </h2>
         <v-divider />
         <v-card
-          v-for="{ title, data, graph } in workspaceInfo"
+          v-for="{ title, data, network } in workspaceInfo"
           :key="title"
           flat
         >
@@ -30,11 +30,11 @@
                 :key="name"
                 dense
                 style="min-height: 30px;"
-                :to="detailLink(name, graph)"
+                :to="detailLink(name, network)"
               >
                 <v-list-item-icon class="ma-0 mt-1">
                   <v-icon small>
-                    {{ graph ? "timeline" : "table_chart" }}
+                    {{ network ? "timeline" : "table_chart" }}
                   </v-icon>
                 </v-list-item-icon>
                 {{ name }}
@@ -119,13 +119,12 @@
 
 <script lang="ts">
 
-import api from '@/api';
-import store from '@/store';
-import { PropType } from 'vue';
-
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import VueJsonPretty from 'vue-json-pretty';
+import { PropType } from 'vue';
+import api from '@/api';
+import store from '@/store';
 
 type AnyJson = boolean | number | string | null | JsonArray | JsonMap;
 interface JsonMap { [key: string]: AnyJson }
@@ -157,12 +156,12 @@ export default {
   computed: {
     nodeTables: () => store.getters.nodeTables,
     edgeTables: () => store.getters.edgeTables,
-    graphs: () => store.getters.graphs,
+    networks: () => store.getters.networks,
     workspaceInfo() {
       return [
         { title: 'Node Tables', data: this.nodeTables },
         { title: 'Edge Tables', data: this.edgeTables },
-        { title: 'Graphs', data: this.graphs, graph: true },
+        { title: 'Networks', data: this.networks, network: true },
       ];
     },
   },
@@ -197,11 +196,11 @@ export default {
   },
   methods: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    detailLink(this: any, name: string, graph: boolean) {
+    detailLink(this: any, name: string, network: boolean) {
       const { workspace } = this;
-      const route = graph ? 'graphDetail' : 'tableDetail';
+      const route = network ? 'networkDetail' : 'tableDetail';
 
-      return { name: route, params: { workspace, table: name, graph: name } };
+      return { name: route, params: { workspace, table: name, network: name } };
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async createTable(this: any) {

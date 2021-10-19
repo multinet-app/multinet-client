@@ -196,7 +196,7 @@ export default Vue.extend({
     columnTypes: {
       async get() {
         try {
-          return await api.tableColumnTypes(this.workspace, this.table);
+          return await api.columnTypes(this.workspace, this.table);
         } catch (err) {
           return {};
         }
@@ -242,7 +242,7 @@ export default Vue.extend({
       });
 
       const {
-        rows,
+        results: rows,
         count,
       } = result;
 
@@ -265,16 +265,16 @@ export default Vue.extend({
           rowKeys.push(rowData);
         });
 
-        headers = Object.keys(rows[0]).filter((d) => d !== '_rev');
+        headers = rows.length > 0 ? Object.keys(rows[0]).filter((d) => d !== '_rev') : [];
       }
 
       this.rowKeys = rowKeys;
       this.headers = headers;
 
       // Roni to convert these lines to computed function
-      this.tables = await api.tables(this.workspace, {
+      this.tables = (await api.tables(this.workspace, {
         type: 'all',
-      });
+      })).results.map((table) => table.name);
 
       this.loading = false;
     },

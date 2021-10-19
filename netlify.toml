@@ -6,7 +6,11 @@ command = "yarn build"
   VUE_APP_GA_TAG = "UA-157426670-1"
 
 [context.deploy-preview.environment]
-VUE_APP_MULTINET_HOST = "https://multinet-app-testing.herokuapp.com"
+VUE_APP_MULTINET_HOST = "https://api.multinet.app"
+VUE_APP_OAUTH_API_ROOT = "https://api.multinet.app/oauth/"
+VUE_APP_OAUTH_CLIENT_ID = "FKSbPC4GNN31E3a6s6f4Uo96gfNfKcGGcEH3K4vq"
 
 [context.production.environment]
 VUE_APP_MULTINET_HOST = "https://api.multinet.app"
+VUE_APP_OAUTH_API_ROOT = "https://api.multinet.app/oauth/"
+VUE_APP_OAUTH_CLIENT_ID = "FKSbPC4GNN31E3a6s6f4Uo96gfNfKcGGcEH3K4vq"

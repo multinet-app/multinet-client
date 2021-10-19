@@ -109,9 +109,9 @@ async function workspaceExists(p, name) {
   return workspaces.includes(name);
 }
 
-// Get the names of either all tables or all graphs in the current workspace
+// Get the names of either all tables or all networks in the current workspace
 async function getElementNames(elementType, p) {
-  // Search for the text of the table or graph elements
+  // Search for the text of the table or network elements
   await p.waitForSelector(`[data-title="${elementType}"] .ws-detail-empty-list`);
   const tables = await p.evaluate((elType) => {
     const titles = [];
@@ -125,7 +125,7 @@ async function getElementNames(elementType, p) {
   return tables;
 }
 
-// Checks if no tables or graphs exist in the current workspace
+// Checks if no tables or networks exist in the current workspace
 async function elementsEmpty(elementType, p) {
   const tables = await getElementNames(elementType, p);
   return tables.includes('info There\'s nothing here yet...');

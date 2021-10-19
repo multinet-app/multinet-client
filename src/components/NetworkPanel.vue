@@ -16,11 +16,11 @@
           ref="downloader"
           :selection="selection"
           :workspace="workspace"
-          download-type="graph"
+          download-type="network"
           @downloaded="cleanup"
         />
 
-        <delete-graph-dialog
+        <delete-network-dialog
           ref="deleter"
           :selection="selection"
           :workspace="workspace"
@@ -28,7 +28,8 @@
         />
       </div>
 
-      <graph-dialog
+      <network-dialog
+        v-if="editable"
         :workspace="workspace"
         :node-tables="nodeTables"
         :edge-tables="edgeTables"
@@ -62,7 +63,7 @@
             slot-scope="{ hover }"
             active-class="grey lighten-4"
             ripple
-            :to="`/workspaces/${workspace}/graph/${item}`"
+            :to="`/workspaces/${workspace}/network/${item}`"
           >
             <v-list-item-action @click.prevent>
               <v-icon
@@ -98,7 +99,7 @@
               </v-btn>
             </v-list-item-action>
             <v-list-item-action
-              v-if="hover"
+              v-if="hover && editable"
               class="mx-0 my-0"
               @click.prevent
             >
@@ -120,18 +121,19 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
-import DeleteGraphDialog from '@/components/DeleteGraphDialog.vue';
-import GraphDialog from '@/components/GraphDialog.vue';
+import DeleteNetworkDialog from '@/components/DeleteNetworkDialog.vue';
+import NetworkDialog from '@/components/NetworkDialog.vue';
 import DownloadDialog from '@/components/DownloadDialog.vue';
 
 import store from '@/store';
+import { RoleLevel } from '@/utils/permissions';
 
 export default Vue.extend({
-  name: 'GraphPanel',
+  name: 'NetworkPanel',
 
   components: {
-    DeleteGraphDialog,
-    GraphDialog,
+    DeleteNetworkDialog,
+    NetworkDialog,
     DownloadDialog,
   },
 
@@ -201,6 +203,10 @@ export default Vue.extend({
     anySelected(): boolean {
       return this.selection.length > 0;
     },
+
+    editable(): boolean {
+      return store.getters.permissionLevel >= RoleLevel.writer;
+    },
   },
 
   watch: {
@@ -230,15 +236,8 @@ export default Vue.extend({
       });
     },
 
-    async cleanup(selection?: string[]) {
+    async cleanup() {
       this.singleSelected = null;
-
-      if (selection) {
-        selection.forEach((item) => {
-          this.checkbox[item] = false;
-        });
-      }
-
       await store.dispatch.fetchWorkspace(this.workspace);
       this.clearCheckboxes();
     },

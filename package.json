@@ -20,13 +20,14 @@
     "test:server:up": "cd .. && PIPENV_DONT_LOAD_ENV=1 pipenv run test-server-up"
   },
   "dependencies": {
+    "@girder/oauth-client": "^0.7.6",
     "@vue/composition-api": "^1.0.0-beta.16",
     "core-js": "^2.6.5",
     "dayjs": "^1.9.1",
     "direct-vuex": "^0.10.4",
     "lodash": "^4.17.21",
     "material-design-icons-iconfont": "^5.0.1",
-    "multinet": "0.20.0",
+    "multinet": "0.21.4",
     "papaparse": "^5.3.0",
     "vue": "^2.6.10",
     "vue-async-computed": "^3.8.2",

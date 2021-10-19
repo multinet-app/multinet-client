@@ -1,9 +1,11 @@
 import Vue from 'vue';
-import Vuex, { Store } from 'vuex';
+import Vuex from 'vuex';
 import { createDirectStore } from 'direct-vuex';
-import { UserSpec } from 'multinet';
+import { SingleUserWorkspacePermissionSpec, UserSpec } from 'multinet';
 
 import api from '@/api';
+import oauthClient from '@/oauth';
+import { RoleLevel } from '@/utils/permissions';
 
 Vue.use(Vuex);
 
@@ -11,13 +13,14 @@ export interface WorkspaceState {
   name: string;
   nodeTables: string[];
   edgeTables: string[];
-  graphs: string[];
+  networks: string[];
 }
 
 export interface State {
   workspaces: string[];
   currentWorkspace: WorkspaceState | null;
   userInfo: UserSpec | null;
+  currentWorkspacePermission: SingleUserWorkspacePermissionSpec | null;
 }
 
 const {
@@ -31,6 +34,7 @@ const {
     workspaces: [],
     currentWorkspace: null,
     userInfo: null,
+    currentWorkspacePermission: null,
   } as State,
   getters: {
     nodeTables(state: State): string[] {
@@ -47,11 +51,22 @@ const {
       return [];
     },
 
-    graphs(state: State) {
-      if (state.currentWorkspace !== null && state.currentWorkspace.graphs) {
-        return state.currentWorkspace.graphs;
+    networks(state: State) {
+      if (state.currentWorkspace !== null && state.currentWorkspace.networks) {
+        return state.currentWorkspace.networks;
       }
       return [];
+    },
+
+    permissionLevel(state: State): RoleLevel {
+      if (!state.currentWorkspacePermission) {
+        return RoleLevel.none;
+      }
+      const { permission } = state.currentWorkspacePermission;
+      if (!permission) {
+        return RoleLevel.none;
+      }
+      return permission as RoleLevel;
     },
   },
   mutations: {
@@ -70,39 +85,59 @@ const {
     setUserInfo(state, userInfo: UserSpec | null) {
       state.userInfo = userInfo;
     },
+
+    setPermissionInfo(state, permissionInfo: SingleUserWorkspacePermissionSpec | null) {
+      state.currentWorkspacePermission = permissionInfo;
+    },
   },
   actions: {
     async fetchWorkspaces(context) {
       const { commit } = rootActionContext(context);
       const workspaces = await api.workspaces();
-      commit.setWorkspaces(workspaces);
+      commit.setWorkspaces(workspaces.results.map((w) => w.name));
     },
 
     async fetchWorkspace(context, workspace: string) {
       const { commit } = rootActionContext(context);
+
       commit.unsetCurrentWorkspace();
 
-      const nodeTables = await api.tables(workspace, { type: 'node' });
-      const edgeTables = await api.tables(workspace, { type: 'edge' });
-      const graphs = await api.graphs(workspace);
+      const networks = await api.networks(workspace);
+      const tables = (await api.tables(workspace)).results;
+      const nodeTables = tables.filter((table) => table.edge === false);
+      const edgeTables = tables.filter((table) => table.edge === true);
+
+      const permissionsInfo = await api.getCurrentUserWorkspacePermissions(workspace);
+      commit.setPermissionInfo(permissionsInfo);
 
       commit.setCurrentWorkspace({
-        name: workspace, nodeTables, edgeTables, graphs,
+        name: workspace,
+        nodeTables: nodeTables.map((table) => table.name),
+        edgeTables: edgeTables.map((table) => table.name),
+        networks: networks.results.map((network) => network.name),
       });
     },
 
     async fetchUserInfo(context) {
       const { commit } = rootActionContext(context);
 
-      const info = await api.userInfo();
-      commit.setUserInfo(info);
+      try {
+        const info = await api.userInfo();
+        commit.setUserInfo(info);
+      } catch (error) {
+        if (error.response.status === 401) {
+          commit.setUserInfo(null);
+        } else {
+          throw new Error(error);
+        }
+      }
     },
 
     async logout(context) {
       const { commit, dispatch } = rootActionContext(context);
 
       // Perform the server logout.
-      await api.logout();
+      await oauthClient.logout();
       commit.setUserInfo(null);
 
       // Refresh the workspace list to account for lost privileges upon logout.
