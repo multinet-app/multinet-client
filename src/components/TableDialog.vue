@@ -9,6 +9,7 @@
         color="blue darken-2"
         icon
         medium
+        :disabled="!editable"
         v-on="on"
       >
         <v-icon dark>
@@ -180,6 +181,8 @@ import {
 import api from '@/api';
 import { TableFileType, CSVColumnType } from '@/types';
 import { validFileType, fileName as getFileName, analyzeCSV } from '@/utils/files';
+import { RoleLevel } from '@/utils/permissions';
+import store from '@/store';
 
 const defaultKeyField = '_key';
 const multinetTypes: readonly CSVColumnType[] = ['label', 'boolean', 'category', 'number', 'date'];
@@ -319,6 +322,8 @@ export default defineComponent({
       }
     }
 
+    const editable = computed(() => store.getters.permissionLevel >= RoleLevel.writer);
+
     return {
       step,
       dialogWidth,
@@ -338,6 +343,7 @@ export default defineComponent({
       restoreKeyField,
       keyField,
       overwrite,
+      editable,
     };
   },
 });

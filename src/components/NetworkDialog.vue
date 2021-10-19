@@ -9,6 +9,7 @@
         color="blue darken-2"
         icon
         medium
+        :disabled="!editable"
         v-on="on"
       >
         <v-icon dark>
@@ -51,6 +52,8 @@ import Vue, { PropType } from 'vue';
 
 import NetworkCreateForm from '@/components/NetworkCreateForm.vue';
 import NetworkUploadForm from '@/components/NetworkUploadForm.vue';
+import store from '@/store';
+import { RoleLevel } from '@/utils/permissions';
 
 export default Vue.extend({
   name: 'NetworkDialog',
@@ -74,7 +77,11 @@ export default Vue.extend({
       networkDialog: false,
     };
   },
-  computed: {},
+  computed: {
+    editable(): boolean {
+      return store.getters.permissionLevel >= RoleLevel.writer;
+    },
+  },
   methods: {
     networkDialogSuccess() {
       this.networkDialog = false;
