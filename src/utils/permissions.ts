@@ -1,3 +1,5 @@
+import { UserSpec, WorkspacePermissionsSpec } from 'multinet';
+
 export type Role = 'owner' | 'maintainers' | 'writers' | 'readers';
 export type SingularRole = 'owner' | 'maintainer' | 'writer' | 'reader' | null;
 
@@ -12,10 +14,10 @@ export enum RoleLevel {
 export function canUpload(userInfo: UserSpec | null, permissions: WorkspacePermissionsSpec | null): boolean {
   if (!userInfo || !permissions) { return false; }
 
-  const userSub = userInfo.sub;
-  const ownerSub = permissions.owner.sub;
-  const maintainerSubs = permissions.maintainers.map((user) => user.sub);
-  const writerSubs = permissions.writers.map((user) => user.sub);
+  const userSub = userInfo.username;
+  const ownerSub = permissions.owner.username;
+  const maintainerSubs = permissions.maintainers.map((user) => user.username);
+  const writerSubs = permissions.writers.map((user) => user.username);
 
   return maintainerSubs.includes(userSub)
     || writerSubs.includes(userSub)
