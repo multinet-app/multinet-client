@@ -29,7 +29,6 @@
       </div>
 
       <network-dialog
-        v-if="editable"
         :workspace="workspace"
         :node-tables="nodeTables"
         :edge-tables="edgeTables"

@@ -29,7 +29,6 @@
       </div>
 
       <table-dialog
-        v-if="editable"
         :workspace="workspace"
         @success="cleanup"
       />
