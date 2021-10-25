@@ -9,6 +9,7 @@
         color="blue darken-2"
         icon
         medium
+        :disabled="!userCanEdit"
         v-on="on"
       >
         <v-icon dark>
@@ -180,6 +181,7 @@ import {
 import api from '@/api';
 import { TableFileType, CSVColumnType } from '@/types';
 import { validFileType, fileName as getFileName, analyzeCSV } from '@/utils/files';
+import store from '@/store';
 
 const defaultKeyField = '_key';
 const multinetTypes: readonly CSVColumnType[] = ['label', 'boolean', 'category', 'number', 'date'];
@@ -319,6 +321,8 @@ export default defineComponent({
       }
     }
 
+    const userCanEdit = computed(() => store.getters.userCanEdit);
+
     return {
       step,
       dialogWidth,
@@ -338,6 +342,7 @@ export default defineComponent({
       restoreKeyField,
       keyField,
       overwrite,
+      userCanEdit,
     };
   },
 });

@@ -9,6 +9,7 @@
         color="blue darken-2"
         icon
         medium
+        :disabled="!userCanEdit"
         v-on="on"
       >
         <v-icon dark>
@@ -51,6 +52,7 @@ import Vue, { PropType } from 'vue';
 
 import NetworkCreateForm from '@/components/NetworkCreateForm.vue';
 import NetworkUploadForm from '@/components/NetworkUploadForm.vue';
+import store from '@/store';
 
 export default Vue.extend({
   name: 'NetworkDialog',
@@ -74,7 +76,11 @@ export default Vue.extend({
       networkDialog: false,
     };
   },
-  computed: {},
+  computed: {
+    userCanEdit(): boolean {
+      return store.getters.userCanEdit;
+    },
+  },
   methods: {
     networkDialogSuccess() {
       this.networkDialog = false;
