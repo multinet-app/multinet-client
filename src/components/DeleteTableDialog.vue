@@ -38,7 +38,7 @@
 
       <v-card-text class="px-5 py-4">
         You are about to delete {{ selection.length }} table{{ plural }}. Type the
-        following phrase to confirm: <strong>{{ confirmationPhrase }}?</strong>
+        following phrase to confirm: <strong>{{ confirmationPhrase }}</strong>
       </v-card-text>
 
       <v-card-text>
