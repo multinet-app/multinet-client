@@ -128,6 +128,7 @@ import Vue, { PropType } from 'vue';
 
 import api from '@/api';
 import { KeyValue, TableRow } from '@/types';
+import store from '@/store';
 
 interface DataPagination {
   page: number;
@@ -155,7 +156,6 @@ export default Vue.extend({
     return {
       rowKeys: [] as KeyValue[][],
       headers: [] as Array<keyof TableRow>,
-      tables: [] as string[],
       editing: false,
       tableSize: 1,
       pagination: {} as DataPagination,
@@ -163,6 +163,7 @@ export default Vue.extend({
     };
   },
   computed: {
+    tables: () => store.getters.tables,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     dataTableHeaders(this: any) {
       const {
@@ -270,11 +271,6 @@ export default Vue.extend({
 
       this.rowKeys = rowKeys;
       this.headers = headers;
-
-      // Roni to convert these lines to computed function
-      this.tables = (await api.tables(this.workspace, {
-        type: 'all',
-      })).results.map((table) => table.name);
 
       this.loading = false;
     },

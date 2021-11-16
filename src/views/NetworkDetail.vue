@@ -441,6 +441,8 @@ export default Vue.extend({
         }
       });
       this.edgeTypes = edges.results.length > 0 ? [tableName(edges.results[0])] : [];
+      this.nodeTypes = this.nodeTypes.sort();
+      this.edgeTypes = this.edgeTypes.sort();
 
       // eslint-disable-next-line no-underscore-dangle
       this.nodes = nodes.results.map((node) => node._id);

@@ -201,6 +201,7 @@ export default Vue.extend({
   computed: {
     nodeTables: () => store.getters.nodeTables,
     edgeTables: () => store.getters.edgeTables,
+    tables: () => store.getters.tables,
     networks: () => store.getters.networks,
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -212,14 +213,6 @@ export default Vue.extend({
       ];
 
       return errors.filter((res): res is string => typeof res === 'string');
-    },
-    tables(): string[] {
-      const {
-        nodeTables,
-        edgeTables,
-      } = this;
-
-      return nodeTables.concat(edgeTables);
     },
   },
 
