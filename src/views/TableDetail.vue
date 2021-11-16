@@ -18,7 +18,7 @@
 
           <v-divider />
 
-          <div v-if="loading">
+          <div v-if="loadingTables">
             <v-skeleton-loader type="list-item" />
             <v-skeleton-loader type="list-item" />
             <v-skeleton-loader type="list-item" />
@@ -160,6 +160,7 @@ export default Vue.extend({
       tableSize: 1,
       pagination: {} as DataPagination,
       loading: true,
+      loadingTables: true,
     };
   },
   computed: {
@@ -219,9 +220,18 @@ export default Vue.extend({
     },
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    tables(this: any) {
+      this.loadingTables = false;
+    },
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     pagination(this: any) {
       this.update();
     },
+  },
+
+  created() {
+    store.dispatch.fetchWorkspace(this.workspace);
   },
 
   methods: {
