@@ -52,9 +52,7 @@
 
         <v-spacer />
 
-        <v-btn icon>
-          <v-icon>more_vert</v-icon>
-        </v-btn>
+        <workspace-option-menu :workspace="workspace" />
       </v-app-bar>
 
       <v-container
@@ -262,6 +260,7 @@ import { EdgesSpec } from 'multinet';
 
 import api from '@/api';
 import { KeyValue } from '@/types';
+import WorkspaceOptionMenu from '@/components/WorkspaceOptionMenu.vue';
 
 interface EdgeRecord {
   id: string;
@@ -278,6 +277,11 @@ type EdgeType = 'incoming' | 'outgoing';
 
 export default Vue.extend({
   name: 'NodeDetail',
+
+  components: {
+    WorkspaceOptionMenu,
+  },
+
   props: {
     workspace: {
       type: String as PropType<string>,

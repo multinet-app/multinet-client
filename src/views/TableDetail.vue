@@ -81,9 +81,7 @@
 
         <v-spacer />
 
-        <v-btn icon>
-          <v-icon>more_vert</v-icon>
-        </v-btn>
+        <workspace-option-menu :workspace="workspace" />
       </v-app-bar>
       <div class="wrapper">
         <v-data-table
@@ -129,6 +127,7 @@ import Vue, { PropType } from 'vue';
 import api from '@/api';
 import { KeyValue, TableRow } from '@/types';
 import store from '@/store';
+import WorkspaceOptionMenu from '@/components/WorkspaceOptionMenu.vue';
 
 interface DataPagination {
   page: number;
@@ -141,6 +140,11 @@ interface DataPagination {
 
 export default Vue.extend({
   name: 'TableDetail',
+
+  components: {
+    WorkspaceOptionMenu,
+  },
+
   props: {
     workspace: {
       type: String as PropType<string>,
