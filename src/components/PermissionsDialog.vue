@@ -374,7 +374,7 @@ export default Vue.extend({
         await api.setWorkspacePermissions(this.workspace, this.mutablePermissions);
         this.permDialog = false;
       } catch (error) {
-        console.log(error);
+        // TODO #205
       }
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
