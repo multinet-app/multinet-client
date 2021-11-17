@@ -165,6 +165,7 @@ export default Vue.extend({
         if (using.length > 0) {
           this.using = using;
         } else {
+          this.clear();
           this.confirmationPhrase = randomPhrase();
         }
       } else {
@@ -181,10 +182,14 @@ export default Vue.extend({
       } = this;
 
       await Promise.all(selection.map((table) => api.deleteTable(workspace, table)));
-
       this.dialog = false;
+
+      this.clear();
+    },
+
+    clear() {
+      this.confirmationPhrase = '';
       this.confirmation = '';
-      this.confirmationPhrase = randomPhrase();
     },
 
     async findDependentNetworks() {

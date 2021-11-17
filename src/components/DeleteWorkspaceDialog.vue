@@ -123,6 +123,7 @@ export default Vue.extend({
   watch: {
     dialog() {
       if (this.dialog) {
+        this.clear();
         this.confirmationPhrase = randomPhrase();
       } else {
         this.$emit('closed');
@@ -138,10 +139,17 @@ export default Vue.extend({
 
       await Promise.all(selection.map((ws) => api.deleteWorkspace(ws)));
 
+      this.clear();
+
       store.dispatch.fetchWorkspaces();
       this.$emit('deleted');
 
       this.dialog = false;
+    },
+
+    clear() {
+      this.confirmationPhrase = '';
+      this.confirmation = '';
     },
   },
 });
