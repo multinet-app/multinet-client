@@ -163,6 +163,8 @@
             <v-btn
               color="primary"
               depressed
+              :loading="loading"
+              :disabled="loading"
               @click="createTable"
             >
               Create Table
@@ -275,6 +277,7 @@ export default defineComponent({
     const tableDialog = ref(false);
     const tableCreationError = ref<string | null>(null);
     const createDisabled = computed(() => selectedFile.value === null || !fileName.value);
+    const loading = ref(false);
     async function createTable() {
       if (selectedFile.value === null || fileName.value === null) {
         return;
@@ -284,6 +287,7 @@ export default defineComponent({
       uploading.value = true;
 
       try {
+        loading.value = true;
         await api.uploadTable(workspace, fileName.value, {
           data: selectedFile.value,
           edgeTable: edgeTable.value,
@@ -292,6 +296,7 @@ export default defineComponent({
 
         tableCreationError.value = null;
         tableDialog.value = false;
+        loading.value = false;
 
         emit('success');
         resetAllFields();
@@ -319,6 +324,7 @@ export default defineComponent({
       uploading,
       uploadProgress,
       createDisabled,
+      loading,
       createTable,
       restoreKeyField,
       keyField,
