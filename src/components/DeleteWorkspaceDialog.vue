@@ -139,8 +139,6 @@ export default Vue.extend({
 
       await Promise.all(selection.map((ws) => api.deleteWorkspace(ws)));
 
-      this.clear();
-
       store.dispatch.fetchWorkspaces();
       this.$emit('deleted');
 

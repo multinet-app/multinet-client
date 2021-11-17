@@ -183,8 +183,6 @@ export default Vue.extend({
 
       await Promise.all(selection.map((table) => api.deleteTable(workspace, table)));
       this.dialog = false;
-
-      this.clear();
     },
 
     clear() {
