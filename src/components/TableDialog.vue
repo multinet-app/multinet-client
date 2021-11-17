@@ -32,8 +32,10 @@
         <v-stepper-step
           :complete="step > 2"
           step="2"
+          :rules="[() => tableCreationError === null]"
         >
           Set Column Types
+          <small>{{ tableCreationError }}</small>
         </v-stepper-step>
       </v-stepper-header>
 
@@ -62,7 +64,6 @@
                   <v-flex>
                     <v-text-field
                       v-model="fileName"
-                      :error-messages="tableCreationError"
                       label="Table Name"
                       outlined
                       dense
@@ -226,10 +227,14 @@ export default defineComponent({
     // Type recommendation
     const columnType: Ref<{[key: string]: CSVColumnType}> = ref({});
 
+    const tableCreationError = ref<string | null>(null);
+
     // File selection
     const selectedFile = ref<File | null>(null);
     const fileName = ref<string | null>(null);
     watch(selectedFile, async (newFile) => {
+      tableCreationError.value = null;
+
       if (newFile === null) {
         fileName.value = null;
         columnType.value = {};
@@ -275,7 +280,6 @@ export default defineComponent({
 
     // Table creation state
     const tableDialog = ref(false);
-    const tableCreationError = ref<string | null>(null);
     const createDisabled = computed(() => selectedFile.value === null || !fileName.value);
     const loading = ref(false);
     async function createTable() {
@@ -301,7 +305,7 @@ export default defineComponent({
         emit('success');
         resetAllFields();
       } catch (err) {
-        tableCreationError.value = err.statusText;
+        tableCreationError.value = `${Object.values(err.response.data).flat()[0]}`;
       } finally {
         uploading.value = false;
         uploadProgress.value = null;
