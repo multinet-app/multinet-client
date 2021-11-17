@@ -80,39 +80,7 @@
         />
         <v-spacer />
 
-        <v-menu
-          v-model="actionsMenu"
-          max-width="275"
-          offset-y
-          origin="center center"
-          transition="scale-transition"
-        >
-          <template v-slot:activator="{ on }">
-            <v-btn
-              icon
-              v-on="on"
-            >
-              <v-icon>more_vert</v-icon>
-            </v-btn>
-          </template>
-          <v-card>
-            <v-list
-              dense
-              width="224"
-            >
-              <!-- Each listing here should contain a v-list-item -->
-              <PermissionsDialog :workspace="workspace" />
-              <v-list-item :to="{ name: 'aqlWizard' }">
-                <v-list-item-icon class="mr-3">
-                  <v-icon>search</v-icon>
-                </v-list-item-icon>
-                <v-list-item-content>
-                  AQL Wizard
-                </v-list-item-content>
-              </v-list-item>
-            </v-list>
-          </v-card>
-        </v-menu>
+        <workspace-option-menu :workspace="workspace" />
       </v-app-bar>
 
       <v-layout
@@ -166,8 +134,8 @@ import Vue, { PropType } from 'vue';
 import api from '@/api';
 import TablePanel from '@/components/TablePanel.vue';
 import NetworkPanel from '@/components/NetworkPanel.vue';
-import PermissionsDialog from '@/components/PermissionsDialog.vue';
 import store from '@/store';
+import WorkspaceOptionMenu from '@/components/WorkspaceOptionMenu.vue';
 
 const surroundingWhitespace = /^\s+|\s+$/;
 const workspaceNameRules: Array<(x: string) => string|boolean> = [
@@ -180,7 +148,7 @@ export default Vue.extend({
   components: {
     TablePanel,
     NetworkPanel,
-    PermissionsDialog,
+    WorkspaceOptionMenu,
   },
   props: {
     workspace: {
@@ -194,13 +162,13 @@ export default Vue.extend({
       editing: false,
       requestError: null as string | null,
       loading: false,
-      actionsMenu: false,
     };
   },
 
   computed: {
     nodeTables: () => store.getters.nodeTables,
     edgeTables: () => store.getters.edgeTables,
+    tables: () => store.getters.tables,
     networks: () => store.getters.networks,
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -212,14 +180,6 @@ export default Vue.extend({
       ];
 
       return errors.filter((res): res is string => typeof res === 'string');
-    },
-    tables(): string[] {
-      const {
-        nodeTables,
-        edgeTables,
-      } = this;
-
-      return nodeTables.concat(edgeTables);
     },
   },
 
@@ -268,7 +228,7 @@ export default Vue.extend({
           if (err.response.status === 409) {
             this.requestError = 'A workspace by that name already exists';
           } else {
-            this.requestError = err.response.statusText;
+            this.requestError = `${Object.values(err.response.data).flat()[0]}`;
           }
         }
       }

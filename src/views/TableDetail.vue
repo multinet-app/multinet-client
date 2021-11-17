@@ -18,7 +18,7 @@
 
           <v-divider />
 
-          <div v-if="loading">
+          <div v-if="loadingTables">
             <v-skeleton-loader type="list-item" />
             <v-skeleton-loader type="list-item" />
             <v-skeleton-loader type="list-item" />
@@ -81,9 +81,7 @@
 
         <v-spacer />
 
-        <v-btn icon>
-          <v-icon>more_vert</v-icon>
-        </v-btn>
+        <workspace-option-menu :workspace="workspace" />
       </v-app-bar>
       <div class="wrapper">
         <v-data-table
@@ -128,6 +126,8 @@ import Vue, { PropType } from 'vue';
 
 import api from '@/api';
 import { KeyValue, TableRow } from '@/types';
+import store from '@/store';
+import WorkspaceOptionMenu from '@/components/WorkspaceOptionMenu.vue';
 
 interface DataPagination {
   page: number;
@@ -140,6 +140,11 @@ interface DataPagination {
 
 export default Vue.extend({
   name: 'TableDetail',
+
+  components: {
+    WorkspaceOptionMenu,
+  },
+
   props: {
     workspace: {
       type: String as PropType<string>,
@@ -155,14 +160,15 @@ export default Vue.extend({
     return {
       rowKeys: [] as KeyValue[][],
       headers: [] as Array<keyof TableRow>,
-      tables: [] as string[],
       editing: false,
       tableSize: 1,
       pagination: {} as DataPagination,
       loading: true,
+      loadingTables: true,
     };
   },
   computed: {
+    tables: () => store.getters.tables,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     dataTableHeaders(this: any) {
       const {
@@ -218,9 +224,18 @@ export default Vue.extend({
     },
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    tables(this: any) {
+      this.loadingTables = false;
+    },
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     pagination(this: any) {
       this.update();
     },
+  },
+
+  created() {
+    store.dispatch.fetchWorkspace(this.workspace);
   },
 
   methods: {
@@ -270,11 +285,6 @@ export default Vue.extend({
 
       this.rowKeys = rowKeys;
       this.headers = headers;
-
-      // Roni to convert these lines to computed function
-      this.tables = (await api.tables(this.workspace, {
-        type: 'all',
-      })).results.map((table) => table.name);
 
       this.loading = false;
     },

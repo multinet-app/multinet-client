@@ -32,7 +32,9 @@
       <v-spacer />
       <v-btn
         depressed
-        :disabled="networkCreateDisabled"
+        color="primary"
+        :disabled="networkCreateDisabled || loading"
+        :loading="loading"
         @click="createNetwork"
       >
         create network
@@ -64,6 +66,7 @@ export default Vue.extend({
       networkCreationErrors: [] as string[],
       networkEdgeTable: null as string | null,
       newNetwork: '',
+      loading: false,
     };
   },
   computed: {
@@ -80,15 +83,23 @@ export default Vue.extend({
       }
 
       try {
+        this.loading = true;
         await api.createNetwork(workspace, newNetwork, {
           edgeTable: this.networkEdgeTable,
         });
         this.networkCreationErrors = [];
+        this.clear();
         this.$emit('success');
       } catch (error) {
         const message = `Network "${this.newNetwork}" already exists.`;
         this.networkCreationErrors = [message];
       }
+    },
+
+    clear() {
+      this.networkEdgeTable = null;
+      this.newNetwork = '';
+      this.loading = false;
     },
   },
 });

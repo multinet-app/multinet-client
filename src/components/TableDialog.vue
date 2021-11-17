@@ -32,8 +32,10 @@
         <v-stepper-step
           :complete="step > 2"
           step="2"
+          :rules="[() => tableCreationError === null]"
         >
           Set Column Types
+          <small>{{ tableCreationError }}</small>
         </v-stepper-step>
       </v-stepper-header>
 
@@ -45,7 +47,7 @@
                 <v-layout wrap>
                   <v-flex>
                     <v-file-input
-                      :error-messages="fileUploadError"
+                      v-model="selectedFile"
                       label="Upload File"
                       prepend-inner-icon="attach_file"
                       prepend-icon=""
@@ -53,7 +55,8 @@
                       clearable
                       dense
                       outlined
-                      @change="handleFileInput"
+                      show-size
+                      accept=".csv"
                     />
                   </v-flex>
                 </v-layout>
@@ -61,7 +64,6 @@
                   <v-flex>
                     <v-text-field
                       v-model="fileName"
-                      :error-messages="tableCreationError"
                       label="Table Name"
                       outlined
                       dense
@@ -162,6 +164,8 @@
             <v-btn
               color="primary"
               depressed
+              :loading="loading"
+              :disabled="loading"
               @click="createTable"
             >
               Create Table
@@ -175,24 +179,16 @@
 
 <script lang="ts">
 import {
-  defineComponent, ref, Ref, computed,
+  defineComponent, ref, Ref, computed, watch,
 } from '@vue/composition-api';
 
 import api from '@/api';
-import { TableFileType, CSVColumnType } from '@/types';
-import { validFileType, fileName as getFileName, analyzeCSV } from '@/utils/files';
+import { CSVColumnType } from '@/types';
+import { analyzeCSV } from '@/utils/files';
 import store from '@/store';
 
 const defaultKeyField = '_key';
 const multinetTypes: readonly CSVColumnType[] = ['label', 'boolean', 'category', 'number', 'date'];
-const fileTypes: readonly TableFileType[] = [
-  {
-    extension: ['csv'],
-    queryCall: 'csv',
-    hint: 'Comma Separated Value file',
-    displayName: 'CSV',
-  },
-];
 
 export default defineComponent({
   name: 'TableDialog',
@@ -231,35 +227,29 @@ export default defineComponent({
     // Type recommendation
     const columnType: Ref<{[key: string]: CSVColumnType}> = ref({});
 
+    const tableCreationError = ref<string | null>(null);
+
     // File selection
     const selectedFile = ref<File | null>(null);
     const fileName = ref<string | null>(null);
-    const fileUploadError = ref<string | null>(null);
-    async function handleFileInput(file: File | undefined) {
-      if (file === undefined) {
-        fileUploadError.value = null;
-        selectedFile.value = null;
+    watch(selectedFile, async (newFile) => {
+      tableCreationError.value = null;
+
+      if (newFile === null) {
+        fileName.value = null;
         columnType.value = {};
 
         return;
       }
+      fileName.value = newFile.name.replace('.csv', '');
 
-      selectedFile.value = file;
-
-      if (!validFileType(file, fileTypes)) {
-        fileUploadError.value = 'Invalid file type';
-      } else {
-        fileName.value = fileName.value || getFileName(file);
-        fileUploadError.value = null;
-      }
-
-      const analysis = await analyzeCSV(file);
+      const analysis = await analyzeCSV(newFile);
       columnType.value = Array.from(analysis.typeRecs.keys()).reduce(
         (acc, key) => ({ ...acc, [key]: analysis.typeRecs.get(key) }), {},
       );
 
       sampleRows.value = [...analysis.sampleRows];
-    }
+    });
 
     // Upload options
     const overwrite = ref(false);
@@ -280,7 +270,6 @@ export default defineComponent({
 
       selectedFile.value = null;
       fileName.value = null;
-      fileUploadError.value = null;
 
       overwrite.value = false;
       restoreKeyField();
@@ -291,8 +280,8 @@ export default defineComponent({
 
     // Table creation state
     const tableDialog = ref(false);
-    const tableCreationError = ref<string | null>(null);
-    const createDisabled = computed(() => !selectedFile.value || !fileName.value || fileUploadError.value);
+    const createDisabled = computed(() => selectedFile.value === null || !fileName.value);
+    const loading = ref(false);
     async function createTable() {
       if (selectedFile.value === null || fileName.value === null) {
         return;
@@ -302,6 +291,7 @@ export default defineComponent({
       uploading.value = true;
 
       try {
+        loading.value = true;
         await api.uploadTable(workspace, fileName.value, {
           data: selectedFile.value,
           edgeTable: edgeTable.value,
@@ -310,11 +300,12 @@ export default defineComponent({
 
         tableCreationError.value = null;
         tableDialog.value = false;
+        loading.value = false;
 
         emit('success');
         resetAllFields();
       } catch (err) {
-        tableCreationError.value = err.statusText;
+        tableCreationError.value = `${Object.values(err.response.data).flat()[0]}`;
       } finally {
         uploading.value = false;
         uploadProgress.value = null;
@@ -330,14 +321,14 @@ export default defineComponent({
       sampleRows,
       columnType,
       multinetTypes,
+      selectedFile,
       fileName,
-      fileUploadError,
       tableDialog,
       tableCreationError,
       uploading,
       uploadProgress,
       createDisabled,
-      handleFileInput,
+      loading,
       createTable,
       restoreKeyField,
       keyField,
