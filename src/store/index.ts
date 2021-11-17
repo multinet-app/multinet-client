@@ -37,23 +37,30 @@ const {
     currentWorkspacePermission: null,
   } as State,
   getters: {
+    tables(state: State, getters): string[] {
+      if (state.currentWorkspace !== null && state.currentWorkspace.nodeTables && state.currentWorkspace.edgeTables) {
+        return getters.nodeTables.concat(getters.edgeTables).sort();
+      }
+      return [];
+    },
+
     nodeTables(state: State): string[] {
       if (state.currentWorkspace !== null && state.currentWorkspace.nodeTables) {
-        return state.currentWorkspace.nodeTables;
+        return state.currentWorkspace.nodeTables.sort();
       }
       return [];
     },
 
     edgeTables(state: State): string[] {
       if (state.currentWorkspace !== null && state.currentWorkspace.edgeTables) {
-        return state.currentWorkspace.edgeTables;
+        return state.currentWorkspace.edgeTables.sort();
       }
       return [];
     },
 
     networks(state: State) {
       if (state.currentWorkspace !== null && state.currentWorkspace.networks) {
-        return state.currentWorkspace.networks;
+        return state.currentWorkspace.networks.sort();
       }
       return [];
     },
@@ -75,7 +82,7 @@ const {
   },
   mutations: {
     setWorkspaces(state, workspaces: string[]) {
-      state.workspaces = workspaces;
+      state.workspaces = workspaces.sort();
     },
 
     setCurrentWorkspace(state, workspace: WorkspaceState) {

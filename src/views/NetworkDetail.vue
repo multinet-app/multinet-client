@@ -40,9 +40,7 @@
 
       <v-spacer />
 
-      <v-btn icon>
-        <v-icon>more_vert</v-icon>
-      </v-btn>
+      <workspace-option-menu :workspace="workspace" />
     </v-app-bar>
     <v-main class="fill-height">
       <v-container
@@ -327,12 +325,18 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 import { EdgesSpec, TableRow } from 'multinet';
+import WorkspaceOptionMenu from '@/components/WorkspaceOptionMenu.vue';
 
 import api from '@/api';
 import { App } from '@/types';
 
 export default Vue.extend({
   name: 'NetworkDetail',
+
+  components: {
+    WorkspaceOptionMenu,
+  },
+
   props: {
     workspace: {
       type: String as PropType<string>,
@@ -441,6 +445,8 @@ export default Vue.extend({
         }
       });
       this.edgeTypes = edges.results.length > 0 ? [tableName(edges.results[0])] : [];
+      this.nodeTypes = this.nodeTypes.sort();
+      this.edgeTypes = this.edgeTypes.sort();
 
       // eslint-disable-next-line no-underscore-dangle
       this.nodes = nodes.results.map((node) => node._id);

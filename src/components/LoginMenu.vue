@@ -80,7 +80,7 @@ export default {
       const userInfo = this.userInfo as unknown as UserSpec | null;
 
       if (userInfo !== null) {
-        return `${userInfo.first_name[0]}${userInfo.last_name[0]}`;
+        return `${userInfo.first_name[0] || ''}${userInfo.last_name[0] || ''}`;
       }
       return '';
     },
