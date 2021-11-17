@@ -1,15 +1,6 @@
 import Papa, { ParseResult } from 'papaparse';
 import dayjs from 'dayjs';
-import { validUploadType } from 'multinet';
-import { FileType, CSVColumnType } from '@/types';
-
-const fileExtension = (file: File) => file.name.split('.').slice(-1)[0];
-const fileName = (file: File) => file.name.split('.')[0];
-
-function validFileType(file: File, allowedTypes: readonly FileType[]) {
-  const extension = fileExtension(file);
-  return allowedTypes.some((type) => type.extension.includes(extension) && validUploadType(type.queryCall));
-}
+import { CSVColumnType } from '@/types';
 
 function isBoolean(strings: Set<string>) {
   // This function tests whether both elements of an array belong to the string
@@ -150,7 +141,5 @@ async function analyzeCSV(file: File): Promise<CSVAnalysis> {
 }
 
 export {
-  fileName,
-  validFileType,
   analyzeCSV,
 };
