@@ -228,7 +228,6 @@ export default Vue.extend({
           if (err.response.status === 409) {
             this.requestError = 'A workspace by that name already exists';
           } else {
-            console.log(err.response);
             this.requestError = `${Object.values(err.response.data).flat()[0]}`;
           }
         }
