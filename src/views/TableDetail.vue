@@ -123,20 +123,12 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
+import { DataPagination } from 'vuetify';
 
 import api from '@/api';
 import { KeyValue, TableRow } from '@/types';
 import store from '@/store';
 import WorkspaceOptionMenu from '@/components/WorkspaceOptionMenu.vue';
-
-interface DataPagination {
-  page: number;
-  itemsPerPage: number;
-  pageStart: number;
-  pageStop: number;
-  pageCount: number;
-  itemsLength: number;
-}
 
 export default Vue.extend({
   name: 'TableDetail',
