@@ -129,7 +129,13 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from 'vue';
+import {
+  defineComponent, ref, PropType, computed, watch,
+} from '@vue/composition-api';
+
+// import { useRouter } from 'vue-router'; // Router import vue3 syntax
+// eslint-disable-next-line import/no-cycle
+import router from '@/router'; // Temporary router syntax that lets us use the old push
 
 import api from '@/api';
 import TablePanel from '@/components/TablePanel.vue';
@@ -143,107 +149,107 @@ const workspaceNameRules: Array<(x: string) => string|boolean> = [
   (x: string) => !surroundingWhitespace.test(x) || 'Workspace name cannot begin or end with whitespace',
 ];
 
-export default Vue.extend({
+export default defineComponent({
   name: 'WorkspaceDetail',
+
   components: {
     TablePanel,
     NetworkPanel,
     WorkspaceOptionMenu,
   },
+
   props: {
     workspace: {
       type: String as PropType<string>,
       required: true,
     },
   },
-  data() {
-    return {
-      localWorkspace: null as string | null,
-      editing: false,
-      requestError: null as string | null,
-      loading: false,
-    };
-  },
 
-  computed: {
-    nodeTables: () => store.getters.nodeTables,
-    edgeTables: () => store.getters.edgeTables,
-    tables: () => store.getters.tables,
-    networks: () => store.getters.networks,
+  setup(props) {
+    // const router = useRouter();
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    nameErrorMessages(this: any): string[] {
-      const { requestError } = this;
+    const localWorkspace = ref<string | null>(null);
+    const editing = ref(false);
+    const requestError = ref<string | null>(null);
+    const loading = ref(false);
+
+    const nodeTables = computed(() => store.getters.nodeTables);
+    const edgeTables = computed(() => store.getters.edgeTables);
+    const tables = computed(() => store.getters.tables);
+    const networks = computed(() => store.getters.networks);
+    const nameErrorMessages = computed(() => {
       const errors = [
-        ...workspaceNameRules.map((rule) => rule(this.localWorkspace as string)),
+        ...workspaceNameRules.map((rule) => rule(localWorkspace.value as string)),
         requestError,
       ];
 
       return errors.filter((res): res is string => typeof res === 'string');
-    },
-  },
-
-  watch: {
-    workspace() {
-      this.update();
-    },
+    });
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    localWorkspace(this: any) {
-      // Once the user types, clears the error returned on sending the rename API call.
-      this.requestError = null;
-    },
-  },
-  created() {
-    this.update();
-  },
-  methods: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    cancelRename(this: any) {
-      this.requestError = null;
-      this.localWorkspace = this.workspace;
-      this.editing = false;
-    },
+    function cancelRename() {
+      requestError.value = null;
+      localWorkspace.value = props.workspace;
+      editing.value = false;
+    }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async renameWorkspace(this: any) {
-      if (this.nameErrorMessages.length) {
+    async function renameWorkspace() {
+      if (nameErrorMessages.value.length) {
         return;
       }
 
-      if (this.localWorkspace === this.workspace) {
-        this.editing = false;
+      if (localWorkspace.value === props.workspace) {
+        editing.value = false;
         return;
       }
 
-      if (this.localWorkspace !== null) {
+      if (localWorkspace.value !== null) {
         try {
-          const { name } = await api.renameWorkspace(this.workspace, this.localWorkspace);
-          this.$router.push(`/workspaces/${name}`);
-          this.editing = false;
-          this.requestError = null;
+          const { name } = await api.renameWorkspace(props.workspace, localWorkspace.value);
+          router.push(`/workspaces/${name}`);
+          editing.value = false;
+          requestError.value = null;
 
           store.dispatch.fetchWorkspaces();
         } catch (err) {
           if (err.response.status === 409) {
-            this.requestError = 'A workspace by that name already exists';
+            requestError.value = 'A workspace by that name already exists';
           } else {
-            this.requestError = `${Object.values(err.response.data).flat()[0]}`;
+            requestError.value = `${Object.values(err.response.data).flat()[0]}`;
           }
         }
       }
-    },
+    }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async update(this: any) {
-      this.loading = true;
+    async function update(this: any) {
+      loading.value = true;
 
-      this.localWorkspace = this.workspace;
-      await store.dispatch.fetchWorkspace(this.workspace);
-      this.loading = false;
-    },
+      localWorkspace.value = props.workspace;
+      await store.dispatch.fetchWorkspace(props.workspace);
+      loading.value = false;
+    }
+
+    watch(() => props.workspace, () => update());
+    // eslint-disable-next-line no-return-assign
+    watch(localWorkspace, () => requestError.value = null);
+
+    update();
+
+    return {
+      editing,
+      loading,
+      networks,
+      nodeTables,
+      edgeTables,
+      tables,
+      cancelRename,
+      renameWorkspace,
+      nameErrorMessages,
+      localWorkspace,
+    };
   },
-
 });
 </script>
 
