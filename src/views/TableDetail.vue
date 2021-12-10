@@ -89,7 +89,6 @@
           height="calc(100vh - 123px)"
           class="table-details"
           :headers="dataTableHeaders"
-          hide-default-header
           :items="dataTableRows"
           :footer-props="{
             itemsPerPageOptions: [10, 20, 50, 100],
@@ -98,24 +97,7 @@
           :server-items-length="tableSize"
           :options.sync="pagination"
           :loading="loading"
-        >
-          <template v-slot:header>
-            <thead dark>
-              <tr>
-                <th
-                  v-for="(header, i) in dataTableHeaders"
-                  :key="i"
-                  class="pt-2 pb-2"
-                >
-                  {{ header.text }}
-                  <span v-if="columnTypes[header.text]">
-                    ({{ columnTypes[header.text] }})
-                  </span>
-                </th>
-              </tr>
-            </thead>
-          </template>
-        </v-data-table>
+        />
       </div>
     </v-main>
   </v-container>
@@ -168,7 +150,7 @@ export default Vue.extend({
       } = this;
 
       return headers.map((header: Array<keyof TableRow>) => ({
-        text: header,
+        text: this.columnTypes[header] === undefined ? header : `${header} (${this.columnTypes[header]})`,
         value: header,
       }));
     },
