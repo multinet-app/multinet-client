@@ -83,13 +83,28 @@
         <workspace-option-menu :workspace="workspace" />
       </v-app-bar>
 
-      <v-layout
-        wrap
+      <v-row
+        v-for="upload in uploads"
+        :key="upload.id"
       >
-        <v-flex
-          md6
-          px-5
-          py-3
+        <v-col
+          cols="12"
+          class="ma-0"
+        >
+          <v-alert
+            border="left"
+            color="blue"
+            type="info"
+            class="mb-0"
+          >
+            Uploading: {{ upload.blob.substring(upload.blob.indexOf('/') + 1) }}
+          </v-alert>
+        </v-col>
+      </v-row>
+      <v-row class="ma-0">
+        <v-col
+          cols="6"
+          class="px-5"
         >
           <v-card
             color="transparent"
@@ -104,12 +119,11 @@
               :loading="loading"
             />
           </v-card>
-        </v-flex>
+        </v-col>
 
-        <v-flex
-          md6
-          px-5
-          py-3
+        <v-col
+          cols="6"
+          class="px-5"
         >
           <v-card
             color="transparent"
@@ -122,8 +136,8 @@
               :loading="loading"
             />
           </v-card>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-main>
   </v-container>
 </template>
@@ -177,6 +191,7 @@ export default defineComponent({
     const edgeTables = computed(() => store.getters.edgeTables);
     const tables = computed(() => store.getters.tables);
     const networks = computed(() => store.getters.networks);
+    const uploads = computed(() => store.state.uploads.filter((upload) => upload.status !== 'FINISHED'));
     const nameErrorMessages = computed(() => {
       const errors = [
         ...workspaceNameRules.map((rule) => rule(localWorkspace.value as string)),
@@ -248,6 +263,7 @@ export default defineComponent({
       renameWorkspace,
       nameErrorMessages,
       localWorkspace,
+      uploads,
     };
   },
 });
