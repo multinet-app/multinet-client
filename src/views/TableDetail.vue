@@ -95,7 +95,7 @@
             showFirstLastPage: true,
           }"
           :server-items-length="tableSize"
-          :options.sync="pagination"
+          :options.sync="options"
           :loading="loading"
         />
       </div>
@@ -105,7 +105,7 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
-import { DataPagination } from 'vuetify';
+import { DataOptions } from 'vuetify';
 
 import api from '@/api';
 import { KeyValue, TableRow } from '@/types';
@@ -136,7 +136,7 @@ export default Vue.extend({
       headers: [] as Array<keyof TableRow>,
       editing: false,
       tableSize: 1,
-      pagination: {} as DataPagination,
+      options: {} as DataOptions,
       loading: true,
       loadingTables: true,
     };
@@ -203,8 +203,12 @@ export default Vue.extend({
     },
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    pagination(this: any) {
-      this.update();
+    options: {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      handler(this: any) {
+        this.update();
+      },
+      deep: true,
     },
   },
 
@@ -220,14 +224,14 @@ export default Vue.extend({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async update(this: any) {
       const {
-        pagination,
+        options,
       } = this;
 
       this.loading = true;
 
       const result = await api.table(this.workspace, this.table, {
-        offset: (pagination.page - 1) * pagination.itemsPerPage,
-        limit: pagination.itemsPerPage,
+        offset: (options.page - 1) * options.itemsPerPage,
+        limit: options.itemsPerPage,
       });
 
       const {
