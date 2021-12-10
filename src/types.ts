@@ -40,3 +40,9 @@ export interface NetworkFileType extends FileType{
 export interface FileTypeTable {
   [key: string]: FileType;
 }
+
+export interface Upload {
+  blob: string;
+  status: string;
+  data_type: string;
+}

@@ -6,6 +6,7 @@ import { SingleUserWorkspacePermissionSpec, UserSpec } from 'multinet';
 import api from '@/api';
 import oauthClient from '@/oauth';
 import { RoleLevel } from '@/utils/permissions';
+import { Upload } from '@/types';
 
 Vue.use(Vuex);
 
@@ -21,6 +22,7 @@ export interface State {
   currentWorkspace: WorkspaceState | null;
   userInfo: UserSpec | null;
   currentWorkspacePermission: SingleUserWorkspacePermissionSpec | null;
+  uploads: Upload[];
 }
 
 const {
@@ -35,6 +37,7 @@ const {
     currentWorkspace: null,
     userInfo: null,
     currentWorkspacePermission: null,
+    uploads: [],
   } as State,
   getters: {
     tables(state: State, getters): string[] {
@@ -100,6 +103,10 @@ const {
     setPermissionInfo(state, permissionInfo: SingleUserWorkspacePermissionSpec | null) {
       state.currentWorkspacePermission = permissionInfo;
     },
+
+    setUploads(state, uploads: Upload[]) {
+      state.uploads = uploads;
+    },
   },
   actions: {
     async fetchWorkspaces(context) {
@@ -117,6 +124,9 @@ const {
       const tables = (await api.tables(workspace)).results;
       const nodeTables = tables.filter((table) => table.edge === false);
       const edgeTables = tables.filter((table) => table.edge === true);
+
+      const uploads = await api.uploads(workspace);
+      commit.setUploads(uploads.results);
 
       const permissionsInfo = await api.getCurrentUserWorkspacePermissions(workspace);
       commit.setPermissionInfo(permissionsInfo);
