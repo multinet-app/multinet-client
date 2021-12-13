@@ -97,7 +97,18 @@
             type="info"
             class="mb-0"
           >
-            Uploading: {{ upload.blob.substring(upload.blob.indexOf('/') + 1) }}
+            <v-row align="center">
+              <v-col class="grow">
+                Uploading: {{ upload.blob.substring(upload.blob.indexOf('/') + 1) }}
+              </v-col>
+              <v-col class="shrink">
+                <v-progress-circular
+                  indeterminate
+                  color="white"
+                  size="26"
+                />
+              </v-col>
+            </v-row>
           </v-alert>
         </v-col>
       </v-row>
