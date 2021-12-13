@@ -158,10 +158,6 @@ import {
   defineComponent, ref, PropType, computed, watch,
 } from '@vue/composition-api';
 
-// import { useRouter } from 'vue-router'; // Router import vue3 syntax
-// eslint-disable-next-line import/no-cycle
-import router from '@/router'; // Temporary router syntax that lets us use the old push
-
 import api from '@/api';
 import TablePanel from '@/components/TablePanel.vue';
 import NetworkPanel from '@/components/NetworkPanel.vue';
@@ -190,8 +186,8 @@ export default defineComponent({
     },
   },
 
-  setup(props) {
-    // const router = useRouter();
+  setup(props, ctx) {
+    const router = ctx.root.$router;
 
     const localWorkspace = ref<string | null>(null);
     const editing = ref(false);
@@ -258,8 +254,7 @@ export default defineComponent({
     }
 
     watch(() => props.workspace, () => update());
-    // eslint-disable-next-line no-return-assign
-    watch(localWorkspace, () => requestError.value = null);
+    watch(localWorkspace, () => { requestError.value = null; });
 
     update();
 
