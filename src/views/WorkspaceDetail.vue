@@ -83,13 +83,39 @@
         <workspace-option-menu :workspace="workspace" />
       </v-app-bar>
 
-      <v-layout
-        wrap
+      <v-row
+        v-for="upload in uploads"
+        :key="upload.id"
       >
-        <v-flex
-          md6
-          px-5
-          py-3
+        <v-col
+          cols="12"
+          class="ma-0"
+        >
+          <v-alert
+            border="left"
+            color="blue"
+            type="info"
+            class="mb-0"
+          >
+            <v-row align="center">
+              <v-col class="grow">
+                Uploading: {{ upload.blob.substring(upload.blob.indexOf('/') + 1) }}
+              </v-col>
+              <v-col class="shrink">
+                <v-progress-circular
+                  indeterminate
+                  color="white"
+                  size="26"
+                />
+              </v-col>
+            </v-row>
+          </v-alert>
+        </v-col>
+      </v-row>
+      <v-row class="ma-0">
+        <v-col
+          cols="6"
+          class="px-5"
         >
           <v-card
             color="transparent"
@@ -104,12 +130,11 @@
               :loading="loading"
             />
           </v-card>
-        </v-flex>
+        </v-col>
 
-        <v-flex
-          md6
-          px-5
-          py-3
+        <v-col
+          cols="6"
+          class="px-5"
         >
           <v-card
             color="transparent"
@@ -122,14 +147,16 @@
               :loading="loading"
             />
           </v-card>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-main>
   </v-container>
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from 'vue';
+import {
+  defineComponent, ref, PropType, computed, watch,
+} from '@vue/composition-api';
 
 import api from '@/api';
 import TablePanel from '@/components/TablePanel.vue';
@@ -143,107 +170,108 @@ const workspaceNameRules: Array<(x: string) => string|boolean> = [
   (x: string) => !surroundingWhitespace.test(x) || 'Workspace name cannot begin or end with whitespace',
 ];
 
-export default Vue.extend({
+export default defineComponent({
   name: 'WorkspaceDetail',
+
   components: {
     TablePanel,
     NetworkPanel,
     WorkspaceOptionMenu,
   },
+
   props: {
     workspace: {
       type: String as PropType<string>,
       required: true,
     },
   },
-  data() {
-    return {
-      localWorkspace: null as string | null,
-      editing: false,
-      requestError: null as string | null,
-      loading: false,
-    };
-  },
 
-  computed: {
-    nodeTables: () => store.getters.nodeTables,
-    edgeTables: () => store.getters.edgeTables,
-    tables: () => store.getters.tables,
-    networks: () => store.getters.networks,
+  setup(props, ctx) {
+    const router = ctx.root.$router;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    nameErrorMessages(this: any): string[] {
-      const { requestError } = this;
+    const localWorkspace = ref<string | null>(null);
+    const editing = ref(false);
+    const requestError = ref<string | null>(null);
+    const loading = ref(false);
+
+    const nodeTables = computed(() => store.getters.nodeTables);
+    const edgeTables = computed(() => store.getters.edgeTables);
+    const tables = computed(() => store.getters.tables);
+    const networks = computed(() => store.getters.networks);
+    const uploads = computed(() => store.state.uploads.filter((upload) => upload.status !== 'FINISHED'));
+    const nameErrorMessages = computed(() => {
       const errors = [
-        ...workspaceNameRules.map((rule) => rule(this.localWorkspace as string)),
+        ...workspaceNameRules.map((rule) => rule(localWorkspace.value as string)),
         requestError,
       ];
 
       return errors.filter((res): res is string => typeof res === 'string');
-    },
-  },
-
-  watch: {
-    workspace() {
-      this.update();
-    },
+    });
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    localWorkspace(this: any) {
-      // Once the user types, clears the error returned on sending the rename API call.
-      this.requestError = null;
-    },
-  },
-  created() {
-    this.update();
-  },
-  methods: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    cancelRename(this: any) {
-      this.requestError = null;
-      this.localWorkspace = this.workspace;
-      this.editing = false;
-    },
+    function cancelRename() {
+      requestError.value = null;
+      localWorkspace.value = props.workspace;
+      editing.value = false;
+    }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async renameWorkspace(this: any) {
-      if (this.nameErrorMessages.length) {
+    async function renameWorkspace() {
+      if (nameErrorMessages.value.length) {
         return;
       }
 
-      if (this.localWorkspace === this.workspace) {
-        this.editing = false;
+      if (localWorkspace.value === props.workspace) {
+        editing.value = false;
         return;
       }
 
-      if (this.localWorkspace !== null) {
+      if (localWorkspace.value !== null) {
         try {
-          const { name } = await api.renameWorkspace(this.workspace, this.localWorkspace);
-          this.$router.push(`/workspaces/${name}`);
-          this.editing = false;
-          this.requestError = null;
+          const { name } = await api.renameWorkspace(props.workspace, localWorkspace.value);
+          router.push(`/workspaces/${name}`);
+          editing.value = false;
+          requestError.value = null;
 
           store.dispatch.fetchWorkspaces();
         } catch (err) {
           if (err.response.status === 409) {
-            this.requestError = 'A workspace by that name already exists';
+            requestError.value = 'A workspace by that name already exists';
           } else {
-            this.requestError = `${Object.values(err.response.data).flat()[0]}`;
+            requestError.value = `${Object.values(err.response.data).flat()[0]}`;
           }
         }
       }
-    },
+    }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async update(this: any) {
-      this.loading = true;
+    async function update(this: any) {
+      loading.value = true;
 
-      this.localWorkspace = this.workspace;
-      await store.dispatch.fetchWorkspace(this.workspace);
-      this.loading = false;
-    },
+      localWorkspace.value = props.workspace;
+      await store.dispatch.fetchWorkspace(props.workspace);
+      loading.value = false;
+    }
+
+    watch(() => props.workspace, () => update());
+    watch(localWorkspace, () => { requestError.value = null; });
+
+    update();
+
+    return {
+      editing,
+      loading,
+      networks,
+      nodeTables,
+      edgeTables,
+      tables,
+      cancelRename,
+      renameWorkspace,
+      nameErrorMessages,
+      localWorkspace,
+      uploads,
+    };
   },
-
 });
 </script>
 
