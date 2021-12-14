@@ -205,8 +205,8 @@ export default Vue.extend({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     options: {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      handler(this: any, newValue: DataOptions, oldValue: DataOptions) {
-        this.update(newValue, oldValue);
+      handler(this: any, newValue: DataOptions) {
+        this.update(newValue);
       },
       deep: true,
     },
@@ -222,13 +222,7 @@ export default Vue.extend({
     },
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async update(this: any, newValue: DataOptions, oldValue: DataOptions) {
-      const changed = (Object.keys(newValue) as (keyof DataOptions)[]).filter((key) => newValue[key] !== oldValue[key]);
-
-      if (changed.includes('sortBy') || changed.includes('sortDesc')) {
-        this.options.page = 1;
-      }
-
+    async update(this: any, newValue: DataOptions) {
       this.loading = true;
 
       const result = await api.table(this.workspace, this.table, {
