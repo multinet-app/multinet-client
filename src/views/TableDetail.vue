@@ -149,7 +149,7 @@ export default Vue.extend({
         headers,
       } = this;
 
-      return headers.map((header: Array<keyof TableRow>) => ({
+      return headers.map((header: keyof TableRow) => ({
         text: this.columnTypes[header] === undefined ? header : `${header} (${this.columnTypes[header]})`,
         value: header,
       }));
