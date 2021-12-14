@@ -1,34 +1,16 @@
-name: CI
+name: Lint application using multinet-app/.github generic lint workflow
 
-on: [push, pull_request]
+on: 
+  pull_request:
+    branches:
+      - '**'
+  
+  push:
+    branches:
+    - main
+
 jobs:
-  build-and-test:
-    name: Build and test on Ubuntu - Node 10
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@master
-
-      # Copy Env File
-      - run: cp .env.default .env
-
-      # Build and test Multinet client app.
-      - uses: actions/setup-node@v1
-        with:
-          node-version: '10.x'
-
-      - uses: actions/cache@v1
-        id: client-cache
-        with:
-          path: /home/runner/work/multinet-client/multinet-client/node_modules
-          key: ${{ runner.os }}-${{ hashFiles('/home/runner/work/multinet-client/multinet-client/yarn.lock') }}-client-cache
-
-      - name: Install yarn packages
-        if: steps.client-cache.outputs.cache-hit != 'true'
-        run: yarn install
-
-      - name: Populate app registry
-        run: yarn init-appregistry
-
-      - run: yarn lint
-      - run: yarn lint:test
-      - run: yarn build
+  lint:
+    uses: multinet-app/.github/.github/workflows/lint.yaml@main
+    with:
+      app-registry: true
