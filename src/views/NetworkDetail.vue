@@ -235,46 +235,8 @@
               >
                 <v-toolbar-title>
                   Nodes
+                  <small>(explore tables in node types)</small>
                 </v-toolbar-title>
-                <v-spacer />
-                <div class="pagination">
-                  <v-btn
-                    class="mx-1"
-                    icon
-                    small
-                    :disabled="!prev"
-                    @click="firstPage()"
-                  >
-                    <v-icon>skip_previous</v-icon>
-                  </v-btn>
-                  <v-btn
-                    class="mx-1"
-                    icon
-                    small
-                    :disabled="!prev"
-                    @click="turnPage(false)"
-                  >
-                    <v-icon>chevron_left</v-icon>
-                  </v-btn>
-                  <v-btn
-                    class="mx-1"
-                    icon
-                    small
-                    :disabled="!next"
-                    @click="turnPage(true)"
-                  >
-                    <v-icon>chevron_right</v-icon>
-                  </v-btn>
-                  <v-btn
-                    class="mx-1"
-                    icon
-                    small
-                    :disabled="!next"
-                    @click="lastPage()"
-                  >
-                    <v-icon>skip_next</v-icon>
-                  </v-btn>
-                </div>
               </v-toolbar>
               <v-card-text class="pa-0">
                 <v-list
@@ -324,7 +286,6 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
-import { EdgesSpec, TableRow } from 'multinet';
 import WorkspaceOptionMenu from '@/components/WorkspaceOptionMenu.vue';
 
 import api from '@/api';
@@ -421,35 +382,31 @@ export default Vue.extend({
       this.panelOpen = !this.panelOpen;
     },
     async update() {
-      function tableName(tableRow: TableRow | EdgesSpec) {
-        // eslint-disable-next-line no-underscore-dangle
-        return tableRow._id.split('/')[0];
-      }
       this.loading = true;
       const network = await api.network(this.workspace, this.network);
-      const nodes = await api.nodes(this.workspace, this.network, {
-        offset: this.offset,
-        limit: this.limit,
-      });
-      const edges = await api.edges(this.workspace, this.network, {
-        offset: this.offset,
-        limit: this.limit,
-      });
       this.totalNodes = network.node_count;
       this.totalEdges = network.edge_count;
 
-      const prelimNodes = nodes.results.map((node) => tableName(node));
-      prelimNodes.forEach((nodeType) => {
-        if (!this.nodeTypes.includes(nodeType)) {
-          this.nodeTypes.push(nodeType);
-        }
-      });
-      this.edgeTypes = edges.results.length > 0 ? [tableName(edges.results[0])] : [];
-      this.nodeTypes = this.nodeTypes.sort();
-      this.edgeTypes = this.edgeTypes.sort();
+      const workspaceTables = await api.networkTables(this.workspace, this.network);
+      this.nodeTypes = workspaceTables
+        .filter((table) => !table.edge)
+        .map((table) => table.name)
+        .sort();
+      this.edgeTypes = workspaceTables
+        .filter((table) => table.edge)
+        .map((table) => table.name)
+        .sort();
 
       // eslint-disable-next-line no-underscore-dangle
-      this.nodes = nodes.results.map((node) => node._id);
+      if (this.totalNodes < 1000) {
+        const nodes = await api.nodes(this.workspace, this.network);
+        // eslint-disable-next-line no-underscore-dangle
+        this.nodes = nodes.results.map((node) => node._id);
+      } else {
+        const nodes = await api.table(this.workspace, this.nodeTypes[0], { limit: 10 });
+        // eslint-disable-next-line no-underscore-dangle
+        this.nodes = nodes.results.map((node) => node._id);
+      }
       this.loading = false;
     },
     turnPage(forward: number) {
