@@ -42,28 +42,6 @@
                 </v-card-text>
               </v-card>
             </v-col>
-            <v-col cols="3">
-              <v-card
-                class="d-flex align-center"
-                light
-              >
-                <v-card-text>
-                  <v-row class="px-4">
-                    <v-col
-                      v-for="collab in collabs"
-                      :key="collab.logo"
-                      class="align-center d-flex py-1"
-                      cols="6"
-                    >
-                      <v-img
-                        :src="collab.logo"
-                        width="100vh"
-                      />
-                    </v-col>
-                  </v-row>
-                </v-card-text>
-              </v-card>
-            </v-col>
           </v-row>
         </v-sheet>
       </v-responsive>
@@ -112,6 +90,28 @@
           </v-col>
         </v-row>
       </div>
+
+      <v-footer
+        app
+        style="margin-left: 256px;"
+      >
+        <v-row>
+          <v-col cols="2" />
+          <v-col
+            v-for="collab, index in collabs"
+            :key="index"
+            cols="2"
+          >
+            <v-img
+              :src="collab.logo"
+              class="logo"
+              contain
+              max-height="50"
+            />
+          </v-col>
+          <v-col cols="2" />
+        </v-row>
+      </v-footer>
     </v-main>
   </v-container>
 </template>
@@ -207,5 +207,8 @@ export default Vue.extend({
 }
 .welcome-text p {
   font-size: 18px;
+}
+.logo {
+  filter: grayscale(100%);
 }
 </style>
