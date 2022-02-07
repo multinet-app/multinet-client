@@ -2,6 +2,28 @@
   <v-app id="app">
     <sidebar />
     <router-view :apps="apps" />
+
+    <v-footer
+      app
+      style="margin-left: 256px;"
+    >
+      <v-row>
+        <v-col cols="2" />
+        <v-col
+          v-for="collab, index in collabs"
+          :key="index"
+          cols="2"
+        >
+          <v-img
+            :src="collab.logo"
+            class="logo"
+            contain
+            max-height="50"
+          />
+        </v-col>
+        <v-col cols="2" />
+      </v-row>
+    </v-footer>
   </v-app>
 </template>
 
@@ -21,6 +43,24 @@ export default Vue.extend({
   data() {
     return {
       apps,
+      collabs: [
+        {
+          // eslint-disable-next-line global-require
+          logo: require('./assets/logo/utah_logo.png'),
+        },
+        {
+          // eslint-disable-next-line global-require
+          logo: require('./assets/logo/Kitware_Logo.png'),
+        },
+        {
+          // eslint-disable-next-line global-require
+          logo: require('./assets/logo/vdl_logo.png'),
+        },
+        {
+          // eslint-disable-next-line global-require
+          logo: require('./assets/logo/nsf_logo.png'),
+        },
+      ],
     };
   },
 });
