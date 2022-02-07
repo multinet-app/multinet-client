@@ -4,8 +4,8 @@
     class="app-sidebar"
     fixed
     permanent
-    stateless
     value="true"
+    :height="navHeight"
   >
     <v-toolbar
       color="grey lighten-2"
@@ -162,6 +162,10 @@ export default Vue.extend({
       } = this;
 
       return Object.keys(checkbox).filter((d) => !!checkbox[d]);
+    },
+
+    navHeight() {
+      return this.$vuetify.breakpoint.height - 62; // 62 is height of footer
     },
 
     selection(): string[] {
