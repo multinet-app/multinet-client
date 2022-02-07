@@ -2,26 +2,23 @@
   <v-app id="app">
     <sidebar />
     <router-view :apps="apps" />
-
     <v-footer
       app
-      style="margin-left: 256px;"
+      style="z-index: 7;"
     >
-      <v-row>
-        <v-col cols="2" />
+      <v-row class="flex-nowrap">
         <v-col
           v-for="collab, index in collabs"
           :key="index"
-          cols="2"
         >
           <v-img
             :src="collab.logo"
-            class="logo"
+            class="logo mx-auto"
             contain
             max-height="50"
+            max-width="200"
           />
         </v-col>
-        <v-col cols="2" />
       </v-row>
     </v-footer>
   </v-app>
