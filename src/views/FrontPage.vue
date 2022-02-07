@@ -8,42 +8,18 @@
       <v-responsive
         class="mb-5"
       >
-        <v-sheet
-          class="pa-6"
-          color="primary"
-          dark
+        <v-card
+          color="grey lighten-2"
           flat
-          height="100%"
+          tile
         >
-          <v-row>
-            <v-col cols="9">
-              <v-card
-                class="pr-6"
-                color="transparent"
-                flat
-                height="0%"
-              >
-                <v-card-title class="text-h4">
-                  Welcome to Multinet!
-                </v-card-title>
-                <v-divider />
-                <v-card-text class="welcome-text">
-                  <p>
-                    Check out the featured datasets and visualizations below! You
-                    can also create your own workspace and upload your own data with
-                    the <strong>New Workspace</strong> button to the left, or
-                    explore data others have uploaded.
-                  </p>
-                  <p>
-                    This project is a joint research and development effort between
-                    the University of Utah and Kitware Inc., funded by the National
-                    Science Foundation.
-                  </p>
-                </v-card-text>
-              </v-card>
-            </v-col>
-          </v-row>
-        </v-sheet>
+          <v-card-text
+            class="grey--text text--darken-3 text-center text-h5 pt-10 pb-0 ma-auto"
+            style="max-width: 700px;"
+          >
+            <strong class="black--text">Multinet</strong> is visualization tool for networks with attributes associated with the nodes and links.
+          </v-card-text>
+        </v-card>
       </v-responsive>
 
       <!-- COLUMNS -->
