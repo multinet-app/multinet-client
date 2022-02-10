@@ -60,16 +60,16 @@
         <v-list-item-group color="primary">
           <v-hover
             v-for="space in workspaces"
-            :key="space"
+            :key="space.name"
           >
             <v-list-item
               slot-scope="{ hover }"
               ripple
-              :to="`/workspaces/${space}/`"
+              :to="`/workspaces/${space.name}/`"
             >
               <v-list-item-action @click.prevent>
                 <v-icon
-                  v-if="!hover && !checkbox[space]"
+                  v-if="!hover && !checkbox[space.name]"
                   class="workspace-icon"
                 >
                   library_books
@@ -77,13 +77,13 @@
 
                 <v-checkbox
                   v-else
-                  v-model="checkbox[space]"
+                  v-model="checkbox[space.name]"
                   class="ws-checkbox"
                 />
               </v-list-item-action>
 
               <v-list-item-content>
-                <v-list-item-title>{{ space }}</v-list-item-title>
+                <v-list-item-title>{{ space.name }}</v-list-item-title>
               </v-list-item-content>
 
               <v-list-item-action

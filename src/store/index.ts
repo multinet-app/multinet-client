@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import { createDirectStore } from 'direct-vuex';
-import { SingleUserWorkspacePermissionSpec, UserSpec } from 'multinet';
+import { SingleUserWorkspacePermissionSpec, UserSpec, Workspace } from 'multinet';
 
 import api from '@/api';
 import oauthClient from '@/oauth';
@@ -18,7 +18,7 @@ export interface WorkspaceState {
 }
 
 export interface State {
-  workspaces: string[];
+  workspaces: Workspace[];
   currentWorkspace: WorkspaceState | null;
   userInfo: UserSpec | null;
   currentWorkspacePermission: SingleUserWorkspacePermissionSpec | null;
@@ -84,8 +84,8 @@ const {
     },
   },
   mutations: {
-    setWorkspaces(state, workspaces: string[]) {
-      state.workspaces = workspaces.sort();
+    setWorkspaces(state, workspaces: Workspace[]) {
+      state.workspaces = workspaces.sort((a, b) => (a.name < b.name ? -1 : 1));
     },
 
     setCurrentWorkspace(state, workspace: WorkspaceState) {
@@ -112,7 +112,7 @@ const {
     async fetchWorkspaces(context) {
       const { commit } = rootActionContext(context);
       const workspaces = await api.workspaces();
-      commit.setWorkspaces(workspaces.results.map((w) => w.name));
+      commit.setWorkspaces(workspaces.results);
     },
 
     async fetchWorkspace(context, workspace: string) {
