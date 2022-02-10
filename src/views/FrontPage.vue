@@ -19,8 +19,40 @@
           >
             <strong class="black--text">Multinet</strong> is visualization tool for networks with attributes associated with the nodes and links.
           </v-card-text>
+          <v-card-text>
+            <v-img
+              style="margin-left: 50px; margin-right: 50px;"
+              :src="samples[1].image"
+              max-height="200px"
+            />
+          </v-card-text>
         </v-card>
       </v-responsive>
+
+      <v-row class="text-center">
+        <v-spacer />
+        <v-col class="text-h4 grey--text text--darken-4">
+          Getting Started
+        </v-col>
+        <v-spacer />
+      </v-row>
+      <v-row class="text-center pb-6">
+        <v-spacer />
+        <v-col class="text-h6 grey--text text--darken-4">
+          <v-icon large>
+            search
+          </v-icon>
+          Sign Up and Upload Your Own Data
+        </v-col>
+        <v-spacer />
+        <v-col class="text-h6 grey--text text--darken-4">
+          <v-icon large>
+            file_upload
+          </v-icon>
+          Try a Demo Below!
+        </v-col>
+        <v-spacer />
+      </v-row>
 
       <!-- COLUMNS -->
       <div class="px-6 py-2">
