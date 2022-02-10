@@ -36,7 +36,7 @@
         </v-col>
         <v-spacer />
       </v-row>
-      <v-row class="text-center pb-6">
+      <v-row class="text-center pb-12">
         <v-spacer />
         <v-col class="text-h6 grey--text text--darken-4">
           <v-icon large>
