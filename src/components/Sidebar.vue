@@ -66,6 +66,7 @@
               :key="space.name"
             >
               <v-list-item
+                v-if="space.public === type"
                 slot-scope="{ hover }"
                 ripple
                 :to="`/workspaces/${space.name}/`"
