@@ -110,6 +110,14 @@
               </v-list-item>
             </v-hover>
           </v-list-item-group>
+
+          <delete-workspace-dialog
+            ref="dws"
+            :something-checked="somethingChecked"
+            :selection="selection"
+            @deleted="workspaceDeleted"
+            @closed="singleSelected = null"
+          />
         </v-tab-item>
       </v-tabs-items>
 
@@ -128,7 +136,7 @@ import Vue from 'vue';
 import store from '@/store';
 
 import WorkspaceDialog from '@/components/WorkspaceDialog.vue';
-// import DeleteWorkspaceDialog from '@/components/DeleteWorkspaceDialog.vue';
+import DeleteWorkspaceDialog from '@/components/DeleteWorkspaceDialog.vue';
 import AboutDialog from '@/components/AboutDialog.vue';
 import LoginMenu from '@/components/LoginMenu.vue';
 
@@ -139,7 +147,7 @@ interface CheckboxTable {
 export default Vue.extend({
 
   components: {
-    // DeleteWorkspaceDialog,
+    DeleteWorkspaceDialog,
     WorkspaceDialog,
     AboutDialog,
     LoginMenu,
