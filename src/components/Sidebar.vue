@@ -41,78 +41,82 @@
     <WorkspaceDialog />
 
     <v-list subheader>
-      <v-subheader class="pr-2">
-        Your Workspaces
-        <v-spacer />
-
-        <delete-workspace-dialog
-          ref="dws"
-          :something-checked="somethingChecked"
-          :selection="selection"
-          @deleted="workspaceDeleted"
-          @closed="singleSelected = null"
-        />
-      </v-subheader>
+      <v-tabs
+        v-model="tabSelected"
+        fixed-tabs
+      >
+        <v-tab style="width: 126px;">
+          Your workspaces
+        </v-tab>
+        <v-tab style="width: 126px;">
+          Public workspaces
+        </v-tab>
+      </v-tabs>
 
       <v-divider />
 
-      <div class="workspaces">
-        <v-list-item-group color="primary">
-          <v-hover
-            v-for="space in workspaces"
-            :key="space.name"
-          >
-            <v-list-item
-              slot-scope="{ hover }"
-              ripple
-              :to="`/workspaces/${space.name}/`"
+      <v-tabs-items v-model="tabSelected">
+        <v-tab-item
+          v-for="type of [false, true]"
+          :key="type"
+        >
+          <v-list-item-group color="primary">
+            <v-hover
+              v-for="space in workspaces"
+              :key="space.name"
             >
-              <v-list-item-action @click.prevent>
-                <v-icon
-                  v-if="!hover && !checkbox[space.name]"
-                  class="workspace-icon"
-                >
-                  library_books
-                </v-icon>
-
-                <v-checkbox
-                  v-else
-                  v-model="checkbox[space.name]"
-                  class="ws-checkbox"
-                />
-              </v-list-item-action>
-
-              <v-list-item-content>
-                <v-list-item-title>{{ space.name }}</v-list-item-title>
-              </v-list-item-content>
-
-              <v-list-item-action
-                v-if="hover"
-                class="mx-0 my-0"
-                @click.prevent
+              <v-list-item
+                slot-scope="{ hover }"
+                ripple
+                :to="`/workspaces/${space.name}/`"
               >
-                <v-btn
-                  icon
-                  small
-                >
+                <v-list-item-action @click.prevent>
                   <v-icon
-                    color="red accent-3"
-                    size="18"
-                    @click="deleteWorkspace(space)"
+                    v-if="!hover && !checkbox[space.name]"
+                    class="workspace-icon"
                   >
-                    delete
+                    library_books
                   </v-icon>
-                </v-btn>
-              </v-list-item-action>
-            </v-list-item>
-          </v-hover>
-        </v-list-item-group>
 
-        <div v-if="loading">
-          <v-skeleton-loader type="list-item" />
-          <v-skeleton-loader type="list-item" />
-          <v-skeleton-loader type="list-item" />
-        </div>
+                  <v-checkbox
+                    v-else
+                    v-model="checkbox[space.name]"
+                    class="ws-checkbox"
+                  />
+                </v-list-item-action>
+
+                <v-list-item-content>
+                  <v-list-item-title>{{ space.name }}</v-list-item-title>
+                </v-list-item-content>
+
+                <v-list-item-action
+                  v-if="hover"
+                  class="mx-0 my-0"
+                  @click.prevent
+                >
+                  <v-btn
+                    icon
+                    small
+                  >
+                    <v-icon
+                      color="red accent-3"
+                      size="18"
+                      @click="deleteWorkspace(space)"
+                    >
+                      delete
+                    </v-icon>
+                  </v-btn>
+                </v-list-item-action>
+              </v-list-item>
+            </v-hover>
+          </v-list-item-group>
+        </v-tab-item>
+      </v-tabs-items>
+
+      <div v-if="loading">
+        <v-skeleton-loader type="list-item" />
+        <v-skeleton-loader type="list-item" />
+        <v-skeleton-loader type="list-item" />
       </div>
     </v-list>
   </v-navigation-drawer>
@@ -124,7 +128,7 @@ import Vue from 'vue';
 import store from '@/store';
 
 import WorkspaceDialog from '@/components/WorkspaceDialog.vue';
-import DeleteWorkspaceDialog from '@/components/DeleteWorkspaceDialog.vue';
+// import DeleteWorkspaceDialog from '@/components/DeleteWorkspaceDialog.vue';
 import AboutDialog from '@/components/AboutDialog.vue';
 import LoginMenu from '@/components/LoginMenu.vue';
 
@@ -135,7 +139,7 @@ interface CheckboxTable {
 export default Vue.extend({
 
   components: {
-    DeleteWorkspaceDialog,
+    // DeleteWorkspaceDialog,
     WorkspaceDialog,
     AboutDialog,
     LoginMenu,
@@ -146,6 +150,7 @@ export default Vue.extend({
       checkbox: {} as CheckboxTable,
       loading: true,
       singleSelected: null as string | null,
+      tabSelected: 0,
     };
   },
 
@@ -215,12 +220,6 @@ export default Vue.extend({
   width: 48px;
 }
 
-.workspaces {
-  /* 171px = height of app-bar + workspace button + list subheader */
-  height: calc(100vh - 171px);
-  overflow-y:scroll;
-}
-
 .workspace-icon {
   opacity: .4;
 }
@@ -229,5 +228,8 @@ export default Vue.extend({
 <style>
 .app-sidebar .v-navigation-drawer__content {
   overflow: hidden;
+}
+.v-tab {
+  font-size: 10pt !important;
 }
 </style>
