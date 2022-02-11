@@ -198,7 +198,9 @@ export default defineComponent({
     const edgeTables = computed(() => store.getters.edgeTables);
     const tables = computed(() => store.getters.tables);
     const networks = computed(() => store.getters.networks);
-    const uploads = computed(() => store.state.uploads.filter((upload) => upload.status !== 'FINISHED'));
+    const uploads = computed(() => store.state.uploads.filter(
+      (upload) => upload.status === 'PENDING' || upload.status === 'STARTED',
+    ));
     const nameErrorMessages = computed(() => {
       const errors = [
         ...workspaceNameRules.map((rule) => rule(localWorkspace.value as string)),
