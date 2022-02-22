@@ -4,6 +4,7 @@
     <router-view :apps="apps" />
     <v-footer
       app
+      style="z-index: 10"
     >
       <v-row class="flex-nowrap">
         <v-col
