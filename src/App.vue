@@ -74,4 +74,7 @@ html {
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
 }
+.v-main__wrap {
+  margin-bottom: 40px; /* Extra margin for toolbar */
+}
 </style>
