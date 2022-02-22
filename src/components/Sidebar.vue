@@ -160,7 +160,7 @@ export default Vue.extend({
       return Object.keys(checkbox).filter((d) => !!checkbox[d]);
     },
 
-    navHeight() {
+    navHeight(): number {
       return this.$vuetify.breakpoint.height - 62; // 62 is height of footer
     },
 
