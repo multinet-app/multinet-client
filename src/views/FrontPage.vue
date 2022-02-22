@@ -40,14 +40,14 @@
         <v-spacer />
         <v-col class="text-h6 grey--text text--darken-4">
           <v-icon large>
-            search
+            file_upload
           </v-icon>
           Sign Up and Upload Your Own Data
         </v-col>
         <v-spacer />
         <v-col class="text-h6 grey--text text--darken-4">
           <v-icon large>
-            file_upload
+            videogame_asset
           </v-icon>
           Try a Demo Below!
         </v-col>
