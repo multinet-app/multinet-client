@@ -44,6 +44,7 @@
       <v-tabs
         v-model="tabSelected"
         fixed-tabs
+        hide-slider
       >
         <v-tab style="width: 126px;">
           Your workspaces
@@ -216,10 +217,12 @@ export default Vue.extend({
 </style>
 
 <style>
-.app-sidebar .v-navigation-drawer__content {
-  overflow: hidden;
-}
 .v-tab {
   font-size: 10pt !important;
+}
+
+/* Stop tab carousel */
+.v-tabs-bar__content {
+  width: 100%;
 }
 </style>
