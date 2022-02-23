@@ -5,7 +5,7 @@
   >
     <template v-slot:activator="{ on: button }">
       <v-tooltip left>
-        <template v-slot:activator="">
+        <template v-slot:activator="{ on: tooltip }">
           <v-fade-transition>
             <v-btn
               v-if="somethingChecked"
@@ -15,6 +15,7 @@
               dark
               color="red accent-3"
               @click="button.click"
+              v-on="tooltip"
             >
               Delete Selected
               <v-icon
