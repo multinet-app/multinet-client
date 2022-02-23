@@ -61,11 +61,11 @@
 
       <v-tabs-items v-model="tabSelected">
         <div
-          v-for="type of [false, true]"
-          :key="type"
+          v-for="publicSpace of [false, true]"
+          :key="publicSpace"
         >
           <v-tab-item
-            v-show="userInfo !== null || type"
+            v-show="userInfo !== null || publicSpace"
           >
             <v-list-item-group color="primary">
               <v-hover
@@ -73,7 +73,7 @@
                 :key="space.name"
               >
                 <v-list-item
-                  v-if="space.public === type"
+                  v-if="space.public === publicSpace"
                   slot-scope="{ hover }"
                   ripple
                   :to="`/workspaces/${space.name}/`"
