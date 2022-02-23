@@ -149,7 +149,7 @@ export default Vue.extend({
       checkbox: {} as CheckboxTable,
       loading: true,
       singleSelected: null as string | null,
-      tabSelected: 0,
+      tabSelected: 1,
     };
   },
 
@@ -188,6 +188,16 @@ export default Vue.extend({
       }
 
       return checked;
+    },
+  },
+
+  watch: {
+    userInfo(newUserInfo) {
+      if (newUserInfo !== null) {
+        this.tabSelected = 0;
+      } else {
+        this.tabSelected = 1;
+      }
     },
   },
 
