@@ -42,111 +42,113 @@
         </v-card>
       </v-responsive>
 
-      <v-row class="text-center">
-        <v-spacer />
-        <v-col class="text-h4 grey--text text--darken-4">
-          Getting Started
-        </v-col>
-        <v-spacer />
-      </v-row>
-      <v-row class="text-center pb-12">
-        <v-spacer />
-        <v-col
-          cols="3"
-          class="text-h6 grey--text text--darken-4"
-        >
-          <v-icon x-large>
-            file_upload
-          </v-icon>
-          Sign up and upload your own data
-        </v-col>
-        <v-spacer />
-        <v-col
-          cols="3"
-          class="text-h6 grey--text text--darken-4"
-        >
-          <v-icon
-            x-large
-            class="pr-1"
-          >
-            videogame_asset
-          </v-icon>
-          Try a demo below or explore the public workspaces
-        </v-col>
-        <v-spacer />
-        <v-col
-          cols="3"
-          class="text-h6 grey--text text--darken-4"
-        >
-          <v-dialog
-            v-model="dialog"
-            width="500"
-          >
-            <template v-slot:activator="{ on }">
-              <v-btn
-                class="px-0"
-                text
-                plain
-                min-width="40px"
-                v-on="on"
-              >
-                <v-icon x-large>
-                  info
-                </v-icon>
-              </v-btn>
-            </template>
-
-            <about-text @toggle="dialog=false" />
-          </v-dialog>
-          Learn more about MultiNet
-        </v-col>
-        <v-spacer />
-      </v-row>
-
-      <!-- COLUMNS -->
-      <div class="px-6 py-2">
-        <v-row class="px-5 pb-6">
-          <v-col
-            v-for="sample in samples"
-            :key="sample.title"
-            cols="4"
-          >
-            <v-hover>
-              <template v-slot:default="{ hover }">
-                <v-card>
-                  <v-img
-                    class="align-end"
-                    height="250px"
-                    :src="sample.image"
-                  >
-                    <v-card-title class="box-shadow-title">
-                      {{ sample.title }}
-                    </v-card-title>
-                  </v-img>
-                  <v-fade-transition>
-                    <v-overlay
-                      v-if="hover"
-                      absolute
-                      opacity=".85"
-                    >
-                      <div class="overlay-text">
-                        <p>{{ sample.text }}</p>
-                        <v-btn
-                          color="primary"
-                          :href="sample.href"
-                          target="_blank"
-                        >
-                          Open in New Window
-                        </v-btn>
-                      </div>
-                    </v-overlay>
-                  </v-fade-transition>
-                </v-card>
-              </template>
-            </v-hover>
+      <v-container id="lower-half">
+        <v-row class="text-center">
+          <v-spacer />
+          <v-col class="text-h4 grey--text text--darken-4">
+            Getting Started
           </v-col>
+          <v-spacer />
         </v-row>
-      </div>
+        <v-row class="text-center pb-12">
+          <v-spacer />
+          <v-col
+            cols="3"
+            class="text-h6 grey--text text--darken-4"
+          >
+            <v-icon x-large>
+              file_upload
+            </v-icon>
+            Sign up and upload your own data
+          </v-col>
+          <v-spacer />
+          <v-col
+            cols="3"
+            class="text-h6 grey--text text--darken-4"
+          >
+            <v-icon
+              x-large
+              class="pr-1"
+            >
+              videogame_asset
+            </v-icon>
+            Try a demo below or explore the public workspaces
+          </v-col>
+          <v-spacer />
+          <v-col
+            cols="3"
+            class="text-h6 grey--text text--darken-4"
+          >
+            <v-dialog
+              v-model="dialog"
+              width="500"
+            >
+              <template v-slot:activator="{ on }">
+                <v-btn
+                  class="px-0"
+                  text
+                  plain
+                  min-width="40px"
+                  v-on="on"
+                >
+                  <v-icon x-large>
+                    info
+                  </v-icon>
+                </v-btn>
+              </template>
+
+              <about-text @toggle="dialog=false" />
+            </v-dialog>
+            Learn more about MultiNet
+          </v-col>
+          <v-spacer />
+        </v-row>
+
+        <!-- COLUMNS -->
+        <div class="px-6 py-2">
+          <v-row class="px-5 pb-6">
+            <v-col
+              v-for="sample in samples"
+              :key="sample.title"
+              cols="4"
+            >
+              <v-hover>
+                <template v-slot:default="{ hover }">
+                  <v-card>
+                    <v-img
+                      class="align-end"
+                      height="250px"
+                      :src="sample.image"
+                    >
+                      <v-card-title class="box-shadow-title">
+                        {{ sample.title }}
+                      </v-card-title>
+                    </v-img>
+                    <v-fade-transition>
+                      <v-overlay
+                        v-if="hover"
+                        absolute
+                        opacity=".85"
+                      >
+                        <div class="overlay-text">
+                          <p>{{ sample.text }}</p>
+                          <v-btn
+                            color="primary"
+                            :href="sample.href"
+                            target="_blank"
+                          >
+                            Open in New Window
+                          </v-btn>
+                        </div>
+                      </v-overlay>
+                    </v-fade-transition>
+                  </v-card>
+                </template>
+              </v-hover>
+            </v-col>
+          </v-row>
+        </div>
+      </v-container>
     </v-main>
   </v-container>
 </template>
@@ -222,13 +224,20 @@ export default Vue.extend({
   padding-bottom: 8px;
   padding-top: 210px;
 }
+
 .overlay-text {
   padding: 48px;
 }
+
 .welcome-text p {
   font-size: 18px;
 }
+
 .logo {
   filter: grayscale(100%);
+}
+
+#lower-half{
+  max-width: 1500px;
 }
 </style>
