@@ -46,7 +46,10 @@
         fixed-tabs
         hide-slider
       >
-        <v-tab style="width: 126px;">
+        <v-tab
+          v-show="userInfo !== null"
+          style="width: 126px;"
+        >
           Your workspaces
         </v-tab>
         <v-tab style="width: 126px;">
@@ -57,51 +60,55 @@
       <v-divider />
 
       <v-tabs-items v-model="tabSelected">
-        <v-tab-item
+        <div
           v-for="type of [false, true]"
           :key="type"
         >
-          <v-list-item-group color="primary">
-            <v-hover
-              v-for="space in workspaces"
-              :key="space.name"
-            >
-              <v-list-item
-                v-if="space.public === type"
-                slot-scope="{ hover }"
-                ripple
-                :to="`/workspaces/${space.name}/`"
+          <v-tab-item
+            v-show="userInfo !== null || type"
+          >
+            <v-list-item-group color="primary">
+              <v-hover
+                v-for="space in workspaces"
+                :key="space.name"
               >
-                <v-list-item-action @click.prevent>
-                  <v-icon
-                    v-if="!hover && !checkbox[space.name]"
-                    class="workspace-icon"
-                  >
-                    library_books
-                  </v-icon>
+                <v-list-item
+                  v-if="space.public === type"
+                  slot-scope="{ hover }"
+                  ripple
+                  :to="`/workspaces/${space.name}/`"
+                >
+                  <v-list-item-action @click.prevent>
+                    <v-icon
+                      v-if="!hover && !checkbox[space.name]"
+                      class="workspace-icon"
+                    >
+                      library_books
+                    </v-icon>
 
-                  <v-checkbox
-                    v-else
-                    v-model="checkbox[space.name]"
-                    class="ws-checkbox"
-                  />
-                </v-list-item-action>
+                    <v-checkbox
+                      v-else
+                      v-model="checkbox[space.name]"
+                      class="ws-checkbox"
+                    />
+                  </v-list-item-action>
 
-                <v-list-item-content>
-                  <v-list-item-title>{{ space.name }}</v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-            </v-hover>
-          </v-list-item-group>
+                  <v-list-item-content>
+                    <v-list-item-title>{{ space.name }}</v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-hover>
+            </v-list-item-group>
 
-          <delete-workspace-dialog
-            ref="dws"
-            :something-checked="somethingChecked"
-            :selection="selection"
-            @deleted="workspaceDeleted"
-            @closed="singleSelected = null"
-          />
-        </v-tab-item>
+            <delete-workspace-dialog
+              ref="dws"
+              :something-checked="somethingChecked"
+              :selection="selection"
+              @deleted="workspaceDeleted"
+              @closed="singleSelected = null"
+            />
+          </v-tab-item>
+        </div>
       </v-tabs-items>
 
       <div v-if="loading">
@@ -115,6 +122,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { UserSpec } from 'multinet';
 
 import store from '@/store';
 
@@ -147,6 +155,11 @@ export default Vue.extend({
 
   computed: {
     workspaces: () => store.state.workspaces,
+
+    userInfo(): UserSpec | null {
+      return store.state.userInfo;
+    },
+
     somethingChecked(): boolean {
       return Object.values(this.checkbox)
         .some(Boolean);
