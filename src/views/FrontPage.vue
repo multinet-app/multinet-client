@@ -51,14 +51,20 @@
       </v-row>
       <v-row class="text-center pb-12">
         <v-spacer />
-        <v-col class="text-h6 grey--text text--darken-4">
+        <v-col
+          cols="3"
+          class="text-h6 grey--text text--darken-4"
+        >
           <v-icon x-large>
             file_upload
           </v-icon>
           Sign up and upload your own data
         </v-col>
         <v-spacer />
-        <v-col class="text-h6 grey--text text--darken-4">
+        <v-col
+          cols="3"
+          class="text-h6 grey--text text--darken-4"
+        >
           <v-icon
             x-large
             class="pr-1"
@@ -66,6 +72,33 @@
             videogame_asset
           </v-icon>
           Try a demo below or explore the public workspaces
+        </v-col>
+        <v-spacer />
+        <v-col
+          cols="3"
+          class="text-h6 grey--text text--darken-4"
+        >
+          <v-dialog
+            v-model="dialog"
+            width="500"
+          >
+            <template v-slot:activator="{ on }">
+              <v-btn
+                class="px-0"
+                text
+                plain
+                min-width="40px"
+                v-on="on"
+              >
+                <v-icon x-large>
+                  info
+                </v-icon>
+              </v-btn>
+            </template>
+
+            <about-text @toggle="dialog=false" />
+          </v-dialog>
+          Learn more about MultiNet
         </v-col>
         <v-spacer />
       </v-row>
@@ -121,13 +154,21 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 import { App } from '@/types';
+import AboutText from '@/components/AboutText.vue';
 
 export default Vue.extend({
+  components: { AboutText },
   props: {
     apps: {
       type: Array as PropType<App[]>,
       required: true,
     },
+  },
+
+  data() {
+    return {
+      dialog: false,
+    };
   },
 
   computed: {
