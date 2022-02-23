@@ -13,12 +13,25 @@
           flat
           tile
         >
-          <v-card-text
-            class="grey--text text--darken-3 text-center text-h5 pt-10 pb-0 ma-auto"
-            style="max-width: 700px;"
-          >
-            <strong class="black--text">Multinet</strong> is visualization tool for networks with attributes associated with the nodes and links.
-          </v-card-text>
+          <v-row class="align-center justify-center">
+            <v-col cols="1" />
+            <v-col cols="2">
+              <v-img
+                src="../assets/logo/app_logo.svg"
+                class="mx-auto"
+                max-height="100px"
+                max-width="100px"
+              />
+            </v-col>
+            <v-col>
+              <v-card-text
+                class="grey--text text--darken-3 text-center text-h4 pt-10"
+              >
+                <strong class="black--text">Multinet</strong> is visualization tool for networks with attributes associated with the nodes and links.
+              </v-card-text>
+            </v-col>
+            <v-col cols="3" />
+          </v-row>
           <v-card-text>
             <v-img
               style="margin-left: 50px; margin-right: 50px;"
