@@ -56,9 +56,15 @@
             cols="3"
             class="text-h6 grey--text text--darken-4"
           >
-            <v-icon x-large>
-              file_upload
-            </v-icon>
+            <v-btn
+              icon
+              x-large
+              @click="login"
+            >
+              <v-icon x-large>
+                file_upload
+              </v-icon>
+            </v-btn>
             Sign up and upload your own data
           </v-col>
           <v-spacer />
@@ -86,8 +92,8 @@
               <template v-slot:activator="{ on }">
                 <v-btn
                   class="px-0"
-                  text
-                  plain
+                  icon
+                  x-large
                   min-width="40px"
                   v-on="on"
                 >
@@ -157,6 +163,7 @@
 import Vue, { PropType } from 'vue';
 import { App } from '@/types';
 import AboutText from '@/components/AboutText.vue';
+import oauthClient from '@/oauth';
 
 export default Vue.extend({
   components: { AboutText },
@@ -213,6 +220,12 @@ export default Vue.extend({
           href: `${this.multiMatrixURL}/?workspace=boston&network=boston`,
         },
       ];
+    },
+  },
+
+  methods: {
+    login(): void {
+      oauthClient.redirectToLogin();
     },
   },
 });
