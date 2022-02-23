@@ -35,8 +35,8 @@
           <v-card-text>
             <v-img
               style="margin-left: 50px; margin-right: 50px;"
-              :src="samples[1].image"
-              max-height="200px"
+              src="../assets/multilink-overview.png"
+              max-height="500px"
             />
           </v-card-text>
         </v-card>
