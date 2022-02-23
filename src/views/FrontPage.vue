@@ -52,7 +52,7 @@
           >
             videogame_asset
           </v-icon>
-          Try a demo below!
+          Try a demo below or explore the public workspaces
         </v-col>
         <v-spacer />
       </v-row>
