@@ -39,17 +39,20 @@
       <v-row class="text-center pb-12">
         <v-spacer />
         <v-col class="text-h6 grey--text text--darken-4">
-          <v-icon large>
+          <v-icon x-large>
             file_upload
           </v-icon>
-          Sign Up and Upload Your Own Data
+          Sign up and upload your own data
         </v-col>
         <v-spacer />
         <v-col class="text-h6 grey--text text--darken-4">
-          <v-icon large>
+          <v-icon
+            x-large
+            class="pr-1"
+          >
             videogame_asset
           </v-icon>
-          Try a Demo Below!
+          Try a demo below!
         </v-col>
         <v-spacer />
       </v-row>
