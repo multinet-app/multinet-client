@@ -64,16 +64,26 @@ export default Vue.extend({
 });
 </script>
 
-<style>
+<style lang="scss">
+$font-family: 'Avenir', Helvetica, Arial, sans-serif;
+
 html {
   overflow-y: auto !important;
 }
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+
+.v-application {
+  [class*='text-'] {
+    font-family: $font-family !important;
+  }
+  .material-icons {
+    font-family: 'Material Icons' !important;
+  }
+
+  font-family: $font-family !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
 }
+
 .v-main__wrap {
   margin-bottom: 40px; /* Extra margin for toolbar */
 }
