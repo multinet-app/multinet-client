@@ -4,8 +4,8 @@
     class="app-sidebar"
     fixed
     permanent
-    stateless
     value="true"
+    :height="navHeight"
   >
     <v-toolbar
       color="grey lighten-2"
@@ -41,78 +41,80 @@
     <WorkspaceDialog />
 
     <v-list subheader>
-      <v-subheader class="pr-2">
-        Your Workspaces
-        <v-spacer />
-
-        <delete-workspace-dialog
-          ref="dws"
-          :something-checked="somethingChecked"
-          :selection="selection"
-          @deleted="workspaceDeleted"
-          @closed="singleSelected = null"
-        />
-      </v-subheader>
+      <v-tabs
+        v-model="tabSelected"
+        fixed-tabs
+        hide-slider
+      >
+        <v-tab
+          v-show="userInfo !== null"
+          style="width: 126px;"
+        >
+          Your workspaces
+        </v-tab>
+        <v-tab style="width: 126px;">
+          Public workspaces
+        </v-tab>
+      </v-tabs>
 
       <v-divider />
 
-      <div class="workspaces">
-        <v-list-item-group color="primary">
-          <v-hover
-            v-for="space in workspaces"
-            :key="space"
+      <v-tabs-items v-model="tabSelected">
+        <div
+          v-for="publicSpace of [false, true]"
+          :key="publicSpace"
+        >
+          <v-tab-item
+            v-show="userInfo !== null || publicSpace"
           >
-            <v-list-item
-              slot-scope="{ hover }"
-              ripple
-              :to="`/workspaces/${space}/`"
-            >
-              <v-list-item-action @click.prevent>
-                <v-icon
-                  v-if="!hover && !checkbox[space]"
-                  class="workspace-icon"
-                >
-                  library_books
-                </v-icon>
-
-                <v-checkbox
-                  v-else
-                  v-model="checkbox[space]"
-                  class="ws-checkbox"
-                />
-              </v-list-item-action>
-
-              <v-list-item-content>
-                <v-list-item-title>{{ space }}</v-list-item-title>
-              </v-list-item-content>
-
-              <v-list-item-action
-                v-if="hover"
-                class="mx-0 my-0"
-                @click.prevent
+            <v-list-item-group color="primary">
+              <v-hover
+                v-for="space in workspaces"
+                :key="space.name"
               >
-                <v-btn
-                  icon
-                  small
+                <v-list-item
+                  v-if="space.public === publicSpace"
+                  slot-scope="{ hover }"
+                  ripple
+                  :to="`/workspaces/${space.name}/`"
                 >
-                  <v-icon
-                    color="red accent-3"
-                    size="18"
-                    @click="deleteWorkspace(space)"
-                  >
-                    delete
-                  </v-icon>
-                </v-btn>
-              </v-list-item-action>
-            </v-list-item>
-          </v-hover>
-        </v-list-item-group>
+                  <v-list-item-action @click.prevent>
+                    <v-icon
+                      v-if="!hover && !checkbox[space.name]"
+                      class="workspace-icon"
+                    >
+                      library_books
+                    </v-icon>
 
-        <div v-if="loading">
-          <v-skeleton-loader type="list-item" />
-          <v-skeleton-loader type="list-item" />
-          <v-skeleton-loader type="list-item" />
+                    <v-checkbox
+                      v-else
+                      v-model="checkbox[space.name]"
+                      class="ws-checkbox"
+                    />
+                  </v-list-item-action>
+
+                  <v-list-item-content>
+                    <v-list-item-title>{{ space.name }}</v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-hover>
+            </v-list-item-group>
+
+            <delete-workspace-dialog
+              ref="dws"
+              :something-checked="somethingChecked"
+              :selection="selection"
+              @deleted="workspaceDeleted"
+              @closed="singleSelected = null"
+            />
+          </v-tab-item>
         </div>
+      </v-tabs-items>
+
+      <div v-if="loading">
+        <v-skeleton-loader type="list-item" />
+        <v-skeleton-loader type="list-item" />
+        <v-skeleton-loader type="list-item" />
       </div>
     </v-list>
   </v-navigation-drawer>
@@ -120,6 +122,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { UserSpec } from 'multinet';
 
 import store from '@/store';
 
@@ -146,11 +149,17 @@ export default Vue.extend({
       checkbox: {} as CheckboxTable,
       loading: true,
       singleSelected: null as string | null,
+      tabSelected: 1,
     };
   },
 
   computed: {
     workspaces: () => store.state.workspaces,
+
+    userInfo(): UserSpec | null {
+      return store.state.userInfo;
+    },
+
     somethingChecked(): boolean {
       return Object.values(this.checkbox)
         .some(Boolean);
@@ -164,6 +173,10 @@ export default Vue.extend({
       return Object.keys(checkbox).filter((d) => !!checkbox[d]);
     },
 
+    navHeight(): number {
+      return this.$vuetify.breakpoint.height - 62; // 62 is height of footer
+    },
+
     selection(): string[] {
       const {
         checked,
@@ -175,6 +188,16 @@ export default Vue.extend({
       }
 
       return checked;
+    },
+  },
+
+  watch: {
+    userInfo(newUserInfo) {
+      if (newUserInfo !== null) {
+        this.tabSelected = 0;
+      } else {
+        this.tabSelected = 1;
+      }
     },
   },
 
@@ -211,19 +234,18 @@ export default Vue.extend({
   width: 48px;
 }
 
-.workspaces {
-  /* 171px = height of app-bar + workspace button + list subheader */
-  height: calc(100vh - 171px);
-  overflow-y:scroll;
-}
-
 .workspace-icon {
   opacity: .4;
 }
 </style>
 
 <style>
-.app-sidebar .v-navigation-drawer__content {
-  overflow: hidden;
+.v-tab {
+  font-size: 10pt !important;
+}
+
+/* Stop tab carousel */
+.v-tabs-bar__content {
+  width: 100%;
 }
 </style>

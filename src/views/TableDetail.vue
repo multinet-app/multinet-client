@@ -43,7 +43,7 @@
         </v-list>
       </v-list>
     </v-navigation-drawer>
-    <v-main class="ma-0">
+    <v-main>
       <v-app-bar
         app
         clipped-right
@@ -86,7 +86,7 @@
       <div class="wrapper">
         <v-data-table
           fixed-header
-          height="calc(100vh - 123px)"
+          height="calc(100vh - 123px - 63px)"
           class="table-details"
           :headers="dataTableHeaders"
           hide-default-header
