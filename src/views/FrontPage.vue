@@ -35,7 +35,7 @@
           <v-card-text>
             <v-img
               style="margin-left: 50px; margin-right: 50px;"
-              src="../assets/multilink-overview.png"
+              src="../assets/multilink-overview.webp"
               max-height="500px"
             />
           </v-card-text>
