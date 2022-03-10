@@ -43,6 +43,6 @@ export interface FileTypeTable {
 
 export interface Upload {
   blob: string;
-  status: string;
+  status: 'PENDING' | 'STARTED' | 'FAILED' | 'FINISHED';
   data_type: string;
 }
