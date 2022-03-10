@@ -473,13 +473,13 @@ ul {
 }
 
 .network-vis {
-  height: calc(100vh - 314px);
+  height: calc(100vh - 314px  - 60px); /* 100vh - 314px - 60px for toolbar */
   position: relative;
   z-index: 1;
 }
 
 .network-vis-closed {
-  height: calc(100vh - 75px);
+  height: calc(100vh - 75px - 60px); /* 100vh - 75px - 60px for toolbar */
 }
 
 .node-cols {
