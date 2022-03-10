@@ -18,31 +18,29 @@
       </v-btn>
     </template>
     <v-card>
-      <v-card>
-        <v-tabs>
-          <v-tab>
-            Upload
-          </v-tab>
-          <v-tab>
-            Create
-          </v-tab>
+      <v-tabs>
+        <v-tab>
+          Upload
+        </v-tab>
+        <v-tab>
+          Create
+        </v-tab>
 
-          <v-tab-item>
-            <network-upload-form
-              :workspace="workspace"
-              @success="networkDialogSuccess"
-            />
-          </v-tab-item>
+        <v-tab-item>
+          <network-upload-form
+            :workspace="workspace"
+            @success="networkDialogSuccess"
+          />
+        </v-tab-item>
 
-          <v-tab-item>
-            <network-create-form
-              :edge-tables="edgeTables"
-              :workspace="workspace"
-              @success="networkDialogSuccess"
-            />
-          </v-tab-item>
-        </v-tabs>
-      </v-card>
+        <v-tab-item>
+          <network-create-form
+            :edge-tables="edgeTables"
+            :workspace="workspace"
+            @success="networkDialogSuccess"
+          />
+        </v-tab-item>
+      </v-tabs>
     </v-card>
   </v-dialog>
 </template>
