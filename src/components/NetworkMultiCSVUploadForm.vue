@@ -1,26 +1,35 @@
 <template>
   <v-card>
-    <v-sheet width="10vw">
-      <v-file-input
-        v-model="files"
-        multiple
-        label="CSV Files"
-        accept="text/csv"
-      />
-    </v-sheet>
+    <v-card-title>Link Tables</v-card-title>
+    <v-card-subtitle>
+      Link edge tables with node tables by clicking the <v-icon>link</v-icon> icon on
+      the desired edge table, and selecting the node table column that you'd like to link it to.
+    </v-card-subtitle>
+    <v-row no-gutters>
+      <v-col cols="2">
+        <v-file-input
+          v-model="files"
+          multiple
+          label="CSV Files"
+          accept="text/csv"
+          class="ml-3"
+        />
+      </v-col>
+    </v-row>
 
     <!-- Data tables -->
     <template v-if="fileSamples.length">
       <v-row
-        v-for="sample in fileSamples"
-        :key="sample.name"
         no-gutters
         justify="center"
         class="my-3"
       >
         <v-card
+          v-for="sample in fileSamples"
+          :key="sample.name"
           outlined
           raised
+          class="ma-4"
         >
           <v-sheet class="table-title px-2">
             <span>{{ sample.name }}</span>
@@ -54,7 +63,7 @@
                           link
                         </v-icon>
                       </template>
-                      <v-card>
+                      <v-card max-height="30vh">
                         <v-card-actions
                           v-if="sourceMenu || targetMenu"
                           class="my-0 py-0"
