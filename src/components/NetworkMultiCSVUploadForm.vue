@@ -30,6 +30,7 @@
           outlined
           raised
           class="ma-4"
+          max-width="90%"
         >
           <v-sheet class="table-title px-2">
             <span>{{ sample.name }}</span>
@@ -80,10 +81,20 @@
                         <v-list class="my-0 py-0">
                           <v-list-item
                             v-for="col in getOtherTableColumns(sample.name)"
-                            :key="col.column"
+                            :key="`${sample.name}-${col.table}-${col.column}`"
+                            :disabled="columnDisabled({table: sample.name, column: header.value}, col)"
                             @click="linkColumns(sample.name, header.value, col)"
                           >
                             {{ `${col.table}:${col.column}` }}
+                            <v-spacer />
+                            <v-btn
+                              v-if="showColumnRemove({table: sample.name, column: header.value}, col)"
+                              icon
+                              right
+                              @click.stop="removeColumnLink({table: sample.name, column: header.value}, col)"
+                            >
+                              <v-icon>close</v-icon>
+                            </v-btn>
                           </v-list-item>
                         </v-list>
                       </v-card>
@@ -121,6 +132,7 @@ interface TableColumn{
 
 // Here, source is the edge table, and target is the associated node table
 interface ColumnLink {
+  id: string;
   source: TableColumn;
   target: TableColumn;
 }
@@ -187,18 +199,84 @@ export default defineComponent({
       }
     });
 
+    function tableColumnString(col: TableColumn) {
+      return `${col.table}:${col.column}`;
+    }
+
+    function createLinkString(source: TableColumn, target: TableColumn): string {
+      return `${source.table}:${source.column}->${target.table}:${target.column}`;
+    }
+
     // Link two columns
-    const linkedColumns = ref<ColumnLink[]>([]);
-    function linkColumns(table: string, column: string, otherColumn: TableColumn) {
-      linkedColumns.value.push({ source: { table, column }, target: otherColumn });
+    const columnLinks = ref<ColumnLink[]>([]);
+    function linkColumns(table: string, column: string, target: TableColumn) {
+      const source: TableColumn = { table, column };
+      const link: ColumnLink = { id: createLinkString(source, target), source, target };
+      if (columnLinks.value.find((l) => l.id === link.id)) {
+        return;
+      }
+
+      columnLinks.value.push(link);
+    }
+
+    function showColumnRemove(tableCol: TableColumn, colListing: TableColumn) {
+      return columnLinks.value.find(
+        (l) => (
+          l.id.includes(tableColumnString(tableCol))
+          && l.id.includes(tableColumnString(colListing))
+        ),
+      );
+    }
+
+    function removeColumnLink(a: TableColumn, b: TableColumn) {
+      const index = columnLinks.value.findIndex(
+        (link) => (
+          link.id.includes(tableColumnString(a))
+          || link.id.includes(tableColumnString(b))
+        ),
+      );
+
+      if (index === -1) {
+        return;
+      }
+
+      columnLinks.value = [...columnLinks.value.slice(0, index), ...columnLinks.value.slice(index + 1)];
+    }
+
+    function columnDisabled(tableCol: TableColumn, colListing: TableColumn) {
+      // Check if current table has a link with this column
+      const existingTableLinks = columnLinks.value.filter((l) => l.id.includes(tableColumnString(tableCol)));
+      if (existingTableLinks.length) {
+        // Check if listed column is part of any existing links
+        const colInvolved = existingTableLinks.find((l) => l.id.includes(tableColumnString(colListing)));
+        if (!colInvolved) {
+          return true;
+        }
+      }
+
+      // Check if column is linked to a different table column
+      const columnAlreadyLinked = columnLinks.value.find(
+        (l) => (
+          l.id.includes(tableColumnString(colListing))
+          && !l.id.includes(tableColumnString(tableCol))
+        ),
+      );
+      if (columnAlreadyLinked) {
+        return true;
+      }
+
+      return false;
     }
 
     return {
       files,
       fileSamples,
       getOtherTableColumns,
-      linkedColumns,
+      columnLinks,
       linkColumns,
+      showColumnRemove,
+      removeColumnLink,
+      columnDisabled,
       chunkedFileSamples,
 
       menuOpen,
