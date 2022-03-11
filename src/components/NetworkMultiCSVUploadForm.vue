@@ -58,26 +58,12 @@
                     >
                       <template v-slot:activator="{ on }">
                         <v-icon
-                          small
                           v-on="on"
                         >
                           link
                         </v-icon>
                       </template>
                       <v-card max-height="30vh">
-                        <v-card-actions
-                          v-if="sourceMenu || targetMenu"
-                          class="my-0 py-0"
-                        >
-                          <v-btn
-                            icon
-                            @click="closeBothMenus"
-                          >
-                            <v-icon>
-                              arrow_left
-                            </v-icon>
-                          </v-btn>
-                        </v-card-actions>
                         <v-list class="my-0 py-0">
                           <v-list-item
                             v-for="col in getOtherTableColumns(sample.name)"
@@ -111,10 +97,7 @@
 </template>
 
 <script lang="ts">
-import {
-  computed, defineComponent, ref, watchEffect,
-} from '@vue/composition-api';
-import { chunk } from 'lodash';
+import { defineComponent, ref, watchEffect } from '@vue/composition-api';
 import Papa from 'papaparse';
 import { DataTableHeader } from 'vuetify';
 
@@ -139,6 +122,7 @@ interface ColumnLink {
 
 export default defineComponent({
   setup() {
+    const menuOpen = ref(false);
     const files = ref<File[]>([]);
     const fileSamples = ref<CSVPreview[]>([]);
 
@@ -177,27 +161,6 @@ export default defineComponent({
 
       return headers;
     }
-
-    // Chunk samples to allow for row rendering
-    const chunkedFileSamples = computed(() => chunk(fileSamples.value, 2));
-
-    // Menu state
-    const menuOpen = ref(false);
-    const sourceMenu = ref(false);
-    const targetMenu = ref(false);
-    function closeBothMenus() {
-      sourceMenu.value = false;
-      targetMenu.value = false;
-    }
-
-    // Ensure values reset if menu closed
-    watchEffect(async () => {
-      if (!menuOpen.value) {
-        // Delay by a small amount to look natural
-        await new Promise((resolve) => setTimeout(resolve, 200));
-        closeBothMenus();
-      }
-    });
 
     function tableColumnString(col: TableColumn) {
       return `${col.table}:${col.column}`;
@@ -277,12 +240,8 @@ export default defineComponent({
       showColumnRemove,
       removeColumnLink,
       columnDisabled,
-      chunkedFileSamples,
 
       menuOpen,
-      sourceMenu,
-      targetMenu,
-      closeBothMenus,
     };
   },
 });
