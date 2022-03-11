@@ -38,7 +38,7 @@
                 <tr>
                   <th
                     v-for="header in headers"
-                    :key="header.text"
+                    :key="header.value"
                     class="pt-2 pb-4"
                   >
                     {{ header.text }}
@@ -69,39 +69,13 @@
                           </v-btn>
                         </v-card-actions>
                         <v-list class="my-0 py-0">
-                          <!-- Source/Target listing -->
-                          <template v-if="!(sourceMenu || targetMenu)">
-                            <v-list-item>
-                              <v-card
-                                flat
-                                @click="sourceMenu = true"
-                              >
-                                Source
-                              </v-card>
-                            </v-list-item>
-                            <v-list-item>
-                              <v-card
-                                flat
-                                @click="targetMenu = true"
-                              >
-                                Target
-                              </v-card>
-                            </v-list-item>
-                          </template>
-
-                          <!-- Source Menu-->
-                          <template v-else-if="sourceMenu">
-                            <v-list-item>
-                              source menu
-                            </v-list-item>
-                          </template>
-
-                          <!-- Target Menu -->
-                          <template v-else>
-                            <v-list-item>
-                              Target menu
-                            </v-list-item>
-                          </template>
+                          <v-list-item
+                            v-for="col in getOtherTableColumns(sample.name)"
+                            :key="col.column"
+                            @click="linkColumns(sample.name, header.value, col)"
+                          >
+                            {{ `${col.table}:${col.column}` }}
+                          </v-list-item>
                         </v-list>
                       </v-card>
                     </v-menu>
@@ -131,10 +105,23 @@ interface CSVPreview {
   rows: CSVRow[];
 }
 
+interface TableColumn{
+  table: string;
+  column: string;
+}
+
+// Here, source is the edge table, and target is the associated node table
+interface ColumnLink {
+  source: TableColumn;
+  target: TableColumn;
+}
+
 export default defineComponent({
   setup() {
     const files = ref<File[]>([]);
     const fileSamples = ref<CSVPreview[]>([]);
+
+    // Parse all selected files, setting results to fileSamples
     watchEffect(async () => {
       const samplesPromise = await Promise.all(files.value.map(async (file) => (
         new Promise((resolve) => {
@@ -155,6 +142,20 @@ export default defineComponent({
 
       fileSamples.value = (await samplesPromise) as CSVPreview[];
     });
+
+    function getOtherTableColumns(tableName: string) {
+      const otherSamples = fileSamples.value.filter((sample) => sample.name !== tableName);
+      const headers: TableColumn[] = [];
+
+      // Add headers from each table to headers
+      otherSamples.forEach((sample) => {
+        // const values = sample.headers.map((header) => `${sample.name}:${header.value}`);
+        const values = sample.headers.map((header) => ({ table: sample.name, column: header.value }));
+        headers.push(...values);
+      });
+
+      return headers;
+    }
 
     // Chunk samples to allow for row rendering
     const chunkedFileSamples = computed(() => chunk(fileSamples.value, 2));
@@ -177,9 +178,18 @@ export default defineComponent({
       }
     });
 
+    // Link two columns
+    const linkedColumns = ref<ColumnLink[]>([]);
+    function linkColumns(table: string, column: string, otherColumn: TableColumn) {
+      linkedColumns.value.push({ source: { table, column }, target: otherColumn });
+    }
+
     return {
       files,
       fileSamples,
+      getOtherTableColumns,
+      linkedColumns,
+      linkColumns,
       chunkedFileSamples,
 
       menuOpen,
