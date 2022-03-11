@@ -51,13 +51,16 @@
                     :key="header.value"
                     class="pt-2 pb-4"
                   >
-                    {{ header.text }}
+                    <span :class="columnLinked({table: sample.name, column: header.value}) ? 'amber--text' : ''">
+                      {{ header.text }}
+                    </span>
                     <v-menu
                       :close-on-content-click="false"
                       @input="menuOpen = $event"
                     >
                       <template v-slot:activator="{ on }">
                         <v-icon
+                          :color="columnLinked({table: sample.name, column: header.value}) ? 'amber' : ''"
                           v-on="on"
                         >
                           link
@@ -231,6 +234,10 @@ export default defineComponent({
       return false;
     }
 
+    function columnLinked(col: TableColumn): boolean {
+      return !!columnLinks.value.find((link) => link.id.includes(tableColumnString(col)));
+    }
+
     return {
       files,
       fileSamples,
@@ -240,6 +247,7 @@ export default defineComponent({
       showColumnRemove,
       removeColumnLink,
       columnDisabled,
+      columnLinked,
 
       menuOpen,
     };
