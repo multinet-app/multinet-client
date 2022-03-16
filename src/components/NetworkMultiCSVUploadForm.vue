@@ -15,6 +15,18 @@
           class="ml-3"
         />
       </v-col>
+      <v-col
+        cols="1"
+        align-self="center"
+        class="ml-3"
+      >
+        <v-btn
+          color="primary"
+          :disabled="!valid"
+        >
+          Upload
+        </v-btn>
+      </v-col>
     </v-row>
 
     <!-- Data tables -->
@@ -33,7 +45,19 @@
           max-width="90%"
         >
           <v-sheet class="table-title px-2">
-            <span>{{ sample.name }}</span>
+            <v-row no-gutters>
+              <span>{{ sample.name }}</span>
+              <v-spacer />
+              <v-switch
+                label="Edge Table"
+                dark
+                hide-details
+                class="ma-0 pa-0"
+                :disabled="edgeTable && edgeTable !== sample.name"
+                :value="edgeTable === sample.name"
+                @change="setEdgeTable(sample.name, $event)"
+              />
+            </v-row>
           </v-sheet>
           <v-data-table
             class="upload-preview"
@@ -128,6 +152,13 @@ export default defineComponent({
     const menuOpen = ref(false);
     const files = ref<File[]>([]);
     const fileSamples = ref<CSVPreview[]>([]);
+
+    // State
+    const valid = ref(false);
+    const edgeTable = ref<string | null>(null);
+    function setEdgeTable(table: string, val: boolean) {
+      edgeTable.value = val ? table : null;
+    }
 
     // Parse all selected files, setting results to fileSamples
     watchEffect(async () => {
@@ -248,8 +279,10 @@ export default defineComponent({
       removeColumnLink,
       columnDisabled,
       columnLinked,
-
       menuOpen,
+      edgeTable,
+      setEdgeTable,
+      valid,
     };
   },
 });
