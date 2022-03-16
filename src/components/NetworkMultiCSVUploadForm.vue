@@ -53,7 +53,7 @@
                 dark
                 hide-details
                 class="ma-0 pa-0"
-                :disabled="edgeTable && edgeTable !== sample.name"
+                :disabled="edgeTableSwitchDisabled(sample.name)"
                 :value="edgeTable === sample.name"
                 @change="setEdgeTable(sample.name, $event)"
               />
@@ -91,25 +91,87 @@
                         </v-icon>
                       </template>
                       <v-card max-height="30vh">
-                        <v-list class="my-0 py-0">
-                          <v-list-item
-                            v-for="col in getOtherTableColumns(sample.name)"
-                            :key="`${sample.name}-${col.table}-${col.column}`"
-                            :disabled="columnDisabled({table: sample.name, column: header.value}, col)"
-                            @click="linkColumns(sample.name, header.value, col)"
-                          >
-                            {{ `${col.table}:${col.column}` }}
-                            <v-spacer />
-                            <v-btn
-                              v-if="showColumnRemove({table: sample.name, column: header.value}, col)"
-                              icon
-                              right
-                              @click.stop="removeColumnLink({table: sample.name, column: header.value}, col)"
+                        <!-- Edge Table -->
+                        <template v-if="edgeTable === sample.name">
+                          <v-card-subtitle class="py-1 px-2">
+                            Select Source/Target
+                          </v-card-subtitle>
+
+                          <template v-if="!(selectingSource || selectingTarget)">
+                            <v-list
+                              class="my-0 py-0"
+                              dense
                             >
-                              <v-icon>close</v-icon>
-                            </v-btn>
-                          </v-list-item>
-                        </v-list>
+                              <v-list-item
+                                :disabled="sourceTargetItemDisabled('source', header.value)"
+                                :input-value="sourceTargetItemActive('source', header.value)"
+                                @click="selectingSource = true"
+                              >
+                                Source
+                              </v-list-item>
+                              <v-list-item
+                                :disabled="sourceTargetItemDisabled('target', header.value)"
+                                :input-value="sourceTargetItemActive('target', header.value)"
+                                @click="selectingTarget = true"
+                              >
+                                Target
+                              </v-list-item>
+                            </v-list>
+                          </template>
+                          <template v-else>
+                            <v-list
+                              class="my-0 py-0"
+                              dense
+                            >
+                              <v-list-item
+                                v-for="col in getOtherTableColumns(sample.name)"
+                                :key="`${sample.name}-${col.table}-${col.column}`"
+                                :disabled="columnDisabled({table: sample.name, column: header.value}, col)"
+                                @click="linkColumns(sample.name, header.value, col)"
+                              >
+                                {{ `${col.table}:${col.column}` }}
+                                <v-spacer />
+                                <v-btn
+                                  v-if="showColumnRemove({table: sample.name, column: header.value}, col)"
+                                  icon
+                                  right
+                                  @click.stop="removeColumnLink({table: sample.name, column: header.value}, col)"
+                                >
+                                  <v-icon>close</v-icon>
+                                </v-btn>
+                              </v-list-item>
+                            </v-list>
+                          </template>
+                        </template>
+
+                        <!-- Node Table -->
+                        <template v-else>
+                          <v-card-subtitle class="py-1 px-2">
+                            Select Foreign Key
+                          </v-card-subtitle>
+                          <v-list
+                            class="my-0 py-0"
+                            dense
+                          >
+                            <v-list-item
+                              v-for="col in getOtherTableColumns(sample.name)"
+                              :key="`${sample.name}-${col.table}-${col.column}`"
+                              :disabled="columnDisabled({table: sample.name, column: header.value}, col)"
+                              @click="linkColumns(sample.name, header.value, col)"
+                            >
+                              {{ `${col.table}:${col.column}` }}
+                              <v-spacer />
+                              <v-btn
+                                v-if="showColumnRemove({table: sample.name, column: header.value}, col)"
+                                icon
+                                right
+                                @click.stop="removeColumnLink({table: sample.name, column: header.value}, col)"
+                              >
+                                <v-icon>close</v-icon>
+                              </v-btn>
+                            </v-list-item>
+                          </v-list>
+                        </template>
                       </v-card>
                     </v-menu>
                   </th>
@@ -124,7 +186,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watchEffect } from '@vue/composition-api';
+import {
+  computed, defineComponent, ref, watchEffect,
+} from '@vue/composition-api';
 import Papa from 'papaparse';
 import { DataTableHeader } from 'vuetify';
 
@@ -135,12 +199,14 @@ interface CSVPreview {
   rows: CSVRow[];
 }
 
+// TODO: Make this a class
 interface TableColumn{
   table: string;
   column: string;
 }
 
 // Here, source is the edge table, and target is the associated node table
+// TODO: Make this a class
 interface ColumnLink {
   id: string;
   source: TableColumn;
@@ -149,16 +215,9 @@ interface ColumnLink {
 
 export default defineComponent({
   setup() {
-    const menuOpen = ref(false);
     const files = ref<File[]>([]);
     const fileSamples = ref<CSVPreview[]>([]);
-
-    // State
-    const valid = ref(false);
-    const edgeTable = ref<string | null>(null);
-    function setEdgeTable(table: string, val: boolean) {
-      edgeTable.value = val ? table : null;
-    }
+    const columnLinks = ref<ColumnLink[]>([]);
 
     // Parse all selected files, setting results to fileSamples
     watchEffect(async () => {
@@ -182,6 +241,51 @@ export default defineComponent({
       fileSamples.value = (await samplesPromise) as CSVPreview[];
     });
 
+    // Edge Table
+    const edgeTable = ref<string | null>(null);
+    const edgeTableSwitchDisabled = (table: string) => (
+      (edgeTable.value && edgeTable.value !== table)
+      || !!columnLinks.value.find((l) => l.id.includes(table))
+    );
+
+    function setEdgeTable(table: string, val: boolean) {
+      edgeTable.value = val ? table : null;
+    }
+
+    // Edge source/target
+    const selectingSource = ref(false);
+    const selectingTarget = ref(false);
+
+    // Here, ColumnLink.source is the edge table column,
+    // and ColumnLink.target is the node table column
+    const edgeTableSource = ref(null as null | ColumnLink);
+    const edgeTableTarget = ref(null as null | ColumnLink);
+
+    type SourceTarget = 'source' | 'target';
+    function sourceTargetItemDisabled(type: SourceTarget, column: string) {
+      const a = type === 'source' ? edgeTableSource.value : edgeTableTarget.value;
+      const b = type === 'target' ? edgeTableSource.value : edgeTableTarget.value;
+
+      return (a && a.source.column !== column) || (b && b.source.column === column);
+    }
+
+    function sourceTargetItemActive(type: SourceTarget, column: string) {
+      if (type === 'source') {
+        return edgeTableSource.value && edgeTableSource.value.source.column === column;
+      }
+
+      return edgeTableTarget.value && edgeTableTarget.value.source.column === column;
+    }
+
+    // Menu state
+    const menuOpen = ref(false);
+    watchEffect(() => {
+      if (!menuOpen.value) {
+        selectingSource.value = false;
+        selectingTarget.value = false;
+      }
+    });
+
     function getOtherTableColumns(tableName: string) {
       const otherSamples = fileSamples.value.filter((sample) => sample.name !== tableName);
       const headers: TableColumn[] = [];
@@ -196,21 +300,31 @@ export default defineComponent({
       return headers;
     }
 
+    // TODO: Place as getter of TableColumn class
     function tableColumnString(col: TableColumn) {
       return `${col.table}:${col.column}`;
     }
 
+    // TODO: Place as getter of ColumnLink class
     function createLinkString(source: TableColumn, target: TableColumn): string {
       return `${source.table}:${source.column}->${target.table}:${target.column}`;
     }
 
     // Link two columns
-    const columnLinks = ref<ColumnLink[]>([]);
     function linkColumns(table: string, column: string, target: TableColumn) {
       const source: TableColumn = { table, column };
       const link: ColumnLink = { id: createLinkString(source, target), source, target };
       if (columnLinks.value.find((l) => l.id === link.id)) {
         return;
+      }
+
+      // Set up edge table links if necessary
+      if (edgeTable.value !== null) {
+        if (selectingSource.value) {
+          edgeTableSource.value = link;
+        } else if (selectingTarget.value) {
+          edgeTableTarget.value = link;
+        }
       }
 
       columnLinks.value.push(link);
@@ -237,7 +351,16 @@ export default defineComponent({
         return;
       }
 
+      const link = columnLinks.value[index];
       columnLinks.value = [...columnLinks.value.slice(0, index), ...columnLinks.value.slice(index + 1)];
+
+      // Unlink edge source if necessary
+      if (edgeTableSource.value && link.id === edgeTableSource.value.id) {
+        edgeTableSource.value = null;
+      }
+      if (edgeTableTarget.value && link.id === edgeTableTarget.value.id) {
+        edgeTableTarget.value = null;
+      }
     }
 
     function columnDisabled(tableCol: TableColumn, colListing: TableColumn) {
@@ -269,9 +392,19 @@ export default defineComponent({
       return !!columnLinks.value.find((link) => link.id.includes(tableColumnString(col)));
     }
 
+    // Denotes whether the dialog is in a submittable state
+    const valid = computed(() => !!(edgeTable.value && edgeTableSource.value && edgeTableTarget.value));
+
     return {
       files,
       fileSamples,
+      menuOpen,
+      selectingSource,
+      edgeTableSource,
+      selectingTarget,
+      edgeTableTarget,
+      sourceTargetItemDisabled,
+      sourceTargetItemActive,
       getOtherTableColumns,
       columnLinks,
       linkColumns,
@@ -279,8 +412,8 @@ export default defineComponent({
       removeColumnLink,
       columnDisabled,
       columnLinked,
-      menuOpen,
       edgeTable,
+      edgeTableSwitchDisabled,
       setEdgeTable,
       valid,
     };
