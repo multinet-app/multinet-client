@@ -174,6 +174,14 @@
                         </template>
                       </v-card>
                     </v-menu>
+
+                    <!-- Include/Exclude Column -->
+                    <v-icon
+                      dark
+                      @click="includeExcludeTableColumn({table: sample.name, column: header.value}, true)"
+                    >
+                      check
+                    </v-icon>
                   </th>
                 </tr>
               </thead>
@@ -388,6 +396,12 @@ export default defineComponent({
       return false;
     }
 
+    // Exclude a table column
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    function includeExcludeTableColumn(tableCol: TableColumn, included: boolean) {
+      // TODO: Implement
+    }
+
     function columnLinked(col: TableColumn): boolean {
       return !!columnLinks.value.find((link) => link.id.includes(tableColumnString(col)));
     }
@@ -411,6 +425,7 @@ export default defineComponent({
       showColumnRemove,
       removeColumnLink,
       columnDisabled,
+      includeExcludeTableColumn,
       columnLinked,
       edgeTable,
       edgeTableSwitchDisabled,
