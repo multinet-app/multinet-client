@@ -37,8 +37,8 @@
         class="my-3"
       >
         <v-card
-          v-for="sample in fileSamples"
-          :key="sample.name"
+          v-for="file in fileSamples"
+          :key="file.name"
           outlined
           raised
           class="ma-4"
@@ -46,16 +46,16 @@
         >
           <v-sheet class="table-title px-2">
             <v-row no-gutters>
-              <span>{{ sample.name }}</span>
+              <span>{{ file.name }}</span>
               <v-spacer />
               <v-switch
                 label="Edge Table"
                 dark
                 hide-details
                 class="ma-0 pa-0"
-                :disabled="edgeTableSwitchDisabled(sample.name)"
-                :value="edgeTable === sample.name"
-                @change="setEdgeTable(sample.name, $event)"
+                :disabled="edgeTableSwitchDisabled(file.name)"
+                :value="edgeTable === file.name"
+                @change="setEdgeTable(file.name, $event)"
               />
             </v-row>
           </v-sheet>
@@ -63,39 +63,39 @@
             class="upload-preview"
             hide-default-footer
             hide-default-header
-            :headers="sample.headers"
-            :items="sample.rows"
+            :headers="file.headers"
+            :items="file.rows"
             disable-sort
           >
             <template v-slot:header="{ props: { headers } }">
               <thead dark>
                 <tr>
                   <th
-                    v-for="header in headers"
-                    :key="header.value"
+                    v-for="{ tableCol } in headers"
+                    :key="tableColumnString(tableCol)"
                     class="pt-2 pb-4"
                   >
                     <!-- Include/Exclude Column -->
                     <v-icon
-                      v-if="tableColExcludedIndex({table: sample.name, column: header.value}) === -1"
+                      v-if="tableColExcludedIndex(tableCol) === -1"
                       dark
-                      :color="columnLinked({table: sample.name, column: header.value}) ? 'amber' : ''"
-                      @click="includeExcludeTableColumn({table: sample.name, column: header.value}, true)"
+                      :color="columnLinked(tableCol) ? 'amber' : ''"
+                      @click="includeExcludeTableColumn(tableCol, true)"
                     >
                       check_box
                     </v-icon>
                     <v-icon
                       v-else
                       dark
-                      :color="columnLinked({table: sample.name, column: header.value}) ? 'amber' : ''"
-                      @click="includeExcludeTableColumn({table: sample.name, column: header.value}, false)"
+                      :color="columnLinked(tableCol) ? 'amber' : ''"
+                      @click="includeExcludeTableColumn(tableCol, false)"
                     >
                       check_box_outline_blank
                     </v-icon>
 
                     <!-- Column name -->
-                    <span :class="columnLinked({table: sample.name, column: header.value}) ? 'amber--text' : ''">
-                      {{ header.text }}
+                    <span :class="columnLinked(tableCol) ? 'amber--text' : ''">
+                      {{ tableCol.column }}
                     </span>
 
                     <!-- Link to other table column -->
@@ -105,7 +105,7 @@
                     >
                       <template v-slot:activator="{ on }">
                         <v-icon
-                          :color="columnLinked({table: sample.name, column: header.value}) ? 'amber' : ''"
+                          :color="columnLinked(tableCol) ? 'amber' : ''"
                           dark
                           v-on="on"
                         >
@@ -114,7 +114,7 @@
                       </template>
                       <v-card max-height="30vh">
                         <!-- Edge Table -->
-                        <template v-if="edgeTable === sample.name">
+                        <template v-if="edgeTable === tableCol.table">
                           <v-card-subtitle class="py-1 px-2">
                             Select Source/Target
                           </v-card-subtitle>
@@ -125,15 +125,15 @@
                               dense
                             >
                               <v-list-item
-                                :disabled="sourceTargetItemDisabled('source', header.value)"
-                                :input-value="sourceTargetItemActive('source', header.value)"
+                                :disabled="sourceTargetItemDisabled('source', tableCol.column)"
+                                :input-value="sourceTargetItemActive('source', tableCol.column)"
                                 @click="selectingSource = true"
                               >
                                 Source
                               </v-list-item>
                               <v-list-item
-                                :disabled="sourceTargetItemDisabled('target', header.value)"
-                                :input-value="sourceTargetItemActive('target', header.value)"
+                                :disabled="sourceTargetItemDisabled('target', tableCol.column)"
+                                :input-value="sourceTargetItemActive('target', tableCol.column)"
                                 @click="selectingTarget = true"
                               >
                                 Target
@@ -146,18 +146,18 @@
                               dense
                             >
                               <v-list-item
-                                v-for="col in getOtherTableColumns(sample.name)"
-                                :key="`${sample.name}-${col.table}-${col.column}`"
-                                :disabled="columnDisabled({table: sample.name, column: header.value}, col)"
-                                @click="linkColumns(sample.name, header.value, col)"
+                                v-for="col in getOtherTableColumns(tableCol.table)"
+                                :key="`${tableCol.table}-${col.table}-${col.column}`"
+                                :disabled="columnDisabled(tableCol, col)"
+                                @click="linkColumns(tableCol, col)"
                               >
                                 {{ `${col.table}:${col.column}` }}
                                 <v-spacer />
                                 <v-btn
-                                  v-if="showColumnRemove({table: sample.name, column: header.value}, col)"
+                                  v-if="showColumnRemove(tableCol, col)"
                                   icon
                                   right
-                                  @click.stop="removeColumnLink({table: sample.name, column: header.value}, col)"
+                                  @click.stop="removeColumnLink(tableCol, col)"
                                 >
                                   <v-icon>close</v-icon>
                                 </v-btn>
@@ -176,18 +176,18 @@
                             dense
                           >
                             <v-list-item
-                              v-for="col in getOtherTableColumns(sample.name)"
-                              :key="`${sample.name}-${col.table}-${col.column}`"
-                              :disabled="columnDisabled({table: sample.name, column: header.value}, col)"
-                              @click="linkColumns(sample.name, header.value, col)"
+                              v-for="col in getOtherTableColumns(tableCol.table)"
+                              :key="`${tableCol.table}-${col.table}-${col.column}`"
+                              :disabled="columnDisabled(tableCol, col)"
+                              @click="linkColumns(tableCol, col)"
                             >
                               {{ `${col.table}:${col.column}` }}
                               <v-spacer />
                               <v-btn
-                                v-if="showColumnRemove({table: sample.name, column: header.value}, col)"
+                                v-if="showColumnRemove(tableCol, col)"
                                 icon
                                 right
-                                @click.stop="removeColumnLink({table: sample.name, column: header.value}, col)"
+                                @click.stop="removeColumnLink(tableCol, col)"
                               >
                                 <v-icon>close</v-icon>
                               </v-btn>
@@ -215,9 +215,14 @@ import Papa from 'papaparse';
 import { DataTableHeader } from 'vuetify';
 
 type CSVRow = {[key: string]: string};
+
+interface TableHeader extends DataTableHeader {
+  tableCol: TableColumn;
+}
+
 interface CSVPreview {
   name: string;
-  headers: DataTableHeader[];
+  headers: TableHeader[];
   rows: CSVRow[];
 }
 
@@ -249,10 +254,19 @@ export default defineComponent({
             preview: 5,
             header: true,
             complete: (result) => {
+              if (!result.meta.fields) {
+                return;
+              }
+
+              const headers: TableHeader[] = result.meta.fields.map((field) => ({
+                tableCol: { table: file.name, column: field },
+                text: field,
+                value: field,
+              }));
+
               resolve({
+                headers,
                 name: file.name,
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                headers: result.meta.fields!.map((field) => ({ text: field, value: field })),
                 rows: result.data as CSVRow[],
               });
             },
@@ -309,17 +323,12 @@ export default defineComponent({
     });
 
     function getOtherTableColumns(tableName: string) {
-      const otherSamples = fileSamples.value.filter((sample) => sample.name !== tableName);
-      const headers: TableColumn[] = [];
-
-      // Add headers from each table to headers
-      otherSamples.forEach((sample) => {
-        // const values = sample.headers.map((header) => `${sample.name}:${header.value}`);
-        const values = sample.headers.map((header) => ({ table: sample.name, column: header.value }));
-        headers.push(...values);
-      });
-
-      return headers;
+      const otherTables = fileSamples.value.filter((table) => table.name !== tableName);
+      return otherTables.reduce(
+        (prev, cur) => (
+          [...prev, ...cur.headers.map((sample) => sample.tableCol)]
+        ), [] as TableColumn[],
+      );
     }
 
     // TODO: Place as getter of TableColumn class
@@ -333,8 +342,7 @@ export default defineComponent({
     }
 
     // Link two columns
-    function linkColumns(table: string, column: string, target: TableColumn) {
-      const source: TableColumn = { table, column };
+    function linkColumns(source: TableColumn, target: TableColumn) {
       const link: ColumnLink = { id: createLinkString(source, target), source, target };
       if (columnLinks.value.find((l) => l.id === link.id)) {
         return;
@@ -463,6 +471,7 @@ export default defineComponent({
       edgeTableSwitchDisabled,
       setEdgeTable,
       valid,
+      tableColumnString,
     };
   },
 });
