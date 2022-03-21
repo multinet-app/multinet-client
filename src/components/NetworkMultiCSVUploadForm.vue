@@ -72,7 +72,7 @@
                 <tr>
                   <th
                     v-for="{ tableCol } in headers"
-                    :key="tableColumnString(tableCol)"
+                    :key="tableCol.id"
                     class="pt-2 pb-4"
                   >
                     <!-- Include/Exclude Column -->
@@ -95,7 +95,7 @@
 
                     <!-- Column name -->
                     <span :class="columnLinked(tableCol) ? 'amber--text' : ''">
-                      {{ tableCol.column }}
+                      {{ tableCol.col }}
                     </span>
 
                     <!-- Link to other table column -->
@@ -125,15 +125,15 @@
                               dense
                             >
                               <v-list-item
-                                :disabled="sourceTargetItemDisabled('source', tableCol.column)"
-                                :input-value="sourceTargetItemActive('source', tableCol.column)"
+                                :disabled="sourceTargetItemDisabled('source', tableCol.col)"
+                                :input-value="sourceTargetItemActive('source', tableCol.col)"
                                 @click="selectingSource = true"
                               >
                                 Source
                               </v-list-item>
                               <v-list-item
-                                :disabled="sourceTargetItemDisabled('target', tableCol.column)"
-                                :input-value="sourceTargetItemActive('target', tableCol.column)"
+                                :disabled="sourceTargetItemDisabled('target', tableCol.col)"
+                                :input-value="sourceTargetItemActive('target', tableCol.col)"
                                 @click="selectingTarget = true"
                               >
                                 Target
@@ -147,11 +147,11 @@
                             >
                               <v-list-item
                                 v-for="col in getOtherTableColumns(tableCol.table)"
-                                :key="`${tableCol.table}-${col.table}-${col.column}`"
+                                :key="`${tableCol.table}-${col.id}`"
                                 :disabled="columnDisabled(tableCol, col)"
                                 @click="linkColumns(tableCol, col)"
                               >
-                                {{ `${col.table}:${col.column}` }}
+                                {{ `${col.table}:${col.col}` }}
                                 <v-spacer />
                                 <v-btn
                                   v-if="showColumnRemove(tableCol, col)"
@@ -177,11 +177,11 @@
                           >
                             <v-list-item
                               v-for="col in getOtherTableColumns(tableCol.table)"
-                              :key="`${tableCol.table}-${col.table}-${col.column}`"
+                              :key="`${tableCol.table}-${col.id}`"
                               :disabled="columnDisabled(tableCol, col)"
                               @click="linkColumns(tableCol, col)"
                             >
-                              {{ `${col.table}:${col.column}` }}
+                              {{ col.id }}
                               <v-spacer />
                               <v-btn
                                 v-if="showColumnRemove(tableCol, col)"
@@ -208,43 +208,63 @@
 </template>
 
 <script lang="ts">
+/* eslint-disable lines-between-class-members */
+/* eslint-disable max-classes-per-file */
+
 import {
   computed, defineComponent, ref, watchEffect,
 } from '@vue/composition-api';
 import Papa from 'papaparse';
 import { DataTableHeader } from 'vuetify';
 
-type CSVRow = {[key: string]: string};
-
-interface TableHeader extends DataTableHeader {
-  tableCol: TableColumn;
-}
-
-interface CSVPreview {
-  name: string;
-  headers: TableHeader[];
-  rows: CSVRow[];
-}
-
-// TODO: Make this a class
-interface TableColumn{
-  table: string;
-  column: string;
-}
-
-// Here, source is the edge table, and target is the associated node table
-// TODO: Make this a class
-interface ColumnLink {
-  id: string;
-  source: TableColumn;
-  target: TableColumn;
-}
-
 export default defineComponent({
   setup() {
     const files = ref<File[]>([]);
     const fileSamples = ref<CSVPreview[]>([]);
     const columnLinks = ref<ColumnLink[]>([]);
+
+    /* CLASSES AND TYPES */
+
+    class TableColumn {
+      id: string;
+      table: string;
+      col: string;
+
+      constructor(table: string, col: string) {
+        this.id = `${table}:${col}`;
+        this.table = table;
+        this.col = col;
+      }
+
+      createLinkString(other: TableColumn): string {
+        return `${this.id}->${other.id}`;
+      }
+    }
+
+    class ColumnLink {
+      id: string;
+      a: TableColumn;
+      b: TableColumn;
+
+      constructor(a: TableColumn, b: TableColumn) {
+        this.a = a;
+        this.b = b;
+        this.id = `${a.id}->${b.id}`;
+      }
+    }
+
+    interface TableHeader extends DataTableHeader {
+      tableCol: TableColumn;
+    }
+
+    type CSVRow = {[key: string]: string};
+    interface CSVPreview {
+      name: string;
+      headers: TableHeader[];
+      rows: CSVRow[];
+    }
+
+    /* COMPONENT LOGIC */
 
     // Parse all selected files, setting results to fileSamples
     watchEffect(async () => {
@@ -259,7 +279,7 @@ export default defineComponent({
               }
 
               const headers: TableHeader[] = result.meta.fields.map((field) => ({
-                tableCol: { table: file.name, column: field },
+                tableCol: new TableColumn(file.name, field),
                 text: field,
                 value: field,
               }));
@@ -299,18 +319,18 @@ export default defineComponent({
 
     type SourceTarget = 'source' | 'target';
     function sourceTargetItemDisabled(type: SourceTarget, column: string) {
-      const a = type === 'source' ? edgeTableSource.value : edgeTableTarget.value;
-      const b = type === 'target' ? edgeTableSource.value : edgeTableTarget.value;
+      const link1 = type === 'source' ? edgeTableSource.value : edgeTableTarget.value;
+      const link2 = type === 'target' ? edgeTableSource.value : edgeTableTarget.value;
 
-      return (a && a.source.column !== column) || (b && b.source.column === column);
+      return (link1 && link1.a.col !== column) || (link2 && link2.a.col === column);
     }
 
     function sourceTargetItemActive(type: SourceTarget, column: string) {
       if (type === 'source') {
-        return edgeTableSource.value && edgeTableSource.value.source.column === column;
+        return edgeTableSource.value && edgeTableSource.value.a.col === column;
       }
 
-      return edgeTableTarget.value && edgeTableTarget.value.source.column === column;
+      return edgeTableTarget.value && edgeTableTarget.value.a.col === column;
     }
 
     // Menu state
@@ -331,19 +351,9 @@ export default defineComponent({
       );
     }
 
-    // TODO: Place as getter of TableColumn class
-    function tableColumnString(col: TableColumn) {
-      return `${col.table}:${col.column}`;
-    }
-
-    // TODO: Place as getter of ColumnLink class
-    function createLinkString(source: TableColumn, target: TableColumn): string {
-      return `${source.table}:${source.column}->${target.table}:${target.column}`;
-    }
-
     // Link two columns
     function linkColumns(source: TableColumn, target: TableColumn) {
-      const link: ColumnLink = { id: createLinkString(source, target), source, target };
+      const link = new ColumnLink(source, target);
       if (columnLinks.value.find((l) => l.id === link.id)) {
         return;
       }
@@ -363,8 +373,8 @@ export default defineComponent({
     function showColumnRemove(tableCol: TableColumn, colListing: TableColumn) {
       return columnLinks.value.find(
         (l) => (
-          l.id.includes(tableColumnString(tableCol))
-          && l.id.includes(tableColumnString(colListing))
+          l.id.includes(tableCol.id)
+          && l.id.includes(colListing.id)
         ),
       );
     }
@@ -372,8 +382,8 @@ export default defineComponent({
     function removeColumnLink(a: TableColumn, b: TableColumn) {
       const index = columnLinks.value.findIndex(
         (link) => (
-          link.id.includes(tableColumnString(a))
-          || link.id.includes(tableColumnString(b))
+          link.id.includes(a.id)
+          || link.id.includes(b.id)
         ),
       );
 
@@ -395,10 +405,10 @@ export default defineComponent({
 
     function columnDisabled(tableCol: TableColumn, colListing: TableColumn) {
       // Check if current table has a link with this column
-      const existingTableLinks = columnLinks.value.filter((l) => l.id.includes(tableColumnString(tableCol)));
+      const existingTableLinks = columnLinks.value.filter((l) => l.id.includes(tableCol.id));
       if (existingTableLinks.length) {
         // Check if listed column is part of any existing links
-        const colInvolved = existingTableLinks.find((l) => l.id.includes(tableColumnString(colListing)));
+        const colInvolved = existingTableLinks.find((l) => l.id.includes(colListing.id));
         if (!colInvolved) {
           return true;
         }
@@ -407,9 +417,8 @@ export default defineComponent({
       // Check if column is linked to a different table column
       const columnAlreadyLinked = columnLinks.value.find(
         (l) => (
-          l.id.includes(tableColumnString(colListing))
-          && !l.id.includes(tableColumnString(tableCol))
-        ),
+          l.id.includes(colListing.id)
+          && !l.id.includes(tableCol.id)),
       );
       if (columnAlreadyLinked) {
         return true;
@@ -421,7 +430,7 @@ export default defineComponent({
     // Include/Exclude a table column
     const excludedTableColumns = ref<TableColumn[]>([]);
     const tableColExcludedIndex = (tableCol: TableColumn) => (
-      excludedTableColumns.value.findIndex((tc) => tc.table === tableCol.table && tc.column === tableCol.column)
+      excludedTableColumns.value.findIndex((tc) => tc.table === tableCol.table && tc.col === tableCol.col)
     );
     function includeExcludeTableColumn(tableCol: TableColumn, excluded: boolean) {
       const existingIndex = tableColExcludedIndex(tableCol);
@@ -441,7 +450,7 @@ export default defineComponent({
     }
 
     function columnLinked(col: TableColumn): boolean {
-      return !!columnLinks.value.find((link) => link.id.includes(tableColumnString(col)));
+      return !!columnLinks.value.find((link) => link.id.includes(col.id));
     }
 
     // Denotes whether the dialog is in a submittable state
@@ -471,7 +480,6 @@ export default defineComponent({
       edgeTableSwitchDisabled,
       setEdgeTable,
       valid,
-      tableColumnString,
     };
   },
 });
