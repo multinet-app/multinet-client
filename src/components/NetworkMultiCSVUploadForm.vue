@@ -75,9 +75,30 @@
                     :key="header.value"
                     class="pt-2 pb-4"
                   >
+                    <!-- Include/Exclude Column -->
+                    <v-icon
+                      v-if="tableColExcludedIndex({table: sample.name, column: header.value}) === -1"
+                      dark
+                      :color="columnLinked({table: sample.name, column: header.value}) ? 'amber' : ''"
+                      @click="includeExcludeTableColumn({table: sample.name, column: header.value}, true)"
+                    >
+                      check_box
+                    </v-icon>
+                    <v-icon
+                      v-else
+                      dark
+                      :color="columnLinked({table: sample.name, column: header.value}) ? 'amber' : ''"
+                      @click="includeExcludeTableColumn({table: sample.name, column: header.value}, false)"
+                    >
+                      check_box_outline_blank
+                    </v-icon>
+
+                    <!-- Column name -->
                     <span :class="columnLinked({table: sample.name, column: header.value}) ? 'amber--text' : ''">
                       {{ header.text }}
                     </span>
+
+                    <!-- Link to other table column -->
                     <v-menu
                       :close-on-content-click="false"
                       @input="menuOpen = $event"
@@ -85,6 +106,7 @@
                       <template v-slot:activator="{ on }">
                         <v-icon
                           :color="columnLinked({table: sample.name, column: header.value}) ? 'amber' : ''"
+                          dark
                           v-on="on"
                         >
                           link
@@ -174,14 +196,6 @@
                         </template>
                       </v-card>
                     </v-menu>
-
-                    <!-- Include/Exclude Column -->
-                    <v-icon
-                      dark
-                      @click="includeExcludeTableColumn({table: sample.name, column: header.value}, true)"
-                    >
-                      check
-                    </v-icon>
                   </th>
                 </tr>
               </thead>
@@ -396,10 +410,26 @@ export default defineComponent({
       return false;
     }
 
-    // Exclude a table column
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    function includeExcludeTableColumn(tableCol: TableColumn, included: boolean) {
-      // TODO: Implement
+    // Include/Exclude a table column
+    const excludedTableColumns = ref<TableColumn[]>([]);
+    const tableColExcludedIndex = (tableCol: TableColumn) => (
+      excludedTableColumns.value.findIndex((tc) => tc.table === tableCol.table && tc.column === tableCol.column)
+    );
+    function includeExcludeTableColumn(tableCol: TableColumn, excluded: boolean) {
+      const existingIndex = tableColExcludedIndex(tableCol);
+      const found = existingIndex !== -1;
+
+      // Only take action if found and excluded differ
+      if (!found && excluded) {
+        // Add to excluded columns
+        excludedTableColumns.value.push(tableCol);
+      } else if (found && !excluded) {
+        // Remove from excluded columns
+        excludedTableColumns.value = [
+          ...excludedTableColumns.value.slice(0, existingIndex),
+          ...excludedTableColumns.value.slice(existingIndex + 1),
+        ];
+      }
     }
 
     function columnLinked(col: TableColumn): boolean {
@@ -425,6 +455,8 @@ export default defineComponent({
       showColumnRemove,
       removeColumnLink,
       columnDisabled,
+      excludedTableColumns,
+      tableColExcludedIndex,
       includeExcludeTableColumn,
       columnLinked,
       edgeTable,
