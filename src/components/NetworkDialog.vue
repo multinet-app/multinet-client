@@ -12,7 +12,7 @@
           v-on="on"
         >
           <v-icon dark>
-            add_circle
+            library_add
           </v-icon>
         </v-btn>
       </template>
