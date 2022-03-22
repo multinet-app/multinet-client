@@ -163,6 +163,7 @@ import TablePanel from '@/components/TablePanel.vue';
 import NetworkPanel from '@/components/NetworkPanel.vue';
 import store from '@/store';
 import WorkspaceOptionMenu from '@/components/WorkspaceOptionMenu.vue';
+import { App } from '@/types';
 
 const surroundingWhitespace = /^\s+|\s+$/;
 const workspaceNameRules: Array<(x: string) => string|boolean> = [
@@ -182,6 +183,10 @@ export default defineComponent({
   props: {
     workspace: {
       type: String as PropType<string>,
+      required: true,
+    },
+    apps: {
+      type: Object as PropType<{network_visualizations: App[]; table_visualizations: App[]}>,
       required: true,
     },
   },
