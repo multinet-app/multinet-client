@@ -128,6 +128,7 @@
               :node-tables="nodeTables"
               :edge-tables="edgeTables"
               :loading="loading"
+              :network-vis-apps="apps.network_visualizations"
             />
           </v-card>
         </v-col>
