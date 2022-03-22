@@ -145,6 +145,7 @@
               :workspace="workspace"
               :items="tables"
               :loading="loading"
+              :table-vis-apps="apps.table_visualizations"
             />
           </v-card>
         </v-col>

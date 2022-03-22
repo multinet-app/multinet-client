@@ -55,7 +55,7 @@
     <template v-else>
       <v-list-item-group color="primary">
         <v-hover
-          v-for="item in items"
+          v-for="item, index in items"
           :key="item"
         >
           <v-list-item
@@ -83,33 +83,22 @@
               <v-list-item-title>{{ item }}</v-list-item-title>
             </v-list-item-content>
 
-            <v-list-item-action
-              v-if="hover"
-              class="mx-0 my-0"
-              @click.prevent
-            >
-              <v-btn icon>
-                <v-icon
-                  color="primary"
-                  @click="downloadItem(item)"
-                >
-                  save_alt
-                </v-icon>
-              </v-btn>
+            <v-list-item-action @click.prevent>
+              <v-select
+                v-model="selectedVisApps[index]"
+                :items="tableVisApps.map((visApp) => visApp.name)"
+                :style="`max-width: ${selectedVisApps[index] !== undefined ? 80 : 120}px;`"
+                hide-details="auto"
+                dense
+              />
             </v-list-item-action>
-            <v-list-item-action
-              v-if="hover && userCanEdit"
-              class="mx-0 my-0"
-              @click.prevent
-            >
-              <v-btn icon>
-                <v-icon
-                  color="red accent-3"
-                  @click="deleteItem(item)"
-                >
-                  delete
-                </v-icon>
-              </v-btn>
+            <v-list-item-action v-if="selectedVisApps[index] !== undefined">
+              <v-icon
+                @click.prevent
+                @click="redirectToTableVis(index)"
+              >
+                arrow_forward
+              </v-icon>
             </v-list-item-action>
           </v-list-item>
         </v-hover>
@@ -125,6 +114,7 @@ import TableDialog from '@/components/TableDialog.vue';
 import DownloadDialog from '@/components/DownloadDialog.vue';
 
 import store from '@/store';
+import { App } from '@/types';
 
 export default Vue.extend({
   name: 'TablePanel',
@@ -150,6 +140,10 @@ export default Vue.extend({
       type: Boolean as PropType<boolean>,
       required: true,
     },
+    tableVisApps: {
+      type: Array as PropType<App[]>,
+      required: true,
+    },
   },
 
   data() {
@@ -162,6 +156,7 @@ export default Vue.extend({
       singleSelected: null as string | null,
       deleterDialog: false,
       downloaderDialog: false,
+      selectedVisApps: new Array(this.items.length),
     };
   },
 
@@ -222,6 +217,20 @@ export default Vue.extend({
       Object.keys(this.checkbox).forEach((key) => {
         this.checkbox[key] = false;
       });
+    },
+
+    redirectToTableVis(index: number) {
+      // Get the select app at index
+      const selectedAppName = this.selectedVisApps[index];
+      const selectedApp = this.tableVisApps.find((app) => app.name === selectedAppName);
+
+      // Get the table name at index
+      const tableName = this.items[index];
+
+      // Redirect to the url with the right table parameter
+      if (selectedApp !== undefined) {
+        window.location.href = `${selectedApp.url}/?workspace=${this.workspace}&table=${tableName}`;
+      }
     },
 
     async cleanup() {
