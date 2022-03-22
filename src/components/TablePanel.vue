@@ -140,6 +140,7 @@ export default Vue.extend({
       type: Boolean as PropType<boolean>,
       required: true,
     },
+
     tableVisApps: {
       type: Array as PropType<App[]>,
       required: true,
@@ -154,8 +155,6 @@ export default Vue.extend({
     return {
       checkbox: {} as CheckboxTable,
       singleSelected: null as string | null,
-      deleterDialog: false,
-      downloaderDialog: false,
       selectedVisApps: new Array(this.items.length),
     };
   },
@@ -182,14 +181,6 @@ export default Vue.extend({
 
       return result;
     },
-
-    anySelected(): boolean {
-      return this.selection.length > 0;
-    },
-
-    userCanEdit(): boolean {
-      return store.getters.userCanEdit;
-    },
   },
 
   watch: {
@@ -199,20 +190,6 @@ export default Vue.extend({
   },
 
   methods: {
-    deleteItem(item: string) {
-      this.singleSelected = item;
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (this.$refs.deleter as any).dialog = true;
-    },
-
-    downloadItem(item: string) {
-      this.singleSelected = item;
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (this.$refs.downloader as any).dialog = true;
-    },
-
     clearCheckboxes() {
       Object.keys(this.checkbox).forEach((key) => {
         this.checkbox[key] = false;
