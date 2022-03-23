@@ -200,6 +200,17 @@
                 </tr>
               </thead>
             </template>
+            <template v-slot:item="{ item, headers }">
+              <tr>
+                <td
+                  v-for="header in headers"
+                  :key="header.tableCol.id"
+                  :class="getColumnItemClass(header.tableCol)"
+                >
+                  {{ item[header.value] }}
+                </td>
+              </tr>
+            </template>
           </v-data-table>
         </v-card>
       </v-row>
@@ -449,6 +460,14 @@ export default defineComponent({
       }
     }
 
+    function getColumnItemClass(col: TableColumn) {
+      if (tableColExcludedIndex(col) !== -1) {
+        return 'grey--text lighten-3';
+      }
+
+      return undefined;
+    }
+
     function columnLinked(col: TableColumn): boolean {
       return !!columnLinks.value.find((link) => link.id.includes(col.id));
     }
@@ -475,6 +494,7 @@ export default defineComponent({
       excludedTableColumns,
       tableColExcludedIndex,
       includeExcludeTableColumn,
+      getColumnItemClass,
       columnLinked,
       edgeTable,
       edgeTableSwitchDisabled,
