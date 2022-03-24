@@ -302,8 +302,19 @@ export default defineComponent({
         };
       }));
 
+      // Sort samples by number of headers, to provide easier viewing
+      const sortedSamples = samples.sort((a, b) => {
+        if (a.headers.length < b.headers.length) {
+          return -1;
+        }
+        if (b.headers.length > a.headers.length) {
+          return 1;
+        }
+        return 0;
+      });
+
       // Store value in tableSamples
-      tableSamples.value = samples;
+      tableSamples.value = sortedSamples;
     });
 
     // Edge Table
