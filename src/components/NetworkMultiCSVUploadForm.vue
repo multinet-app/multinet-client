@@ -1,20 +1,11 @@
 <template>
   <v-card>
-    <v-card-title>Link Tables</v-card-title>
+    <v-card-title>Create from Existing Tables</v-card-title>
     <v-card-subtitle>
       Link edge tables with node tables by clicking the <v-icon>link</v-icon> icon on
       the desired edge table, and selecting the node table column that you'd like to link it to.
     </v-card-subtitle>
     <v-row no-gutters>
-      <v-col cols="2">
-        <v-file-input
-          v-model="files"
-          multiple
-          label="CSV Files"
-          accept="text/csv"
-          class="ml-3"
-        />
-      </v-col>
       <v-col
         cols="1"
         align-self="center"
@@ -24,20 +15,20 @@
           color="primary"
           :disabled="!valid"
         >
-          Upload
+          Create
         </v-btn>
       </v-col>
     </v-row>
 
     <!-- Data tables -->
-    <template v-if="fileSamples.length">
+    <template v-if="tableSamples.length">
       <v-row
         no-gutters
         justify="center"
         class="my-3"
       >
         <v-card
-          v-for="file in fileSamples"
+          v-for="file in tableSamples"
           :key="file.name"
           outlined
           raised
@@ -73,7 +64,7 @@
                   <th
                     v-for="{ tableCol } in headers"
                     :key="tableCol.id"
-                    class="pt-2 pb-4"
+                    style="width: 1px; white-space: nowrap;"
                   >
                     <!-- Include/Exclude Column -->
                     <v-icon
@@ -206,8 +197,9 @@
                   v-for="header in headers"
                   :key="header.tableCol.id"
                   :class="getColumnItemClass(header.tableCol)"
+                  style="width: 1px; white-space: nowrap;"
                 >
-                  {{ item[header.value] }}
+                  {{ columnItemText(item, header.value) }}
                 </td>
               </tr>
             </template>
@@ -223,15 +215,17 @@
 /* eslint-disable max-classes-per-file */
 
 import {
-  computed, defineComponent, ref, watchEffect,
+  computed, defineComponent, onMounted, ref, watchEffect,
 } from '@vue/composition-api';
-import Papa from 'papaparse';
 import { DataTableHeader } from 'vuetify';
+
+import api from '@/api';
+import store from '@/store';
 
 export default defineComponent({
   setup() {
     const files = ref<File[]>([]);
-    const fileSamples = ref<CSVPreview[]>([]);
+    const tableSamples = ref<CSVPreview[]>([]);
     const columnLinks = ref<ColumnLink[]>([]);
 
     /* CLASSES AND TYPES */
@@ -277,35 +271,39 @@ export default defineComponent({
 
     /* COMPONENT LOGIC */
 
-    // Parse all selected files, setting results to fileSamples
-    watchEffect(async () => {
-      const samplesPromise = await Promise.all(files.value.map(async (file) => (
-        new Promise((resolve) => {
-          Papa.parse(file, {
-            preview: 5,
-            header: true,
-            complete: (result) => {
-              if (!result.meta.fields) {
-                return;
-              }
+    // Load table from workspace and store in tableSamples
+    onMounted(async () => {
+      if (!store.state.currentWorkspace) {
+        return;
+      }
 
-              const headers: TableHeader[] = result.meta.fields.map((field) => ({
-                tableCol: new TableColumn(file.name, field),
-                text: field,
-                value: field,
-              }));
+      const ws = store.state.currentWorkspace;
+      const tables = [...ws.nodeTables, ...ws.edgeTables];
+      const samples: CSVPreview[] = await Promise.all(tables.map(async (table) => {
+        const res = await api.axios.get(`workspaces/${ws.name}/tables/${table}/rows`, {
+          params: {
+            limit: 5,
+          },
+        });
 
-              resolve({
-                headers,
-                name: file.name,
-                rows: result.data as CSVRow[],
-              });
-            },
-          });
-        })
-      )));
+        const rows = res.data.results;
+        const headers: TableHeader[] = Object.keys(rows[0])
+          .filter((header) => !['_id', '_key', '_rev'].includes(header))
+          .map((header) => ({
+            text: header,
+            value: header,
+            tableCol: new TableColumn(table, header),
+          }));
 
-      fileSamples.value = (await samplesPromise) as CSVPreview[];
+        return {
+          rows,
+          headers,
+          name: table,
+        };
+      }));
+
+      // Store value in tableSamples
+      tableSamples.value = samples;
     });
 
     // Edge Table
@@ -354,7 +352,7 @@ export default defineComponent({
     });
 
     function getOtherTableColumns(tableName: string) {
-      const otherTables = fileSamples.value.filter((table) => table.name !== tableName);
+      const otherTables = tableSamples.value.filter((table) => table.name !== tableName);
       return otherTables.reduce(
         (prev, cur) => (
           [...prev, ...cur.headers.map((sample) => sample.tableCol)]
@@ -468,6 +466,21 @@ export default defineComponent({
       return undefined;
     }
 
+    const maxItemLength = 20;
+    function columnItemText(item: CSVRow, key: string) {
+      let val = item[key];
+      if (typeof val !== 'string') {
+        val = JSON.stringify(val);
+      }
+
+      const truncated = val.substring(0, maxItemLength);
+      if (val === truncated) {
+        return val;
+      }
+
+      return `${truncated}...`;
+    }
+
     function columnLinked(col: TableColumn): boolean {
       return !!columnLinks.value.find((link) => link.id.includes(col.id));
     }
@@ -477,7 +490,7 @@ export default defineComponent({
 
     return {
       files,
-      fileSamples,
+      tableSamples,
       menuOpen,
       selectingSource,
       edgeTableSource,
@@ -495,6 +508,7 @@ export default defineComponent({
       tableColExcludedIndex,
       includeExcludeTableColumn,
       getColumnItemClass,
+      columnItemText,
       columnLinked,
       edgeTable,
       edgeTableSwitchDisabled,
