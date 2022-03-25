@@ -98,6 +98,7 @@
                         <v-icon
                           :color="columnLinked(tableCol) ? 'amber' : ''"
                           dark
+                          :disabled="linkDisabled(tableCol)"
                           v-on="on"
                         >
                           link
@@ -403,7 +404,7 @@ export default defineComponent({
       const index = columnLinks.value.findIndex(
         (link) => (
           link.id.includes(a.id)
-          || link.id.includes(b.id)
+          && link.id.includes(b.id)
         ),
       );
 
@@ -496,6 +497,22 @@ export default defineComponent({
       return !!columnLinks.value.find((link) => link.id.includes(col.id));
     }
 
+    function linkDisabled(col: TableColumn): boolean {
+      // If table has no links, don't disable
+      const tableLinks = columnLinks.value.filter((l) => l.id.includes(col.table));
+      if (!tableLinks.length) {
+        return false;
+      }
+
+      // Disable column if table has links but column isn't linked
+      const colLinked = tableLinks.find((l) => l.id.includes(col.id));
+      if (col.table !== edgeTable.value && !colLinked) {
+        return true;
+      }
+
+      return false;
+    }
+
     // Denotes whether the dialog is in a submittable state
     const valid = computed(() => !!(edgeTable.value && edgeTableSource.value && edgeTableTarget.value));
 
@@ -521,6 +538,7 @@ export default defineComponent({
       getColumnItemClass,
       columnItemText,
       columnLinked,
+      linkDisabled,
       edgeTable,
       edgeTableSwitchDisabled,
       setEdgeTable,
