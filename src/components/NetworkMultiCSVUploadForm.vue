@@ -14,6 +14,7 @@
         <v-btn
           color="primary"
           :disabled="!valid"
+          @click="createNetwork"
         >
           Create
         </v-btn>
@@ -223,10 +224,14 @@ import { DataTableHeader } from 'vuetify';
 import api from '@/api';
 import store from '@/store';
 
-class TableColumn {
-  id: string;
+interface ColumnDef {
   table: string;
   col: string;
+}
+class TableColumn implements ColumnDef {
+  table: string;
+  col: string;
+  id: string;
 
   constructor(table: string, col: string) {
     this.id = `${table}:${col}`;
@@ -261,7 +266,7 @@ interface CSVPreview {
 // For fully constructed network
 interface ForeignLink {
   column: string;
-  foreignColumn: TableColumn;
+  foreignColumn: ColumnDef;
 }
 interface CSVNetwork {
   edgeTable: {
@@ -270,7 +275,7 @@ interface CSVNetwork {
     target: ForeignLink;
   };
 
-  joins: {
+  joins?: {
     [key: string]: ForeignLink;
   };
 }
@@ -529,6 +534,41 @@ export default defineComponent({
 
     // Denotes whether the dialog is in a submittable state
     const valid = computed(() => !!(edgeTable.value && edgeTableSource.value && edgeTableTarget.value));
+    function createNetwork() {
+      if (!valid.value) {
+        return;
+      }
+
+      /* eslint-disable @typescript-eslint/no-non-null-assertion */
+      const network: CSVNetwork = {
+        edgeTable: {
+          name: edgeTable.value!,
+          source: {
+            column: edgeTableSource.value!.a.col,
+            foreignColumn: edgeTableSource.value!.b,
+          },
+          target: {
+            column: edgeTableTarget.value!.a.col,
+            foreignColumn: edgeTableTarget.value!.b,
+          },
+        },
+      };
+
+      const nodeLinks = columnLinks.value.filter((l) => !l.id.includes(edgeTable.value!));
+      if (nodeLinks.length) {
+        network.joins = nodeLinks.reduce((prev, cur) => ({
+          ...prev,
+          [cur.a.table]: {
+            column: cur.a.col,
+            foreignColumn: cur.b,
+          },
+        }), {});
+      }
+      /* eslint-disable @typescript-eslint/no-non-null-assertion */
+
+      // TODO: Finish post request
+      api.axios.post('', network);
+    }
 
     return {
       files,
@@ -557,6 +597,7 @@ export default defineComponent({
       edgeTableSwitchDisabled,
       setEdgeTable,
       valid,
+      createNetwork,
     };
   },
 });
