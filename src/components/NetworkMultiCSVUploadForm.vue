@@ -434,13 +434,13 @@ export default defineComponent({
         }
       }
 
-      // Check if column is linked to a different table column
-      const columnAlreadyLinked = columnLinks.value.find(
+      // Check if column is linked to a different edge table column
+      const edgeColumnAlreadyLinked = columnLinks.value.find(
         (l) => (
           l.id.includes(colListing.id)
           && !l.id.includes(tableCol.id)),
       );
-      if (columnAlreadyLinked) {
+      if (tableCol.table === edgeTable.value && edgeColumnAlreadyLinked) {
         return true;
       }
 
