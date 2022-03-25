@@ -223,54 +223,63 @@ import { DataTableHeader } from 'vuetify';
 import api from '@/api';
 import store from '@/store';
 
+class TableColumn {
+  id: string;
+  table: string;
+  col: string;
+
+  constructor(table: string, col: string) {
+    this.id = `${table}:${col}`;
+    this.table = table;
+    this.col = col;
+  }
+}
+
+class ColumnLink {
+  id: string;
+  a: TableColumn;
+  b: TableColumn;
+
+  constructor(a: TableColumn, b: TableColumn) {
+    this.a = a;
+    this.b = b;
+    this.id = `${a.id}->${b.id}`;
+  }
+}
+
+interface TableHeader extends DataTableHeader {
+  tableCol: TableColumn;
+}
+
+type CSVRow = {[key: string]: string};
+interface CSVPreview {
+  name: string;
+  headers: TableHeader[];
+  rows: CSVRow[];
+}
+
+// For fully constructed network
+interface ForeignLink {
+  column: string;
+  foreignColumn: TableColumn;
+}
+interface CSVNetwork {
+  edgeTable: {
+    name: string;
+    source: ForeignLink;
+    target: ForeignLink;
+  };
+
+  joins: {
+    [key: string]: ForeignLink;
+  };
+}
+
 export default defineComponent({
   setup() {
     const files = ref<File[]>([]);
     const tableSamples = ref<CSVPreview[]>([]);
     const columnLinks = ref<ColumnLink[]>([]);
-
-    /* CLASSES AND TYPES */
-
-    class TableColumn {
-      id: string;
-      table: string;
-      col: string;
-
-      constructor(table: string, col: string) {
-        this.id = `${table}:${col}`;
-        this.table = table;
-        this.col = col;
-      }
-
-      createLinkString(other: TableColumn): string {
-        return `${this.id}->${other.id}`;
-      }
-    }
-
-    class ColumnLink {
-      id: string;
-      a: TableColumn;
-      b: TableColumn;
-
-      constructor(a: TableColumn, b: TableColumn) {
-        this.a = a;
-        this.b = b;
-        this.id = `${a.id}->${b.id}`;
-      }
-    }
-
-    interface TableHeader extends DataTableHeader {
-      tableCol: TableColumn;
-    }
-
-    type CSVRow = {[key: string]: string};
-    interface CSVPreview {
-      name: string;
-      headers: TableHeader[];
-      rows: CSVRow[];
-    }
-
-    /* COMPONENT LOGIC */
 
     // Load table from workspace and store in tableSamples
     onMounted(async () => {
