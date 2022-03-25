@@ -461,6 +461,11 @@ export default defineComponent({
       if (!found && excluded) {
         // Add to excluded columns
         excludedTableColumns.value.push(tableCol);
+
+        // Remove any existing links
+        columnLinks.value
+          .filter((l) => l.id.includes(tableCol.id))
+          .forEach((l) => { removeColumnLink(l.a, l.b); });
       } else if (found && !excluded) {
         // Remove from excluded columns
         excludedTableColumns.value = [
