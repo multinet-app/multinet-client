@@ -89,33 +89,15 @@
           height="calc(100vh - 123px - 63px)"
           class="table-details"
           :headers="dataTableHeaders"
-          hide-default-header
           :items="dataTableRows"
           :footer-props="{
             itemsPerPageOptions: [10, 20, 50, 100],
             showFirstLastPage: true,
           }"
           :server-items-length="tableSize"
-          :options.sync="pagination"
+          :options.sync="options"
           :loading="loading"
-        >
-          <template v-slot:header>
-            <thead dark>
-              <tr>
-                <th
-                  v-for="(header, i) in dataTableHeaders"
-                  :key="i"
-                  class="pt-2 pb-2"
-                >
-                  {{ header.text }}
-                  <span v-if="columnTypes[header.text]">
-                    ({{ columnTypes[header.text] }})
-                  </span>
-                </th>
-              </tr>
-            </thead>
-          </template>
-        </v-data-table>
+        />
       </div>
     </v-main>
   </v-container>
@@ -123,7 +105,7 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
-import { DataPagination } from 'vuetify';
+import { DataOptions } from 'vuetify';
 
 import api from '@/api';
 import { KeyValue, TableRow } from '@/types';
@@ -154,7 +136,7 @@ export default Vue.extend({
       headers: [] as Array<keyof TableRow>,
       editing: false,
       tableSize: 1,
-      pagination: {} as DataPagination,
+      options: {} as DataOptions,
       loading: true,
       loadingTables: true,
     };
@@ -167,8 +149,8 @@ export default Vue.extend({
         headers,
       } = this;
 
-      return headers.map((header: Array<keyof TableRow>) => ({
-        text: header,
+      return headers.map((header: keyof TableRow) => ({
+        text: this.columnTypes[header] === undefined ? header : `${header} (${this.columnTypes[header]})`,
         value: header,
       }));
     },
@@ -221,8 +203,12 @@ export default Vue.extend({
     },
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    pagination(this: any) {
-      this.update();
+    options: {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      handler(this: any, newValue: DataOptions) {
+        this.update(newValue);
+      },
+      deep: true,
     },
   },
 
@@ -236,16 +222,12 @@ export default Vue.extend({
     },
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async update(this: any) {
-      const {
-        pagination,
-      } = this;
-
+    async update(this: any, newValue: DataOptions) {
       this.loading = true;
 
       const result = await api.table(this.workspace, this.table, {
-        offset: (pagination.page - 1) * pagination.itemsPerPage,
-        limit: pagination.itemsPerPage,
+        offset: (newValue.page - 1) * newValue.itemsPerPage,
+        limit: newValue.itemsPerPage,
       });
 
       const {
