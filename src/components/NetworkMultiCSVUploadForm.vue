@@ -5,6 +5,10 @@
       Link edge tables with node tables by clicking the <v-icon>link</v-icon> icon on
       the desired edge table, and selecting the node table column that you'd like to link it to.
     </v-card-subtitle>
+    <v-progress-linear
+      v-if="networkCreating"
+      indeterminate
+    />
     <v-row
       no-gutters
       align="center"
@@ -297,7 +301,7 @@ interface CSVNetwork {
 }
 
 export default defineComponent({
-  setup() {
+  setup(props, ctx) {
     const files = ref<File[]>([]);
     const tableSamples = ref<CSVPreview[]>([]);
     const columnLinks = ref<ColumnLink[]>([]);
@@ -557,10 +561,13 @@ export default defineComponent({
       && edgeTableTarget.value
     ));
 
-    function createNetwork() {
+    const networkCreating = ref(false);
+    async function createNetwork() {
       if (!valid.value || store.state.currentWorkspace === null) {
         return;
       }
+
+      networkCreating.value = true;
 
       /* eslint-disable @typescript-eslint/no-non-null-assertion */
       const network: CSVNetwork = {
@@ -591,7 +598,9 @@ export default defineComponent({
       /* eslint-enable @typescript-eslint/no-non-null-assertion */
 
       // Create network with post request
-      api.axios.post(`/workspaces/${store.state.currentWorkspace.name}/networks/from_tables/`, network);
+      await api.axios.post(`/workspaces/${store.state.currentWorkspace.name}/networks/from_tables/`, network);
+      networkCreating.value = false;
+      ctx.emit('success');
     }
 
     return {
@@ -623,6 +632,7 @@ export default defineComponent({
       setEdgeTable,
       valid,
       createNetwork,
+      networkCreating,
     };
   },
 });
