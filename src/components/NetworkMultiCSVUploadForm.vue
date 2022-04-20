@@ -5,15 +5,29 @@
       Link edge tables with node tables by clicking the <v-icon>link</v-icon> icon on
       the desired edge table, and selecting the node table column that you'd like to link it to.
     </v-card-subtitle>
-    <v-row no-gutters>
+    <v-row
+      no-gutters
+      align="center"
+    >
+      <v-col
+        cols="2"
+        align-self="center"
+        class="ml-3"
+      >
+        <v-text-field
+          v-model="networkName"
+          label="Network Name"
+          solo
+        />
+      </v-col>
       <v-col
         cols="1"
         align-self="center"
-        class="ml-3"
       >
         <v-btn
           color="primary"
           :disabled="!valid"
+          class="ml-2 mb-6"
           @click="createNetwork"
         >
           Create
@@ -87,7 +101,7 @@
 
                     <!-- Column name -->
                     <span :class="columnLinked(tableCol) ? 'amber--text' : ''">
-                      {{ tableCol.col }}
+                      {{ tableCol.column }}
                     </span>
 
                     <!-- Link to other table column -->
@@ -118,15 +132,15 @@
                               dense
                             >
                               <v-list-item
-                                :disabled="sourceTargetItemDisabled('source', tableCol.col)"
-                                :input-value="sourceTargetItemActive('source', tableCol.col)"
+                                :disabled="sourceTargetItemDisabled('source', tableCol.column)"
+                                :input-value="sourceTargetItemActive('source', tableCol.column)"
                                 @click="selectingSource = true"
                               >
                                 Source
                               </v-list-item>
                               <v-list-item
-                                :disabled="sourceTargetItemDisabled('target', tableCol.col)"
-                                :input-value="sourceTargetItemActive('target', tableCol.col)"
+                                :disabled="sourceTargetItemDisabled('target', tableCol.column)"
+                                :input-value="sourceTargetItemActive('target', tableCol.column)"
                                 @click="selectingTarget = true"
                               >
                                 Target
@@ -144,7 +158,7 @@
                                 :disabled="columnDisabled(tableCol, col)"
                                 @click="linkColumns(tableCol, col)"
                               >
-                                {{ `${col.table}:${col.col}` }}
+                                {{ `${col.table}:${col.column}` }}
                                 <v-spacer />
                                 <v-btn
                                   v-if="showColumnRemove(tableCol, col)"
@@ -215,6 +229,7 @@
 <script lang="ts">
 /* eslint-disable lines-between-class-members */
 /* eslint-disable max-classes-per-file */
+/* eslint-disable @typescript-eslint/camelcase */
 
 import {
   computed, defineComponent, onMounted, ref, watchEffect,
@@ -226,17 +241,17 @@ import store from '@/store';
 
 interface ColumnDef {
   table: string;
-  col: string;
+  column: string;
 }
 class TableColumn implements ColumnDef {
   table: string;
-  col: string;
+  column: string;
   id: string;
 
   constructor(table: string, col: string) {
     this.id = `${table}:${col}`;
     this.table = table;
-    this.col = col;
+    this.column = col;
   }
 }
 
@@ -266,10 +281,11 @@ interface CSVPreview {
 // For fully constructed network
 interface ForeignLink {
   column: string;
-  foreignColumn: ColumnDef;
+  foreign_column: ColumnDef;
 }
 interface CSVNetwork {
-  edgeTable: {
+  name: string;
+  edge_table: {
     name: string;
     source: ForeignLink;
     target: ForeignLink;
@@ -285,6 +301,7 @@ export default defineComponent({
     const files = ref<File[]>([]);
     const tableSamples = ref<CSVPreview[]>([]);
     const columnLinks = ref<ColumnLink[]>([]);
+    const networkName = ref<string| null>(null);
 
     // Load table from workspace and store in tableSamples
     onMounted(async () => {
@@ -357,15 +374,15 @@ export default defineComponent({
       const link1 = type === 'source' ? edgeTableSource.value : edgeTableTarget.value;
       const link2 = type === 'target' ? edgeTableSource.value : edgeTableTarget.value;
 
-      return (link1 && link1.a.col !== column) || (link2 && link2.a.col === column);
+      return (link1 && link1.a.column !== column) || (link2 && link2.a.column === column);
     }
 
     function sourceTargetItemActive(type: SourceTarget, column: string) {
       if (type === 'source') {
-        return edgeTableSource.value && edgeTableSource.value.a.col === column;
+        return edgeTableSource.value && edgeTableSource.value.a.column === column;
       }
 
-      return edgeTableTarget.value && edgeTableTarget.value.a.col === column;
+      return edgeTableTarget.value && edgeTableTarget.value.a.column === column;
     }
 
     // Menu state
@@ -465,7 +482,7 @@ export default defineComponent({
     // Include/Exclude a table column
     const excludedTableColumns = ref<TableColumn[]>([]);
     const tableColExcludedIndex = (tableCol: TableColumn) => (
-      excludedTableColumns.value.findIndex((tc) => tc.table === tableCol.table && tc.col === tableCol.col)
+      excludedTableColumns.value.findIndex((tc) => tc.table === tableCol.table && tc.column === tableCol.column)
     );
     function includeExcludeTableColumn(tableCol: TableColumn, excluded: boolean) {
       const existingIndex = tableColExcludedIndex(tableCol);
@@ -533,23 +550,30 @@ export default defineComponent({
     }
 
     // Denotes whether the dialog is in a submittable state
-    const valid = computed(() => !!(edgeTable.value && edgeTableSource.value && edgeTableTarget.value));
+    const valid = computed(() => !!(
+      networkName.value
+      && edgeTable.value
+      && edgeTableSource.value
+      && edgeTableTarget.value
+    ));
+
     function createNetwork() {
-      if (!valid.value) {
+      if (!valid.value || store.state.currentWorkspace === null) {
         return;
       }
 
       /* eslint-disable @typescript-eslint/no-non-null-assertion */
       const network: CSVNetwork = {
-        edgeTable: {
+        name: networkName.value!,
+        edge_table: {
           name: edgeTable.value!,
           source: {
-            column: edgeTableSource.value!.a.col,
-            foreignColumn: edgeTableSource.value!.b,
+            column: edgeTableSource.value!.a.column,
+            foreign_column: edgeTableSource.value!.b,
           },
           target: {
-            column: edgeTableTarget.value!.a.col,
-            foreignColumn: edgeTableTarget.value!.b,
+            column: edgeTableTarget.value!.a.column,
+            foreign_column: edgeTableTarget.value!.b,
           },
         },
       };
@@ -559,21 +583,22 @@ export default defineComponent({
         network.joins = nodeLinks.reduce((prev, cur) => ({
           ...prev,
           [cur.a.table]: {
-            column: cur.a.col,
-            foreignColumn: cur.b,
+            column: cur.a.column,
+            foreign_column: cur.b,
           },
         }), {});
       }
-      /* eslint-disable @typescript-eslint/no-non-null-assertion */
+      /* eslint-enable @typescript-eslint/no-non-null-assertion */
 
-      // TODO: Finish post request
-      api.axios.post('', network);
+      // Create network with post request
+      api.axios.post(`/workspaces/${store.state.currentWorkspace.name}/networks/from_tables/`, network);
     }
 
     return {
       files,
       tableSamples,
       menuOpen,
+      networkName,
       selectingSource,
       edgeTableSource,
       selectingTarget,
