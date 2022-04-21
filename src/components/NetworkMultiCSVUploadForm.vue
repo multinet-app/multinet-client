@@ -43,188 +43,222 @@
     <template v-if="tableSamples.length">
       <v-row
         no-gutters
-        justify="center"
-        class="my-3"
+        class="ml-3"
       >
-        <v-card
-          v-for="file in tableSamples"
-          :key="file.name"
-          outlined
-          raised
-          class="ma-4"
-          max-width="90%"
-        >
-          <v-sheet class="table-title px-2">
-            <v-row no-gutters>
-              <span>{{ file.name }}</span>
-              <v-spacer />
-              <v-switch
-                label="Edge Table"
-                dark
-                hide-details
-                class="ma-0 pa-0"
-                :disabled="edgeTableSwitchDisabled(file.name)"
-                :value="edgeTable === file.name"
-                @change="setEdgeTable(file.name, $event)"
-              />
-            </v-row>
-          </v-sheet>
-          <v-data-table
-            class="upload-preview"
-            hide-default-footer
-            hide-default-header
-            :headers="file.headers"
-            :items="file.rows"
-            disable-sort
+        <v-col cols="2">
+          <v-list>
+            <v-list-item class="px-0">
+              <v-list-item-action>
+                <v-checkbox
+                  :value="allTablesVisible"
+                  @change="selectAllTables"
+                />
+              </v-list-item-action>
+              <v-list-item-subtitle>
+                All Tables
+              </v-list-item-subtitle>
+            </v-list-item>
+
+            <v-list-item
+              v-for="file in tableSamples"
+              :key="file.name"
+              class="px-0"
+            >
+              <v-list-item-action>
+                <v-checkbox v-model="tablesVisible[file.name]" />
+              </v-list-item-action>
+              <v-list-item-title>
+                {{ file.name }}
+              </v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-col>
+        <v-divider vertical />
+        <v-col cols="10">
+          <v-row
+            no-gutters
+            justify="start"
           >
-            <template v-slot:header="{ props: { headers } }">
-              <thead dark>
-                <tr>
-                  <th
-                    v-for="{ tableCol } in headers"
-                    :key="tableCol.id"
-                    style="width: 1px; white-space: nowrap;"
-                  >
-                    <!-- Include/Exclude Column -->
-                    <v-icon
-                      v-if="tableColExcludedIndex(tableCol) === -1"
-                      dark
-                      :color="columnLinked(tableCol) ? 'amber' : ''"
-                      @click="includeExcludeTableColumn(tableCol, true)"
-                    >
-                      check_box
-                    </v-icon>
-                    <v-icon
-                      v-else
-                      dark
-                      :color="columnLinked(tableCol) ? 'amber' : ''"
-                      @click="includeExcludeTableColumn(tableCol, false)"
-                    >
-                      check_box_outline_blank
-                    </v-icon>
-
-                    <!-- Column name -->
-                    <span :class="columnLinked(tableCol) ? 'amber--text' : ''">
-                      {{ tableCol.column }}
-                    </span>
-
-                    <!-- Link to other table column -->
-                    <v-menu
-                      :close-on-content-click="false"
-                      @input="menuOpen = $event"
-                    >
-                      <template v-slot:activator="{ on }">
+            <v-card
+              v-for="file in visibleTableSamples"
+              :key="file.name"
+              outlined
+              raised
+              class="ma-4"
+            >
+              <v-sheet class="table-title px-2">
+                <v-row no-gutters>
+                  <span>{{ file.name }}</span>
+                  <v-spacer />
+                  <v-switch
+                    label="Edge Table"
+                    dark
+                    hide-details
+                    class="ma-0 pa-0"
+                    :disabled="edgeTableSwitchDisabled(file.name)"
+                    :value="edgeTable === file.name"
+                    @change="setEdgeTable(file.name, $event)"
+                  />
+                </v-row>
+              </v-sheet>
+              <v-data-table
+                class="upload-preview"
+                hide-default-footer
+                hide-default-header
+                :headers="file.headers"
+                :items="file.rows"
+                disable-sort
+              >
+                <template v-slot:header="{ props: { headers } }">
+                  <thead dark>
+                    <tr>
+                      <th
+                        v-for="{ tableCol } in headers"
+                        :key="tableCol.id"
+                        style="width: 1px; white-space: nowrap;"
+                      >
+                        <!-- Include/Exclude Column -->
                         <v-icon
-                          :color="columnLinked(tableCol) ? 'amber' : ''"
+                          v-if="tableColExcludedIndex(tableCol) === -1"
                           dark
-                          :disabled="linkDisabled(tableCol)"
-                          v-on="on"
+                          :color="columnLinked(tableCol) ? 'amber' : ''"
+                          @click="includeExcludeTableColumn(tableCol, true)"
                         >
-                          link
+                          check_box
                         </v-icon>
-                      </template>
-                      <v-card max-height="30vh">
-                        <!-- Edge Table -->
-                        <template v-if="edgeTable === tableCol.table">
-                          <v-card-subtitle class="py-1 px-2">
-                            Select Source/Target
-                          </v-card-subtitle>
+                        <v-icon
+                          v-else
+                          dark
+                          :color="columnLinked(tableCol) ? 'amber' : ''"
+                          @click="includeExcludeTableColumn(tableCol, false)"
+                        >
+                          check_box_outline_blank
+                        </v-icon>
 
-                          <template v-if="!(selectingSource || selectingTarget)">
-                            <v-list
-                              class="my-0 py-0"
-                              dense
+                        <!-- Column name -->
+                        <span :class="columnLinked(tableCol) ? 'amber--text' : ''">
+                          {{ tableCol.column }}
+                        </span>
+
+                        <!-- Link to other table column -->
+                        <v-menu
+                          :close-on-content-click="false"
+                          @input="menuOpen = $event"
+                        >
+                          <template v-slot:activator="{ on }">
+                            <v-icon
+                              :color="columnLinked(tableCol) ? 'amber' : ''"
+                              dark
+                              :disabled="linkDisabled(tableCol)"
+                              v-on="on"
                             >
-                              <v-list-item
-                                :disabled="sourceTargetItemDisabled('source', tableCol.column)"
-                                :input-value="sourceTargetItemActive('source', tableCol.column)"
-                                @click="selectingSource = true"
-                              >
-                                Source
-                              </v-list-item>
-                              <v-list-item
-                                :disabled="sourceTargetItemDisabled('target', tableCol.column)"
-                                :input-value="sourceTargetItemActive('target', tableCol.column)"
-                                @click="selectingTarget = true"
-                              >
-                                Target
-                              </v-list-item>
-                            </v-list>
+                              link
+                            </v-icon>
                           </template>
-                          <template v-else>
-                            <v-list
-                              class="my-0 py-0"
-                              dense
-                            >
-                              <v-list-item
-                                v-for="col in getOtherTableColumns(tableCol.table)"
-                                :key="`${tableCol.table}-${col.id}`"
-                                :disabled="columnDisabled(tableCol, col)"
-                                @click="linkColumns(tableCol, col)"
-                              >
-                                {{ `${col.table}:${col.column}` }}
-                                <v-spacer />
-                                <v-btn
-                                  v-if="showColumnRemove(tableCol, col)"
-                                  icon
-                                  right
-                                  @click.stop="removeColumnLink(tableCol, col)"
+                          <v-card max-height="30vh">
+                            <!-- Edge Table -->
+                            <template v-if="edgeTable === tableCol.table">
+                              <v-card-subtitle class="py-1 px-2">
+                                Select Source/Target
+                              </v-card-subtitle>
+
+                              <template v-if="!(selectingSource || selectingTarget)">
+                                <v-list
+                                  class="my-0 py-0"
+                                  dense
                                 >
-                                  <v-icon>close</v-icon>
-                                </v-btn>
-                              </v-list-item>
-                            </v-list>
-                          </template>
-                        </template>
+                                  <v-list-item
+                                    :disabled="sourceTargetItemDisabled('source', tableCol.column)"
+                                    :input-value="sourceTargetItemActive('source', tableCol.column)"
+                                    @click="selectingSource = true"
+                                  >
+                                    Source
+                                  </v-list-item>
+                                  <v-list-item
+                                    :disabled="sourceTargetItemDisabled('target', tableCol.column)"
+                                    :input-value="sourceTargetItemActive('target', tableCol.column)"
+                                    @click="selectingTarget = true"
+                                  >
+                                    Target
+                                  </v-list-item>
+                                </v-list>
+                              </template>
+                              <template v-else>
+                                <v-list
+                                  class="my-0 py-0"
+                                  dense
+                                >
+                                  <v-list-item
+                                    v-for="col in getOtherTableColumns(tableCol.table)"
+                                    :key="`${tableCol.table}-${col.id}`"
+                                    :disabled="columnDisabled(tableCol, col)"
+                                    @click="linkColumns(tableCol, col)"
+                                  >
+                                    {{ `${col.table}:${col.column}` }}
+                                    <v-spacer />
+                                    <v-btn
+                                      v-if="showColumnRemove(tableCol, col)"
+                                      icon
+                                      right
+                                      @click.stop="removeColumnLink(tableCol, col)"
+                                    >
+                                      <v-icon>close</v-icon>
+                                    </v-btn>
+                                  </v-list-item>
+                                </v-list>
+                              </template>
+                            </template>
 
-                        <!-- Node Table -->
-                        <template v-else>
-                          <v-card-subtitle class="py-1 px-2">
-                            Select Foreign Key
-                          </v-card-subtitle>
-                          <v-list
-                            class="my-0 py-0"
-                            dense
-                          >
-                            <v-list-item
-                              v-for="col in getOtherTableColumns(tableCol.table)"
-                              :key="`${tableCol.table}-${col.id}`"
-                              :disabled="columnDisabled(tableCol, col)"
-                              @click="linkColumns(tableCol, col)"
-                            >
-                              {{ col.id }}
-                              <v-spacer />
-                              <v-btn
-                                v-if="showColumnRemove(tableCol, col)"
-                                icon
-                                right
-                                @click.stop="removeColumnLink(tableCol, col)"
+                            <!-- Node Table -->
+                            <template v-else>
+                              <v-card-subtitle class="py-1 px-2">
+                                Select Foreign Key
+                              </v-card-subtitle>
+                              <v-list
+                                class="my-0 py-0"
+                                dense
                               >
-                                <v-icon>close</v-icon>
-                              </v-btn>
-                            </v-list-item>
-                          </v-list>
-                        </template>
-                      </v-card>
-                    </v-menu>
-                  </th>
-                </tr>
-              </thead>
-            </template>
-            <template v-slot:item="{ item, headers }">
-              <tr>
-                <td
-                  v-for="header in headers"
-                  :key="header.tableCol.id"
-                  :class="getColumnItemClass(header.tableCol)"
-                  style="width: 1px; white-space: nowrap;"
-                >
-                  {{ columnItemText(item, header.value) }}
-                </td>
-              </tr>
-            </template>
-          </v-data-table>
-        </v-card>
+                                <v-list-item
+                                  v-for="col in getOtherTableColumns(tableCol.table)"
+                                  :key="`${tableCol.table}-${col.id}`"
+                                  :disabled="columnDisabled(tableCol, col)"
+                                  @click="linkColumns(tableCol, col)"
+                                >
+                                  {{ col.id }}
+                                  <v-spacer />
+                                  <v-btn
+                                    v-if="showColumnRemove(tableCol, col)"
+                                    icon
+                                    right
+                                    @click.stop="removeColumnLink(tableCol, col)"
+                                  >
+                                    <v-icon>close</v-icon>
+                                  </v-btn>
+                                </v-list-item>
+                              </v-list>
+                            </template>
+                          </v-card>
+                        </v-menu>
+                      </th>
+                    </tr>
+                  </thead>
+                </template>
+                <template v-slot:item="{ item, headers }">
+                  <tr>
+                    <td
+                      v-for="header in headers"
+                      :key="header.tableCol.id"
+                      :class="getColumnItemClass(header.tableCol)"
+                      style="width: 1px; white-space: nowrap;"
+                    >
+                      {{ columnItemText(item, header.value) }}
+                    </td>
+                  </tr>
+                </template>
+              </v-data-table>
+            </v-card>
+          </v-row>
+        </v-col>
       </v-row>
     </template>
   </v-card>
@@ -236,7 +270,7 @@
 /* eslint-disable @typescript-eslint/camelcase */
 
 import {
-  computed, defineComponent, onMounted, ref, watchEffect,
+  computed, defineComponent, onMounted, reactive, ref, watchEffect,
 } from '@vue/composition-api';
 import { DataTableHeader } from 'vuetify';
 
@@ -304,6 +338,23 @@ export default defineComponent({
   setup(props, ctx) {
     const files = ref<File[]>([]);
     const tableSamples = ref<CSVPreview[]>([]);
+    const tablesVisible = ref<Record<string, boolean>>({});
+    const visibleTableSamples = computed(
+      () => tableSamples.value.filter(
+        (sample) => tablesVisible.value[sample.name] === true,
+      ),
+    );
+    const allTablesVisible = computed(
+      () => visibleTableSamples.value.length === tableSamples.value.length,
+    );
+    function selectAllTables(on: boolean | null) {
+      // Coerce null to boolean
+      const state = !!on;
+      Object.keys(tablesVisible.value).forEach((key) => {
+        tablesVisible.value[key] = state;
+      });
+    }
+
     const columnLinks = ref<ColumnLink[]>([]);
     const networkName = ref<string| null>(null);
 
@@ -351,6 +402,7 @@ export default defineComponent({
 
       // Store value in tableSamples
       tableSamples.value = sortedSamples;
+      tablesVisible.value = reactive(sortedSamples.reduce((obj, cur) => ({ ...obj, [cur.name]: true }), {}));
     });
 
     // Edge Table
@@ -606,6 +658,10 @@ export default defineComponent({
     return {
       files,
       tableSamples,
+      tablesVisible,
+      visibleTableSamples,
+      allTablesVisible,
+      selectAllTables,
       menuOpen,
       networkName,
       selectingSource,
