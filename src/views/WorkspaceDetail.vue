@@ -188,7 +188,7 @@ export default defineComponent({
       required: true,
     },
     apps: {
-      type: Object as PropType<{network_visualizations: App[]; table_visualizations: App[]}>,
+      type: Object as PropType<{ network_visualizations: App[]; table_visualizations: App[] }>,
       required: true,
     },
   },

@@ -169,7 +169,7 @@ export default Vue.extend({
   components: { AboutText },
   props: {
     apps: {
-      type: Array as PropType<App[]>,
+      type: Object as PropType<{ network_visualizations: App[]; table_visualizations: App[] }>,
       required: true,
     },
   },
@@ -182,11 +182,11 @@ export default Vue.extend({
 
   computed: {
     multiMatrixURL(): string {
-      return `${this.apps.filter((d) => d.name === 'MultiMatrix')[0].url}`;
+      return `${this.apps.network_visualizations.filter((d) => d.name === 'MultiMatrix')[0].url}`;
     },
 
     multiLinkURL(): string {
-      return `${this.apps.filter((d) => d.name === 'MultiLink')[0].url}`;
+      return `${this.apps.network_visualizations.filter((d) => d.name === 'MultiLink')[0].url}`;
     },
 
     samples(): Array<{title: string; image: NodeRequire; text: string; href: string }> {
