@@ -55,14 +55,15 @@
     <template v-else>
       <v-list-item-group color="primary">
         <v-hover
-          v-for="item, index in items"
-          :key="item"
+          v-for="item in items"
+          :key="item.id"
         >
           <v-list-item
             slot-scope="{ hover }"
             active-class="grey lighten-4"
             ripple
-            :to="`/workspaces/${workspace}/network/${item}`"
+            :to="`/workspaces/${workspace}/network/${item.name}`"
+            two-line
           >
             <v-list-item-action @click.prevent>
               <v-icon
@@ -74,31 +75,25 @@
 
               <v-checkbox
                 v-else
-                v-model="checkbox[item]"
+                v-model="checkbox[item.name]"
                 class="ws-detail-checkbox"
               />
             </v-list-item-action>
 
             <v-list-item-content>
-              <v-list-item-title>{{ item }}</v-list-item-title>
+              <v-list-item-title>{{ item.name }}</v-list-item-title>
+              <v-list-item-subtitle>Created: {{ new Date(item.created).toISOString().split('T')[0] }}</v-list-item-subtitle>
             </v-list-item-content>
 
-            <v-list-item-action @click.prevent>
-              <v-select
-                v-model="selectedVisApps[index]"
-                :items="networkVisApps.map((visApp) => visApp.name)"
-                :style="`max-width: ${selectedVisApps[index] !== undefined ? 80 : 120}px;`"
-                hide-details="auto"
+            <v-list-item-action>
+              <v-btn
+                v-show="hover"
+                color="primary"
+                depressed
                 dense
-              />
-            </v-list-item-action>
-            <v-list-item-action v-if="selectedVisApps[index] !== undefined">
-              <v-icon
-                @click.prevent
-                @click="redirectToTableVis(index)"
               >
-                arrow_forward
-              </v-icon>
+                visualize
+              </v-btn>
             </v-list-item-action>
           </v-list-item>
         </v-hover>
@@ -109,12 +104,12 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
+import { Network } from 'multinet';
 import DeleteNetworkDialog from '@/components/DeleteNetworkDialog.vue';
 import NetworkDialog from '@/components/NetworkDialog.vue';
 import DownloadDialog from '@/components/DownloadDialog.vue';
 
 import store from '@/store';
-import { App } from '@/types';
 
 export default Vue.extend({
   name: 'NetworkPanel',
@@ -132,7 +127,7 @@ export default Vue.extend({
     },
 
     items: {
-      type: Array as PropType<string[]>,
+      type: Array as PropType<Network[]>,
       required: true,
     },
 
@@ -150,12 +145,6 @@ export default Vue.extend({
       type: Boolean as PropType<boolean>,
       required: true,
     },
-
-    networkVisApps: {
-      type: Array as PropType<App[]>,
-      required: true,
-    },
-
   },
 
   data() {
@@ -211,20 +200,6 @@ export default Vue.extend({
       this.singleSelected = null;
       await store.dispatch.fetchWorkspace(this.workspace);
       this.clearCheckboxes();
-    },
-
-    redirectToTableVis(index: number) {
-      // Get the select app at index
-      const selectedAppName = this.selectedVisApps[index];
-      const selectedApp = this.networkVisApps.find((app) => app.name === selectedAppName);
-
-      // Get the table name at index
-      const tableName = this.items[index];
-
-      // Redirect to the url with the right table parameter
-      if (selectedApp !== undefined) {
-        window.location.href = `${selectedApp.url}/?workspace=${this.workspace}&network=${tableName}`;
-      }
     },
   },
 });

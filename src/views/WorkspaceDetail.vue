@@ -125,8 +125,8 @@
             <network-panel
               :workspace="workspace"
               :items="networks"
-              :node-tables="nodeTables"
-              :edge-tables="edgeTables"
+              :node-tables="nodeTables.map((table) => table.name)"
+              :edge-tables="edgeTables.map((table) => table.name)"
               :loading="loading"
               :network-vis-apps="apps.network_visualizations"
             />

@@ -26,9 +26,9 @@
 
           <v-list-item
             v-for="t in tables"
-            :key="t"
+            :key="t.name"
             ripple
-            :to="`/workspaces/${workspace}/table/${t}`"
+            :to="`/workspaces/${workspace}/table/${t.name}`"
           >
             <v-list-item-action>
               <v-icon color="primary">
@@ -37,7 +37,7 @@
             </v-list-item-action>
 
             <v-list-item-content>
-              <v-list-item-title>{{ t }}</v-list-item-title>
+              <v-list-item-title>{{ t.name }}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list>
