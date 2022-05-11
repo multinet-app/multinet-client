@@ -129,6 +129,7 @@
               :edge-tables="edgeTables.map((table) => table.name)"
               :loading="loading"
               :network-vis-apps="apps.network_visualizations"
+              :apps="apps"
             />
           </v-card>
         </v-col>
@@ -147,6 +148,7 @@
               :items="tables"
               :loading="loading"
               :table-vis-apps="apps.table_visualizations"
+              :apps="apps"
             />
           </v-card>
         </v-col>

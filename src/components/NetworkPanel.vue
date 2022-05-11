@@ -63,7 +63,7 @@
             active-class="grey lighten-4"
             ripple
             :to="`/workspaces/${workspace}/network/${item.name}`"
-            two-line
+            three-line
           >
             <v-list-item-action @click.prevent>
               <v-icon
@@ -87,12 +87,18 @@
 
             <v-list-item-action>
               <v-btn
+                v-for="app in apps.network_visualizations"
                 v-show="hover"
+                :key="app.name"
                 color="primary"
+                :href="`${app.url}/?workspace=${workspace}&network=${item.name}`"
+                target="_blank"
                 depressed
-                dense
+                small
+                style="height: 22px; margin-top: 2px; margin-bottom: 2px;"
+                @click.stop
               >
-                visualize
+                Visualize in {{ app.name }}
               </v-btn>
             </v-list-item-action>
           </v-list-item>
@@ -110,6 +116,7 @@ import NetworkDialog from '@/components/NetworkDialog.vue';
 import DownloadDialog from '@/components/DownloadDialog.vue';
 
 import store from '@/store';
+import { App } from '@/types';
 
 export default Vue.extend({
   name: 'NetworkPanel',
@@ -143,6 +150,11 @@ export default Vue.extend({
 
     loading: {
       type: Boolean as PropType<boolean>,
+      required: true,
+    },
+
+    apps: {
+      type: Object as PropType<{ network_visualizations: App[]; table_visualizations: App[] }>,
       required: true,
     },
   },

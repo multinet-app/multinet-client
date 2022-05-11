@@ -63,7 +63,7 @@
             active-class="grey lighten-4"
             ripple
             :to="`/workspaces/${workspace}/table/${item.name}`"
-            two-line
+            three-line
           >
             <v-list-item-action @click.prevent>
               <v-icon
@@ -89,10 +89,14 @@
               <v-btn
                 v-show="hover"
                 color="primary"
+                :href="`${upsetUrl}/?workspace=${workspace}&table=${item.name}`"
+                target="_blank"
                 depressed
-                dense
+                small
+                class="mt-3"
+                @click.stop
               >
-                visualize
+                Visualize in Upset
               </v-btn>
             </v-list-item-action>
           </v-list-item>
@@ -109,6 +113,7 @@ import TableDialog from '@/components/TableDialog.vue';
 import DownloadDialog from '@/components/DownloadDialog.vue';
 
 import store from '@/store';
+import { App } from '@/types';
 
 export default Vue.extend({
   name: 'TablePanel',
@@ -132,6 +137,11 @@ export default Vue.extend({
 
     loading: {
       type: Boolean as PropType<boolean>,
+      required: true,
+    },
+
+    apps: {
+      type: Object as PropType<{ network_visualizations: App[]; table_visualizations: App[] }>,
       required: true,
     },
   },
@@ -168,6 +178,12 @@ export default Vue.extend({
       }
 
       return result;
+    },
+
+    upsetUrl(): string {
+      const foundApp = this.apps.table_visualizations.find((vis: App) => vis.name === 'Upset');
+
+      return foundApp !== undefined ? foundApp.url : '';
     },
   },
 
