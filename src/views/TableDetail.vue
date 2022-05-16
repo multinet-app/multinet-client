@@ -12,6 +12,32 @@
     >
       <v-list>
         <v-list subheader>
+          <v-subheader>
+            Table Visualizations
+          </v-subheader>
+          <v-divider />
+          <v-list-item
+            v-for="app in apps.table_visualizations"
+            :key="app.name"
+            class="pl-2"
+            :href="`${app.url}/?workspace=${workspace}&table=${table}`"
+            target="_blank"
+          >
+            <v-list-item-avatar class="mr-3">
+              <v-icon color="blue lighten-3">
+                exit_to_app
+              </v-icon>
+            </v-list-item-avatar>
+            <v-list-item-title>
+              {{ app.name }}
+            </v-list-item-title>
+            <v-list-item-icon>
+              <v-icon color="blue lighten-3">
+                chevron_right
+              </v-icon>
+            </v-list-item-icon>
+          </v-list-item>
+
           <v-subheader class="pr-2">
             All Tables
           </v-subheader>
@@ -26,9 +52,9 @@
 
           <v-list-item
             v-for="t in tables"
-            :key="t"
+            :key="t.name"
             ripple
-            :to="`/workspaces/${workspace}/table/${t}`"
+            :to="`/workspaces/${workspace}/table/${t.name}`"
           >
             <v-list-item-action>
               <v-icon color="primary">
@@ -37,7 +63,7 @@
             </v-list-item-action>
 
             <v-list-item-content>
-              <v-list-item-title>{{ t }}</v-list-item-title>
+              <v-list-item-title>{{ t.name }}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list>
@@ -126,7 +152,7 @@ import Vue, { PropType } from 'vue';
 import { DataPagination } from 'vuetify';
 
 import api from '@/api';
-import { KeyValue, TableRow } from '@/types';
+import { App, KeyValue, TableRow } from '@/types';
 import store from '@/store';
 import WorkspaceOptionMenu from '@/components/WorkspaceOptionMenu.vue';
 
@@ -145,6 +171,11 @@ export default Vue.extend({
 
     table: {
       type: String as PropType<string>,
+      required: true,
+    },
+
+    apps: {
+      type: Object as PropType<{ network_visualizations: App[]; table_visualizations: App[] }>,
       required: true,
     },
   },

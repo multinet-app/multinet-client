@@ -56,17 +56,18 @@
       <v-list-item-group color="primary">
         <v-hover
           v-for="item in items"
-          :key="item"
+          :key="item.id"
         >
           <v-list-item
             slot-scope="{ hover }"
             active-class="grey lighten-4"
             ripple
-            :to="`/workspaces/${workspace}/table/${item}`"
+            :to="`/workspaces/${workspace}/table/${item.name}`"
+            three-line
           >
             <v-list-item-action @click.prevent>
               <v-icon
-                v-if="!hover && !checkbox[item]"
+                v-if="!hover && !checkbox[item.name]"
                 class="item-icon"
               >
                 table_chart
@@ -74,41 +75,28 @@
 
               <v-checkbox
                 v-else
-                v-model="checkbox[item]"
+                v-model="checkbox[item.name]"
                 class="ws-detail-checkbox"
               />
             </v-list-item-action>
 
             <v-list-item-content>
-              <v-list-item-title>{{ item }}</v-list-item-title>
+              <v-list-item-title>{{ item.name }}</v-list-item-title>
+              <v-list-item-subtitle>Created: {{ new Date(item.created).toISOString().split('T')[0] }}</v-list-item-subtitle>
             </v-list-item-content>
 
-            <v-list-item-action
-              v-if="hover"
-              class="mx-0 my-0"
-              @click.prevent
-            >
-              <v-btn icon>
-                <v-icon
-                  color="primary"
-                  @click="downloadItem(item)"
-                >
-                  save_alt
-                </v-icon>
-              </v-btn>
-            </v-list-item-action>
-            <v-list-item-action
-              v-if="hover && userCanEdit"
-              class="mx-0 my-0"
-              @click.prevent
-            >
-              <v-btn icon>
-                <v-icon
-                  color="red accent-3"
-                  @click="deleteItem(item)"
-                >
-                  delete
-                </v-icon>
+            <v-list-item-action>
+              <v-btn
+                :disabled="!hover"
+                color="primary"
+                :href="`${upsetUrl}/?workspace=${workspace}&table=${item.name}`"
+                target="_blank"
+                depressed
+                small
+                class="mt-3"
+                @click.stop
+              >
+                Visualize in Upset
               </v-btn>
             </v-list-item-action>
           </v-list-item>
@@ -125,6 +113,7 @@ import TableDialog from '@/components/TableDialog.vue';
 import DownloadDialog from '@/components/DownloadDialog.vue';
 
 import store from '@/store';
+import { App } from '@/types';
 
 export default Vue.extend({
   name: 'TablePanel',
@@ -150,6 +139,11 @@ export default Vue.extend({
       type: Boolean as PropType<boolean>,
       required: true,
     },
+
+    apps: {
+      type: Object as PropType<{ network_visualizations: App[]; table_visualizations: App[] }>,
+      required: true,
+    },
   },
 
   data() {
@@ -160,8 +154,6 @@ export default Vue.extend({
     return {
       checkbox: {} as CheckboxTable,
       singleSelected: null as string | null,
-      deleterDialog: false,
-      downloaderDialog: false,
     };
   },
 
@@ -188,12 +180,10 @@ export default Vue.extend({
       return result;
     },
 
-    anySelected(): boolean {
-      return this.selection.length > 0;
-    },
+    upsetUrl(): string {
+      const foundApp = this.apps.table_visualizations.find((vis: App) => vis.name === 'Upset');
 
-    userCanEdit(): boolean {
-      return store.getters.userCanEdit;
+      return foundApp !== undefined ? foundApp.url : '';
     },
   },
 
@@ -204,20 +194,6 @@ export default Vue.extend({
   },
 
   methods: {
-    deleteItem(item: string) {
-      this.singleSelected = item;
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (this.$refs.deleter as any).dialog = true;
-    },
-
-    downloadItem(item: string) {
-      this.singleSelected = item;
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (this.$refs.downloader as any).dialog = true;
-    },
-
     clearCheckboxes() {
       Object.keys(this.checkbox).forEach((key) => {
         this.checkbox[key] = false;

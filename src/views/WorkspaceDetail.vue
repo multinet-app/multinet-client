@@ -125,9 +125,11 @@
             <network-panel
               :workspace="workspace"
               :items="networks"
-              :node-tables="nodeTables"
-              :edge-tables="edgeTables"
+              :node-tables="nodeTables.map((table) => table.name)"
+              :edge-tables="edgeTables.map((table) => table.name)"
               :loading="loading"
+              :network-vis-apps="apps.network_visualizations"
+              :apps="apps"
             />
           </v-card>
         </v-col>
@@ -145,6 +147,8 @@
               :workspace="workspace"
               :items="tables"
               :loading="loading"
+              :table-vis-apps="apps.table_visualizations"
+              :apps="apps"
             />
           </v-card>
         </v-col>
@@ -163,6 +167,7 @@ import TablePanel from '@/components/TablePanel.vue';
 import NetworkPanel from '@/components/NetworkPanel.vue';
 import store from '@/store';
 import WorkspaceOptionMenu from '@/components/WorkspaceOptionMenu.vue';
+import { App } from '@/types';
 
 const surroundingWhitespace = /^\s+|\s+$/;
 const workspaceNameRules: Array<(x: string) => string|boolean> = [
@@ -182,6 +187,10 @@ export default defineComponent({
   props: {
     workspace: {
       type: String as PropType<string>,
+      required: true,
+    },
+    apps: {
+      type: Object as PropType<{ network_visualizations: App[]; table_visualizations: App[] }>,
       required: true,
     },
   },

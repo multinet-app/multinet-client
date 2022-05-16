@@ -88,7 +88,7 @@
               </div>
               <v-divider />
               <v-list-item
-                v-for="app in apps"
+                v-for="app in apps.network_visualizations"
                 :key="app.name"
                 class="pl-2"
                 :href="`${app.url}/?workspace=${workspace}&network=${network}`"
@@ -347,7 +347,7 @@ export default Vue.extend({
       required: true,
     },
     apps: {
-      type: Array as PropType<App[]>,
+      type: Object as PropType<{ network_visualizations: App[]; table_visualizations: App[] }>,
       required: true,
     },
   },

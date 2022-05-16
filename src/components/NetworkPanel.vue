@@ -56,13 +56,14 @@
       <v-list-item-group color="primary">
         <v-hover
           v-for="item in items"
-          :key="item"
+          :key="item.id"
         >
           <v-list-item
             slot-scope="{ hover }"
             active-class="grey lighten-4"
             ripple
-            :to="`/workspaces/${workspace}/network/${item}`"
+            :to="`/workspaces/${workspace}/network/${item.name}`"
+            three-line
           >
             <v-list-item-action @click.prevent>
               <v-icon
@@ -74,41 +75,30 @@
 
               <v-checkbox
                 v-else
-                v-model="checkbox[item]"
+                v-model="checkbox[item.name]"
                 class="ws-detail-checkbox"
               />
             </v-list-item-action>
 
             <v-list-item-content>
-              <v-list-item-title>{{ item }}</v-list-item-title>
+              <v-list-item-title>{{ item.name }}</v-list-item-title>
+              <v-list-item-subtitle>Created: {{ new Date(item.created).toISOString().split('T')[0] }}</v-list-item-subtitle>
             </v-list-item-content>
 
-            <v-list-item-action
-              v-if="hover"
-              class="mx-0 my-0"
-              @click.prevent
-            >
-              <v-btn icon>
-                <v-icon
-                  color="primary"
-                  @click="downloadItem(item)"
-                >
-                  save_alt
-                </v-icon>
-              </v-btn>
-            </v-list-item-action>
-            <v-list-item-action
-              v-if="hover && userCanEdit"
-              class="mx-0 my-0"
-              @click.prevent
-            >
-              <v-btn icon>
-                <v-icon
-                  color="red accent-3"
-                  @click="deleteItem(item)"
-                >
-                  delete
-                </v-icon>
+            <v-list-item-action>
+              <v-btn
+                v-for="app in apps.network_visualizations"
+                :key="app.name"
+                :disabled="!hover"
+                color="primary"
+                :href="`${app.url}/?workspace=${workspace}&network=${item.name}`"
+                target="_blank"
+                depressed
+                small
+                style="height: 22px; margin-top: 2px; margin-bottom: 2px;"
+                @click.stop
+              >
+                Visualize in {{ app.name }}
               </v-btn>
             </v-list-item-action>
           </v-list-item>
@@ -120,11 +110,13 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
+import { Network } from 'multinet';
 import DeleteNetworkDialog from '@/components/DeleteNetworkDialog.vue';
 import NetworkDialog from '@/components/NetworkDialog.vue';
 import DownloadDialog from '@/components/DownloadDialog.vue';
 
 import store from '@/store';
+import { App } from '@/types';
 
 export default Vue.extend({
   name: 'NetworkPanel',
@@ -142,7 +134,7 @@ export default Vue.extend({
     },
 
     items: {
-      type: Array as PropType<string[]>,
+      type: Array as PropType<Network[]>,
       required: true,
     },
 
@@ -160,6 +152,11 @@ export default Vue.extend({
       type: Boolean as PropType<boolean>,
       required: true,
     },
+
+    apps: {
+      type: Object as PropType<{ network_visualizations: App[]; table_visualizations: App[] }>,
+      required: true,
+    },
   },
 
   data() {
@@ -170,8 +167,7 @@ export default Vue.extend({
     return {
       checkbox: {} as CheckboxTable,
       singleSelected: null as string | null,
-      deleterDialog: false,
-      downloaderDialog: false,
+      selectedVisApps: new Array(this.items.length),
     };
   },
 
@@ -197,14 +193,6 @@ export default Vue.extend({
 
       return result;
     },
-
-    anySelected(): boolean {
-      return this.selection.length > 0;
-    },
-
-    userCanEdit(): boolean {
-      return store.getters.userCanEdit;
-    },
   },
 
   watch: {
@@ -214,20 +202,6 @@ export default Vue.extend({
   },
 
   methods: {
-    deleteItem(item: string) {
-      this.singleSelected = item;
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (this.$refs.deleter as any).dialog = true;
-    },
-
-    downloadItem(item: string) {
-      this.singleSelected = item;
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (this.$refs.downloader as any).dialog = true;
-    },
-
     clearCheckboxes() {
       Object.keys(this.checkbox).forEach((key) => {
         this.checkbox[key] = false;
