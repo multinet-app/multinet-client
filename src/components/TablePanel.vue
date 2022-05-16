@@ -87,7 +87,7 @@
 
             <v-list-item-action>
               <v-btn
-                v-show="hover"
+                :disabled="!hover"
                 color="primary"
                 :href="`${upsetUrl}/?workspace=${workspace}&table=${item.name}`"
                 target="_blank"

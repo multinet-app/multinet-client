@@ -88,8 +88,8 @@
             <v-list-item-action>
               <v-btn
                 v-for="app in apps.network_visualizations"
-                v-show="hover"
                 :key="app.name"
+                :disabled="!hover"
                 color="primary"
                 :href="`${app.url}/?workspace=${workspace}&network=${item.name}`"
                 target="_blank"
