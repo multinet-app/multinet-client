@@ -1,23 +1,46 @@
 <template>
-  <v-dialog
-    v-model="networkDialog"
-    width="700"
-  >
-    <template v-slot:activator="{ on }">
-      <v-btn
-        id="add-network"
-        color="blue darken-2"
-        icon
-        medium
-        :disabled="!userCanEdit"
-        v-on="on"
-      >
-        <v-icon dark>
-          add_circle
-        </v-icon>
-      </v-btn>
-    </template>
-    <v-card>
+  <div>
+    <!-- Multi CSV -->
+    <v-dialog v-model="CSVNetworkDialog">
+      <template v-slot:activator="{ on }">
+        <v-btn
+          id="add-csv-network"
+          color="blue darken-2"
+          icon
+          medium
+          :disabled="!userCanEdit"
+          v-on="on"
+        >
+          <v-icon dark>
+            library_add
+          </v-icon>
+        </v-btn>
+      </template>
+      <NetworkMultiCSVUploadForm
+        :workspace="workspace"
+        @success="CSVNetworkDialogSuccess"
+      />
+    </v-dialog>
+
+    <!-- Normal -->
+    <v-dialog
+      v-model="networkDialog"
+      width="700"
+    >
+      <template v-slot:activator="{ on }">
+        <v-btn
+          id="add-network"
+          color="blue darken-2"
+          icon
+          medium
+          :disabled="!userCanEdit"
+          v-on="on"
+        >
+          <v-icon dark>
+            add_circle
+          </v-icon>
+        </v-btn>
+      </template>
       <v-card>
         <v-tabs>
           <v-tab>
@@ -43,8 +66,8 @@
           </v-tab-item>
         </v-tabs>
       </v-card>
-    </v-card>
-  </v-dialog>
+    </v-dialog>
+  </div>
 </template>
 
 <script lang="ts">
@@ -52,6 +75,7 @@ import Vue, { PropType } from 'vue';
 
 import NetworkCreateForm from '@/components/NetworkCreateForm.vue';
 import NetworkUploadForm from '@/components/NetworkUploadForm.vue';
+import NetworkMultiCSVUploadForm from '@/components/NetworkMultiCSVUploadForm.vue';
 import store from '@/store';
 
 export default Vue.extend({
@@ -59,6 +83,7 @@ export default Vue.extend({
   components: {
     NetworkCreateForm,
     NetworkUploadForm,
+    NetworkMultiCSVUploadForm,
   },
   props: {
     edgeTables: {
@@ -74,6 +99,7 @@ export default Vue.extend({
   data() {
     return {
       networkDialog: false,
+      CSVNetworkDialog: false,
     };
   },
   computed: {
@@ -84,6 +110,10 @@ export default Vue.extend({
   methods: {
     networkDialogSuccess() {
       this.networkDialog = false;
+      this.$emit('success');
+    },
+    CSVNetworkDialogSuccess() {
+      this.CSVNetworkDialog = false;
       this.$emit('success');
     },
   },

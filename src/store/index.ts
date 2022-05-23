@@ -42,7 +42,7 @@ const {
     uploads: [],
   } as State,
   getters: {
-    tables(state: State, getters): string[] {
+    tables(state: State, getters) {
       if (state.currentWorkspace !== null && state.currentWorkspace.nodeTables && state.currentWorkspace.edgeTables) {
         return getters.nodeTables.concat(getters.edgeTables).sort();
       }
