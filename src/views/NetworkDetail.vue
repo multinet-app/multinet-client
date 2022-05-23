@@ -88,7 +88,7 @@
               </div>
               <v-divider />
               <v-list-item
-                v-for="app in apps"
+                v-for="app in apps.network_visualizations"
                 :key="app.name"
                 class="pl-2"
                 :href="`${app.url}/?workspace=${workspace}&network=${network}`"
@@ -347,7 +347,7 @@ export default Vue.extend({
       required: true,
     },
     apps: {
-      type: Array as PropType<App[]>,
+      type: Object as PropType<{ network_visualizations: App[]; table_visualizations: App[] }>,
       required: true,
     },
   },
@@ -473,13 +473,13 @@ ul {
 }
 
 .network-vis {
-  height: calc(100vh - 314px);
+  height: calc(100vh - 314px  - 60px); /* 100vh - 314px - 60px for toolbar */
   position: relative;
   z-index: 1;
 }
 
 .network-vis-closed {
-  height: calc(100vh - 75px);
+  height: calc(100vh - 75px - 60px); /* 100vh - 75px - 60px for toolbar */
 }
 
 .node-cols {

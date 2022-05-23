@@ -6,24 +6,25 @@
     <template v-slot:activator="{ on: button }">
       <v-tooltip left>
         <template v-slot:activator="{ on: tooltip }">
-          <v-scroll-x-transition>
+          <v-fade-transition>
             <v-btn
               v-if="somethingChecked"
               id="delete-workspaces"
-              icon
-              small
-              text
+              block
+              tile
+              dark
+              color="red accent-3"
               @click="button.click"
               v-on="tooltip"
             >
+              Delete Selected
               <v-icon
-                color="red accent-3"
-                size="22px"
+                right
               >
                 delete_sweep
               </v-icon>
             </v-btn>
-          </v-scroll-x-transition>
+          </v-fade-transition>
         </template>
         <span>Delete selected</span>
       </v-tooltip>

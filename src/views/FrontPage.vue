@@ -8,110 +8,153 @@
       <v-responsive
         class="mb-5"
       >
-        <v-sheet
-          class="pa-6"
-          color="primary"
-          dark
+        <v-card
+          color="grey lighten-2"
           flat
-          height="100%"
+          tile
         >
-          <v-row>
-            <v-col cols="9">
-              <v-card
-                class="pr-6"
-                color="transparent"
-                flat
-                height="0%"
-              >
-                <v-card-title class="text-h4">
-                  Welcome to Multinet!
-                </v-card-title>
-                <v-divider />
-                <v-card-text class="welcome-text">
-                  <p>
-                    Check out the featured datasets and visualizations below! You
-                    can also create your own workspace and upload your own data with
-                    the <strong>New Workspace</strong> button to the left, or
-                    explore data others have uploaded.
-                  </p>
-                  <p>
-                    This project is a joint research and development effort between
-                    the University of Utah and Kitware Inc., funded by the National
-                    Science Foundation.
-                  </p>
-                </v-card-text>
-              </v-card>
+          <v-row class="align-center justify-center">
+            <v-col cols="1" />
+            <v-col cols="2">
+              <v-img
+                src="../assets/logo/app_logo.svg"
+                class="mx-auto"
+                max-height="100px"
+                max-width="100px"
+              />
             </v-col>
-            <v-col cols="3">
-              <v-card
-                class="d-flex align-center"
-                light
+            <v-col>
+              <v-card-text
+                class="grey--text text--darken-3 text-center text-h4 pt-10"
               >
-                <v-card-text>
-                  <v-row class="px-4">
-                    <v-col
-                      v-for="collab in collabs"
-                      :key="collab.logo"
-                      class="align-center d-flex py-1"
-                      cols="6"
-                    >
-                      <v-img
-                        :src="collab.logo"
-                        width="100vh"
-                      />
-                    </v-col>
-                  </v-row>
-                </v-card-text>
-              </v-card>
+                <strong class="black--text">Multinet</strong> is visualization tool for networks with attributes associated with the nodes and links.
+              </v-card-text>
             </v-col>
+            <v-col cols="3" />
           </v-row>
-        </v-sheet>
+          <v-card-text>
+            <v-img
+              style="margin-left: 50px; margin-right: 50px;"
+              src="../assets/multilink-overview.webp"
+              max-height="500px"
+            />
+          </v-card-text>
+        </v-card>
       </v-responsive>
 
-      <!-- COLUMNS -->
-      <div class="px-6 py-2">
-        <v-row class="px-5 pb-6">
-          <v-col
-            v-for="sample in samples"
-            :key="sample.title"
-            cols="4"
-          >
-            <v-hover>
-              <template v-slot:default="{ hover }">
-                <v-card>
-                  <v-img
-                    class="align-end"
-                    height="250px"
-                    :src="sample.image"
-                  >
-                    <v-card-title class="box-shadow-title">
-                      {{ sample.title }}
-                    </v-card-title>
-                  </v-img>
-                  <v-fade-transition>
-                    <v-overlay
-                      v-if="hover"
-                      absolute
-                      opacity=".85"
-                    >
-                      <div class="overlay-text">
-                        <p>{{ sample.text }}</p>
-                        <v-btn
-                          color="primary"
-                          :href="sample.href"
-                          target="_blank"
-                        >
-                          Open in New Window
-                        </v-btn>
-                      </div>
-                    </v-overlay>
-                  </v-fade-transition>
-                </v-card>
-              </template>
-            </v-hover>
+      <v-container id="lower-half">
+        <v-row class="text-center">
+          <v-spacer />
+          <v-col class="text-h4 grey--text text--darken-4">
+            Getting Started
           </v-col>
+          <v-spacer />
         </v-row>
-      </div>
+        <v-row class="text-center pb-12">
+          <v-spacer />
+          <v-col
+            cols="3"
+            class="text-h6 grey--text text--darken-4"
+          >
+            <v-btn
+              icon
+              x-large
+              @click="login"
+            >
+              <v-icon x-large>
+                file_upload
+              </v-icon>
+            </v-btn>
+            Sign up and upload your own data
+          </v-col>
+          <v-spacer />
+          <v-col
+            cols="3"
+            class="text-h6 grey--text text--darken-4"
+          >
+            <v-icon
+              x-large
+              class="pr-1"
+            >
+              videogame_asset
+            </v-icon>
+            Try a demo below or explore the public workspaces
+          </v-col>
+          <v-spacer />
+          <v-col
+            cols="3"
+            class="text-h6 grey--text text--darken-4"
+          >
+            <v-dialog
+              v-model="dialog"
+              width="500"
+            >
+              <template v-slot:activator="{ on }">
+                <v-btn
+                  class="px-0"
+                  icon
+                  x-large
+                  min-width="40px"
+                  v-on="on"
+                >
+                  <v-icon x-large>
+                    info
+                  </v-icon>
+                </v-btn>
+              </template>
+
+              <about-text @toggle="dialog=false" />
+            </v-dialog>
+            Learn more about MultiNet
+          </v-col>
+          <v-spacer />
+        </v-row>
+
+        <!-- COLUMNS -->
+        <div class="px-6 py-2">
+          <v-row class="px-5 pb-6">
+            <v-col
+              v-for="sample in samples"
+              :key="sample.title"
+              cols="4"
+            >
+              <v-hover>
+                <template v-slot:default="{ hover }">
+                  <v-card>
+                    <v-img
+                      class="align-end"
+                      height="250px"
+                      :src="sample.image"
+                    >
+                      <v-card-title class="box-shadow-title">
+                        {{ sample.title }}
+                      </v-card-title>
+                    </v-img>
+                    <v-fade-transition>
+                      <v-overlay
+                        v-if="hover"
+                        absolute
+                        opacity=".85"
+                      >
+                        <div class="overlay-text">
+                          <p>{{ sample.text }}</p>
+                          <v-btn
+                            color="primary"
+                            :href="sample.href"
+                            target="_blank"
+                          >
+                            Open in New Window
+                          </v-btn>
+                        </div>
+                      </v-overlay>
+                    </v-fade-transition>
+                  </v-card>
+                </template>
+              </v-hover>
+            </v-col>
+          </v-row>
+        </div>
+      </v-container>
     </v-main>
   </v-container>
 </template>
@@ -119,45 +162,31 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 import { App } from '@/types';
+import AboutText from '@/components/AboutText.vue';
+import oauthClient from '@/oauth';
 
 export default Vue.extend({
+  components: { AboutText },
   props: {
     apps: {
-      type: Array as PropType<App[]>,
+      type: Object as PropType<{ network_visualizations: App[]; table_visualizations: App[] }>,
       required: true,
     },
   },
 
   data() {
     return {
-      collabs: [
-        {
-          // eslint-disable-next-line global-require
-          logo: require('../assets/logo/utah_logo.png'),
-        },
-        {
-          // eslint-disable-next-line global-require
-          logo: require('../assets/logo/Kitware_Logo.png'),
-        },
-        {
-          // eslint-disable-next-line global-require
-          logo: require('../assets/logo/vdl_logo.png'),
-        },
-        {
-          // eslint-disable-next-line global-require
-          logo: require('../assets/logo/nsf_logo.png'),
-        },
-      ],
+      dialog: false,
     };
   },
 
   computed: {
     multiMatrixURL(): string {
-      return `${this.apps.filter((d) => d.name === 'MultiMatrix')[0].url}`;
+      return `${this.apps.network_visualizations.filter((d) => d.name === 'MultiMatrix')[0].url}`;
     },
 
     multiLinkURL(): string {
-      return `${this.apps.filter((d) => d.name === 'MultiLink')[0].url}`;
+      return `${this.apps.network_visualizations.filter((d) => d.name === 'MultiLink')[0].url}`;
     },
 
     samples(): Array<{title: string; image: NodeRequire; text: string; href: string }> {
@@ -193,6 +222,12 @@ export default Vue.extend({
       ];
     },
   },
+
+  methods: {
+    login(): void {
+      oauthClient.redirectToLogin();
+    },
+  },
 });
 </script>
 
@@ -202,10 +237,20 @@ export default Vue.extend({
   padding-bottom: 8px;
   padding-top: 210px;
 }
+
 .overlay-text {
   padding: 48px;
 }
+
 .welcome-text p {
   font-size: 18px;
+}
+
+.logo {
+  filter: grayscale(100%);
+}
+
+#lower-half{
+  max-width: 1500px;
 }
 </style>

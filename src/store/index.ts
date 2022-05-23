@@ -1,7 +1,9 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import { createDirectStore } from 'direct-vuex';
-import { SingleUserWorkspacePermissionSpec, UserSpec } from 'multinet';
+import {
+  Network, SingleUserWorkspacePermissionSpec, Table, UserSpec, Workspace,
+} from 'multinet';
 
 import api from '@/api';
 import oauthClient from '@/oauth';
@@ -12,13 +14,13 @@ Vue.use(Vuex);
 
 export interface WorkspaceState {
   name: string;
-  nodeTables: string[];
-  edgeTables: string[];
-  networks: string[];
+  nodeTables: Table[];
+  edgeTables: Table[];
+  networks: Network[];
 }
 
 export interface State {
-  workspaces: string[];
+  workspaces: Workspace[];
   currentWorkspace: WorkspaceState | null;
   userInfo: UserSpec | null;
   currentWorkspacePermission: SingleUserWorkspacePermissionSpec | null;
@@ -47,23 +49,23 @@ const {
       return [];
     },
 
-    nodeTables(state: State): string[] {
+    nodeTables(state: State) {
       if (state.currentWorkspace !== null && state.currentWorkspace.nodeTables) {
-        return state.currentWorkspace.nodeTables.sort();
+        return state.currentWorkspace.nodeTables.sort((a, b) => a.name.localeCompare(b.name));
       }
       return [];
     },
 
-    edgeTables(state: State): string[] {
+    edgeTables(state: State) {
       if (state.currentWorkspace !== null && state.currentWorkspace.edgeTables) {
-        return state.currentWorkspace.edgeTables.sort();
+        return state.currentWorkspace.edgeTables.sort((a, b) => a.name.localeCompare(b.name));
       }
       return [];
     },
 
     networks(state: State) {
       if (state.currentWorkspace !== null && state.currentWorkspace.networks) {
-        return state.currentWorkspace.networks.sort();
+        return state.currentWorkspace.networks.sort((a, b) => a.name.localeCompare(b.name));
       }
       return [];
     },
@@ -84,8 +86,8 @@ const {
     },
   },
   mutations: {
-    setWorkspaces(state, workspaces: string[]) {
-      state.workspaces = workspaces.sort();
+    setWorkspaces(state, workspaces: Workspace[]) {
+      state.workspaces = workspaces.sort((a, b) => (a.name < b.name ? -1 : 1));
     },
 
     setCurrentWorkspace(state, workspace: WorkspaceState) {
@@ -112,7 +114,7 @@ const {
     async fetchWorkspaces(context) {
       const { commit } = rootActionContext(context);
       const workspaces = await api.workspaces();
-      commit.setWorkspaces(workspaces.results.map((w) => w.name));
+      commit.setWorkspaces(workspaces.results);
     },
 
     async fetchWorkspace(context, workspace: string) {
@@ -133,9 +135,9 @@ const {
 
       commit.setCurrentWorkspace({
         name: workspace,
-        nodeTables: nodeTables.map((table) => table.name),
-        edgeTables: edgeTables.map((table) => table.name),
-        networks: networks.results.map((network) => network.name),
+        nodeTables,
+        edgeTables,
+        networks: networks.results,
       });
     },
 
