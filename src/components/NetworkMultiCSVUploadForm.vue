@@ -367,7 +367,7 @@ export default defineComponent({
       const ws = store.state.currentWorkspace;
       const tables = [...ws.nodeTables, ...ws.edgeTables];
       const samples: CSVPreview[] = await Promise.all(tables.map(async (table) => {
-        const res = await api.axios.get(`workspaces/${ws.name}/tables/${table}/rows`, {
+        const res = await api.axios.get(`workspaces/${ws.name}/tables/${table.name}/rows`, {
           params: {
             limit: 5,
           },
@@ -379,13 +379,13 @@ export default defineComponent({
           .map((header) => ({
             text: header,
             value: header,
-            tableCol: new TableColumn(table, header),
+            tableCol: new TableColumn(table.name, header),
           }));
 
         return {
           rows,
           headers,
-          name: table,
+          name: table.name,
         };
       }));
 

@@ -128,7 +128,6 @@
               :node-tables="nodeTables.map((table) => table.name)"
               :edge-tables="edgeTables.map((table) => table.name)"
               :loading="loading"
-              :network-vis-apps="apps.network_visualizations"
               :apps="apps"
             />
           </v-card>
@@ -147,7 +146,6 @@
               :workspace="workspace"
               :items="tables"
               :loading="loading"
-              :table-vis-apps="apps.table_visualizations"
               :apps="apps"
             />
           </v-card>
