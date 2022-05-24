@@ -121,7 +121,7 @@
                         <v-icon
                           v-if="tableColExcludedIndex(tableCol) === -1"
                           dark
-                          :color="columnLinked(tableCol) ? 'amber' : ''"
+                          :color="linkColor(tableCol)"
                           @click="includeExcludeTableColumn(tableCol, true)"
                         >
                           check_box
@@ -129,14 +129,14 @@
                         <v-icon
                           v-else
                           dark
-                          :color="columnLinked(tableCol) ? 'amber' : ''"
+                          :color="linkColor(tableCol)"
                           @click="includeExcludeTableColumn(tableCol, false)"
                         >
                           check_box_outline_blank
                         </v-icon>
 
                         <!-- Column name -->
-                        <span :class="columnLinked(tableCol) ? 'amber--text' : ''">
+                        <span :class="linkColor(tableCol, true)">
                           {{ tableCol.column }}
                         </span>
 
@@ -147,7 +147,7 @@
                         >
                           <template v-slot:activator="{ on }">
                             <v-icon
-                              :color="columnLinked(tableCol) ? 'amber' : ''"
+                              :color="linkColor(tableCol)"
                               dark
                               :disabled="linkDisabled(tableCol)"
                               v-on="on"
@@ -304,6 +304,17 @@ class ColumnLink {
     this.id = `${a.id}->${b.id}`;
   }
 }
+
+const LinkColors = [
+  'amber',
+  'green',
+  'red',
+  'brown',
+  'orange',
+  'lime',
+  'purple',
+  'cyan',
+];
 
 interface TableHeader extends DataTableHeader {
   tableCol: TableColumn;
@@ -585,8 +596,18 @@ export default defineComponent({
       return `${truncated}...`;
     }
 
-    function columnLinked(col: TableColumn): boolean {
-      return !!columnLinks.value.find((link) => link.id.includes(col.id));
+    function linkColor(col: TableColumn, text = false): string | undefined {
+      const index = columnLinks.value.findIndex((link) => link.id.includes(col.id));
+      if (index === -1) {
+        return undefined;
+      }
+
+      let color = LinkColors[index % LinkColors.length];
+      if (text) {
+        color = `${color}--text`;
+      }
+
+      return color;
     }
 
     function linkDisabled(col: TableColumn): boolean {
@@ -681,7 +702,7 @@ export default defineComponent({
       includeExcludeTableColumn,
       getColumnItemClass,
       columnItemText,
-      columnLinked,
+      linkColor,
       linkDisabled,
       edgeTable,
       edgeTableSwitchDisabled,
