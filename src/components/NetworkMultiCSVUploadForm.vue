@@ -19,7 +19,7 @@
         class="ml-3"
       >
         <v-text-field
-          v-model="networkName"
+          v-model="network.name"
           label="Network Name"
           solo
         />
@@ -60,15 +60,15 @@
             </v-list-item>
 
             <v-list-item
-              v-for="file in tableSamples"
-              :key="file.name"
+              v-for="sample in tableSamples"
+              :key="sample.table.name"
               class="px-0"
             >
               <v-list-item-action>
-                <v-checkbox v-model="tablesVisible[file.name]" />
+                <v-checkbox v-model="tablesVisible[sample.table.name]" />
               </v-list-item-action>
               <v-list-item-title>
-                {{ file.name }}
+                {{ sample.table.name }}
               </v-list-item-title>
             </v-list-item>
           </v-list>
@@ -80,24 +80,24 @@
             justify="start"
           >
             <v-card
-              v-for="file in visibleTableSamples"
-              :key="file.name"
+              v-for="sample in visibleTableSamples"
+              :key="sample.table.name"
               outlined
               raised
               class="ma-4"
             >
               <v-sheet class="table-title px-2">
                 <v-row no-gutters>
-                  <span>{{ file.name }}</span>
+                  <span>{{ sample.table.name }}</span>
                   <v-spacer />
                   <v-switch
                     label="Edge Table"
                     dark
                     hide-details
                     class="ma-0 pa-0"
-                    :disabled="edgeTableSwitchDisabled(file.name)"
-                    :value="edgeTable === file.name"
-                    @change="setEdgeTable(file.name, $event)"
+                    :disabled="network.edge?.table && network.edge.table.name !== sample.table.name"
+                    :value="network.edge?.table.name === sample.table.name"
+                    @change="setEdgeTable(sample.table, $event)"
                   />
                 </v-row>
               </v-sheet>
@@ -105,39 +105,41 @@
                 class="upload-preview"
                 hide-default-footer
                 hide-default-header
-                :headers="file.headers"
-                :items="file.rows"
+                :headers="sample.headers"
+                :items="sample.rows"
                 disable-sort
               >
-                <template v-slot:header="{ props: { headers } }">
+                <template #header="{ props: { headers } }">
                   <thead dark>
                     <tr>
                       <th
-                        v-for="{ tableCol } in headers"
-                        :key="tableCol.id"
+                        v-for="{ value: col } in headers"
+                        :key="`${sample.table.name}:${col}`"
                         style="width: 1px; white-space: nowrap;"
                       >
                         <!-- Include/Exclude Column -->
                         <v-icon
-                          v-if="tableColExcludedIndex(tableCol) === -1"
+                          v-if="!excludedMap[sample.table.name][col]"
+                          :disabled="checkboxDisabled(sample.table, col)"
                           dark
-                          :color="linkColor(tableCol)"
-                          @click="includeExcludeTableColumn(tableCol, true)"
+                          :color="linkColor(sample.table, col)"
+                          @click="excludedMap[sample.table.name][col] = true"
                         >
                           check_box
                         </v-icon>
                         <v-icon
                           v-else
                           dark
-                          :color="linkColor(tableCol)"
-                          @click="includeExcludeTableColumn(tableCol, false)"
+                          :disabled="checkboxDisabled(sample.table, col)"
+                          :color="linkColor(sample.table, col)"
+                          @click="excludedMap[sample.table.name][col] = false"
                         >
                           check_box_outline_blank
                         </v-icon>
 
                         <!-- Column name -->
-                        <span :class="linkColor(tableCol, true)">
-                          {{ tableCol.column }}
+                        <span :class="linkColor(sample.table, col, true)">
+                          {{ col }}
                         </span>
 
                         <!-- Link to other table column -->
@@ -145,11 +147,11 @@
                           :close-on-content-click="false"
                           @input="menuOpen = $event"
                         >
-                          <template v-slot:activator="{ on }">
+                          <template #activator="{ on }">
                             <v-icon
-                              :color="linkColor(tableCol)"
+                              :color="linkColor(sample.table, col)"
                               dark
-                              :disabled="linkDisabled(tableCol)"
+                              :disabled="linkDisabled(sample.table)"
                               v-on="on"
                             >
                               link
@@ -157,26 +159,31 @@
                           </template>
                           <v-card max-height="30vh">
                             <!-- Edge Table -->
-                            <template v-if="edgeTable === tableCol.table">
-                              <v-card-subtitle class="py-1 px-2">
-                                Select Source/Target
+                            <template v-if="network.edge?.table.name === sample.table.name">
+                              <v-card-subtitle
+                                class="py-1 px-2"
+                              >
+                                <span v-if="linkMap[sample.table.name]?.[col] !== undefined">
+                                  Remove Link
+                                </span>
+                                <span v-else>
+                                  Select Source/Target
+                                </span>
                               </v-card-subtitle>
 
-                              <template v-if="!(selectingSource || selectingTarget)">
+                              <template v-if="!(linkMap[sample.table.name]?.[col] || selectingSource || selectingTarget)">
                                 <v-list
                                   class="my-0 py-0"
                                   dense
                                 >
                                   <v-list-item
-                                    :disabled="sourceTargetItemDisabled('source', tableCol.column)"
-                                    :input-value="sourceTargetItemActive('source', tableCol.column)"
+                                    :disabled="network.source_table !== undefined"
                                     @click="selectingSource = true"
                                   >
                                     Source
                                   </v-list-item>
                                   <v-list-item
-                                    :disabled="sourceTargetItemDisabled('target', tableCol.column)"
-                                    :input-value="sourceTargetItemActive('target', tableCol.column)"
+                                    :disabled="network.target_table !== undefined"
                                     @click="selectingTarget = true"
                                   >
                                     Target
@@ -188,23 +195,28 @@
                                   class="my-0 py-0"
                                   dense
                                 >
-                                  <v-list-item
-                                    v-for="col in getOtherTableColumns(tableCol.table)"
-                                    :key="`${tableCol.table}-${col.id}`"
-                                    :disabled="columnDisabled(tableCol, col)"
-                                    @click="linkColumns(tableCol, col)"
-                                  >
-                                    {{ `${col.table}:${col.column}` }}
-                                    <v-spacer />
-                                    <v-btn
-                                      v-if="showColumnRemove(tableCol, col)"
-                                      icon
-                                      right
-                                      @click.stop="removeColumnLink(tableCol, col)"
+                                  <template v-if="linkMap[sample.table.name]?.[col] !== undefined">
+                                    <v-list-item>
+                                      {{ `${linkMap[sample.table.name][col].table.name}:${linkMap[sample.table.name][col].column}` }}
+                                      <v-spacer />
+                                      <v-btn
+                                        icon
+                                        right
+                                        @click.stop="removeColumnLink(sample.table, col)"
+                                      >
+                                        <v-icon>close</v-icon>
+                                      </v-btn>
+                                    </v-list-item>
+                                  </template>
+                                  <template v-else>
+                                    <v-list-item
+                                      v-for="otherCol in getOtherTableColumns(sample.table.name)"
+                                      :key="`${sample.table.name}-${otherCol.table.name}-${otherCol.column}`"
+                                      @click="linkSourceOrTargetTable(col, otherCol.table, otherCol.column)"
                                     >
-                                      <v-icon>close</v-icon>
-                                    </v-btn>
-                                  </v-list-item>
+                                      {{ `${otherCol.table.name}:${otherCol.column}` }}
+                                    </v-list-item>
+                                  </template>
                                 </v-list>
                               </template>
                             </template>
@@ -212,29 +224,39 @@
                             <!-- Node Table -->
                             <template v-else>
                               <v-card-subtitle class="py-1 px-2">
-                                Select Foreign Key
+                                <span v-if="linkMap[sample.table.name]?.[col] !== undefined">
+                                  Remove Link
+                                </span>
+                                <span v-else>
+                                  Join From
+                                </span>
                               </v-card-subtitle>
                               <v-list
                                 class="my-0 py-0"
                                 dense
                               >
-                                <v-list-item
-                                  v-for="col in getOtherTableColumns(tableCol.table)"
-                                  :key="`${tableCol.table}-${col.id}`"
-                                  :disabled="columnDisabled(tableCol, col)"
-                                  @click="linkColumns(tableCol, col)"
-                                >
-                                  {{ col.id }}
-                                  <v-spacer />
-                                  <v-btn
-                                    v-if="showColumnRemove(tableCol, col)"
-                                    icon
-                                    right
-                                    @click.stop="removeColumnLink(tableCol, col)"
+                                <template v-if="linkMap[sample.table.name]?.[col] !== undefined">
+                                  <v-list-item>
+                                    {{ `${linkMap[sample.table.name][col].table.name}:${linkMap[sample.table.name][col].column}` }}
+                                    <v-spacer />
+                                    <v-btn
+                                      icon
+                                      right
+                                      @click.stop="removeColumnLink(sample.table, col)"
+                                    >
+                                      <v-icon>close</v-icon>
+                                    </v-btn>
+                                  </v-list-item>
+                                </template>
+                                <template v-else>
+                                  <v-list-item
+                                    v-for="otherCol in getOtherTableColumns(sample.table.name)"
+                                    :key="`${sample.table.name}-${otherCol.table.name}-${otherCol.column}`"
+                                    @click="joinTable(sample.table, col, otherCol.table, otherCol.column)"
                                   >
-                                    <v-icon>close</v-icon>
-                                  </v-btn>
-                                </v-list-item>
+                                    {{ `${otherCol.table.name}:${otherCol.column}` }}
+                                  </v-list-item>
+                                </template>
                               </v-list>
                             </template>
                           </v-card>
@@ -243,12 +265,12 @@
                     </tr>
                   </thead>
                 </template>
-                <template v-slot:item="{ item, headers }">
+                <template #item="{ item, headers }">
                   <tr>
                     <td
                       v-for="header in headers"
-                      :key="header.tableCol.id"
-                      :class="getColumnItemClass(header.tableCol)"
+                      :key="header.value"
+                      :class="getColumnItemClass(sample.table, header.value)"
                       style="width: 1px; white-space: nowrap;"
                     >
                       {{ columnItemText(item, header.value) }}
@@ -267,43 +289,15 @@
 <script lang="ts">
 /* eslint-disable lines-between-class-members */
 /* eslint-disable max-classes-per-file */
-/* eslint-disable @typescript-eslint/camelcase */
+/* eslint-disable brace-style */
 
 import {
-  computed, defineComponent, onMounted, reactive, ref, watchEffect,
+  computed, defineComponent, onMounted, reactive, ref, watch, watchEffect,
 } from '@vue/composition-api';
 import { DataTableHeader } from 'vuetify';
 
 import api from '@/api';
 import store from '@/store';
-
-interface ColumnDef {
-  table: string;
-  column: string;
-}
-class TableColumn implements ColumnDef {
-  table: string;
-  column: string;
-  id: string;
-
-  constructor(table: string, col: string) {
-    this.id = `${table}:${col}`;
-    this.table = table;
-    this.column = col;
-  }
-}
-
-class ColumnLink {
-  id: string;
-  a: TableColumn;
-  b: TableColumn;
-
-  constructor(a: TableColumn, b: TableColumn) {
-    this.a = a;
-    this.b = b;
-    this.id = `${a.id}->${b.id}`;
-  }
-}
 
 const LinkColors = [
   'amber',
@@ -316,33 +310,50 @@ const LinkColors = [
   'cyan',
 ];
 
-interface TableHeader extends DataTableHeader {
-  tableCol: TableColumn;
+interface BaseTable {
+  name: string;
+  excluded: {[key: string]: boolean | undefined};
+  // excluded: Set<string>;
+}
+
+interface Link {
+  local: string;
+  foreign: string;
+}
+
+interface FullTable extends BaseTable {
+  joined?: {
+    table: BaseTable;
+    link: Link;
+  };
+}
+
+// For fully constructed network
+interface CSVNetwork {
+  name: string;
+  // edge_table: FullTable;
+  edge: {
+    table: FullTable;
+    source: Link;
+    target: Link;
+  };
+  source_table: FullTable;
+  target_table: FullTable;
+}
+
+interface CSVNetworkModel extends Partial<Omit<CSVNetwork, 'edge'>> {
+  edge?: {
+    table: FullTable;
+    source?: Link;
+    target?: Link;
+  }
 }
 
 type CSVRow = {[key: string]: string};
 interface CSVPreview {
-  name: string;
-  headers: TableHeader[];
+  headers: DataTableHeader[];
   rows: CSVRow[];
-}
-
-// For fully constructed network
-interface ForeignLink {
-  column: string;
-  foreign_column: ColumnDef;
-}
-interface CSVNetwork {
-  name: string;
-  edge_table: {
-    name: string;
-    source: ForeignLink;
-    target: ForeignLink;
-  };
-
-  joins?: {
-    [key: string]: ForeignLink;
-  };
+  table: BaseTable;
 }
 
 export default defineComponent({
@@ -352,7 +363,7 @@ export default defineComponent({
     const tablesVisible = ref<Record<string, boolean>>({});
     const visibleTableSamples = computed(
       () => tableSamples.value.filter(
-        (sample) => tablesVisible.value[sample.name] === true,
+        (sample) => tablesVisible.value[sample.table.name] === true,
       ),
     );
     const allTablesVisible = computed(
@@ -366,8 +377,160 @@ export default defineComponent({
       });
     }
 
-    const columnLinks = ref<ColumnLink[]>([]);
-    const networkName = ref<string| null>(null);
+    const network: CSVNetworkModel = reactive({
+      name: undefined,
+      edge: undefined,
+      source_table: undefined,
+      target_table: undefined,
+    });
+    const mainTables = computed(() => [network.edge?.table, network.source_table, network.target_table]);
+    const inNetworkTables = computed(() => [
+      ...mainTables.value,
+      network.edge?.table.joined?.table,
+      network.source_table?.joined?.table,
+      network.target_table?.joined?.table,
+    ]);
+
+    interface ExclusionMap {
+      [key: string]: {
+        [innerKey: string]: boolean
+      }
+    }
+
+    // Remove any no longer visible links
+    watch(tablesVisible, (visible) => {
+      const invisibleTables = tableSamples.value.filter((s) => visible[s.table.name] === false);
+      invisibleTables.forEach((sample) => {
+        const { table } = sample;
+
+        // Edge table + joined
+        if (network.edge?.table.name === table.name) {
+          network.edge = undefined;
+          network.source_table = undefined;
+          network.target_table = undefined;
+          return;
+        }
+        if (network.edge?.table.joined?.table.name === table.name) {
+          network.edge.table.joined = undefined;
+          return;
+        }
+
+        // Source table + joined
+        if (network.source_table?.name === table.name) {
+          network.source_table = undefined;
+          if (network.edge) {
+            network.edge.source = undefined;
+          }
+          return;
+        }
+        if (network.source_table?.joined?.table.name === table.name) {
+          network.source_table.joined = undefined;
+          return;
+        }
+
+        // Target table + joined
+        if (network.target_table?.name === table.name) {
+          network.target_table = undefined;
+          if (network.edge) {
+            network.edge.target = undefined;
+          }
+          return;
+        }
+        if (network.target_table?.joined?.table.name === table.name) {
+          network.target_table.joined = undefined;
+        }
+      });
+    }, { deep: true });
+
+    // Update excluded map when visible tables change
+    const excludedMap = ref(reactive({} as ExclusionMap));
+    watch(visibleTableSamples, (samples) => {
+      excludedMap.value = reactive(samples.reduce((acc, cur) => (
+        {
+          ...acc,
+          [cur.table.name]: cur.headers.reduce((hacc, hcur) => (
+            {
+              ...hacc,
+              // Default all tables to not excluded
+              [hcur.value]: false,
+            }
+          ), {}),
+        }
+      ), {}));
+    });
+
+    interface LinkMapValue {
+      table: BaseTable;
+      column: string;
+      type: 'source' | 'target' | 'join'
+    }
+    const linkMap = computed(() => {
+      const map = {} as Record<string, Record<string, LinkMapValue>>;
+
+      // Edge table
+      if (network.edge) {
+        map[network.edge.table.name] = {};
+
+        if (network.edge.source && network.source_table) {
+          map[network.edge.table.name][network.edge.source.local] = {
+            table: network.source_table,
+            column: network.edge.source.foreign,
+            type: 'source',
+          };
+        }
+        if (network.edge.target && network.target_table) {
+          map[network.edge.table.name][network.edge.target.local] = {
+            table: network.target_table,
+            column: network.edge.target.foreign,
+            type: 'target',
+          };
+        }
+        if (network.edge.table.joined) {
+          map[network.edge.table.name][network.edge.table.joined.link.local] = {
+            table: network.edge.table.joined.table,
+            column: network.edge.table.joined.link.foreign,
+            type: 'join',
+          };
+        }
+      }
+
+      // Source table
+      if (network.source_table?.joined) {
+        map[network.source_table.name] = {};
+        map[network.source_table.name][network.source_table.joined.link.local] = {
+          table: network.source_table.joined.table,
+          column: network.source_table.joined.link.foreign,
+          type: 'join',
+        };
+      }
+
+      // Target table
+      if (network.target_table?.joined) {
+        map[network.target_table.name] = {};
+        map[network.target_table.name][network.target_table.joined.link.local] = {
+          table: network.target_table.joined.table,
+          column: network.target_table.joined.link.foreign,
+          type: 'join',
+        };
+      }
+
+      return map;
+    });
+
+    // Network data
+    function setEdgeTable(table: BaseTable, val: boolean) {
+      const newEdgeTable = {
+        table: {
+          ...table,
+          joined: undefined,
+        },
+        source: undefined,
+        target: undefined,
+      };
+      network.edge = val ? newEdgeTable : undefined;
+      network.source_table = undefined;
+      network.target_table = undefined;
+    }
 
     // Load table from workspace and store in tableSamples
     onMounted(async () => {
@@ -385,18 +548,15 @@ export default defineComponent({
         });
 
         const rows = res.data.results;
-        const headers: TableHeader[] = Object.keys(rows[0])
+        const headers: DataTableHeader[] = Object.keys(rows[0])
           .filter((header) => !['_id', '_key', '_rev'].includes(header))
-          .map((header) => ({
-            text: header,
-            value: header,
-            tableCol: new TableColumn(table.name, header),
-          }));
+          .map((header) => ({ text: header, value: header }));
 
         return {
-          rows,
+          // table: { name: table.name, excluded: new Set<string>() },
+          table: reactive({ name: table.name, excluded: {} }),
           headers,
-          name: table.name,
+          rows,
         };
       }));
 
@@ -413,44 +573,12 @@ export default defineComponent({
 
       // Store value in tableSamples
       tableSamples.value = sortedSamples;
-      tablesVisible.value = reactive(sortedSamples.reduce((obj, cur) => ({ ...obj, [cur.name]: true }), {}));
+      tablesVisible.value = reactive(sortedSamples.reduce((obj, cur) => ({ ...obj, [cur.table.name]: true }), {}));
     });
-
-    // Edge Table
-    const edgeTable = ref<string | null>(null);
-    const edgeTableSwitchDisabled = (table: string) => (
-      (edgeTable.value && edgeTable.value !== table)
-      || !!columnLinks.value.find((l) => l.id.includes(table))
-    );
-
-    function setEdgeTable(table: string, val: boolean) {
-      edgeTable.value = val ? table : null;
-    }
 
     // Edge source/target
     const selectingSource = ref(false);
     const selectingTarget = ref(false);
-
-    // Here, ColumnLink.source is the edge table column,
-    // and ColumnLink.target is the node table column
-    const edgeTableSource = ref(null as null | ColumnLink);
-    const edgeTableTarget = ref(null as null | ColumnLink);
-
-    type SourceTarget = 'source' | 'target';
-    function sourceTargetItemDisabled(type: SourceTarget, column: string) {
-      const link1 = type === 'source' ? edgeTableSource.value : edgeTableTarget.value;
-      const link2 = type === 'target' ? edgeTableSource.value : edgeTableTarget.value;
-
-      return (link1 && link1.a.column !== column) || (link2 && link2.a.column === column);
-    }
-
-    function sourceTargetItemActive(type: SourceTarget, column: string) {
-      if (type === 'source') {
-        return edgeTableSource.value && edgeTableSource.value.a.column === column;
-      }
-
-      return edgeTableTarget.value && edgeTableTarget.value.a.column === column;
-    }
 
     // Menu state
     const menuOpen = ref(false);
@@ -461,120 +589,148 @@ export default defineComponent({
       }
     });
 
+    const unusedTable = (table: string) => (![network.edge?.table.name, network.source_table?.name, network.target_table?.name].includes(table));
     function getOtherTableColumns(tableName: string) {
-      const otherTables = tableSamples.value.filter((table) => table.name !== tableName);
-      return otherTables.reduce(
-        (prev, cur) => (
-          [...prev, ...cur.headers.map((sample) => sample.tableCol)]
-        ), [] as TableColumn[],
-      );
-    }
-
-    // Link two columns
-    function linkColumns(source: TableColumn, target: TableColumn) {
-      const link = new ColumnLink(source, target);
-      if (columnLinks.value.find((l) => l.id === link.id)) {
-        return;
-      }
-
-      // Set up edge table links if necessary
-      if (edgeTable.value !== null) {
-        if (selectingSource.value) {
-          edgeTableSource.value = link;
-        } else if (selectingTarget.value) {
-          edgeTableTarget.value = link;
-        }
-      }
-
-      columnLinks.value.push(link);
-    }
-
-    function showColumnRemove(tableCol: TableColumn, colListing: TableColumn) {
-      return columnLinks.value.find(
-        (l) => (
-          l.id.includes(tableCol.id)
-          && l.id.includes(colListing.id)
-        ),
-      );
-    }
-
-    function removeColumnLink(a: TableColumn, b: TableColumn) {
-      const index = columnLinks.value.findIndex(
-        (link) => (
-          link.id.includes(a.id)
-          && link.id.includes(b.id)
-        ),
+      const otherTables = visibleTableSamples.value.filter(
+        (sample) => unusedTable(sample.table.name) && sample.table.name !== tableName,
       );
 
-      if (index === -1) {
-        return;
+      return otherTables.reduce((prev, cur) => ([
+        ...prev,
+        ...cur.headers.map((sample) => ({ table: cur.table, column: sample.value })),
+      ]), [] as {table: BaseTable; column: string}[]);
+    }
+
+    /** Links the source/target table to the edge table. */
+    function linkSourceOrTargetTable(edgeCol: string, table: BaseTable, col: string) {
+      if (network.edge?.table === undefined) {
+        throw new Error('Edge table not yet defined!');
       }
 
-      const link = columnLinks.value[index];
-      columnLinks.value = [...columnLinks.value.slice(0, index), ...columnLinks.value.slice(index + 1)];
-
-      // Unlink edge source if necessary
-      if (edgeTableSource.value && link.id === edgeTableSource.value.id) {
-        edgeTableSource.value = null;
+      const type = selectingSource.value ? 'source' : 'target';
+      const newTable = { ...table, joined: undefined };
+      if (type === 'source') {
+        network.source_table = newTable;
+      } else {
+        network.target_table = newTable;
       }
-      if (edgeTableTarget.value && link.id === edgeTableTarget.value.id) {
-        edgeTableTarget.value = null;
+
+      // Set reference to link in edge def
+      network.edge[type] = {
+        local: edgeCol,
+        foreign: col,
+      };
+    }
+
+    function joinTable(mainTable: FullTable, col: string, subTable: BaseTable, subCol: string) {
+      // eslint-disable-next-line no-param-reassign
+      // mainTable.joined = {table: subTable };
+      // TODO
+
+      const joined = { table: subTable, link: { local: col, foreign: subCol } as Link };
+      if (network.edge && network.edge.table.name === mainTable.name) {
+        network.edge.table.joined = joined;
+      } else if (network.source_table && network.source_table.name === mainTable.name) {
+        network.source_table.joined = joined;
+      } else if (network.target_table && network.target_table.name === mainTable.name) {
+        network.target_table.joined = joined;
+      } else {
+        throw new Error('Attempted to join onto invalid table!');
       }
     }
 
-    function columnDisabled(tableCol: TableColumn, colListing: TableColumn) {
-      // Check if current table has a link with this column
-      const existingTableLinks = columnLinks.value.filter((l) => l.id.includes(tableCol.id));
-      if (existingTableLinks.length) {
-        // Check if listed column is part of any existing links
-        const colInvolved = existingTableLinks.find((l) => l.id.includes(colListing.id));
-        if (!colInvolved) {
-          return true;
-        }
+    function tableColId(table: BaseTable, col: string) {
+      return `${table.name}:${col}`;
+    }
+
+    function checkboxDisabled(table: BaseTable, col: string) {
+      // Disable if source/target column in edge table
+      if (
+        (
+          network.edge?.table.name === table.name && (
+            network.edge.source?.local === col || network.edge?.target?.local === col
+          )
+        )
+        || (network.source_table?.name === table.name && network.edge?.source?.foreign === col)
+        || (network.target_table?.name === table.name && network.edge?.target?.foreign === col)
+      ) {
+        return true;
       }
 
-      // Check if column is linked to a different edge table column
-      const edgeColumnAlreadyLinked = columnLinks.value.find(
-        (l) => (
-          l.id.includes(colListing.id)
-          && !l.id.includes(tableCol.id)),
-      );
-      if (tableCol.table === edgeTable.value && edgeColumnAlreadyLinked) {
+      // Disable if column is joined on either side
+      if (mainTables.value.some((t) => (
+        (t?.name === table.name && t.joined?.link.local === col)
+        || (t?.joined?.table.name === table.name && t.joined.link.foreign === col)
+      ))) {
+        return true;
+      }
+
+      // Disable if not one of main tables or a joined table
+      if (!mainTables.value.some(
+        (t) => t?.name === table.name || t?.joined?.table.name === table.name,
+      )) {
         return true;
       }
 
       return false;
     }
 
-    // Include/Exclude a table column
-    const excludedTableColumns = ref<TableColumn[]>([]);
-    const tableColExcludedIndex = (tableCol: TableColumn) => (
-      excludedTableColumns.value.findIndex((tc) => tc.table === tableCol.table && tc.column === tableCol.column)
-    );
-    function includeExcludeTableColumn(tableCol: TableColumn, excluded: boolean) {
-      const existingIndex = tableColExcludedIndex(tableCol);
-      const found = existingIndex !== -1;
-
-      // Only take action if found and excluded differ
-      if (!found && excluded) {
-        // Add to excluded columns
-        excludedTableColumns.value.push(tableCol);
-
-        // Remove any existing links
-        columnLinks.value
-          .filter((l) => l.id.includes(tableCol.id))
-          .forEach((l) => { removeColumnLink(l.a, l.b); });
-      } else if (found && !excluded) {
-        // Remove from excluded columns
-        excludedTableColumns.value = [
-          ...excludedTableColumns.value.slice(0, existingIndex),
-          ...excludedTableColumns.value.slice(existingIndex + 1),
-        ];
-      }
+    function linkDisabled(table: BaseTable): boolean {
+      // Disable if not one of main tables
+      return !mainTables.value.some((t) => t?.name === table.name);
     }
 
-    function getColumnItemClass(col: TableColumn) {
-      if (tableColExcludedIndex(col) !== -1) {
+    function removeColumnLink(mainTable: FullTable, col: string) {
+      const link: LinkMapValue | undefined = linkMap.value[mainTable.name]?.[col];
+      if (link === undefined) {
+        throw new Error('Link not found!');
+      }
+
+      if (
+        (
+          network.source_table?.name === mainTable.name
+          || network.target_table?.name === mainTable.name
+        )
+        && link.type !== 'join'
+      ) {
+        throw new Error('Cannot have source/target links from source/target table!');
+      }
+
+      if (network.edge?.table.name === mainTable.name) {
+        switch (link.type) {
+          case 'source':
+            network.source_table = undefined;
+            network.edge.source = undefined;
+            return;
+          case 'target':
+            network.target_table = undefined;
+            network.edge.target = undefined;
+            return;
+          case 'join':
+            network.edge.table.joined = undefined;
+            return;
+          default:
+            break;
+        }
+      }
+
+      if (network.source_table?.name === mainTable.name) {
+        network.source_table.joined = undefined;
+        return;
+      }
+
+      if (network.target_table?.name === mainTable.name) {
+        network.target_table.joined = undefined;
+        return;
+      }
+
+      throw new Error('Attempted to remove unexpected link!');
+    }
+
+    function getColumnItemClass(table: BaseTable, col: string) {
+      // "Disable" if table not in full network or column is excluded
+      const tableInNetwork = inNetworkTables.value.some((t) => t?.name === table.name);
+      if (!tableInNetwork || excludedMap.value[table.name]?.[col]) {
         return 'grey--text lighten-3';
       }
 
@@ -596,42 +752,64 @@ export default defineComponent({
       return `${truncated}...`;
     }
 
-    function linkColor(col: TableColumn, text = false): string | undefined {
-      const index = columnLinks.value.findIndex((link) => link.id.includes(col.id));
-      if (index === -1) {
-        return undefined;
+    /* eslint-disable prefer-destructuring */
+    function linkColor(table: BaseTable, col: string, text = false) {
+      let color;
+
+      // Source link
+      if (
+        (network.edge?.table.name === table.name && col === network.edge?.source?.local)
+        || (network.source_table?.name === table.name && col === network.edge?.source?.foreign)
+      ) {
+        color = LinkColors[0];
       }
 
-      let color = LinkColors[index % LinkColors.length];
-      if (text) {
+      // Target link
+      if (
+        (network.edge?.table.name === table.name && col === network.edge.target?.local)
+        || (network.target_table?.name === table.name && col === network.edge?.target?.foreign)
+      ) {
+        color = LinkColors[1];
+      }
+
+      // Edge table join
+      if (
+        (network.edge?.table.name === table.name && col === network.edge?.table.joined?.link.local)
+        || (network.edge?.table.joined?.table.name === table.name && col === network.edge?.table.joined.link.foreign)
+      ) {
+        color = LinkColors[2];
+      }
+
+      // Source table join
+      if (
+        (network.source_table?.name === table.name && col === network.source_table.joined?.link.local)
+        || (network.source_table?.joined?.table.name === table.name && col === network.source_table.joined.link.foreign)
+      ) {
+        color = LinkColors[3];
+      }
+
+      // Target table join
+      if (
+        (network.target_table?.name === table.name && col === network.target_table.joined?.link.local)
+        || (network.target_table?.joined?.table.name === table.name && col === network.target_table.joined.link.foreign)
+      ) {
+        color = LinkColors[4];
+      }
+
+      if (color && text) {
         color = `${color}--text`;
       }
 
       return color;
     }
-
-    function linkDisabled(col: TableColumn): boolean {
-      // If table has no links, don't disable
-      const tableLinks = columnLinks.value.filter((l) => l.id.includes(col.table));
-      if (!tableLinks.length) {
-        return false;
-      }
-
-      // Disable column if table has links but column isn't linked
-      const colLinked = tableLinks.find((l) => l.id.includes(col.id));
-      if (col.table !== edgeTable.value && !colLinked) {
-        return true;
-      }
-
-      return false;
-    }
+    /* eslint-enable prefer-destructuring */
 
     // Denotes whether the dialog is in a submittable state
     const valid = computed(() => !!(
-      networkName.value
-      && edgeTable.value
-      && edgeTableSource.value
-      && edgeTableTarget.value
+      network.name
+      && network.edge?.table
+      && network.source_table
+      && network.target_table
     ));
 
     const networkCreating = ref(false);
@@ -643,40 +821,42 @@ export default defineComponent({
       networkCreating.value = true;
 
       /* eslint-disable @typescript-eslint/no-non-null-assertion */
-      const network: CSVNetwork = {
-        name: networkName.value!,
-        edge_table: {
-          name: edgeTable.value!,
-          source: {
-            column: edgeTableSource.value!.a.column,
-            foreign_column: edgeTableSource.value!.b,
-          },
-          target: {
-            column: edgeTableTarget.value!.a.column,
-            foreign_column: edgeTableTarget.value!.b,
-          },
-        },
-      };
+      // const _network: CSVNetwork = {
+      //   name: networkName.value!,
+      //   edge_table: {
+      //     name: edgeTable.value!,
+      //     source: {
+      //       column: edgeTableSource.value!.a.column,
+      //       foreign_column: edgeTableSource.value!.b,
+      //     },
+      //     target: {
+      //       column: edgeTableTarget.value!.a.column,
+      //       foreign_column: edgeTableTarget.value!.b,
+      //     },
+      //   },
+      // };
 
-      const nodeLinks = columnLinks.value.filter((l) => !l.id.includes(edgeTable.value!));
-      if (nodeLinks.length) {
-        network.joins = nodeLinks.reduce((prev, cur) => ({
-          ...prev,
-          [cur.a.table]: {
-            column: cur.a.column,
-            foreign_column: cur.b,
-          },
-        }), {});
-      }
+      // const nodeLinks = columnLinks.value.filter((l) => !l.id.includes(edgeTable.value!));
+      // if (nodeLinks.length) {
+      //   network.joins = nodeLinks.reduce((prev, cur) => ({
+      //     ...prev,
+      //     [cur.a.table]: {
+      //       column: cur.a.column,
+      //       foreign_column: cur.b,
+      //     },
+      //   }), {});
+      // }
       /* eslint-enable @typescript-eslint/no-non-null-assertion */
 
       // Create network with post request
-      await api.axios.post(`/workspaces/${store.state.currentWorkspace.name}/networks/from_tables/`, network);
+      // await api.axios.post(`/workspaces/${store.state.currentWorkspace.name}/networks/from_tables/`, network);
       networkCreating.value = false;
       ctx.emit('success');
     }
 
     return {
+      excludedMap,
+      network,
       files,
       tableSamples,
       tablesVisible,
@@ -684,28 +864,18 @@ export default defineComponent({
       allTablesVisible,
       selectAllTables,
       menuOpen,
-      networkName,
       selectingSource,
-      edgeTableSource,
       selectingTarget,
-      edgeTableTarget,
-      sourceTargetItemDisabled,
-      sourceTargetItemActive,
       getOtherTableColumns,
-      columnLinks,
-      linkColumns,
-      showColumnRemove,
+      checkboxDisabled,
+      linkSourceOrTargetTable,
+      joinTable,
       removeColumnLink,
-      columnDisabled,
-      excludedTableColumns,
-      tableColExcludedIndex,
-      includeExcludeTableColumn,
+      linkMap,
       getColumnItemClass,
       columnItemText,
       linkColor,
       linkDisabled,
-      edgeTable,
-      edgeTableSwitchDisabled,
       setEdgeTable,
       valid,
       createNetwork,
