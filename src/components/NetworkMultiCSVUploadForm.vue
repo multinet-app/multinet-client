@@ -157,7 +157,10 @@
                               link
                             </v-icon>
                           </template>
-                          <v-card max-height="30vh">
+                          <v-card
+                            v-if="!linkDisabled(sample.table)"
+                            max-height="30vh"
+                          >
                             <!-- Edge Table -->
                             <template v-if="edgeTable?.table.name === sample.table.name">
                               <v-card-subtitle
