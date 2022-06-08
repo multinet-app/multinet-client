@@ -353,6 +353,8 @@ interface CSVPreview {
 
 export default defineComponent({
   setup(props, ctx) {
+    const workspace = computed(() => store.state.currentWorkspace);
+
     const files = ref<File[]>([]);
     const tableSamples = ref<CSVPreview[]>([]);
     const tablesVisible = ref<Record<string, boolean>>({});
@@ -527,13 +529,14 @@ export default defineComponent({
       targetTable.value = undefined;
     }
 
-    // Load table from workspace and store in tableSamples
-    onMounted(async () => {
-      if (!store.state.currentWorkspace) {
+    async function init() {
+      if (workspace.value === null) {
+        tableSamples.value = [];
+        tablesVisible.value = {};
         return;
       }
 
-      const ws = store.state.currentWorkspace;
+      const ws = workspace.value;
       const tables = [...ws.nodeTables, ...ws.edgeTables];
       const samples: CSVPreview[] = await Promise.all(tables.map(async (table) => {
         const res = await api.axios.get(`workspaces/${ws.name}/tables/${table.name}/rows`, {
@@ -568,6 +571,15 @@ export default defineComponent({
       // Store value in tableSamples
       tableSamples.value = sortedSamples;
       tablesVisible.value = reactive(sortedSamples.reduce((obj, cur) => ({ ...obj, [cur.table.name]: true }), {}));
+    }
+
+    // Load table from workspace and store in tableSamples
+    onMounted(() => {
+      init();
+    });
+
+    watch(workspace, () => {
+      init();
     });
 
     // Edge source/target
