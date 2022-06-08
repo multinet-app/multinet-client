@@ -315,8 +315,7 @@ const LinkColors = [
 
 interface BaseTable {
   name: string;
-  excluded: {[key: string]: boolean | undefined};
-  // excluded: Set<string>;
+  excluded: string[];
 }
 
 interface Link {
@@ -549,8 +548,7 @@ export default defineComponent({
           .map((header) => ({ text: header, value: header }));
 
         return {
-          // table: { name: table.name, excluded: new Set<string>() },
-          table: reactive({ name: table.name, excluded: {} }),
+          table: reactive({ name: table.name, excluded: [] }),
           headers,
           rows,
         };
