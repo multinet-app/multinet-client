@@ -19,7 +19,7 @@
         class="ml-3"
       >
         <v-text-field
-          v-model="network.name"
+          v-model="networkName"
           label="Network Name"
           solo
         />
@@ -95,8 +95,8 @@
                     dark
                     hide-details
                     class="ma-0 pa-0"
-                    :disabled="network.edge?.table && network.edge.table.name !== sample.table.name"
-                    :value="network.edge?.table.name === sample.table.name"
+                    :disabled="edgeTable?.table && edgeTable.table.name !== sample.table.name"
+                    :value="edgeTable?.table.name === sample.table.name"
                     @change="setEdgeTable(sample.table, $event)"
                   />
                 </v-row>
@@ -159,7 +159,7 @@
                           </template>
                           <v-card max-height="30vh">
                             <!-- Edge Table -->
-                            <template v-if="network.edge?.table.name === sample.table.name">
+                            <template v-if="edgeTable?.table.name === sample.table.name">
                               <v-card-subtitle
                                 class="py-1 px-2"
                               >
@@ -177,13 +177,13 @@
                                   dense
                                 >
                                   <v-list-item
-                                    :disabled="network.source_table !== undefined"
+                                    :disabled="sourceTable !== undefined"
                                     @click="selectingSource = true"
                                   >
                                     Source
                                   </v-list-item>
                                   <v-list-item
-                                    :disabled="network.target_table !== undefined"
+                                    :disabled="targetTable !== undefined"
                                     @click="selectingTarget = true"
                                   >
                                     Target
@@ -328,25 +328,18 @@ interface FullTable extends BaseTable {
   };
 }
 
+interface EdgeTableDef {
+  table: FullTable;
+  source?: Link;
+  target?: Link;
+}
+
 // For fully constructed network
 interface CSVNetwork {
   name: string;
-  // edge_table: FullTable;
-  edge: {
-    table: FullTable;
-    source: Link;
-    target: Link;
-  };
+  edge: EdgeTableDef;
   source_table: FullTable;
   target_table: FullTable;
-}
-
-interface CSVNetworkModel extends Partial<Omit<CSVNetwork, 'edge'>> {
-  edge?: {
-    table: FullTable;
-    source?: Link;
-    target?: Link;
-  }
 }
 
 type CSVRow = {[key: string]: string};
@@ -377,18 +370,18 @@ export default defineComponent({
       });
     }
 
-    const network: CSVNetworkModel = reactive({
-      name: undefined,
-      edge: undefined,
-      source_table: undefined,
-      target_table: undefined,
-    });
-    const mainTables = computed(() => [network.edge?.table, network.source_table, network.target_table]);
+    // Network def
+    const networkName = ref('');
+    const edgeTable = ref<EdgeTableDef>();
+    const sourceTable = ref<FullTable>();
+    const targetTable = ref<FullTable>();
+
+    const mainTables = computed(() => [edgeTable.value?.table, sourceTable.value, targetTable.value]);
     const inNetworkTables = computed(() => [
       ...mainTables.value,
-      network.edge?.table.joined?.table,
-      network.source_table?.joined?.table,
-      network.target_table?.joined?.table,
+      edgeTable.value?.table.joined?.table,
+      sourceTable.value?.joined?.table,
+      targetTable.value?.joined?.table,
     ]);
 
     interface ExclusionMap {
@@ -404,40 +397,40 @@ export default defineComponent({
         const { table } = sample;
 
         // Edge table + joined
-        if (network.edge?.table.name === table.name) {
-          network.edge = undefined;
-          network.source_table = undefined;
-          network.target_table = undefined;
+        if (edgeTable.value?.table.name === table.name) {
+          edgeTable.value = undefined;
+          sourceTable.value = undefined;
+          targetTable.value = undefined;
           return;
         }
-        if (network.edge?.table.joined?.table.name === table.name) {
-          network.edge.table.joined = undefined;
+        if (edgeTable.value?.table.joined?.table.name === table.name) {
+          edgeTable.value.table.joined = undefined;
           return;
         }
 
         // Source table + joined
-        if (network.source_table?.name === table.name) {
-          network.source_table = undefined;
-          if (network.edge) {
-            network.edge.source = undefined;
+        if (sourceTable.value?.name === table.name) {
+          sourceTable.value = undefined;
+          if (edgeTable.value) {
+            edgeTable.value.source = undefined;
           }
           return;
         }
-        if (network.source_table?.joined?.table.name === table.name) {
-          network.source_table.joined = undefined;
+        if (sourceTable.value?.joined?.table.name === table.name) {
+          sourceTable.value.joined = undefined;
           return;
         }
 
         // Target table + joined
-        if (network.target_table?.name === table.name) {
-          network.target_table = undefined;
-          if (network.edge) {
-            network.edge.target = undefined;
+        if (targetTable.value?.name === table.name) {
+          targetTable.value = undefined;
+          if (edgeTable.value) {
+            edgeTable.value.target = undefined;
           }
           return;
         }
-        if (network.target_table?.joined?.table.name === table.name) {
-          network.target_table.joined = undefined;
+        if (targetTable.value?.joined?.table.name === table.name) {
+          targetTable.value.joined = undefined;
         }
       });
     }, { deep: true });
@@ -468,48 +461,48 @@ export default defineComponent({
       const map = {} as Record<string, Record<string, LinkMapValue>>;
 
       // Edge table
-      if (network.edge) {
-        map[network.edge.table.name] = {};
+      if (edgeTable.value) {
+        map[edgeTable.value.table.name] = {};
 
-        if (network.edge.source && network.source_table) {
-          map[network.edge.table.name][network.edge.source.local] = {
-            table: network.source_table,
-            column: network.edge.source.foreign,
+        if (edgeTable.value.source && sourceTable.value) {
+          map[edgeTable.value.table.name][edgeTable.value.source.local] = {
+            table: sourceTable.value,
+            column: edgeTable.value.source.foreign,
             type: 'source',
           };
         }
-        if (network.edge.target && network.target_table) {
-          map[network.edge.table.name][network.edge.target.local] = {
-            table: network.target_table,
-            column: network.edge.target.foreign,
+        if (edgeTable.value.target && targetTable.value) {
+          map[edgeTable.value.table.name][edgeTable.value.target.local] = {
+            table: targetTable.value,
+            column: edgeTable.value.target.foreign,
             type: 'target',
           };
         }
-        if (network.edge.table.joined) {
-          map[network.edge.table.name][network.edge.table.joined.link.local] = {
-            table: network.edge.table.joined.table,
-            column: network.edge.table.joined.link.foreign,
+        if (edgeTable.value.table.joined) {
+          map[edgeTable.value.table.name][edgeTable.value.table.joined.link.local] = {
+            table: edgeTable.value.table.joined.table,
+            column: edgeTable.value.table.joined.link.foreign,
             type: 'join',
           };
         }
       }
 
       // Source table
-      if (network.source_table?.joined) {
-        map[network.source_table.name] = {};
-        map[network.source_table.name][network.source_table.joined.link.local] = {
-          table: network.source_table.joined.table,
-          column: network.source_table.joined.link.foreign,
+      if (sourceTable.value?.joined) {
+        map[sourceTable.value.name] = {};
+        map[sourceTable.value.name][sourceTable.value.joined.link.local] = {
+          table: sourceTable.value.joined.table,
+          column: sourceTable.value.joined.link.foreign,
           type: 'join',
         };
       }
 
       // Target table
-      if (network.target_table?.joined) {
-        map[network.target_table.name] = {};
-        map[network.target_table.name][network.target_table.joined.link.local] = {
-          table: network.target_table.joined.table,
-          column: network.target_table.joined.link.foreign,
+      if (targetTable.value?.joined) {
+        map[targetTable.value.name] = {};
+        map[targetTable.value.name][targetTable.value.joined.link.local] = {
+          table: targetTable.value.joined.table,
+          column: targetTable.value.joined.link.foreign,
           type: 'join',
         };
       }
@@ -527,9 +520,9 @@ export default defineComponent({
         source: undefined,
         target: undefined,
       };
-      network.edge = val ? newEdgeTable : undefined;
-      network.source_table = undefined;
-      network.target_table = undefined;
+      edgeTable.value = val ? newEdgeTable : undefined;
+      sourceTable.value = undefined;
+      targetTable.value = undefined;
     }
 
     // Load table from workspace and store in tableSamples
@@ -589,10 +582,10 @@ export default defineComponent({
       }
     });
 
-    const unusedTable = (table: string) => (![network.edge?.table.name, network.source_table?.name, network.target_table?.name].includes(table));
     function getOtherTableColumns(tableName: string) {
       const otherTables = visibleTableSamples.value.filter(
-        (sample) => unusedTable(sample.table.name) && sample.table.name !== tableName,
+        // (sample) => !mainTables.value.includes(sample.table.name) && sample.table.name !== tableName,
+        (sample) => !mainTables.value.some((t) => t?.name === sample.table.name) && sample.table.name !== tableName,
       );
 
       return otherTables.reduce((prev, cur) => ([
@@ -603,20 +596,20 @@ export default defineComponent({
 
     /** Links the source/target table to the edge table. */
     function linkSourceOrTargetTable(edgeCol: string, table: BaseTable, col: string) {
-      if (network.edge?.table === undefined) {
+      if (edgeTable.value?.table === undefined) {
         throw new Error('Edge table not yet defined!');
       }
 
       const type = selectingSource.value ? 'source' : 'target';
       const newTable = { ...table, joined: undefined };
       if (type === 'source') {
-        network.source_table = newTable;
+        sourceTable.value = newTable;
       } else {
-        network.target_table = newTable;
+        targetTable.value = newTable;
       }
 
       // Set reference to link in edge def
-      network.edge[type] = {
+      edgeTable.value[type] = {
         local: edgeCol,
         foreign: col,
       };
@@ -628,31 +621,27 @@ export default defineComponent({
       // TODO
 
       const joined = { table: subTable, link: { local: col, foreign: subCol } as Link };
-      if (network.edge && network.edge.table.name === mainTable.name) {
-        network.edge.table.joined = joined;
-      } else if (network.source_table && network.source_table.name === mainTable.name) {
-        network.source_table.joined = joined;
-      } else if (network.target_table && network.target_table.name === mainTable.name) {
-        network.target_table.joined = joined;
+      if (edgeTable.value && edgeTable.value.table.name === mainTable.name) {
+        edgeTable.value.table.joined = joined;
+      } else if (sourceTable.value && sourceTable.value.name === mainTable.name) {
+        sourceTable.value.joined = joined;
+      } else if (targetTable.value && targetTable.value.name === mainTable.name) {
+        targetTable.value.joined = joined;
       } else {
         throw new Error('Attempted to join onto invalid table!');
       }
-    }
-
-    function tableColId(table: BaseTable, col: string) {
-      return `${table.name}:${col}`;
     }
 
     function checkboxDisabled(table: BaseTable, col: string) {
       // Disable if source/target column in edge table
       if (
         (
-          network.edge?.table.name === table.name && (
-            network.edge.source?.local === col || network.edge?.target?.local === col
+          edgeTable.value?.table.name === table.name && (
+            edgeTable.value.source?.local === col || edgeTable.value?.target?.local === col
           )
         )
-        || (network.source_table?.name === table.name && network.edge?.source?.foreign === col)
-        || (network.target_table?.name === table.name && network.edge?.target?.foreign === col)
+        || (sourceTable.value?.name === table.name && edgeTable.value?.source?.foreign === col)
+        || (targetTable.value?.name === table.name && edgeTable.value?.target?.foreign === col)
       ) {
         return true;
       }
@@ -688,39 +677,39 @@ export default defineComponent({
 
       if (
         (
-          network.source_table?.name === mainTable.name
-          || network.target_table?.name === mainTable.name
+          sourceTable.value?.name === mainTable.name
+          || targetTable.value?.name === mainTable.name
         )
         && link.type !== 'join'
       ) {
         throw new Error('Cannot have source/target links from source/target table!');
       }
 
-      if (network.edge?.table.name === mainTable.name) {
+      if (edgeTable.value?.table.name === mainTable.name) {
         switch (link.type) {
           case 'source':
-            network.source_table = undefined;
-            network.edge.source = undefined;
+            sourceTable.value = undefined;
+            edgeTable.value.source = undefined;
             return;
           case 'target':
-            network.target_table = undefined;
-            network.edge.target = undefined;
+            targetTable.value = undefined;
+            edgeTable.value.target = undefined;
             return;
           case 'join':
-            network.edge.table.joined = undefined;
+            edgeTable.value.table.joined = undefined;
             return;
           default:
             break;
         }
       }
 
-      if (network.source_table?.name === mainTable.name) {
-        network.source_table.joined = undefined;
+      if (sourceTable.value?.name === mainTable.name) {
+        sourceTable.value.joined = undefined;
         return;
       }
 
-      if (network.target_table?.name === mainTable.name) {
-        network.target_table.joined = undefined;
+      if (targetTable.value?.name === mainTable.name) {
+        targetTable.value.joined = undefined;
         return;
       }
 
@@ -758,40 +747,40 @@ export default defineComponent({
 
       // Source link
       if (
-        (network.edge?.table.name === table.name && col === network.edge?.source?.local)
-        || (network.source_table?.name === table.name && col === network.edge?.source?.foreign)
+        (edgeTable.value?.table.name === table.name && col === edgeTable.value?.source?.local)
+        || (sourceTable.value?.name === table.name && col === edgeTable.value?.source?.foreign)
       ) {
         color = LinkColors[0];
       }
 
       // Target link
       if (
-        (network.edge?.table.name === table.name && col === network.edge.target?.local)
-        || (network.target_table?.name === table.name && col === network.edge?.target?.foreign)
+        (edgeTable.value?.table.name === table.name && col === edgeTable.value.target?.local)
+        || (targetTable.value?.name === table.name && col === edgeTable.value?.target?.foreign)
       ) {
         color = LinkColors[1];
       }
 
       // Edge table join
       if (
-        (network.edge?.table.name === table.name && col === network.edge?.table.joined?.link.local)
-        || (network.edge?.table.joined?.table.name === table.name && col === network.edge?.table.joined.link.foreign)
+        (edgeTable.value?.table.name === table.name && col === edgeTable.value?.table.joined?.link.local)
+        || (edgeTable.value?.table.joined?.table.name === table.name && col === edgeTable.value?.table.joined.link.foreign)
       ) {
         color = LinkColors[2];
       }
 
       // Source table join
       if (
-        (network.source_table?.name === table.name && col === network.source_table.joined?.link.local)
-        || (network.source_table?.joined?.table.name === table.name && col === network.source_table.joined.link.foreign)
+        (sourceTable.value?.name === table.name && col === sourceTable.value.joined?.link.local)
+        || (sourceTable.value?.joined?.table.name === table.name && col === sourceTable.value.joined.link.foreign)
       ) {
         color = LinkColors[3];
       }
 
       // Target table join
       if (
-        (network.target_table?.name === table.name && col === network.target_table.joined?.link.local)
-        || (network.target_table?.joined?.table.name === table.name && col === network.target_table.joined.link.foreign)
+        (targetTable.value?.name === table.name && col === targetTable.value.joined?.link.local)
+        || (targetTable.value?.joined?.table.name === table.name && col === targetTable.value.joined.link.foreign)
       ) {
         color = LinkColors[4];
       }
@@ -806,10 +795,10 @@ export default defineComponent({
 
     // Denotes whether the dialog is in a submittable state
     const valid = computed(() => !!(
-      network.name
-      && network.edge?.table
-      && network.source_table
-      && network.target_table
+      networkName.value
+      && edgeTable.value?.table
+      && sourceTable.value
+      && targetTable.value
     ));
 
     const networkCreating = ref(false);
@@ -856,7 +845,10 @@ export default defineComponent({
 
     return {
       excludedMap,
-      network,
+      networkName,
+      edgeTable,
+      sourceTable,
+      targetTable,
       files,
       tableSamples,
       tablesVisible,
