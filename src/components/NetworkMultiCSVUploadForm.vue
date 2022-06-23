@@ -819,39 +819,31 @@ export default defineComponent({
       if (!valid.value || store.state.currentWorkspace === null) {
         return;
       }
+      if (!(edgeTable.value && sourceTable.value && targetTable.value)) {
+        throw new Error('Falsey values when trying to create network!');
+      }
 
       networkCreating.value = true;
 
-      /* eslint-disable @typescript-eslint/no-non-null-assertion */
-      // const _network: CSVNetwork = {
-      //   name: networkName.value!,
-      //   edge_table: {
-      //     name: edgeTable.value!,
-      //     source: {
-      //       column: edgeTableSource.value!.a.column,
-      //       foreign_column: edgeTableSource.value!.b,
-      //     },
-      //     target: {
-      //       column: edgeTableTarget.value!.a.column,
-      //       foreign_column: edgeTableTarget.value!.b,
-      //     },
-      //   },
-      // };
+      const network: CSVNetwork = {
+        name: networkName.value,
+        edge: edgeTable.value,
+        source_table: sourceTable.value,
+        target_table: targetTable.value,
+      };
 
-      // const nodeLinks = columnLinks.value.filter((l) => !l.id.includes(edgeTable.value!));
-      // if (nodeLinks.length) {
-      //   network.joins = nodeLinks.reduce((prev, cur) => ({
-      //     ...prev,
-      //     [cur.a.table]: {
-      //       column: cur.a.column,
-      //       foreign_column: cur.b,
-      //     },
-      //   }), {});
-      // }
-      /* eslint-enable @typescript-eslint/no-non-null-assertion */
+      // Inject excluded columns
+      const edgeTableExcluded = excludedMap.value[edgeTable.value.table.name];
+      network.edge.table.excluded = Object.keys(edgeTableExcluded).filter((key) => edgeTableExcluded[key] === true);
+
+      const sourceTableExcluded = excludedMap.value[sourceTable.value.name];
+      network.source_table.excluded = Object.keys(sourceTableExcluded).filter((key) => sourceTableExcluded[key] === true);
+
+      const targetTableExcluded = excludedMap.value[targetTable.value.name];
+      network.target_table.excluded = Object.keys(targetTableExcluded).filter((key) => targetTableExcluded[key] === true);
 
       // Create network with post request
-      // await api.axios.post(`/workspaces/${store.state.currentWorkspace.name}/networks/from_tables/`, network);
+      await api.axios.post(`/workspaces/${store.state.currentWorkspace.name}/networks/from_tables/`, network);
       networkCreating.value = false;
       ctx.emit('success');
     }
