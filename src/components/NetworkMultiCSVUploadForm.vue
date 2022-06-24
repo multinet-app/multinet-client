@@ -330,6 +330,10 @@ interface FullTable extends BaseTable {
   };
 }
 
+function isFullTable(table: FullTable | BaseTable): table is FullTable {
+  return 'joined' in table;
+}
+
 interface EdgeTableDef {
   table: FullTable;
   source?: Link;
@@ -832,15 +836,27 @@ export default defineComponent({
         target_table: targetTable.value,
       };
 
+      /**
+       * Inject excluded columns into passed table.
+       */
+      function injectExcluded(table: FullTable | BaseTable | undefined) {
+        if (table === undefined) {
+          return;
+        }
+
+        const excluded = excludedMap.value[table.name];
+        // eslint-disable-next-line no-param-reassign
+        table.excluded = Object.keys(excluded).filter((key) => excluded[key] === true);
+
+        if (isFullTable(table)) {
+          injectExcluded(table.joined?.table);
+        }
+      }
+
       // Inject excluded columns
-      const edgeTableExcluded = excludedMap.value[edgeTable.value.table.name];
-      network.edge.table.excluded = Object.keys(edgeTableExcluded).filter((key) => edgeTableExcluded[key] === true);
-
-      const sourceTableExcluded = excludedMap.value[sourceTable.value.name];
-      network.source_table.excluded = Object.keys(sourceTableExcluded).filter((key) => sourceTableExcluded[key] === true);
-
-      const targetTableExcluded = excludedMap.value[targetTable.value.name];
-      network.target_table.excluded = Object.keys(targetTableExcluded).filter((key) => targetTableExcluded[key] === true);
+      injectExcluded(network.edge.table);
+      injectExcluded(network.source_table);
+      injectExcluded(network.target_table);
 
       // Create network with post request
       await api.axios.post(`/workspaces/${store.state.currentWorkspace.name}/networks/from_tables/`, network);
