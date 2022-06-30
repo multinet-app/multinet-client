@@ -4,9 +4,9 @@
     v-model="dialog"
     width="400"
   >
-    <template v-slot:activator="{ on: button }">
+    <template #activator="{ on: button }">
       <v-tooltip left>
-        <template v-slot:activator="{ on: tooltip }">
+        <template #activator="{ on: tooltip }">
           <v-scroll-x-transition>
             <v-btn
               icon

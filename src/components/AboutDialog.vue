@@ -4,7 +4,7 @@
     class="ws-dialog"
     width="500"
   >
-    <template v-slot:activator="{ on }">
+    <template #activator="{ on }">
       <v-btn
         class="mt-n1 ml-n1"
         icon

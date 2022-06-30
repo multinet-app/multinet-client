@@ -89,7 +89,7 @@
               v-model="dialog"
               width="500"
             >
-              <template v-slot:activator="{ on }">
+              <template #activator="{ on }">
                 <v-btn
                   class="px-0"
                   icon
@@ -119,7 +119,7 @@
               cols="4"
             >
               <v-hover>
-                <template v-slot:default="{ hover }">
+                <template #default="{ hover }">
                   <v-card>
                     <v-img
                       class="align-end"

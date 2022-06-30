@@ -3,7 +3,7 @@
     v-model="tableDialog"
     :width="dialogWidth"
   >
-    <template v-slot:activator="{ on }">
+    <template #activator="{ on }">
       <v-btn
         id="add-table"
         color="blue darken-2"
@@ -128,7 +128,7 @@
             :items="sampleRows"
             height="65vh"
           >
-            <template v-slot:header="{ props: { headers } }">
+            <template #header="{ props: { headers } }">
               <thead dark>
                 <tr>
                   <th
@@ -244,9 +244,7 @@ export default defineComponent({
       fileName.value = newFile.name.replace('.csv', '');
 
       const analysis = await analyzeCSV(newFile);
-      columnType.value = Array.from(analysis.typeRecs.keys()).reduce(
-        (acc, key) => ({ ...acc, [key]: analysis.typeRecs.get(key) }), {},
-      );
+      columnType.value = Array.from(analysis.typeRecs.keys()).reduce((acc, key) => ({ ...acc, [key]: analysis.typeRecs.get(key) }), {});
 
       sampleRows.value = [...analysis.sampleRows];
     });

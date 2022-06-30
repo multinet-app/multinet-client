@@ -3,9 +3,9 @@
     v-model="dialog"
     width="700"
   >
-    <template v-slot:activator="{ on: button }">
+    <template #activator="{ on: button }">
       <v-tooltip left>
-        <template v-slot:activator="{ on: tooltip }">
+        <template #activator="{ on: tooltip }">
           <v-fade-transition>
             <v-btn
               v-if="somethingChecked"

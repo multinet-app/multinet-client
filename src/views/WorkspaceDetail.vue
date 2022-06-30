@@ -19,7 +19,7 @@
               v-if="!editing && hover"
               left
             >
-              <template v-slot:activator="{ on }">
+              <template #activator="{ on }">
                 <div>
                   <v-btn
                     class="ml-1 mr-2"

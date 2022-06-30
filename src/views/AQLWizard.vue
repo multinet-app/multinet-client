@@ -77,7 +77,7 @@
             offset-y
             :close-on-content-click="false"
           >
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <v-btn
                 class="ml-2"
                 color="secondary"

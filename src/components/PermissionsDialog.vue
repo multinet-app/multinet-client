@@ -3,7 +3,7 @@
     v-model="permDialog"
     max-width="600"
   >
-    <template v-slot:activator="{ on }">
+    <template #activator="{ on }">
       <v-list-item
         ripple
         :disabled="!workspacePermissionsEditable"
@@ -63,7 +63,7 @@
           </v-col>
           <v-col class="py-0">
             <v-tooltip right>
-              <template v-slot:activator="{ on }">
+              <template #activator="{ on }">
                 <v-btn
                   color="grey lighten-1"
                   dark
@@ -159,7 +159,7 @@
             left
             open-on-hover
           >
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <v-icon
                 small
                 class="ml-2 mb-1"

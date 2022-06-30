@@ -2,7 +2,7 @@
   <div>
     <!-- Multi CSV -->
     <v-dialog v-model="CSVNetworkDialog">
-      <template v-slot:activator="{ on }">
+      <template #activator="{ on }">
         <v-btn
           id="add-csv-network"
           color="blue darken-2"
@@ -27,7 +27,7 @@
       v-model="networkDialog"
       width="700"
     >
-      <template v-slot:activator="{ on }">
+      <template #activator="{ on }">
         <v-btn
           id="add-network"
           color="blue darken-2"

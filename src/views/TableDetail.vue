@@ -125,7 +125,7 @@
           :options.sync="pagination"
           :loading="loading"
         >
-          <template v-slot:header>
+          <template #header>
             <thead dark>
               <tr>
                 <th
