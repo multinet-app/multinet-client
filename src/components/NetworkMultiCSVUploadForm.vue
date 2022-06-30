@@ -122,7 +122,6 @@
                           v-if="!excludedMap[sample.table.name][col]"
                           :disabled="checkboxDisabled(sample.table, col)"
                           dark
-                          :color="linkColor(sample.table, col)"
                           @click="excludedMap[sample.table.name][col] = true"
                         >
                           check_box
@@ -131,25 +130,23 @@
                           v-else
                           dark
                           :disabled="checkboxDisabled(sample.table, col)"
-                          :color="linkColor(sample.table, col)"
                           @click="excludedMap[sample.table.name][col] = false"
                         >
                           check_box_outline_blank
                         </v-icon>
 
                         <!-- Column name -->
-                        <span :class="linkColor(sample.table, col, true)">
-                          {{ col }}
-                        </span>
+                        <span>{{ col }}</span>
 
                         <!-- Link to other table column -->
                         <v-menu
+                          v-if="edgeTable?.table.name === sample.table.name"
                           :close-on-content-click="false"
                           @input="menuOpen = $event"
                         >
                           <template #activator="{ on }">
                             <v-icon
-                              :color="linkColor(sample.table, col)"
+                              :color="linkColor(sample.table, col, 'edge')"
                               dark
                               :disabled="linkDisabled(sample.table)"
                               v-on="on"
@@ -162,83 +159,42 @@
                             max-height="30vh"
                           >
                             <!-- Edge Table -->
-                            <template v-if="edgeTable?.table.name === sample.table.name">
-                              <v-card-subtitle
-                                class="py-1 px-2"
-                              >
-                                <span v-if="linkMap[sample.table.name]?.[col] !== undefined">
-                                  Remove Link
-                                </span>
-                                <span v-else>
-                                  Select Source/Target
-                                </span>
-                              </v-card-subtitle>
+                            <v-card-subtitle
+                              class="py-1 px-2"
+                            >
+                              <span v-if="linkExists(sample.table, col, ['source', 'target'])">
+                                Remove Link
+                              </span>
+                              <span v-else>
+                                Select Source/Target
+                              </span>
+                            </v-card-subtitle>
 
-                              <template v-if="!(linkMap[sample.table.name]?.[col] || selectingSource || selectingTarget)">
-                                <v-list
-                                  class="my-0 py-0"
-                                  dense
-                                >
-                                  <v-list-item
-                                    :disabled="sourceTable !== undefined"
-                                    @click="selectingSource = true"
-                                  >
-                                    Source
-                                  </v-list-item>
-                                  <v-list-item
-                                    :disabled="targetTable !== undefined"
-                                    @click="selectingTarget = true"
-                                  >
-                                    Target
-                                  </v-list-item>
-                                </v-list>
-                              </template>
-                              <template v-else>
-                                <v-list
-                                  class="my-0 py-0"
-                                  dense
-                                >
-                                  <template v-if="linkMap[sample.table.name]?.[col] !== undefined">
-                                    <v-list-item>
-                                      {{ `${linkMap[sample.table.name][col].table.name}:${linkMap[sample.table.name][col].column}` }}
-                                      <v-spacer />
-                                      <v-btn
-                                        icon
-                                        right
-                                        @click.stop="removeColumnLink(sample.table, col)"
-                                      >
-                                        <v-icon>close</v-icon>
-                                      </v-btn>
-                                    </v-list-item>
-                                  </template>
-                                  <template v-else>
-                                    <v-list-item
-                                      v-for="otherCol in getOtherTableColumns(sample.table.name)"
-                                      :key="`${sample.table.name}-${otherCol.table.name}-${otherCol.column}`"
-                                      @click="linkSourceOrTargetTable(col, otherCol.table, otherCol.column)"
-                                    >
-                                      {{ `${otherCol.table.name}:${otherCol.column}` }}
-                                    </v-list-item>
-                                  </template>
-                                </v-list>
-                              </template>
-                            </template>
-
-                            <!-- Node Table -->
-                            <template v-else>
-                              <v-card-subtitle class="py-1 px-2">
-                                <span v-if="linkMap[sample.table.name]?.[col] !== undefined">
-                                  Remove Link
-                                </span>
-                                <span v-else>
-                                  Join From
-                                </span>
-                              </v-card-subtitle>
+                            <template v-if="!(linkExists(sample.table, col, ['source', 'target']) || selectingSource || selectingTarget)">
                               <v-list
                                 class="my-0 py-0"
                                 dense
                               >
-                                <template v-if="linkMap[sample.table.name]?.[col] !== undefined">
+                                <v-list-item
+                                  :disabled="sourceTable !== undefined"
+                                  @click="selectingSource = true"
+                                >
+                                  Source
+                                </v-list-item>
+                                <v-list-item
+                                  :disabled="targetTable !== undefined"
+                                  @click="selectingTarget = true"
+                                >
+                                  Target
+                                </v-list-item>
+                              </v-list>
+                            </template>
+                            <template v-else>
+                              <v-list
+                                class="my-0 py-0"
+                                dense
+                              >
+                                <template v-if="linkExists(sample.table, col, ['source', 'target'])">
                                   <v-list-item>
                                     {{ `${linkMap[sample.table.name][col].table.name}:${linkMap[sample.table.name][col].column}` }}
                                     <v-spacer />
@@ -255,13 +211,71 @@
                                   <v-list-item
                                     v-for="otherCol in getOtherTableColumns(sample.table.name)"
                                     :key="`${sample.table.name}-${otherCol.table.name}-${otherCol.column}`"
-                                    @click="joinTable(sample.table, col, otherCol.table, otherCol.column)"
+                                    @click="linkSourceOrTargetTable(col, otherCol.table, otherCol.column)"
                                   >
                                     {{ `${otherCol.table.name}:${otherCol.column}` }}
                                   </v-list-item>
                                 </template>
                               </v-list>
                             </template>
+                          </v-card>
+                        </v-menu>
+
+                        <v-menu
+                          v-if="inNetworkTables.some((t) => t?.name === sample.table.name)"
+                          :close-on-content-click="false"
+                          @input="menuOpen = $event"
+                        >
+                          <template #activator="{ on }">
+                            <v-icon
+                              :color="linkColor(sample.table, col, 'node')"
+                              dark
+                              :disabled="linkDisabled(sample.table)"
+                              v-on="on"
+                            >
+                              call_merge
+                            </v-icon>
+                          </template>
+                          <v-card
+                            v-if="!linkDisabled(sample.table)"
+                            max-height="30vh"
+                          >
+                            <!-- Node Table -->
+                            <v-card-subtitle class="py-1 px-2">
+                              <span v-if="linkExists(sample.table, col, ['join'])">
+                                Remove Link
+                              </span>
+                              <span v-else>
+                                Join From
+                              </span>
+                            </v-card-subtitle>
+                            <v-list
+                              class="my-0 py-0"
+                              dense
+                            >
+                              <template v-if="linkExists(sample.table, col, ['join'])">
+                                <v-list-item>
+                                  {{ `${linkMap[sample.table.name][col].table.name}:${linkMap[sample.table.name][col].column}` }}
+                                  <v-spacer />
+                                  <v-btn
+                                    icon
+                                    right
+                                    @click.stop="removeColumnLink(sample.table, col)"
+                                  >
+                                    <v-icon>close</v-icon>
+                                  </v-btn>
+                                </v-list-item>
+                              </template>
+                              <template v-else>
+                                <v-list-item
+                                  v-for="otherCol in getOtherTableColumns(sample.table.name)"
+                                  :key="`${sample.table.name}-${otherCol.table.name}-${otherCol.column}`"
+                                  @click="joinTable(sample.table, col, otherCol.table, otherCol.column)"
+                                >
+                                  {{ `${otherCol.table.name}:${otherCol.column}` }}
+                                </v-list-item>
+                              </template>
+                            </v-list>
                           </v-card>
                         </v-menu>
                       </th>
@@ -460,37 +474,35 @@ export default defineComponent({
       ), {}));
     });
 
+    type LinkType = 'source' | 'target' | 'join';
     interface LinkMapValue {
       table: BaseTable;
       column: string;
-      type: 'source' | 'target' | 'join'
     }
     const linkMap = computed(() => {
-      const map = {} as Record<string, Record<string, LinkMapValue>>;
+      const map = {} as Record<string, Record<string, Record<LinkType, LinkMapValue>>>;
 
       // Edge table
       if (edgeTable.value) {
         map[edgeTable.value.table.name] = {};
 
         if (edgeTable.value.source && sourceTable.value) {
-          map[edgeTable.value.table.name][edgeTable.value.source.local] = {
+          // TODO: Fix setting existing
+          map[edgeTable.value.table.name][edgeTable.value.source.local].source = {
             table: sourceTable.value,
             column: edgeTable.value.source.foreign,
-            type: 'source',
           };
         }
         if (edgeTable.value.target && targetTable.value) {
-          map[edgeTable.value.table.name][edgeTable.value.target.local] = {
+          map[edgeTable.value.table.name][edgeTable.value.target.local].target = {
             table: targetTable.value,
             column: edgeTable.value.target.foreign,
-            type: 'target',
           };
         }
         if (edgeTable.value.table.joined) {
-          map[edgeTable.value.table.name][edgeTable.value.table.joined.link.local] = {
+          map[edgeTable.value.table.name][edgeTable.value.table.joined.link.local].join = {
             table: edgeTable.value.table.joined.table,
             column: edgeTable.value.table.joined.link.foreign,
-            type: 'join',
           };
         }
       }
@@ -498,25 +510,37 @@ export default defineComponent({
       // Source table
       if (sourceTable.value?.joined) {
         map[sourceTable.value.name] = {};
-        map[sourceTable.value.name][sourceTable.value.joined.link.local] = {
+        map[sourceTable.value.name][sourceTable.value.joined.link.local].join = {
           table: sourceTable.value.joined.table,
           column: sourceTable.value.joined.link.foreign,
-          type: 'join',
         };
       }
 
       // Target table
       if (targetTable.value?.joined) {
         map[targetTable.value.name] = {};
-        map[targetTable.value.name][targetTable.value.joined.link.local] = {
+        map[targetTable.value.name][targetTable.value.joined.link.local].join = {
           table: targetTable.value.joined.table,
           column: targetTable.value.joined.link.foreign,
-          type: 'join',
         };
       }
 
       return map;
     });
+
+    function linkExists(table: BaseTable, col: string, types?: LinkType[]) {
+      const entry = linkMap.value[table.name]?.[col];
+      if (entry === undefined) {
+        return false;
+      }
+      if (types === undefined) {
+        return true;
+      }
+
+      const linkTypes = Object.keys(entry) as LinkType[];
+      const intersection = linkTypes.some((t) => types.includes(t));
+      return entry !== undefined && intersection;
+    }
 
     // Network data
     function setEdgeTable(table: BaseTable, val: boolean) {
@@ -687,7 +711,7 @@ export default defineComponent({
     }
 
     function removeColumnLink(mainTable: FullTable, col: string) {
-      const link: LinkMapValue | undefined = linkMap.value[mainTable.name]?.[col];
+      const link = linkMap.value[mainTable.name]?.[col];
       if (link === undefined) {
         throw new Error('Link not found!');
       }
@@ -697,26 +721,23 @@ export default defineComponent({
           sourceTable.value?.name === mainTable.name
           || targetTable.value?.name === mainTable.name
         )
-        && link.type !== 'join'
+        && link.join === undefined
       ) {
         throw new Error('Cannot have source/target links from source/target table!');
       }
 
       if (edgeTable.value?.table.name === mainTable.name) {
-        switch (link.type) {
-          case 'source':
-            sourceTable.value = undefined;
-            edgeTable.value.source = undefined;
-            return;
-          case 'target':
-            targetTable.value = undefined;
-            edgeTable.value.target = undefined;
-            return;
-          case 'join':
-            edgeTable.value.table.joined = undefined;
-            return;
-          default:
-            break;
+        const keys = Object.keys(link) as LinkType[];
+        if (keys.includes('source')) {
+          sourceTable.value = undefined;
+          edgeTable.value.source = undefined;
+        }
+        if (keys.includes('target')) {
+          targetTable.value = undefined;
+          edgeTable.value.target = undefined;
+        }
+        if (keys.includes('join')) {
+          edgeTable.value.table.joined = undefined;
         }
       }
 
@@ -759,10 +780,14 @@ export default defineComponent({
     }
 
     /* eslint-disable prefer-destructuring */
-    function linkColor(table: BaseTable, col: string, text = false) {
+    function linkColor(table: BaseTable, col: string, tableType: 'edge' | 'node') {
+      const allowedTypes = tableType === 'edge' ? ['source', 'target'] : ['join'];
+
+      // There's at most 5 links
       let color;
 
       // Source link
+      // TODO: Update to use linkMap and distinguish between link type
       if (
         (edgeTable.value?.table.name === table.name && col === edgeTable.value?.source?.local)
         || (sourceTable.value?.name === table.name && col === edgeTable.value?.source?.foreign)
@@ -800,10 +825,6 @@ export default defineComponent({
         || (targetTable.value?.joined?.table.name === table.name && col === targetTable.value.joined.link.foreign)
       ) {
         color = LinkColors[4];
-      }
-
-      if (color && text) {
-        color = `${color}--text`;
       }
 
       return color;
@@ -876,6 +897,7 @@ export default defineComponent({
       visibleTableSamples,
       allTablesVisible,
       selectAllTables,
+      inNetworkTables,
       menuOpen,
       selectingSource,
       selectingTarget,
@@ -885,6 +907,7 @@ export default defineComponent({
       joinTable,
       removeColumnLink,
       linkMap,
+      linkExists,
       getColumnItemClass,
       columnItemText,
       linkColor,
