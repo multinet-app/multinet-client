@@ -111,7 +111,8 @@ export default Vue.extend({
             this.newWorkspace = '';
             this.dialog = false;
           }
-        } catch (err) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (err: any) {
           if (err.status === 409) {
             this.error = `Workspace "${err.data}" already exists!`;
           } else {

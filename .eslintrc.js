@@ -23,6 +23,10 @@ module.exports = {
     'max-len': ['off'],
     'import/prefer-default-export': ['off'],
     camelcase: 'off',
+    'vuejs-accessibility/no-autofocus': 'off',
+    'vue/multi-word-component-names': ['error', {
+      ignores: ['Sidebar'],
+    }],
   },
 
   parserOptions: {

@@ -189,7 +189,8 @@ export default Vue.extend({
       return `${this.apps.network_visualizations.filter((d) => d.name === 'MultiLink')[0].url}`;
     },
 
-    samples(): Array<{title: string; image: NodeRequire; text: string; href: string }> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    samples(): Array<{title: string; image: any; text: string; href: string }> {
       return [
         {
           title: 'Paul Revere - MultiLink',

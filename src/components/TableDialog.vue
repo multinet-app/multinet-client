@@ -128,11 +128,11 @@
             :items="sampleRows"
             height="65vh"
           >
-            <template #header="{ props: { headers } }">
+            <template #header="{ props: { headers: innerHeaders } }">
               <thead dark>
                 <tr>
                   <th
-                    v-for="(header, i) in headers"
+                    v-for="(header, i) in innerHeaders"
                     :key="i"
                     class="pt-2 pb-4"
                   >
@@ -208,7 +208,8 @@ export default defineComponent({
       return '35vw';
     });
 
-    const sampleRows: Ref<Array<{}>> = ref([]);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const sampleRows: Ref<Array<Record<string, any>>> = ref([]);
     const headers = computed(() => {
       const keys = Object.keys(sampleRows.value[0] || {});
       return keys.map((key) => ({
@@ -302,7 +303,8 @@ export default defineComponent({
 
         emit('success');
         resetAllFields();
-      } catch (err) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (err: any) {
         tableCreationError.value = `${Object.values(err.response.data).flat()[0]}`;
       } finally {
         uploading.value = false;
