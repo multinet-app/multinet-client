@@ -140,7 +140,7 @@
 
                         <!-- Link to other table column -->
                         <v-menu
-                          v-if="edgeTable?.table.name === sample.table.name"
+                          v-if="mainTables.some((t) => t?.name === sample.table.name)"
                           :close-on-content-click="false"
                           @input="menuOpen = $event"
                         >
@@ -154,10 +154,7 @@
                               link
                             </v-icon>
                           </template>
-                          <v-card
-                            v-if="!linkDisabled(sample.table)"
-                            max-height="30vh"
-                          >
+                          <v-card max-height="30vh">
                             <!-- Edge Table -->
                             <v-card-subtitle
                               class="py-1 px-2"
@@ -196,7 +193,7 @@
                               >
                                 <template v-if="linkExists(sample.table, col, ['source', 'target'])">
                                   <v-list-item>
-                                    {{ `${linkMap[sample.table.name][col].table.name}:${linkMap[sample.table.name][col].column}` }}
+                                    {{ getLinkText(sample.table, col, ['source', 'target']) }}
                                     <v-spacer />
                                     <v-btn
                                       icon
@@ -230,16 +227,13 @@
                             <v-icon
                               :color="linkColor(sample.table, col, 'node')"
                               dark
-                              :disabled="linkDisabled(sample.table)"
+                              :disabled="joinDisabled(sample.table)"
                               v-on="on"
                             >
                               call_merge
                             </v-icon>
                           </template>
-                          <v-card
-                            v-if="!linkDisabled(sample.table)"
-                            max-height="30vh"
-                          >
+                          <v-card max-height="30vh">
                             <!-- Node Table -->
                             <v-card-subtitle class="py-1 px-2">
                               <span v-if="linkExists(sample.table, col, ['join'])">
@@ -255,7 +249,7 @@
                             >
                               <template v-if="linkExists(sample.table, col, ['join'])">
                                 <v-list-item>
-                                  {{ `${linkMap[sample.table.name][col].table.name}:${linkMap[sample.table.name][col].column}` }}
+                                  {{ getLinkText(sample.table, col, ['join']) }}
                                   <v-spacer />
                                   <v-btn
                                     icon
@@ -480,49 +474,51 @@ export default defineComponent({
       column: string;
     }
     const linkMap = computed(() => {
-      const map = {} as Record<string, Record<string, Record<LinkType, LinkMapValue>>>;
+      const map = {} as Record<string, Record<string, Partial<Record<LinkType, LinkMapValue>>>>;
+      function set(table: string, col: string, type: LinkType, val: LinkMapValue) {
+        if (map[table] === undefined) {
+          map[table] = {};
+        }
+        if (map[table][col] === undefined) {
+          map[table][col] = {};
+        }
+        map[table][col][type] = val;
+      }
 
       // Edge table
-      if (edgeTable.value) {
-        map[edgeTable.value.table.name] = {};
-
-        if (edgeTable.value.source && sourceTable.value) {
-          // TODO: Fix setting existing
-          map[edgeTable.value.table.name][edgeTable.value.source.local].source = {
-            table: sourceTable.value,
-            column: edgeTable.value.source.foreign,
-          };
-        }
-        if (edgeTable.value.target && targetTable.value) {
-          map[edgeTable.value.table.name][edgeTable.value.target.local].target = {
-            table: targetTable.value,
-            column: edgeTable.value.target.foreign,
-          };
-        }
-        if (edgeTable.value.table.joined) {
-          map[edgeTable.value.table.name][edgeTable.value.table.joined.link.local].join = {
-            table: edgeTable.value.table.joined.table,
-            column: edgeTable.value.table.joined.link.foreign,
-          };
-        }
+      if (edgeTable.value?.source && sourceTable.value) {
+        set(edgeTable.value.table.name, edgeTable.value.source.local, 'source', {
+          table: sourceTable.value,
+          column: edgeTable.value.source.foreign,
+        });
+      }
+      if (edgeTable.value?.target && targetTable.value) {
+        set(edgeTable.value.table.name, edgeTable.value.target.local, 'target', {
+          table: targetTable.value,
+          column: edgeTable.value.target.foreign,
+        });
+      }
+      if (edgeTable.value?.table.joined) {
+        set(edgeTable.value.table.name, edgeTable.value.table.joined.link.local, 'join', {
+          table: edgeTable.value.table.joined.table,
+          column: edgeTable.value.table.joined.link.foreign,
+        });
       }
 
       // Source table
       if (sourceTable.value?.joined) {
-        map[sourceTable.value.name] = {};
-        map[sourceTable.value.name][sourceTable.value.joined.link.local].join = {
+        set(sourceTable.value.name, sourceTable.value.joined.link.local, 'join', {
           table: sourceTable.value.joined.table,
           column: sourceTable.value.joined.link.foreign,
-        };
+        });
       }
 
       // Target table
       if (targetTable.value?.joined) {
-        map[targetTable.value.name] = {};
-        map[targetTable.value.name][targetTable.value.joined.link.local].join = {
+        set(targetTable.value.name, targetTable.value.joined.link.local, 'join', {
           table: targetTable.value.joined.table,
           column: targetTable.value.joined.link.foreign,
-        };
+        });
       }
 
       return map;
@@ -540,6 +536,30 @@ export default defineComponent({
       const linkTypes = Object.keys(entry) as LinkType[];
       const intersection = linkTypes.some((t) => types.includes(t));
       return entry !== undefined && intersection;
+    }
+
+    /** Get first link that matches specified type. */
+    function getLinkText(table: BaseTable, col: string, types?: LinkType[]) {
+      const format = (val: LinkMapValue) => (`${val.table.name}:${val.column}`);
+      const entry = linkMap.value[table.name]?.[col];
+      const linkTypes = Object.keys(entry || {}) as LinkType[];
+      if (entry === undefined || !linkTypes.length) {
+        return '';
+      }
+
+      if (types === undefined) {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        return format(entry[linkTypes[0]]!);
+      }
+
+      // Return first matching linkType
+      const match = linkTypes.find((t) => types.includes(t));
+      if (match === undefined) {
+        return '';
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      return format(entry[match]!);
     }
 
     // Network data
@@ -706,10 +726,20 @@ export default defineComponent({
     }
 
     function linkDisabled(table: BaseTable): boolean {
-      // Disable if not one of main tables
-      return !mainTables.value.some((t) => t?.name === table.name);
+      return edgeTable.value?.table.name !== table.name;
     }
 
+    function joinDisabled(table: BaseTable, col: string): boolean {
+      // Disable if not one of main tables, or if another column
+      // in this table is already linked (only one join per table allowed)
+      const entry = linkMap.value[table.name];
+      return !mainTables.value.some((t) => t?.name === table.name) || (
+        entry !== undefined
+        && Object.keys(entry).some((key) => key !== col && entry[key].join !== undefined)
+      );
+    }
+
+    // TODO: Fix
     function removeColumnLink(mainTable: FullTable, col: string) {
       const link = linkMap.value[mainTable.name]?.[col];
       if (link === undefined) {
@@ -897,6 +927,7 @@ export default defineComponent({
       visibleTableSamples,
       allTablesVisible,
       selectAllTables,
+      mainTables,
       inNetworkTables,
       menuOpen,
       selectingSource,
@@ -912,6 +943,8 @@ export default defineComponent({
       columnItemText,
       linkColor,
       linkDisabled,
+      getLinkText,
+      joinDisabled,
       setEdgeTable,
       valid,
       createNetwork,
