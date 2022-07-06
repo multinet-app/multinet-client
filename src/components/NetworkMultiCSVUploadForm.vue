@@ -254,7 +254,7 @@
                                   <v-btn
                                     icon
                                     right
-                                    @click.stop="removeColumnLink(sample.table, col)"
+                                    @click.stop="removeColumnLink(sample.table, col, true)"
                                   >
                                     <v-icon>close</v-icon>
                                   </v-btn>
@@ -739,7 +739,7 @@ export default defineComponent({
       );
     }
 
-    function removeColumnLink(mainTable: FullTable, col: string) {
+    function removeColumnLink(mainTable: FullTable, col: string, join = false) {
       const link = linkMap.value[mainTable.name]?.[col];
       if (link === undefined) {
         throw new Error('Link not found!');
@@ -758,17 +758,19 @@ export default defineComponent({
       // Edge table
       if (edgeTable.value?.table.name === mainTable.name) {
         const keys = Object.keys(link) as LinkType[];
-        if (keys.includes('source')) {
-          sourceTable.value = undefined;
-          edgeTable.value.source = undefined;
-        }
-        if (keys.includes('target')) {
-          targetTable.value = undefined;
-          edgeTable.value.target = undefined;
-        }
-        if (keys.includes('join')) {
+        if (!join) {
+          if (keys.includes('source')) {
+            sourceTable.value = undefined;
+            edgeTable.value.source = undefined;
+          }
+          if (keys.includes('target')) {
+            targetTable.value = undefined;
+            edgeTable.value.target = undefined;
+          }
+        } else if (keys.includes('join')) {
           edgeTable.value.table.joined = undefined;
         }
+
         return;
       }
 
