@@ -146,9 +146,9 @@
                         >
                           <template #activator="{ on }">
                             <v-icon
-                              :color="linkColor(sample.table, col, 'edge')"
+                              :color="linkColor(sample.table, col)"
                               dark
-                              :disabled="linkDisabled(sample.table)"
+                              :class="{'disable-events': linkDisabled(sample.table)}"
                               v-on="on"
                             >
                               link
@@ -225,9 +225,9 @@
                         >
                           <template #activator="{ on }">
                             <v-icon
-                              :color="linkColor(sample.table, col, 'node')"
+                              :color="linkColor(sample.table, col, true)"
+                              :class="{'disable-events': joinDisabled(sample.table, col)}"
                               dark
-                              :disabled="joinDisabled(sample.table)"
                               v-on="on"
                             >
                               call_merge
@@ -739,7 +739,6 @@ export default defineComponent({
       );
     }
 
-    // TODO: Fix
     function removeColumnLink(mainTable: FullTable, col: string) {
       const link = linkMap.value[mainTable.name]?.[col];
       if (link === undefined) {
@@ -756,6 +755,7 @@ export default defineComponent({
         throw new Error('Cannot have source/target links from source/target table!');
       }
 
+      // Edge table
       if (edgeTable.value?.table.name === mainTable.name) {
         const keys = Object.keys(link) as LinkType[];
         if (keys.includes('source')) {
@@ -769,6 +769,7 @@ export default defineComponent({
         if (keys.includes('join')) {
           edgeTable.value.table.joined = undefined;
         }
+        return;
       }
 
       if (sourceTable.value?.name === mainTable.name) {
@@ -810,54 +811,66 @@ export default defineComponent({
     }
 
     /* eslint-disable prefer-destructuring */
-    function linkColor(table: BaseTable, col: string, tableType: 'edge' | 'node') {
-      const allowedTypes = tableType === 'edge' ? ['source', 'target'] : ['join'];
-
+    function linkColor(table: BaseTable, col: string, join = false) {
       // There's at most 5 links
-      let color;
+      // Edge -> Source
+      // Edge -> Target
+      // Edge -> Joined Table
+      // Source -> Joined Table
+      // Target -> Joined Table
+      // Since we want to show both sides of link, in reality there are 10 places it can live
 
       // Source link
-      // TODO: Update to use linkMap and distinguish between link type
       if (
-        (edgeTable.value?.table.name === table.name && col === edgeTable.value?.source?.local)
-        || (sourceTable.value?.name === table.name && col === edgeTable.value?.source?.foreign)
+        !join && (
+          (edgeTable.value?.table.name === table.name && col === edgeTable.value?.source?.local)
+          || (sourceTable.value?.name === table.name && col === edgeTable.value?.source?.foreign)
+        )
       ) {
-        color = LinkColors[0];
+        return LinkColors[0];
       }
 
       // Target link
       if (
-        (edgeTable.value?.table.name === table.name && col === edgeTable.value.target?.local)
-        || (targetTable.value?.name === table.name && col === edgeTable.value?.target?.foreign)
+        !join && (
+          (edgeTable.value?.table.name === table.name && col === edgeTable.value.target?.local)
+          || (targetTable.value?.name === table.name && col === edgeTable.value?.target?.foreign)
+        )
       ) {
-        color = LinkColors[1];
+        return LinkColors[1];
       }
 
       // Edge table join
       if (
-        (edgeTable.value?.table.name === table.name && col === edgeTable.value?.table.joined?.link.local)
-        || (edgeTable.value?.table.joined?.table.name === table.name && col === edgeTable.value?.table.joined.link.foreign)
+        join && (
+          (edgeTable.value?.table.name === table.name && col === edgeTable.value?.table.joined?.link.local)
+          || (edgeTable.value?.table.joined?.table.name === table.name && col === edgeTable.value?.table.joined.link.foreign)
+        )
       ) {
-        color = LinkColors[2];
+        return LinkColors[2];
       }
 
       // Source table join
       if (
-        (sourceTable.value?.name === table.name && col === sourceTable.value.joined?.link.local)
-        || (sourceTable.value?.joined?.table.name === table.name && col === sourceTable.value.joined.link.foreign)
+        join && (
+          (sourceTable.value?.name === table.name && col === sourceTable.value.joined?.link.local)
+          || (sourceTable.value?.joined?.table.name === table.name && col === sourceTable.value.joined.link.foreign)
+        )
       ) {
-        color = LinkColors[3];
+        return LinkColors[3];
       }
 
       // Target table join
       if (
-        (targetTable.value?.name === table.name && col === targetTable.value.joined?.link.local)
-        || (targetTable.value?.joined?.table.name === table.name && col === targetTable.value.joined.link.foreign)
+        join && (
+          (targetTable.value?.name === table.name && col === targetTable.value.joined?.link.local)
+          || (targetTable.value?.joined?.table.name === table.name && col === targetTable.value.joined.link.foreign)
+        )
       ) {
-        color = LinkColors[4];
+        return LinkColors[4];
       }
 
-      return color;
+      return undefined;
     }
     /* eslint-enable prefer-destructuring */
 
@@ -957,5 +970,9 @@ export default defineComponent({
 .upload-preview table th, .table-title {
   background-color: #1976d2 !important;
   color: #fff !important;
+}
+
+.disable-events {
+  pointer-events: none
 }
 </style>
