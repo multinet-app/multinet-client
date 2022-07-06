@@ -184,7 +184,8 @@ export default Vue.extend({
 
         this.tableCreationError = null;
         this.$emit('success');
-      } catch (err) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (err: any) {
         if (err.status === 409) {
           this.tableCreationError = `Table "${fileName}" already exists`;
         } else if (err.status === 415) {

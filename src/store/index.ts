@@ -147,7 +147,8 @@ const {
       try {
         const info = await api.userInfo();
         commit.setUserInfo(info);
-      } catch (error) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
         if (error.response.status === 401) {
           commit.setUserInfo(null);
         } else {
@@ -180,6 +181,7 @@ export {
 // The following lines enable types in the injected store '$store'.
 export type ApplicationStore = typeof store;
 declare module 'vuex' {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Store<S> {
     direct: ApplicationStore;
   }

@@ -77,7 +77,7 @@
             offset-y
             :close-on-content-click="false"
           >
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <v-btn
                 class="ml-2"
                 color="secondary"
@@ -118,14 +118,14 @@
 </template>
 
 <script lang="ts">
-
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import VueJsonPretty from 'vue-json-pretty';
 import { PropType } from 'vue';
 import api from '@/api';
 import store from '@/store';
 
+// eslint-disable-next-line no-use-before-define
 type AnyJson = boolean | number | string | null | JsonArray | JsonMap;
 interface JsonMap { [key: string]: AnyJson }
 type JsonArray = Array<AnyJson>
@@ -212,7 +212,8 @@ export default {
         store.dispatch.fetchWorkspace(this.workspace);
 
         this.$router.push({ name: 'tableDetail', params: { workspace, table: createTableName } });
-      } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
         if (error.status === 409) {
           this.createTableErrorMessage = 'Table Already Exists';
         } else {
@@ -235,7 +236,8 @@ export default {
         const resp = await api.aql(workspace, query);
         this.lastQueryResults = resp;
         this.queryErrorMessage = '';
-      } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
         this.queryErrorMessage = error.data;
         this.lastQueryResults = null;
       }

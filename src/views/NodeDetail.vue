@@ -262,11 +262,11 @@ import api from '@/api';
 import { KeyValue } from '@/types';
 import WorkspaceOptionMenu from '@/components/WorkspaceOptionMenu.vue';
 
-interface EdgeRecord {
-  id: string;
-  from: string;
-  to: string;
-}
+// interface EdgeRecord {
+//   id: string;
+//   from: string;
+//   to: string;
+// }
 
 interface Connection {
   id: string;

@@ -19,7 +19,7 @@
               v-if="!editing && hover"
               left
             >
-              <template v-slot:activator="{ on }">
+              <template #activator="{ on }">
                 <div>
                   <v-btn
                     class="ml-1 mr-2"
@@ -243,7 +243,8 @@ export default defineComponent({
           requestError.value = null;
 
           store.dispatch.fetchWorkspaces();
-        } catch (err) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (err: any) {
           if (err.response.status === 409) {
             requestError.value = 'A workspace by that name already exists';
           } else {

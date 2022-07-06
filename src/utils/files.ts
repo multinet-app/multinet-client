@@ -39,20 +39,20 @@ interface TypeScore {
 
 interface CSVAnalysis {
   typeRecs: Map<string, CSVColumnType>;
-  sampleRows: Array<{}>;
+  sampleRows: Array<Record<string, unknown>>;
 }
 
 async function analyzeCSV(file: File): Promise<CSVAnalysis> {
   const parsePromise: Promise<CSVAnalysis> = new Promise((resolve) => {
     const columnTypes = new Map<string, TypeScore>();
     const typeRecs = new Map<string, CSVColumnType>();
-    const sampleRows = [] as Array<{}>;
+    const sampleRows = [] as Array<Record<string, unknown>>;
     let rowsParsed = 0;
 
     Papa.parse(file, {
       header: true,
       skipEmptyLines: true,
-      step(row: ParseResult<{}>, parser) {
+      step(row: ParseResult<Record<string, unknown>>, parser) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const data = row.data as { [key: string]: any };
 
