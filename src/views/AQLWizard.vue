@@ -154,9 +154,9 @@ export default {
     };
   },
   computed: {
-    nodeTables: () => store.getters.nodeTables,
-    edgeTables: () => store.getters.edgeTables,
-    networks: () => store.getters.networks,
+    nodeTables: () => store.getters.nodeTables.map((table) => table.name),
+    edgeTables: () => store.getters.edgeTables.map((table) => table.name),
+    networks: () => store.getters.networks.map((network) => network.name),
     workspaceInfo() {
       return [
         { title: 'Node Tables', data: this.nodeTables },
