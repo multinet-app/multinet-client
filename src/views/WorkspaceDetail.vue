@@ -158,7 +158,7 @@
 <script lang="ts">
 import {
   defineComponent, ref, PropType, computed, watch,
-} from '@vue/composition-api';
+} from 'vue';
 
 import api from '@/api';
 import TablePanel from '@/components/TablePanel.vue';
