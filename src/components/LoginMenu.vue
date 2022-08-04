@@ -61,64 +61,55 @@
 </template>
 
 <script lang="ts">
-import { UserSpec } from 'multinet';
 import oauthClient from '@/oauth';
 import store from '@/store';
+import {
+  computed, defineComponent, getCurrentInstance, ref, watch,
+} from 'vue';
 
-export default {
-  data: () => ({
-    menu: false,
-    location: '',
-  }),
+export default defineComponent({
+  setup() {
+    const menu = ref(false);
+    const location = ref('');
 
-  computed: {
-    userInfo: (): UserSpec | null => store.state.userInfo,
-
-    userInitials(): string {
-      // Required due to poor Vue TS support. See
-      // https://github.com/multinet-app/multinet-client/pull/80#discussion_r422401040
-      const userInfo = this.userInfo as unknown as UserSpec | null;
-
-      if (userInfo !== null) {
-        return `${userInfo.first_name[0] || ''}${userInfo.last_name[0] || ''}`;
-      }
-      return '';
-    },
-  },
-
-  watch: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    menu(this: any, menu: boolean) {
-      if (menu) {
-        this.location = window.location.href;
-      }
-    },
-  },
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  created(this: any) {
     store.dispatch.fetchUserInfo();
-  },
+    const userInfo = computed(() => store.state.userInfo);
+    const userInitials = computed(() => (userInfo.value !== null ? `${userInfo.value.first_name[0] || ''}${userInfo.value.last_name[0] || ''}` : ''));
 
-  methods: {
-    login(): void {
+    watch(menu, () => {
+      if (menu.value) {
+        location.value = window.location.href;
+      }
+    });
+
+    function login() {
       oauthClient.redirectToLogin();
-    },
+    }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async logout(this: any) {
+    const currentInstance = getCurrentInstance();
+    const router = currentInstance !== null ? currentInstance.proxy.$router : null;
+    async function logout() {
       // Perform the logout action, then redirect the user to the home page.
       // This is to prevent the logged-out user from continuing to look at, e.g.,
       // workspaces or tables they may have been viewing at the time of logout.
       await store.dispatch.logout();
 
       // Avoid illegal duplicate navigation if we are already on the Home view.
-      if (this.$router.currentRoute.name !== 'home') {
-        this.$router.push({ name: 'home' });
+      if (router !== null && router.currentRoute.name !== 'home') {
+        router.push({ name: 'home' });
       }
-    },
+    }
+
+    return {
+      menu,
+      location,
+      userInfo,
+      userInitials,
+      login,
+      logout,
+    };
   },
-};
+});
 </script>
 
 <style scoped>

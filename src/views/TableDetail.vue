@@ -148,7 +148,10 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from 'vue';
+import {
+  computed,
+  defineComponent, PropType, Ref, ref, watch,
+} from 'vue';
 import { DataPagination } from 'vuetify';
 
 import api from '@/api';
@@ -156,7 +159,7 @@ import { App, KeyValue, TableRow } from '@/types';
 import store from '@/store';
 import WorkspaceOptionMenu from '@/components/WorkspaceOptionMenu.vue';
 
-export default Vue.extend({
+export default defineComponent({
   name: 'TableDetail',
 
   components: {
@@ -179,38 +182,29 @@ export default Vue.extend({
       required: true,
     },
   },
-  data() {
-    return {
-      rowKeys: [] as KeyValue[][],
-      headers: [] as Array<keyof TableRow>,
-      editing: false,
-      tableSize: 1,
-      pagination: {} as DataPagination,
-      loading: true,
-      loadingTables: true,
-    };
-  },
-  computed: {
-    tables: () => store.getters.tables,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    dataTableHeaders(this: any) {
-      const {
-        headers,
-      } = this;
+  setup(props) {
+    const rowKeys: Ref<KeyValue[][]> = ref([]);
+    const headers: Ref<Array<keyof TableRow>> = ref([]);
+    const editing = ref(false);
+    const tableSize = ref(1);
+    const pagination: Ref<DataPagination> = ref({} as DataPagination);
+    const loading = ref(true);
+    const loadingTables = ref(true);
+    const columnTypes = ref({});
 
-      return headers.map((header: Array<keyof TableRow>) => ({
-        text: header,
-        value: header,
-      }));
-    },
+    api.columnTypes(props.workspace, props.table).then((data) => { columnTypes.value = data; });
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    dataTableRows(this: any) {
+    const tables = computed(() => store.getters.tables);
+    const dataTableHeaders = computed(() => headers.value.map((header) => ({
+      text: header,
+      value: header,
+    })));
+    const dataTableRows = computed(() => {
       const result = [] as TableRow[];
 
-      this.rowKeys.forEach((rowKey: KeyValue[]) => {
+      rowKeys.value.forEach((rowKey) => {
         const obj = {} as TableRow;
-        rowKey.forEach((entry: KeyValue) => {
+        rowKey.forEach((entry) => {
           obj[entry.key] = entry.value;
         });
 
@@ -218,65 +212,14 @@ export default Vue.extend({
       });
 
       return result;
-    },
-  },
+    });
 
-  asyncComputed: {
-    columnTypes: {
-      async get() {
-        try {
-          return await api.columnTypes(this.workspace, this.table);
-        } catch (err) {
-          return {};
-        }
-      },
+    async function update() {
+      loading.value = true;
 
-      default: {},
-    },
-  },
-
-  watch: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    workspace(this: any) {
-      this.update();
-    },
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    table(this: any) {
-      this.update();
-    },
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    tables(this: any) {
-      this.loadingTables = false;
-    },
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    pagination(this: any) {
-      this.update();
-    },
-  },
-
-  created() {
-    store.dispatch.fetchWorkspace(this.workspace);
-  },
-
-  methods: {
-    rowClassName(index: number): 'even-row' | 'odd-row' {
-      return index % 2 === 0 ? 'even-row' : 'odd-row';
-    },
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async update(this: any) {
-      const {
-        pagination,
-      } = this;
-
-      this.loading = true;
-
-      const result = await api.table(this.workspace, this.table, {
-        offset: (pagination.page - 1) * pagination.itemsPerPage,
-        limit: pagination.itemsPerPage,
+      const result = await api.table(props.workspace, props.table, {
+        offset: (pagination.value.page - 1) * pagination.value.itemsPerPage,
+        limit: pagination.value.itemsPerPage,
       });
 
       const {
@@ -284,10 +227,10 @@ export default Vue.extend({
         count,
       } = result;
 
-      this.tableSize = count;
+      tableSize.value = count;
 
-      const rowKeys: KeyValue[][] = [];
-      let headers: Array<keyof TableRow> = [];
+      const newRowKeys: KeyValue[][] = [];
+      let newHeaders: Array<keyof TableRow> = [];
       if (rows) {
         rows.forEach((row) => {
           const rowData: KeyValue[] = [];
@@ -300,17 +243,36 @@ export default Vue.extend({
               });
             });
 
-          rowKeys.push(rowData);
+          newRowKeys.push(rowData);
         });
 
-        headers = rows.length > 0 ? Object.keys(rows[0]).filter((d) => d !== '_rev') : [];
+        newHeaders = rows.length > 0 ? Object.keys(rows[0]).filter((d) => d !== '_rev') : [];
       }
 
-      this.rowKeys = rowKeys;
-      this.headers = headers;
+      rowKeys.value = newRowKeys;
+      headers.value = newHeaders;
 
-      this.loading = false;
-    },
+      loading.value = false;
+    }
+
+    watch([() => props.workspace, () => props.table, pagination], () => update());
+    watch(tables, () => { loadingTables.value = false; });
+
+    store.dispatch.fetchWorkspace(props.workspace);
+
+    return {
+      rowKeys,
+      headers,
+      editing,
+      tableSize,
+      pagination,
+      loading,
+      loadingTables,
+      dataTableHeaders,
+      dataTableRows,
+      columnTypes,
+      tables,
+    };
   },
 });
 </script>

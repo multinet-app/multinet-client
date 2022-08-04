@@ -107,7 +107,9 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from 'vue';
+import {
+  computed, defineComponent, PropType, ref, Ref, watch,
+} from 'vue';
 import DeleteTableDialog from '@/components/DeleteTableDialog.vue';
 import TableDialog from '@/components/TableDialog.vue';
 import DownloadDialog from '@/components/DownloadDialog.vue';
@@ -115,7 +117,7 @@ import DownloadDialog from '@/components/DownloadDialog.vue';
 import store from '@/store';
 import { App } from '@/types';
 
-export default Vue.extend({
+export default defineComponent({
   name: 'TablePanel',
 
   components: {
@@ -146,65 +148,43 @@ export default Vue.extend({
     },
   },
 
-  data() {
+  setup(props) {
     interface CheckboxTable {
       [index: string]: boolean;
     }
 
-    return {
-      checkbox: {} as CheckboxTable,
-      singleSelected: null as string | null,
-    };
-  },
+    const checkbox: Ref<CheckboxTable> = ref({});
+    const singleSelected: Ref<string | null> = ref('');
 
-  computed: {
-    checked(): string[] {
-      return Object.keys(this.checkbox)
-        .filter((d) => !!this.checkbox[d]);
-    },
-
-    selection(): string[] {
-      const {
-        singleSelected,
-        checked,
-      } = this;
-
-      let result: string[] = [];
-
-      if (singleSelected !== null) {
-        result = result.concat([singleSelected]);
-      } else {
-        result = result.concat(checked);
-      }
-
-      return result;
-    },
-
-    upsetUrl(): string {
-      const foundApp = this.apps.table_visualizations.find((vis: App) => vis.name === 'Upset');
+    const checked = computed(() => Object.keys(checkbox.value).filter((d) => !!checkbox.value[d]));
+    const selection = computed(() => (singleSelected.value !== null ? [singleSelected.value] : [...checked.value]));
+    const upsetUrl = computed(() => {
+      const foundApp = props.apps.table_visualizations.find((vis: App) => vis.name === 'Upset');
 
       return foundApp !== undefined ? foundApp.url : '';
-    },
-  },
+    });
 
-  watch: {
-    workspace() {
-      this.clearCheckboxes();
-    },
-  },
-
-  methods: {
-    clearCheckboxes() {
-      Object.keys(this.checkbox).forEach((key) => {
-        this.checkbox[key] = false;
+    function clearCheckboxes() {
+      Object.keys(checkbox.value).forEach((key) => {
+        checkbox.value[key] = false;
       });
-    },
+    }
 
-    async cleanup() {
-      this.singleSelected = null;
-      await store.dispatch.fetchWorkspace(this.workspace);
-      this.clearCheckboxes();
-    },
+    async function cleanup() {
+      singleSelected.value = null;
+      await store.dispatch.fetchWorkspace(props.workspace);
+      clearCheckboxes();
+    }
+
+    watch(() => props.workspace, () => clearCheckboxes());
+
+    return {
+      checkbox,
+      singleSelected,
+      selection,
+      upsetUrl,
+      cleanup,
+    };
   },
 });
 </script>

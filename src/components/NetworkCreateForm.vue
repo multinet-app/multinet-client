@@ -44,11 +44,13 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from 'vue';
+import {
+  computed, defineComponent, PropType, ref, Ref,
+} from 'vue';
 
 import api from '@/api';
 
-export default Vue.extend({
+export default defineComponent({
   name: 'NetworkCreateForm',
   props: {
     edgeTables: {
@@ -61,46 +63,47 @@ export default Vue.extend({
       required: true,
     },
   },
-  data() {
-    return {
-      networkCreationErrors: [] as string[],
-      networkEdgeTable: null as string | null,
-      newNetwork: '',
-      loading: false,
-    };
-  },
-  computed: {
-    networkCreateDisabled(): boolean {
-      return !this.networkEdgeTable || !this.newNetwork;
-    },
-  },
-  methods: {
-    async createNetwork() {
-      const { workspace, newNetwork } = this;
+  setup(props, { emit }) {
+    const networkCreationErrors: Ref<string[]> = ref([]);
+    const networkEdgeTable: Ref<string | null> = ref(null);
+    const newNetwork = ref('');
+    const loading = ref(false);
 
-      if (this.networkEdgeTable === null) {
+    const networkCreateDisabled = computed(() => !networkEdgeTable.value || !newNetwork.value);
+
+    function clear() {
+      networkEdgeTable.value = null;
+      newNetwork.value = '';
+      loading.value = false;
+    }
+
+    async function createNetwork() {
+      if (networkEdgeTable.value === null) {
         throw new Error('this.networkEdgeTable must not be null');
       }
 
       try {
-        this.loading = true;
-        await api.createNetwork(workspace, newNetwork, {
-          edgeTable: this.networkEdgeTable,
+        loading.value = true;
+        await api.createNetwork(props.workspace, newNetwork.value, {
+          edgeTable: networkEdgeTable.value,
         });
-        this.networkCreationErrors = [];
-        this.clear();
-        this.$emit('success');
+        networkCreationErrors.value = [];
+        clear();
+        emit('success');
       } catch (error) {
-        const message = `Network "${this.newNetwork}" already exists.`;
-        this.networkCreationErrors = [message];
+        const message = `Network "${newNetwork.value}" already exists.`;
+        networkCreationErrors.value = [message];
       }
-    },
+    }
 
-    clear() {
-      this.networkEdgeTable = null;
-      this.newNetwork = '';
-      this.loading = false;
-    },
+    return {
+      networkCreationErrors,
+      networkEdgeTable,
+      newNetwork,
+      loading,
+      networkCreateDisabled,
+      createNetwork,
+    };
   },
 });
 </script>

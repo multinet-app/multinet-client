@@ -255,7 +255,10 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from 'vue';
+import {
+  computed,
+  defineComponent, PropType, Ref, ref, watch,
+} from 'vue';
 import { EdgesSpec } from 'multinet';
 
 import api from '@/api';
@@ -275,7 +278,7 @@ interface Connection {
 
 type EdgeType = 'incoming' | 'outgoing';
 
-export default Vue.extend({
+export default defineComponent({
   name: 'NodeDetail',
 
   components: {
@@ -303,156 +306,125 @@ export default Vue.extend({
       required: true,
     },
   },
-  data() {
-    return {
-      incoming: [] as Connection[],
-      outgoing: [] as Connection[],
-      attributes: [] as KeyValue[],
-      offsetIncoming: 0,
-      offsetOutgoing: 0,
-      pageCount: 20,
-      totalIncoming: 0,
-      totalOutgoing: 0,
-      loading: true,
-    };
-  },
-  computed: {
-    lastIncomingPage(): number {
-      return this.computePageNumber(this.totalIncoming) * this.pageCount;
-    },
-    lastOutgoingPage(): number {
-      return this.computePageNumber(this.totalOutgoing) * this.pageCount;
-    },
-    nextIncoming(): boolean {
-      return this.lastIncomingPage !== this.offsetIncoming;
-    },
-    nextOutgoing(): boolean {
-      return this.lastOutgoingPage !== this.offsetOutgoing;
-    },
-    prevIncoming(): boolean {
-      return this.offsetIncoming !== 0;
-    },
-    prevOutgoing(): boolean {
-      return this.offsetOutgoing !== 0;
-    },
+  setup(props) {
+    const incoming: Ref<Connection[]> = ref([]);
+    const outgoing: Ref<Connection[]> = ref([]);
+    const attributes: Ref<KeyValue[]> = ref([]);
+    const offsetIncoming = ref(0);
+    const offsetOutgoing = ref(0);
+    const pageCount = ref(20);
+    const totalIncoming = ref(0);
+    const totalOutgoing = ref(0);
+    const loading = ref(true);
 
-    currentIncomingPageNumber(): number {
-      return this.computePageNumber(this.offsetIncoming) + 1;
-    },
+    function computePageNumber(offset: number) {
+      return Math.floor(offset / pageCount.value);
+    }
 
-    lastIncomingPageNumber(): number {
-      return this.computePageNumber(this.totalIncoming) + 1;
-    },
-
-    currentOutgoingPageNumber(): number {
-      return this.computePageNumber(this.offsetOutgoing) + 1;
-    },
-
-    lastOutgoingPageNumber(): number {
-      return this.computePageNumber(this.totalOutgoing) + 1;
-    },
-
-    attributeTable() {
-      const {
-        attributes,
-      } = this;
-
+    const lastIncomingPage = computed(() => computePageNumber(totalIncoming.value) * pageCount.value);
+    const lastOutgoingPage = computed(() => computePageNumber(totalOutgoing.value) * pageCount.value);
+    const nextIncoming = computed(() => lastIncomingPage.value !== offsetIncoming.value);
+    const nextOutgoing = computed(() => lastOutgoingPage.value !== offsetOutgoing.value);
+    const prevIncoming = computed(() => offsetIncoming.value !== 0);
+    const prevOutgoing = computed(() => offsetOutgoing.value !== 0);
+    const currentIncomingPageNumber = computed(() => computePageNumber(offsetIncoming.value) + 1);
+    const lastIncomingPageNumber = computed(() => computePageNumber(totalIncoming.value) + 1);
+    const currentOutgoingPageNumber = computed(() => computePageNumber(offsetOutgoing.value) + 1);
+    const lastOutgoingPageNumber = computed(() => computePageNumber(totalOutgoing.value) + 1);
+    const attributeTable = computed(() => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const table: { [key: string]: any } = {};
-      attributes.forEach((entry) => {
+      attributes.value.forEach((entry) => {
         table[entry.key] = entry.value;
       });
 
       return table;
-    },
-  },
-  watch: {
-    workspace() {
-      this.update();
-    },
-    network() {
-      this.update();
-    },
-    type() {
-      this.update();
-    },
-    node() {
-      this.update();
-    },
-    offsetIncoming() {
-      this.update();
-    },
-    offsetOutgoing() {
-      this.update();
-    },
-    pageCount() {
-      this.update();
-    },
-  },
-  created() {
-    this.update();
-  },
-  methods: {
-    async update() {
-      this.loading = true;
-      const nodeTable = (await api.table(this.workspace, this.type, {})).results;
+    });
+
+    async function update() {
+      loading.value = true;
+      const nodeTable = (await api.table(props.workspace, props.type, {})).results;
       // eslint-disable-next-line no-underscore-dangle
-      const node = nodeTable.find((table) => table._key === this.node);
-      const incoming = (await api.edges(this.workspace, this.network, {
+      const newNode = nodeTable.find((table) => table._key === props.node);
+      const newIncoming = (await api.edges(props.workspace, props.network, {
         direction: 'incoming',
-        offset: this.offsetIncoming,
-        limit: this.pageCount,
+        offset: offsetIncoming.value,
+        limit: pageCount.value,
       // eslint-disable-next-line no-underscore-dangle
-      })).results.filter((edge) => edge._to === `${this.type}/${this.node}`);
-      const outgoing = (await api.edges(this.workspace, this.network, {
+      })).results.filter((edge) => edge._to === `${props.type}/${props.node}`);
+      const newOutgoing = (await api.edges(props.workspace, props.network, {
         direction: 'outgoing',
-        offset: this.offsetOutgoing,
-        limit: this.pageCount,
+        offset: offsetOutgoing.value,
+        limit: pageCount.value,
       // eslint-disable-next-line no-underscore-dangle
-      })).results.filter((edge) => edge._from === `${this.type}/${this.node}`);
+      })).results.filter((edge) => edge._from === `${props.type}/${props.node}`);
 
       // eslint-disable-next-line no-underscore-dangle
-      if (node) {
-        this.attributes = Object.entries(node).filter(([key]) => key !== '_rev').map(([key, value]) => ({
+      if (newNode) {
+        attributes.value = Object.entries(newNode).filter(([key]) => key !== '_rev').map(([key, value]) => ({
           key,
           value,
         }));
       }
 
       // eslint-disable-next-line no-underscore-dangle
-      this.incoming = incoming.map((edge: EdgesSpec) => ({ id: edge._id, node: edge._from }));
+      incoming.value = newIncoming.map((edge: EdgesSpec) => ({ id: edge._id, node: edge._from }));
       // eslint-disable-next-line no-underscore-dangle
-      this.outgoing = outgoing.map((edge: EdgesSpec) => ({ id: edge._id, node: edge._to }));
-      this.totalIncoming = this.incoming.length;
-      this.totalOutgoing = this.outgoing.length;
+      outgoing.value = newOutgoing.map((edge: EdgesSpec) => ({ id: edge._id, node: edge._to }));
+      totalIncoming.value = incoming.value.length;
+      totalOutgoing.value = outgoing.value.length;
 
-      this.loading = false;
-    },
-    turnPage(edgeType: EdgeType, forward: number) {
+      loading.value = false;
+    }
+    function turnPage(edgeType: EdgeType, forward: number) {
       if (edgeType === 'incoming') {
-        this.offsetIncoming += forward ? this.pageCount : -this.pageCount;
+        offsetIncoming.value += forward ? pageCount.value : -pageCount.value;
       } else if (edgeType === 'outgoing') {
-        this.offsetOutgoing += forward ? this.pageCount : -this.pageCount;
+        offsetOutgoing.value += forward ? pageCount.value : -pageCount.value;
       }
-    },
-    lastPage(edgeType: EdgeType) {
+    }
+    function lastPage(edgeType: EdgeType) {
       if (edgeType === 'incoming') {
-        this.offsetIncoming = this.lastIncomingPage;
+        offsetIncoming.value = lastIncomingPage.value;
       } else if (edgeType === 'outgoing') {
-        this.offsetOutgoing = this.lastOutgoingPage;
+        offsetOutgoing.value = lastOutgoingPage.value;
       }
-    },
-    firstPage(edgeType: EdgeType) {
+    }
+    function firstPage(edgeType: EdgeType) {
       if (edgeType === 'incoming') {
-        this.offsetIncoming = 0;
+        offsetIncoming.value = 0;
       } else if (edgeType === 'outgoing') {
-        this.offsetOutgoing = 0;
+        offsetOutgoing.value = 0;
       }
-    },
+    }
 
-    computePageNumber(offset: number) {
-      return Math.floor(offset / this.pageCount);
-    },
+    watch([() => props.workspace, () => props.network, () => props.type, () => props.node, offsetIncoming, offsetOutgoing, pageCount], () => update());
+
+    update();
+
+    return {
+      incoming,
+      outgoing,
+      attributes,
+      offsetIncoming,
+      offsetOutgoing,
+      pageCount,
+      totalIncoming,
+      totalOutgoing,
+      loading,
+      attributeTable,
+      nextIncoming,
+      nextOutgoing,
+      prevIncoming,
+      prevOutgoing,
+      lastIncomingPageNumber,
+      lastOutgoingPageNumber,
+      currentIncomingPageNumber,
+      currentOutgoingPageNumber,
+      turnPage,
+      firstPage,
+      lastPage,
+    };
   },
 });
 </script>

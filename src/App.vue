@@ -26,39 +26,41 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 
 import Sidebar from '@/components/Sidebar.vue';
 import apps from '@/assets/appregistry.json';
 
-export default Vue.extend({
+export default defineComponent({
   name: 'App',
 
   components: {
     Sidebar,
   },
 
-  data() {
+  setup() {
+    const collabs = [
+      {
+        // eslint-disable-next-line global-require
+        logo: require('./assets/logo/utah_logo.png'),
+      },
+      {
+        // eslint-disable-next-line global-require
+        logo: require('./assets/logo/Kitware_Logo.png'),
+      },
+      {
+        // eslint-disable-next-line global-require
+        logo: require('./assets/logo/vdl_logo.png'),
+      },
+      {
+        // eslint-disable-next-line global-require
+        logo: require('./assets/logo/nsf_logo.png'),
+      },
+    ];
+
     return {
       apps,
-      collabs: [
-        {
-          // eslint-disable-next-line global-require
-          logo: require('./assets/logo/utah_logo.png'),
-        },
-        {
-          // eslint-disable-next-line global-require
-          logo: require('./assets/logo/Kitware_Logo.png'),
-        },
-        {
-          // eslint-disable-next-line global-require
-          logo: require('./assets/logo/vdl_logo.png'),
-        },
-        {
-          // eslint-disable-next-line global-require
-          logo: require('./assets/logo/nsf_logo.png'),
-        },
-      ],
+      collabs,
     };
   },
 });

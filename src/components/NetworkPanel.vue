@@ -109,7 +109,9 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from 'vue';
+import {
+  computed, defineComponent, PropType, Ref, ref, watch,
+} from 'vue';
 import { Network } from 'multinet';
 import DeleteNetworkDialog from '@/components/DeleteNetworkDialog.vue';
 import NetworkDialog from '@/components/NetworkDialog.vue';
@@ -118,7 +120,7 @@ import DownloadDialog from '@/components/DownloadDialog.vue';
 import store from '@/store';
 import { App } from '@/types';
 
-export default Vue.extend({
+export default defineComponent({
   name: 'NetworkPanel',
 
   components: {
@@ -159,60 +161,39 @@ export default Vue.extend({
     },
   },
 
-  data() {
+  setup(props) {
     interface CheckboxTable {
       [index: string]: boolean;
     }
 
-    return {
-      checkbox: {} as CheckboxTable,
-      singleSelected: null as string | null,
-      selectedVisApps: new Array(this.items.length),
-    };
-  },
+    const checkbox: Ref<CheckboxTable> = ref({});
+    const singleSelected: Ref<string | null> = ref('');
+    const selectedVisApps = ref(new Array(props.items.length));
 
-  computed: {
-    checked(): string[] {
-      return Object.keys(this.checkbox)
-        .filter((d) => !!this.checkbox[d]);
-    },
+    const checked = computed(() => Object.keys(checkbox.value).filter((d) => !!checkbox.value[d]));
+    const selection = computed(() => (singleSelected.value !== null ? [singleSelected.value] : [...checked.value]));
 
-    selection(): string[] {
-      const {
-        singleSelected,
-        checked,
-      } = this;
-
-      let result: string[] = [];
-
-      if (singleSelected !== null) {
-        result = result.concat([singleSelected]);
-      } else {
-        result = result.concat(checked);
-      }
-
-      return result;
-    },
-  },
-
-  watch: {
-    workspace() {
-      this.clearCheckboxes();
-    },
-  },
-
-  methods: {
-    clearCheckboxes() {
-      Object.keys(this.checkbox).forEach((key) => {
-        this.checkbox[key] = false;
+    function clearCheckboxes() {
+      Object.keys(checkbox.value).forEach((key) => {
+        checkbox.value[key] = false;
       });
-    },
+    }
 
-    async cleanup() {
-      this.singleSelected = null;
-      await store.dispatch.fetchWorkspace(this.workspace);
-      this.clearCheckboxes();
-    },
+    async function cleanup() {
+      singleSelected.value = null;
+      await store.dispatch.fetchWorkspace(props.workspace);
+      clearCheckboxes();
+    }
+
+    watch(() => props.workspace, () => clearCheckboxes());
+
+    return {
+      checkbox,
+      singleSelected,
+      selectedVisApps,
+      selection,
+      cleanup,
+    };
   },
 });
 </script>

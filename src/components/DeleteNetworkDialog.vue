@@ -75,12 +75,14 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from 'vue';
+import {
+  computed, defineComponent, PropType, ref, watch,
+} from 'vue';
 
 import api from '@/api';
 import { randomPhrase } from '@/utils/randomPhrase';
 
-export default Vue.extend({
+export default defineComponent({
   props: {
     selection: {
       type: Array as PropType<string[]>,
@@ -93,53 +95,41 @@ export default Vue.extend({
     },
   },
 
-  data() {
-    return {
-      dialog: false,
-      confirmation: '',
-      confirmationPhrase: '',
-    };
-  },
+  setup(props, { emit }) {
+    const dialog = ref(false);
+    const confirmation = ref('');
+    const confirmationPhrase = ref('');
 
-  computed: {
-    // This workaround is necessary because of https://github.com/vuejs/vue/issues/10455
-    //
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    plural(this: any) {
-      return this.selection.length > 1 ? 's' : '';
-    },
+    const plural = computed(() => (props.selection.length > 1 ? 's' : ''));
+    const nonZeroSelection = computed(() => props.selection.length > 0);
 
-    nonZeroSelection(): boolean {
-      return this.selection.length > 0;
-    },
-  },
+    async function execute() {
+      await Promise.all(props.selection.map((network) => api.deleteNetwork(props.workspace, network)));
+      dialog.value = false;
+    }
 
-  watch: {
-    dialog() {
-      if (this.dialog) {
-        this.clear();
-        this.confirmationPhrase = randomPhrase();
+    function clear() {
+      confirmationPhrase.value = '';
+      confirmation.value = '';
+    }
+
+    watch(dialog, () => {
+      if (dialog.value) {
+        clear();
+        confirmationPhrase.value = randomPhrase();
       } else {
-        this.$emit('closed');
+        emit('closed');
       }
-    },
-  },
+    });
 
-  methods: {
-    async execute() {
-      const {
-        selection,
-        workspace,
-      } = this;
-
-      await Promise.all(selection.map((network) => api.deleteNetwork(workspace, network)));
-      this.dialog = false;
-    },
-
-    clear() {
-      this.confirmationPhrase = '';
-      this.confirmation = '';
-    },
+    return {
+      dialog,
+      confirmation,
+      confirmationPhrase,
+      plural,
+      nonZeroSelection,
+      execute,
+    };
   },
 });
 </script>

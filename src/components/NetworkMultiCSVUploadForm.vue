@@ -364,7 +364,7 @@ interface CSVPreview {
 }
 
 export default defineComponent({
-  setup(props, ctx) {
+  setup(props, { emit }) {
     const workspace = computed(() => store.state.currentWorkspace);
 
     const files = ref<File[]>([]);
@@ -927,7 +927,7 @@ export default defineComponent({
       // Create network with post request
       await api.axios.post(`/workspaces/${store.state.currentWorkspace.name}/networks/from_tables/`, network);
       networkCreating.value = false;
-      ctx.emit('success');
+      emit('success');
     }
 
     return {

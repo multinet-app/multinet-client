@@ -157,7 +157,7 @@
 
 <script lang="ts">
 import {
-  defineComponent, ref, PropType, computed, watch,
+  defineComponent, ref, PropType, computed, watch, getCurrentInstance,
 } from 'vue';
 
 import api from '@/api';
@@ -193,8 +193,9 @@ export default defineComponent({
     },
   },
 
-  setup(props, ctx) {
-    const router = ctx.root.$router;
+  setup(props) {
+    const currentInstance = getCurrentInstance();
+    const router = currentInstance !== null ? currentInstance.proxy.$router : null;
 
     const localWorkspace = ref<string | null>(null);
     const editing = ref(false);

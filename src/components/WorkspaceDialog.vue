@@ -72,55 +72,63 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import {
+  computed, defineComponent, getCurrentInstance, ref, watch,
+} from 'vue';
+// import { useRouter } from 'vue-router';
 
 import api from '@/api';
 import store from '@/store';
 
-export default Vue.extend({
-  data() {
-    return {
-      dialog: false,
-      newWorkspace: '',
-      error: '',
-    };
-  },
+export default defineComponent({
+  setup() {
+    const dialog = ref(false);
+    const newWorkspace = ref('');
+    const error = ref('');
 
-  computed: {
-    userInfo: () => store.state.userInfo,
-  },
+    const userInfo = computed(() => store.state.userInfo);
 
-  watch: {
-    dialog() {
-      if (this.dialog) {
-        this.error = '';
+    watch(dialog, () => {
+      if (dialog.value) {
+        error.value = '';
       }
-    },
-  },
+    });
 
-  methods: {
-    async create() {
-      if (this.newWorkspace) {
+    const instance = getCurrentInstance();
+    // const router = useRouter();
+    async function create() {
+      if (newWorkspace.value) {
         try {
-          const response = await api.createWorkspace(this.newWorkspace);
+          const response = await api.createWorkspace(newWorkspace.value);
 
           if (response) {
             store.dispatch.fetchWorkspaces();
 
-            this.$router.push(`/workspaces/${this.newWorkspace}`);
-            this.newWorkspace = '';
-            this.dialog = false;
+            if (instance !== null) {
+              instance.proxy.$router.push(`/workspaces/${newWorkspace.value}`);
+            }
+
+            newWorkspace.value = '';
+            dialog.value = false;
           }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {
           if (err.status === 409) {
-            this.error = `Workspace "${err.data}" already exists!`;
+            error.value = `Workspace "${err.data}" already exists!`;
           } else {
-            this.error = `Error creating workspace: ${err.status}`;
+            error.value = `Error creating workspace: ${err.status}`;
           }
         }
       }
-    },
+    }
+
+    return {
+      dialog,
+      newWorkspace,
+      error,
+      userInfo,
+      create,
+    };
   },
 });
 </script>

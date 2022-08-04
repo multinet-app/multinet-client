@@ -121,8 +121,9 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import { UserSpec } from 'multinet';
+import {
+  computed, defineComponent, getCurrentInstance, Ref, ref, watch,
+} from 'vue';
 
 import store from '@/store';
 
@@ -135,96 +136,76 @@ interface CheckboxTable {
   [index: string]: boolean;
 }
 
-export default Vue.extend({
-
+export default defineComponent({
   components: {
     DeleteWorkspaceDialog,
     WorkspaceDialog,
     AboutDialog,
     LoginMenu,
   },
-  data() {
-    return {
-      newWorkspace: '',
-      checkbox: {} as CheckboxTable,
-      loading: true,
-      singleSelected: null as string | null,
-      tabSelected: 1,
-    };
-  },
 
-  computed: {
-    workspaces: () => store.state.workspaces,
+  setup() {
+    const newWorkspace = ref('');
+    const checkbox: Ref<CheckboxTable> = ref({});
+    const loading = ref(true);
+    const singleSelected: Ref<string | null> = ref(null);
+    const tabSelected = ref(1);
 
-    userInfo(): UserSpec | null {
-      return store.state.userInfo;
-    },
+    const workspaces = computed(() => store.state.workspaces);
+    const userInfo = computed(() => store.state.userInfo);
+    const somethingChecked = computed(() => Object.values(checkbox.value).some(Boolean));
+    const checked = computed(() => Object.keys(checkbox.value).filter((d) => !!checkbox.value[d]));
+    const currentInstance = getCurrentInstance();
+    const navHeight = computed(() => (currentInstance !== null ? currentInstance.proxy.$vuetify.breakpoint.height - 62 : 0));
+    const selection = computed(() => (singleSelected.value ? [singleSelected.value] : checked.value));
 
-    somethingChecked(): boolean {
-      return Object.values(this.checkbox)
-        .some(Boolean);
-    },
-
-    checked(): string[] {
-      const {
-        checkbox,
-      } = this;
-
-      return Object.keys(checkbox).filter((d) => !!checkbox[d]);
-    },
-
-    navHeight(): number {
-      return this.$vuetify.breakpoint.height - 62; // 62 is height of footer
-    },
-
-    selection(): string[] {
-      const {
-        checked,
-        singleSelected,
-      } = this;
-
-      if (singleSelected) {
-        return [singleSelected];
-      }
-
-      return checked;
-    },
-  },
-
-  watch: {
-    userInfo(newUserInfo) {
+    watch(userInfo, (newUserInfo) => {
       if (newUserInfo !== null) {
-        this.tabSelected = 0;
+        tabSelected.value = 0;
       } else {
-        this.tabSelected = 1;
+        tabSelected.value = 1;
       }
-    },
-  },
+    });
 
-  async created() {
-    try {
-      await store.dispatch.fetchWorkspaces();
-    } finally {
-      this.loading = false;
+    store.dispatch.fetchWorkspaces().then(() => { loading.value = false; });
+
+    const router = currentInstance !== null ? currentInstance.proxy.$router : null;
+    function route(workspace: string) {
+      if (router !== null) {
+        router.push(`/workspaces/${workspace}`);
+      }
     }
-  },
 
-  methods: {
-    route(workspace: string) {
-      this.$router.push(`/workspaces/${workspace}`);
-    },
+    function workspaceDeleted() {
+      checkbox.value = {};
+      if (router !== null) {
+        router.replace({ name: 'home' });
+      }
+    }
 
-    workspaceDeleted() {
-      this.checkbox = {};
-      this.$router.replace({ name: 'home' });
-    },
-
-    deleteWorkspace(ws: string) {
-      this.singleSelected = ws;
+    const dws = ref(null);
+    function deleteWorkspace(ws: string) {
+      singleSelected.value = ws;
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (this.$refs.dws as any).dialog = true;
-    },
+      (dws as any).dialog = true;
+    }
+
+    return {
+      newWorkspace,
+      checkbox,
+      loading,
+      singleSelected,
+      tabSelected,
+      workspaces,
+      somethingChecked,
+      navHeight,
+      selection,
+      userInfo,
+      route,
+      workspaceDeleted,
+      deleteWorkspace,
+    };
   },
 });
 </script>
