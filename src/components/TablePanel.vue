@@ -154,7 +154,7 @@ export default defineComponent({
     }
 
     const checkbox: Ref<CheckboxTable> = ref({});
-    const singleSelected: Ref<string | null> = ref('');
+    const singleSelected: Ref<string | null> = ref(null);
 
     const checked = computed(() => Object.keys(checkbox.value).filter((d) => !!checkbox.value[d]));
     const selection = computed(() => (singleSelected.value !== null ? [singleSelected.value] : [...checked.value]));

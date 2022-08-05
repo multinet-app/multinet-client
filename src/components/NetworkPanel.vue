@@ -67,7 +67,7 @@
           >
             <v-list-item-action @click.prevent>
               <v-icon
-                v-if="!hover && !checkbox[item]"
+                v-if="!hover && !checkbox[item.name]"
                 class="item-icon"
               >
                 timeline
@@ -167,7 +167,7 @@ export default defineComponent({
     }
 
     const checkbox: Ref<CheckboxTable> = ref({});
-    const singleSelected: Ref<string | null> = ref('');
+    const singleSelected: Ref<string | null> = ref(null);
     const selectedVisApps = ref(new Array(props.items.length));
 
     const checked = computed(() => Object.keys(checkbox.value).filter((d) => !!checkbox.value[d]));
