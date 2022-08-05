@@ -131,10 +131,7 @@ import WorkspaceDialog from '@/components/WorkspaceDialog.vue';
 import DeleteWorkspaceDialog from '@/components/DeleteWorkspaceDialog.vue';
 import AboutDialog from '@/components/AboutDialog.vue';
 import LoginMenu from '@/components/LoginMenu.vue';
-
-interface CheckboxTable {
-  [index: string]: boolean;
-}
+import { CheckboxTable } from '@/types';
 
 export default defineComponent({
   components: {
