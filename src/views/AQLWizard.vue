@@ -71,36 +71,6 @@
           >
             Run Query
           </v-btn>
-
-          <v-menu
-            v-model="createTableMenu"
-            offset-y
-            :close-on-content-click="false"
-          >
-            <template #activator="{ on }">
-              <v-btn
-                class="ml-2"
-                color="secondary"
-                v-on="on"
-              >
-                Create Table
-              </v-btn>
-            </template>
-            <v-card class="px-2 pt-2">
-              <v-text-field
-                v-model="createTableName"
-                solo
-                flat
-                label="Table Name"
-                append-icon="publish"
-                :error-messages="createTableErrorMessage"
-                :hide-details="!createTableErrorMessage"
-                @input="createTableErrorMessage = null"
-                @click:append="createTable"
-                @keydown.enter="createTable"
-              />
-            </v-card>
-          </v-menu>
         </v-card-actions>
       </v-card>
       <v-card
