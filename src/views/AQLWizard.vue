@@ -93,11 +93,10 @@
 import VueJsonPretty from 'vue-json-pretty';
 import {
   computed,
-  defineComponent, PropType, Ref, ref, watch,
+  defineComponent, PropType, reactive, Ref, ref, watch,
 } from 'vue';
 import api from '@/api';
 import store from '@/store';
-import { Location } from 'vue-router';
 import { useCurrentInstance } from '@/utils/use';
 
 // eslint-disable-next-line no-use-before-define
@@ -127,24 +126,10 @@ export default defineComponent({
     const router = useCurrentInstance().proxy.$router;
     const route = router !== null ? router.currentRoute : null;
 
-    const query = ref(route === null ? '' : route.query.query as string);
+    const query = ref('');
+    const bind_vars = reactive({});
     watch(query, () => {
       if (queryErrorMessage.value) { queryErrorMessage.value = ''; }
-
-      if (route !== null && query.value !== route.query.query) {
-        const newRoute: Location = {
-          ...route,
-          name: route.name === null ? undefined : route.name,
-          query: {
-            ...route.query,
-            query: query.value || undefined,
-          },
-        };
-
-        if (router !== null) {
-          router.replace(newRoute);
-        }
-      }
     });
 
     const nodeTables = computed(() => store.getters.nodeTables);
