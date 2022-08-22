@@ -64,8 +64,10 @@
 import oauthClient from '@/oauth';
 import store from '@/store';
 import {
-  computed, defineComponent, getCurrentInstance, ref, watch,
+  computed, defineComponent, ref, watch,
 } from 'vue';
+
+import { useCurrentInstance } from '@/utils/use';
 
 export default defineComponent({
   setup() {
@@ -86,8 +88,8 @@ export default defineComponent({
       oauthClient.redirectToLogin();
     }
 
-    const currentInstance = getCurrentInstance();
-    const router = currentInstance !== null ? currentInstance.proxy.$router : null;
+    const currentInstance = useCurrentInstance();
+    const router = currentInstance.proxy.$router;
     async function logout() {
       // Perform the logout action, then redirect the user to the home page.
       // This is to prevent the logged-out user from continuing to look at, e.g.,

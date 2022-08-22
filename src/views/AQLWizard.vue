@@ -123,11 +123,12 @@
 import VueJsonPretty from 'vue-json-pretty';
 import {
   computed,
-  defineComponent, getCurrentInstance, PropType, Ref, ref, watch,
+  defineComponent, PropType, Ref, ref, watch,
 } from 'vue';
 import api from '@/api';
 import store from '@/store';
 import { Location } from 'vue-router';
+import { useCurrentInstance } from '@/utils/use';
 
 // eslint-disable-next-line no-use-before-define
 type AnyJson = boolean | number | string | null | JsonArray | JsonMap;
@@ -153,8 +154,7 @@ export default defineComponent({
     const createTableErrorMessage: Ref<null | string> = ref(null);
     const createTableName: Ref<null | string> = ref(null);
 
-    const currentInstance = getCurrentInstance();
-    const router = currentInstance !== null ? currentInstance.proxy.$router : null;
+    const router = useCurrentInstance().proxy.$router;
     const route = router !== null ? router.currentRoute : null;
 
     const query = ref(route === null ? '' : route.query.query as string);
