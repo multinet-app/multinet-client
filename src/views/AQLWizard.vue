@@ -202,7 +202,7 @@ export default defineComponent({
     const createTableErrorMessage: Ref<null | string> = ref(null);
     const createTableName: Ref<null | string> = ref(null);
 
-    const query = ref('FOR doc IN @@TABLE RETURN doc');
+    const query = ref('FOR doc IN @@TABLE LIMIT 10 RETURN doc');
     const default_query_finished = ref(false);
     watch(query, () => {
       if (queryErrorMessage.value) { queryErrorMessage.value = ''; }
