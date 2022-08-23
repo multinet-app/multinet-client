@@ -180,7 +180,7 @@
 <script lang="ts">
 import {
   defineComponent, ref, Ref, computed, watch,
-} from '@vue/composition-api';
+} from 'vue';
 
 import api from '@/api';
 import { CSVColumnType } from '@/types';

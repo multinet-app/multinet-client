@@ -304,7 +304,7 @@
 
 import {
   computed, defineComponent, onMounted, reactive, ref, watch, watchEffect,
-} from '@vue/composition-api';
+} from 'vue';
 import { DataTableHeader } from 'vuetify';
 
 import api from '@/api';
