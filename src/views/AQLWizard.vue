@@ -102,9 +102,9 @@
           <v-btn
             color="error"
             text
-            @click="query=''"
+            @click="lastQueryResults = null"
           >
-            Clear
+            Clear Results
           </v-btn>
           <v-spacer />
           <v-btn
