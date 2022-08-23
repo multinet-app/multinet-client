@@ -123,6 +123,8 @@
         <vue-json-pretty
           :data="lastQueryResults"
           highlight-mouseover-node
+          collapsed-on-click-brackets
+          virtual
         />
       </v-card>
     </v-main>
@@ -133,6 +135,8 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import VueJsonPretty from 'vue-json-pretty';
+import 'vue-json-pretty/lib/styles.css';
+
 import {
   computed,
   defineComponent, PropType, Ref, ref, watch,
