@@ -267,7 +267,7 @@ export default defineComponent({
         queryErrorMessage.value = '';
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
-        queryErrorMessage.value = error.data;
+        queryErrorMessage.value = error.response.data;
         lastQueryResults.value = null;
       }
 
