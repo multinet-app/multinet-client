@@ -157,7 +157,7 @@
 
 <script lang="ts">
 import {
-  defineComponent, ref, PropType, computed, watch, getCurrentInstance,
+  defineComponent, ref, PropType, computed, watch,
 } from 'vue';
 
 import api from '@/api';
@@ -166,6 +166,7 @@ import NetworkPanel from '@/components/NetworkPanel.vue';
 import store from '@/store';
 import WorkspaceOptionMenu from '@/components/WorkspaceOptionMenu.vue';
 import { App } from '@/types';
+import { useCurrentInstance } from '@/utils/use';
 
 const surroundingWhitespace = /^\s+|\s+$/;
 const workspaceNameRules: Array<(x: string) => string|boolean> = [
@@ -194,8 +195,7 @@ export default defineComponent({
   },
 
   setup(props) {
-    const currentInstance = getCurrentInstance();
-    const router = currentInstance !== null ? currentInstance.proxy.$router : null;
+    const router = useCurrentInstance().proxy.$router;
 
     const localWorkspace = ref<string | null>(null);
     const editing = ref(false);

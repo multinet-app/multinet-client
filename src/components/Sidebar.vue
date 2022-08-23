@@ -122,7 +122,7 @@
 
 <script lang="ts">
 import {
-  computed, defineComponent, getCurrentInstance, Ref, ref, watch,
+  computed, defineComponent, Ref, ref, watch,
 } from 'vue';
 
 import store from '@/store';
@@ -132,6 +132,7 @@ import DeleteWorkspaceDialog from '@/components/DeleteWorkspaceDialog.vue';
 import AboutDialog from '@/components/AboutDialog.vue';
 import LoginMenu from '@/components/LoginMenu.vue';
 import { CheckboxTable } from '@/types';
+import { useCurrentInstance } from '@/utils/use';
 
 export default defineComponent({
   components: {
@@ -152,8 +153,8 @@ export default defineComponent({
     const userInfo = computed(() => store.state.userInfo);
     const somethingChecked = computed(() => Object.values(checkbox.value).some(Boolean));
     const checked = computed(() => Object.keys(checkbox.value).filter((d) => !!checkbox.value[d]));
-    const currentInstance = getCurrentInstance();
-    const navHeight = computed(() => (currentInstance !== null ? currentInstance.proxy.$vuetify.breakpoint.height - 62 : 0));
+    const currentInstance = useCurrentInstance();
+    const navHeight = computed(() => (currentInstance.proxy.$vuetify.breakpoint.height - 62));
     const selection = computed(() => (singleSelected.value ? [singleSelected.value] : checked.value));
 
     watch(userInfo, (newUserInfo) => {
@@ -166,7 +167,7 @@ export default defineComponent({
 
     store.dispatch.fetchWorkspaces().then(() => { loading.value = false; });
 
-    const router = currentInstance !== null ? currentInstance.proxy.$router : null;
+    const router = currentInstance.proxy.$router;
     function route(workspace: string) {
       if (router !== null) {
         router.push(`/workspaces/${workspace}`);

@@ -73,12 +73,13 @@
 
 <script lang="ts">
 import {
-  computed, defineComponent, getCurrentInstance, ref, watch,
+  computed, defineComponent, ref, watch,
 } from 'vue';
 // import { useRouter } from 'vue-router';
 
 import api from '@/api';
 import store from '@/store';
+import { useCurrentInstance } from '@/utils/use';
 
 export default defineComponent({
   setup() {
@@ -94,8 +95,7 @@ export default defineComponent({
       }
     });
 
-    const instance = getCurrentInstance();
-    // const router = useRouter();
+    const router = useCurrentInstance().proxy.$router;
     async function create() {
       if (newWorkspace.value) {
         try {
@@ -104,9 +104,7 @@ export default defineComponent({
           if (response) {
             store.dispatch.fetchWorkspaces();
 
-            if (instance !== null) {
-              instance.proxy.$router.push(`/workspaces/${newWorkspace.value}`);
-            }
+            router.push(`/workspaces/${newWorkspace.value}`);
 
             newWorkspace.value = '';
             dialog.value = false;
