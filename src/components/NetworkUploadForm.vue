@@ -72,7 +72,9 @@
 
 <script lang="ts">
 import { NetworkUploadType, validNetworkUploadType } from 'multinet';
-import Vue from 'vue';
+import {
+  computed, defineComponent, Ref, ref,
+} from 'vue';
 
 import api from '@/api';
 import { NetworkFileType } from '@/types';
@@ -98,7 +100,7 @@ const fileTypes: NetworkFileType[] = [
   },
 ];
 
-export default Vue.extend({
+export default defineComponent({
   name: 'NetworkUploadForm',
 
   props: {
@@ -108,110 +110,109 @@ export default Vue.extend({
     },
   },
 
-  data() {
-    return {
-      fileTypes,
-      tableCreationError: null as string | null,
-      fileUploadError: null as string | null,
-      fileName: null as string | null,
-      selectedType: null as NetworkFileType | null,
-      file: null as File | null,
-      uploading: false,
-      uploadProgress: null as number | null,
-    };
-  },
+  setup(props, { emit }) {
+    const tableCreationError: Ref<string | null> = ref(null);
+    const fileUploadError : Ref<string | null> = ref(null);
+    const fileName: Ref<string | null> = ref(null);
+    const selectedType: Ref<NetworkFileType | null> = ref(null);
+    const file: Ref<File | null> = ref(null);
+    const uploading = ref(false);
+    const uploadProgress: Ref<number | null> = ref(null);
 
-  computed: {
-    createDisabled(): boolean {
-      return (
-        !this.file
-        || !this.fileName
-        || !this.selectedType
-        || !!this.fileUploadError
-      );
-    },
-  },
+    const createDisabled = computed(() => (
+      !file.value
+      || !fileName.value
+      || !selectedType.value
+      || !!fileUploadError.value
+    ));
 
-  methods: {
-    handleUploadProgress(event: { loaded: number; total: number; [key: string]: unknown }) {
-      this.uploadProgress = (event.loaded / event.total) * 100;
-    },
+    function handleUploadProgress(event: { loaded: number; total: number; [key: string]: unknown }) {
+      uploadProgress.value = (event.loaded / event.total) * 100;
+    }
 
-    handleFileInput(file: File) {
-      this.file = file;
-
-      if (!file) {
-        this.selectedType = null;
-        this.fileUploadError = null;
-        return;
-      }
-
-      const fileInfo = this.fileInfo(file);
-      if (fileInfo !== null) {
-        const [fileName, selectedType] = fileInfo;
-        this.fileName = this.fileName || fileName;
-        this.selectedType = selectedType;
-        this.fileUploadError = null;
-      } else {
-        this.fileUploadError = 'Invalid file type';
-        this.selectedType = null;
-      }
-    },
-
-    async createNetwork() {
-      const {
-        file,
-        workspace,
-        fileName,
-        selectedType,
-      } = this;
-
-      if (file === null || fileName === null) {
-        throw new Error('Valid file must be selected.');
-      }
-
-      if (selectedType === null) {
-        throw new Error('`selectedType` is null, which is impossible');
-      }
-
-      this.uploading = true;
-
-      try {
-        await api.uploadNetwork(workspace, fileName, {
-          type: selectedType.queryCall as NetworkUploadType,
-          data: file,
-        });
-
-        this.tableCreationError = null;
-        this.$emit('success');
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (err: any) {
-        if (err.status === 409) {
-          this.tableCreationError = `Table "${fileName}" already exists`;
-        } else if (err.status === 415) {
-          this.tableCreationError = 'Data could not be read as CSV';
-        } else {
-          this.tableCreationError = 'Unknown error; please see developer console for details';
-          throw err;
-        }
-      } finally {
-        this.uploading = false;
-        this.uploadProgress = null;
-      }
-    },
-
-    fileInfo(file: File): [string, NetworkFileType] | null {
-      if (!file) {
+    function fileInfo(fileInput: File): [string, NetworkFileType] | null {
+      if (!fileInput) {
         return null;
       }
 
-      const [fileName, ...extensions] = file.name.split('.');
+      const [fileNameSplit, ...extensions] = fileInput.name.split('.');
       const extension = extensions[extensions.length - 1];
 
-      const found = this.fileTypes.find((type) => type.extension.includes(extension) && validNetworkUploadType(type.queryCall));
+      const found = fileTypes.find((type) => type.extension.includes(extension) && validNetworkUploadType(type.queryCall));
 
-      return found === undefined ? null : [fileName, found];
-    },
+      return found === undefined ? null : [fileNameSplit, found];
+    }
+
+    function handleFileInput(fileInput: File) {
+      file.value = fileInput;
+
+      if (!file.value) {
+        selectedType.value = null;
+        fileUploadError.value = null;
+        return;
+      }
+
+      const fileInfoResult = fileInfo(file.value);
+      if (fileInfoResult !== null) {
+        const [fileNameResult, selectedTypeResult] = fileInfoResult;
+        fileName.value = fileName.value || fileNameResult;
+        selectedType.value = selectedTypeResult;
+        fileUploadError.value = null;
+      } else {
+        fileUploadError.value = 'Invalid file type';
+        selectedType.value = null;
+      }
+    }
+
+    async function createNetwork() {
+      if (file.value === null || fileName.value === null) {
+        throw new Error('Valid file must be selected.');
+      }
+
+      if (selectedType.value === null) {
+        throw new Error('`selectedType` is null, which is impossible');
+      }
+
+      uploading.value = true;
+
+      try {
+        await api.uploadNetwork(props.workspace, fileName.value, {
+          type: selectedType.value.queryCall as NetworkUploadType,
+          data: file.value,
+        });
+
+        tableCreationError.value = null;
+        emit('success');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (err: any) {
+        if (err.status === 409) {
+          tableCreationError.value = `Table "${fileName}" already exists`;
+        } else if (err.status === 415) {
+          tableCreationError.value = 'Data could not be read as CSV';
+        } else {
+          tableCreationError.value = 'Unknown error; please see developer console for details';
+          throw err;
+        }
+      } finally {
+        uploading.value = false;
+        uploadProgress.value = null;
+      }
+    }
+
+    return {
+      fileTypes,
+      tableCreationError,
+      fileUploadError,
+      fileName,
+      selectedType,
+      file,
+      uploading,
+      uploadProgress,
+      createDisabled,
+      handleUploadProgress,
+      handleFileInput,
+      createNetwork,
+    };
   },
 });
 </script>

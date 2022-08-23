@@ -166,6 +166,7 @@ import NetworkPanel from '@/components/NetworkPanel.vue';
 import store from '@/store';
 import WorkspaceOptionMenu from '@/components/WorkspaceOptionMenu.vue';
 import { App } from '@/types';
+import { useCurrentInstance } from '@/utils/use';
 
 const surroundingWhitespace = /^\s+|\s+$/;
 const workspaceNameRules: Array<(x: string) => string|boolean> = [
@@ -193,8 +194,8 @@ export default defineComponent({
     },
   },
 
-  setup(props, ctx) {
-    const router = ctx.root.$router;
+  setup(props) {
+    const router = useCurrentInstance().proxy.$router;
 
     const localWorkspace = ref<string | null>(null);
     const editing = ref(false);

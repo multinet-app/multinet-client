@@ -1,5 +1,4 @@
 import 'material-design-icons-iconfont/dist/material-design-icons.css';
-import AsyncComputed from 'vue-async-computed';
 import Vue from 'vue';
 import App from './App.vue';
 import api from './api';
@@ -10,7 +9,6 @@ import store from './store';
 import './vuegtag';
 
 Vue.config.productionTip = false;
-Vue.use(AsyncComputed);
 
 oauthClient.maybeRestoreLogin().then(() => {
   Object.assign(api.axios.defaults.headers.common, oauthClient.authHeaders);

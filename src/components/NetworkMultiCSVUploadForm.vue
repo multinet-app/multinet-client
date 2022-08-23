@@ -95,8 +95,8 @@
                     dark
                     hide-details
                     class="ma-0 pa-0"
-                    :disabled="edgeTable?.table && edgeTable.table.name !== sample.table.name"
-                    :value="edgeTable?.table.name === sample.table.name"
+                    :disabled="edgeTable.table && edgeTable.table.name !== sample.table.name"
+                    :value="edgeTable.table.name === sample.table.name"
                     @change="setEdgeTable(sample.table, $event)"
                   />
                 </v-row>
@@ -140,7 +140,7 @@
 
                         <!-- Link to other table column -->
                         <v-menu
-                          v-if="mainTables.some((t) => t?.name === sample.table.name)"
+                          v-if="mainTables.some((t) => t.name === sample.table.name)"
                           :close-on-content-click="false"
                           @input="menuOpen = $event"
                         >
@@ -219,7 +219,7 @@
                         </v-menu>
 
                         <v-menu
-                          v-if="inNetworkTables.some((t) => t?.name === sample.table.name)"
+                          v-if="inNetworkTables.some((t) => t.name === sample.table.name)"
                           :close-on-content-click="false"
                           @input="menuOpen = $event"
                         >
@@ -364,7 +364,7 @@ interface CSVPreview {
 }
 
 export default defineComponent({
-  setup(props, ctx) {
+  setup(props, { emit }) {
     const workspace = computed(() => store.state.currentWorkspace);
 
     const files = ref<File[]>([]);
@@ -927,7 +927,7 @@ export default defineComponent({
       // Create network with post request
       await api.axios.post(`/workspaces/${store.state.currentWorkspace.name}/networks/from_tables/`, network);
       networkCreating.value = false;
-      ctx.emit('success');
+      emit('success');
     }
 
     return {

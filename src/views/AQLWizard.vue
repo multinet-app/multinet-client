@@ -121,16 +121,21 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import VueJsonPretty from 'vue-json-pretty';
-import { PropType } from 'vue';
+import {
+  computed,
+  defineComponent, PropType, Ref, ref, watch,
+} from 'vue';
 import api from '@/api';
 import store from '@/store';
+import { Location } from 'vue-router';
+import { useCurrentInstance } from '@/utils/use';
 
 // eslint-disable-next-line no-use-before-define
 type AnyJson = boolean | number | string | null | JsonArray | JsonMap;
 interface JsonMap { [key: string]: AnyJson }
 type JsonArray = Array<AnyJson>
 
-export default {
+export default defineComponent({
   name: 'AQLWizard',
   components: {
     VueJsonPretty,
@@ -141,109 +146,114 @@ export default {
       required: true,
     },
   },
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  data(this: any) {
-    return {
-      query: this.$route.query.query || '',
-      lastQueryResults: null as null | Array<JsonArray>,
-      loading: false,
-      queryErrorMessage: '',
-      createTableMenu: false,
-      createTableErrorMessage: null as null | string,
-      createTableName: null as null | string,
-    };
-  },
-  computed: {
-    nodeTables: () => store.getters.nodeTables,
-    edgeTables: () => store.getters.edgeTables,
-    networks: () => store.getters.networks,
-    workspaceInfo() {
-      return [
-        { title: 'Node Tables', data: this.nodeTables },
-        { title: 'Edge Tables', data: this.edgeTables },
-        { title: 'Networks', data: this.networks, network: true },
-      ];
-    },
-  },
-  watch: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    nodeTables(this: any, nodeTables: string[]) {
-      // Populate text area with example query
-      if (nodeTables.length && !this.query) {
-        this.query = `FOR doc in ${nodeTables[0]} RETURN doc`;
-      }
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    query(this: any, query: string) {
-      if (this.queryErrorMessage) { this.queryErrorMessage = ''; }
+  setup(props) {
+    const lastQueryResults: Ref<null | Array<JsonArray>> = ref(null);
+    const loading = ref(false);
+    const queryErrorMessage = ref('');
+    const createTableMenu = ref(false);
+    const createTableErrorMessage: Ref<null | string> = ref(null);
+    const createTableName: Ref<null | string> = ref(null);
 
-      if (query !== this.$route.query) {
-        const route = {
-          ...this.$route,
+    const router = useCurrentInstance().proxy.$router;
+    const route = router !== null ? router.currentRoute : null;
+
+    const query = ref(route === null ? '' : route.query.query as string);
+    watch(query, () => {
+      if (queryErrorMessage.value) { queryErrorMessage.value = ''; }
+
+      if (route !== null && query.value !== route.query.query) {
+        const newRoute: Location = {
+          ...route,
+          name: route.name === null ? undefined : route.name,
           query: {
-            ...this.$route.query,
-            query: query || undefined,
+            ...route.query,
+            query: query.value || undefined,
           },
         };
 
-        this.$router.replace(route);
+        if (router !== null) {
+          router.replace(newRoute);
+        }
       }
-    },
-  },
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  created(this: any) {
-    store.dispatch.fetchWorkspace(this.workspace);
-  },
-  methods: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    detailLink(this: any, name: string, network: boolean) {
-      const { workspace } = this;
-      const route = network ? 'networkDetail' : 'tableDetail';
+    });
 
-      return { name: route, params: { workspace, table: name, network: name } };
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async createTable(this: any) {
-      const { workspace, query, createTableName } = this;
+    const nodeTables = computed(() => store.getters.nodeTables);
+    watch(nodeTables, () => {
+      if (nodeTables.value.length && !query.value) {
+        query.value = `FOR doc in ${nodeTables.value[0]} RETURN doc`;
+      }
+    });
 
+    const edgeTables = computed(() => store.getters.edgeTables);
+    const networks = computed(() => store.getters.networks);
+    const workspaceInfo = computed(() => [
+      { title: 'Node Tables', data: nodeTables.value },
+      { title: 'Edge Tables', data: edgeTables.value },
+      { title: 'Networks', data: networks.value, network: true },
+    ]);
+
+    function detailLink(name: string, network: boolean) {
+      const routeName = network ? 'networkDetail' : 'tableDetail';
+
+      return { name: routeName, params: { workspace: props.workspace, table: name, network: name } };
+    }
+    async function createTable() {
+      if (createTableName.value === null) {
+        return;
+      }
       try {
-        await api.createAQLTable(workspace, createTableName, query);
-        this.createTableMenu = false;
-        store.dispatch.fetchWorkspace(this.workspace);
+        await api.createAQLTable(props.workspace, createTableName.value, query.value);
+        createTableMenu.value = false;
+        store.dispatch.fetchWorkspace(props.workspace);
 
-        this.$router.push({ name: 'tableDetail', params: { workspace, table: createTableName } });
+        if (router !== null) {
+          router.push({ name: 'tableDetail', params: { workspace: props.workspace, table: createTableName.value } });
+        }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
         if (error.status === 409) {
-          this.createTableErrorMessage = 'Table Already Exists';
+          createTableErrorMessage.value = 'Table Already Exists';
         } else {
-          this.createTableErrorMessage = error.data;
+          createTableErrorMessage.value = error.data;
         }
       }
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async runQuery(this: any) {
-      const { workspace, query } = this;
-
-      if (!query) {
-        this.queryErrorMessage = 'Query cannot be empty.';
+    }
+    async function runQuery() {
+      if (!query.value) {
+        queryErrorMessage.value = 'Query cannot be empty.';
         return;
       }
 
-      this.loading = true;
+      loading.value = true;
 
       try {
-        const resp = await api.aql(workspace, query);
-        this.lastQueryResults = resp;
-        this.queryErrorMessage = '';
+        const resp = await api.aql(props.workspace, query.value);
+        lastQueryResults.value = resp;
+        queryErrorMessage.value = '';
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
-        this.queryErrorMessage = error.data;
-        this.lastQueryResults = null;
+        queryErrorMessage.value = error.data;
+        lastQueryResults.value = null;
       }
 
-      this.loading = false;
-    },
+      loading.value = false;
+    }
+
+    store.dispatch.fetchWorkspace(props.workspace);
+
+    return {
+      query,
+      lastQueryResults,
+      loading,
+      queryErrorMessage,
+      createTableMenu,
+      createTableErrorMessage,
+      createTableName,
+      workspaceInfo,
+      detailLink,
+      createTable,
+      runQuery,
+    };
   },
-};
+});
 </script>

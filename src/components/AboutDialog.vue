@@ -22,18 +22,19 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent, ref } from 'vue';
 
 import AboutText from '@/components/AboutText.vue';
 
-export default Vue.extend({
+export default defineComponent({
   components: {
     AboutText,
   },
 
-  data() {
+  setup() {
+    const dialog = ref(false);
     return {
-      dialog: false,
+      dialog,
     };
   },
 });

@@ -71,14 +71,16 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from 'vue';
+import {
+  computed, defineComponent, PropType, ref,
+} from 'vue';
 
 import NetworkCreateForm from '@/components/NetworkCreateForm.vue';
 import NetworkUploadForm from '@/components/NetworkUploadForm.vue';
 import NetworkMultiCSVUploadForm from '@/components/NetworkMultiCSVUploadForm.vue';
 import store from '@/store';
 
-export default Vue.extend({
+export default defineComponent({
   name: 'NetworkDialog',
   components: {
     NetworkCreateForm,
@@ -96,26 +98,27 @@ export default Vue.extend({
       required: true,
     },
   },
-  data() {
+  setup(props, { emit }) {
+    const networkDialog = ref(false);
+    const CSVNetworkDialog = ref(false);
+
+    const userCanEdit = computed(() => store.getters.userCanEdit);
+
+    function networkDialogSuccess() {
+      networkDialog.value = false;
+      emit('success');
+    }
+    function CSVNetworkDialogSuccess() {
+      CSVNetworkDialog.value = false;
+      emit('success');
+    }
     return {
-      networkDialog: false,
-      CSVNetworkDialog: false,
+      networkDialog,
+      CSVNetworkDialog,
+      userCanEdit,
+      networkDialogSuccess,
+      CSVNetworkDialogSuccess,
     };
-  },
-  computed: {
-    userCanEdit(): boolean {
-      return store.getters.userCanEdit;
-    },
-  },
-  methods: {
-    networkDialogSuccess() {
-      this.networkDialog = false;
-      this.$emit('success');
-    },
-    CSVNetworkDialogSuccess() {
-      this.CSVNetworkDialog = false;
-      this.$emit('success');
-    },
   },
 });
 </script>

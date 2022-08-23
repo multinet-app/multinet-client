@@ -89,11 +89,14 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from 'vue';
+import {
+  computed,
+  defineComponent, PropType, Ref, ref, watch,
+} from 'vue';
 
 import api from '@/api';
 
-export default Vue.extend({
+export default defineComponent({
   props: {
     selection: {
       type: Array as PropType<string[]>,
@@ -111,56 +114,35 @@ export default Vue.extend({
     },
   },
 
-  data() {
-    return {
-      dialog: false,
-      disabled: false,
-      timeout: undefined as number | undefined,
-      loading: false,
-    };
-  },
+  setup(props, { emit }) {
+    const dialog = ref(false);
+    const disabled = ref(false);
+    const timeout: Ref<number | undefined> = ref(undefined);
+    const loading = ref(false);
 
-  computed: {
-    // This workaround is necessary because of https://github.com/vuejs/vue/issues/10455
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    plural(this: any) {
-      return this.selection.length > 1 ? 's' : '';
-    },
-
-    nonZeroSelection(): boolean {
-      return this.selection.length > 0;
-    },
-
-    downloadEndpoint() {
-      switch (this.downloadType) {
+    const plural = computed(() => (props.selection.length > 1 ? 's' : ''));
+    const nonZeroSelection = computed(() => props.selection.length > 0);
+    const downloadEndpoint = computed(() => {
+      switch (props.downloadType) {
         case 'table':
           return api.downloadTable.bind(api);
         case 'network':
         default:
           return api.downloadNetwork.bind(api);
       }
-    },
-  },
+    });
 
-  watch: {
-    dialog(open) {
-      if (!open) {
-        this.$emit('closed');
+    watch(dialog, () => {
+      if (!dialog.value) {
+        emit('closed');
       }
-    },
-  },
+    });
 
-  methods: {
-    async execute() {
-      const {
-        selection,
-        workspace,
-      } = this;
+    async function execute() {
+      loading.value = true;
 
-      this.loading = true;
-
-      const downloads = await Promise.all(selection.map(async (name) => {
-        const { data, headers: { 'content-type': contentType } } = await this.downloadEndpoint(workspace, name);
+      const downloads = await Promise.all(props.selection.map(async (name) => {
+        const { data, headers: { 'content-type': contentType } } = await downloadEndpoint.value(props.workspace, name);
         const blobData = data instanceof Object ? JSON.stringify(data, null, 2) : data;
         const blob = new Blob([blobData], { type: contentType });
 
@@ -179,10 +161,20 @@ export default Vue.extend({
         URL.revokeObjectURL(link.href);
       });
 
-      this.$emit('downloaded', selection);
-      this.loading = false;
-      this.dialog = false;
-    },
+      emit('downloaded', props.selection);
+      loading.value = false;
+      dialog.value = false;
+    }
+
+    return {
+      dialog,
+      disabled,
+      timeout,
+      loading,
+      plural,
+      nonZeroSelection,
+      execute,
+    };
   },
 });
 </script>

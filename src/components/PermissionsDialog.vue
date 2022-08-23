@@ -199,7 +199,9 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from 'vue';
+import {
+  computed, defineComponent, PropType, Ref, ref, watch,
+} from 'vue';
 import { WorkspacePermissionsSpec, UserSpec } from 'multinet';
 import { cloneDeep, debounce } from 'lodash';
 import api from '@/api';
@@ -223,7 +225,7 @@ export interface UserSearchResult extends UserSpec {
 const assignableRoleListing: SingularRole[] = ['maintainer', 'writer', 'reader'];
 const totalRoleListing: SingularRole[] = [...assignableRoleListing, 'owner'];
 
-export default Vue.extend({
+export default defineComponent({
   name: 'PermissionsDialog',
   props: {
     workspace: {
@@ -231,33 +233,27 @@ export default Vue.extend({
       required: true,
     },
   },
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  data(this: any) {
-    return {
-      assignableRoleListing,
-      totalRoleListing,
-      permDialog: false,
-      publicToggle: true,
-      mutablePermissions: null as WorkspacePermissionsSpec | null,
-      throttledUserSearch: debounce(this.searchUsers, 200),
-      userSearchString: null as string | null,
-      userSearchResults: [] as UserSearchResult[],
-      newUserSelection: [] as UserSpec[],
-    };
-  },
-  computed: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    workspacePermissionsEditable(this: any) {
-      return store.getters.permissionLevel >= RoleLevel.maintainer;
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    filteredWorkspacePermissions(this: any) {
+  setup(props) {
+    const permDialog = ref(false);
+    const mutablePermissions: Ref<WorkspacePermissionsSpec | null> = ref(null);
+    const userSearchString: Ref<string | null> = ref(null);
+    const userSearchResults: Ref<UserSearchResult[]> = ref([]);
+    const newUserSelection: Ref<UserSpec[]> = ref([]);
+
+    const publicToggle = ref(true);
+    watch(publicToggle, (val) => {
+      if (mutablePermissions.value) {
+        mutablePermissions.value.public = val;
+      }
+    });
+
+    const filteredWorkspacePermissions = computed(() => {
       // Used to remove the `public` field in the permissions object.
-      if (this.mutablePermissions === null) { return null; }
+      if (mutablePermissions.value === null) { return null; }
 
       const {
         owner, maintainers, readers, writers,
-      } = this.mutablePermissions as WorkspacePermissionsSpec;
+      } = mutablePermissions.value;
 
       return {
         owner,
@@ -265,24 +261,26 @@ export default Vue.extend({
         readers,
         writers,
       };
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    userPermissionsList(this: any): UserPermissionSpec[] {
+    });
+    const userPermissionsList = computed(() => {
       const userPermissionList: UserPermissionSpec[] = [];
-      if (this.filteredWorkspacePermissions === null) return userPermissionList;
+      if (filteredWorkspacePermissions.value === null) {
+        return userPermissionList;
+      }
 
       const roles = Object.keys(
-        this.filteredWorkspacePermissions,
+        filteredWorkspacePermissions.value,
       ) as Role[];
 
       roles.forEach((role) => {
-        const roleUsers = this.filteredWorkspacePermissions[role];
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const roleUsers = filteredWorkspacePermissions.value![role];
 
         if (roleUsers) {
           if (role === 'owner') {
-            userPermissionList.push({ role, user: roleUsers });
+            userPermissionList.push({ role, user: roleUsers as UserSpec });
           } else {
-            roleUsers.forEach((user: UserSpec) => {
+            (roleUsers as UserSpec[]).forEach((user: UserSpec) => {
               userPermissionList.push({ role, user });
             });
           }
@@ -290,104 +288,12 @@ export default Vue.extend({
       });
 
       return userPermissionList;
-    },
-  },
-  asyncComputed: {
-    permissions: {
-      async get(): Promise<WorkspacePermissionsSpec | null> {
-        try {
-          return api.getWorkspacePermissions(this.workspace);
-        } catch (error) {
-          return null;
-        }
-      },
-      default: null,
-    },
-  },
-  watch: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    permissions(this: any, val: WorkspacePermissionsSpec) {
-      if (val !== null) {
-        this.initMutableData(val);
-      }
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    publicToggle(this: any, val: boolean) {
-      if (this.mutablePermissions) {
-        this.mutablePermissions.public = val;
-      }
-    },
-  },
-  methods: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    initMutableData(this: any, permissions: WorkspacePermissionsSpec) {
-      this.mutablePermissions = cloneDeep(permissions);
-      this.publicToggle = this.permissions.public;
-    },
-    singularRoleToPlural(role: SingularRole): Role {
-      if (role === 'owner') { return role; }
+    });
 
-      return `${role}s` as Role;
-    },
-    pluralRoleToSingular(role: Role): SingularRole {
-      if (role === 'owner') { return role; }
+    async function searchUsers(query: string) {
+      if (userSearchString.value === null) { return; }
 
-      return role.slice(0, -1) as SingularRole;
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    setRoleForUser(this: any, user: UserSpec, currentRole: Role, newRole: Role) {
-      const mutablePermissions = this.mutablePermissions as WorkspacePermissionsSpec;
-
-      // Currently don't allow changing owners
-      if (newRole !== currentRole && newRole !== 'owner' && currentRole !== 'owner') {
-        mutablePermissions[newRole].push(user);
-        mutablePermissions[currentRole] = mutablePermissions[currentRole].filter((x) => x.id !== user.id);
-      }
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    setRoleForAllUsers(this: any, role: Role) {
-      const userList: UserSpec[] = (this.userPermissionsList as UserPermissionSpec[])
-        .filter((user: UserPermissionSpec) => user.role !== 'owner')
-        .map((user) => user.user);
-
-      this.mutablePermissions = {
-        owner: this.mutablePermissions.owner,
-        public: this.mutablePermissions.public,
-        maintainers: [],
-        writers: [],
-        readers: [],
-        [role]: userList,
-      };
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    removeUserPermissions(this: any, user: UserSpec, currentRole: Role) {
-      if (currentRole === 'owner') return;
-
-      const mutablePermissions = this.mutablePermissions as WorkspacePermissionsSpec;
-      const newRoleList = mutablePermissions[currentRole].filter((x) => x.id !== user.id);
-
-      mutablePermissions[currentRole] = newRoleList;
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async setPermissions(this: any) {
-      try {
-        await api.setWorkspacePermissions(this.workspace, this.mutablePermissions);
-        this.permDialog = false;
-      } catch (error) {
-        // TODO #205
-      }
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    cancelChange(this: any) {
-      this.permDialog = false;
-      this.initMutableData(this.permissions);
-      this.resetUserSearch();
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async searchUsers(this: any, query: string) {
-      if (!this.userSearchString) { return; }
-
-      const userPermissionList = this.userPermissionsList as UserPermissionSpec[];
+      const userPermissionList = userPermissionsList.value as UserPermissionSpec[];
       const userInWorkspace = (user: UserSpec) => (userPermissionList.find((userPerm) => userPerm.user.id === user.id));
 
       const result = await api.searchUsers(query);
@@ -395,23 +301,125 @@ export default Vue.extend({
         .map((user) => ({ ...user, listing: `${user.first_name} ${user.last_name} (${user.email})` }))
         .filter((user) => !userInWorkspace(user));
 
-      this.userSearchResults = mappedResults;
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    resetUserSearch(this: any) {
-      this.newUserSelection = [];
-      this.userSearchResults = [];
-      this.userSearchString = null;
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    addSelectedUsers(this: any) {
-      const mutablePermissions = this.mutablePermissions as WorkspacePermissionsSpec;
-      const newUserSelection = this.newUserSelection as UserSpec[];
+      userSearchResults.value = mappedResults;
+    }
+    const throttledUserSearch = debounce(searchUsers, 200);
 
-      mutablePermissions.readers.push(...newUserSelection);
+    const workspacePermissionsEditable = computed(() => store.getters.permissionLevel >= RoleLevel.maintainer);
 
-      this.resetUserSearch();
-    },
+    function initMutableData(permissions: WorkspacePermissionsSpec) {
+      mutablePermissions.value = cloneDeep(permissions);
+      publicToggle.value = permissions.public;
+    }
+
+    // Workspace permissions setup
+    const permissions: Ref<WorkspacePermissionsSpec | null> = ref(null);
+    api.getWorkspacePermissions(props.workspace).then((data) => { permissions.value = data; });
+    watch(permissions, (val) => {
+      if (val !== null) {
+        initMutableData(val);
+      }
+    });
+
+    function singularRoleToPlural(role: SingularRole): Role {
+      if (role === 'owner') { return role; }
+
+      return `${role}s` as Role;
+    }
+    function pluralRoleToSingular(role: Role): SingularRole {
+      if (role === 'owner') { return role; }
+
+      return role.slice(0, -1) as SingularRole;
+    }
+    function setRoleForUser(user: UserSpec, currentRole: Role, newRole: Role) {
+      if (mutablePermissions.value === null) {
+        return;
+      }
+
+      // Currently don't allow changing owners
+      if (newRole !== currentRole && newRole !== 'owner' && currentRole !== 'owner') {
+        mutablePermissions.value[newRole].push(user);
+        mutablePermissions.value[currentRole] = mutablePermissions.value[currentRole].filter((x) => x.id !== user.id);
+      }
+    }
+    function setRoleForAllUsers(role: Role) {
+      if (mutablePermissions.value === null) {
+        return;
+      }
+      const userList: UserSpec[] = userPermissionsList.value
+        .filter((user: UserPermissionSpec) => user.role !== 'owner')
+        .map((user) => user.user);
+
+      mutablePermissions.value = {
+        owner: mutablePermissions.value.owner,
+        public: mutablePermissions.value.public,
+        maintainers: [],
+        writers: [],
+        readers: [],
+        [role]: userList,
+      };
+    }
+    function removeUserPermissions(user: UserSpec, currentRole: Role) {
+      if (currentRole === 'owner' || mutablePermissions.value === null) return;
+
+      const newRoleList = mutablePermissions.value[currentRole].filter((x) => x.id !== user.id);
+
+      mutablePermissions.value[currentRole] = newRoleList;
+    }
+    async function setPermissions() {
+      if (mutablePermissions.value === null) {
+        return;
+      }
+      try {
+        await api.setWorkspacePermissions(props.workspace, mutablePermissions.value);
+        permDialog.value = false;
+      } catch (error) {
+        // TODO #205
+      }
+    }
+    function resetUserSearch() {
+      newUserSelection.value = [];
+      userSearchResults.value = [];
+      userSearchString.value = null;
+    }
+    function cancelChange() {
+      if (permissions.value === null) {
+        return;
+      }
+      permDialog.value = false;
+      initMutableData(permissions.value);
+      resetUserSearch();
+    }
+    function addSelectedUsers() {
+      if (mutablePermissions.value === null) {
+        return;
+      }
+
+      mutablePermissions.value.readers.push(...newUserSelection.value);
+      resetUserSearch();
+    }
+
+    return {
+      assignableRoleListing,
+      totalRoleListing,
+      permDialog,
+      publicToggle,
+      mutablePermissions,
+      throttledUserSearch,
+      userSearchString,
+      userSearchResults,
+      newUserSelection,
+      workspacePermissionsEditable,
+      setPermissions,
+      cancelChange,
+      userPermissionsList,
+      pluralRoleToSingular,
+      addSelectedUsers,
+      singularRoleToPlural,
+      setRoleForUser,
+      setRoleForAllUsers,
+      removeUserPermissions,
+    };
   },
 });
 </script>

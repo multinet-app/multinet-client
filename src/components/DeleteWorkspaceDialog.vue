@@ -79,14 +79,16 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from 'vue';
+import {
+  computed, defineComponent, PropType, ref, watch,
+} from 'vue';
 
 import api from '@/api';
 import store from '@/store';
 
 import { randomPhrase } from '@/utils/randomPhrase';
 
-export default Vue.extend({
+export default defineComponent({
   props: {
     somethingChecked: {
       type: Boolean as PropType<boolean>,
@@ -99,57 +101,45 @@ export default Vue.extend({
     },
   },
 
-  data() {
-    return {
-      dialog: false,
-      confirmationPhrase: '',
-      confirmation: '',
-    };
-  },
+  setup(props, { emit }) {
+    const dialog = ref(false);
+    const confirmationPhrase = ref('');
+    const confirmation = ref('');
 
-  computed: {
-    // This workaround is necessary because of https://github.com/vuejs/vue/issues/10455
-    //
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    plural(this: any) {
-      return this.selection.length > 1 ? 's' : '';
-    },
+    const plural = computed(() => (props.selection.length > 1 ? 's' : ''));
+    const detail = computed(() => (props.selection.length === 1 ? ` (${props.selection[0]})` : ''));
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    detail(this: any) {
-      return this.selection.length === 1 ? ` (${this.selection[0]})` : '';
-    },
-  },
-
-  watch: {
-    dialog() {
-      if (this.dialog) {
-        this.clear();
-        this.confirmationPhrase = randomPhrase();
-      } else {
-        this.$emit('closed');
-      }
-    },
-  },
-
-  methods: {
-    async execute() {
-      const {
-        selection,
-      } = this;
-
-      await Promise.all(selection.map((ws) => api.deleteWorkspace(ws)));
+    async function execute() {
+      await Promise.all(props.selection.map((ws) => api.deleteWorkspace(ws)));
 
       store.dispatch.fetchWorkspaces();
-      this.$emit('deleted');
+      emit('deleted');
 
-      this.dialog = false;
-    },
+      dialog.value = false;
+    }
 
-    clear() {
-      this.confirmationPhrase = '';
-      this.confirmation = '';
-    },
+    function clear() {
+      confirmationPhrase.value = '';
+      confirmation.value = '';
+    }
+
+    watch(dialog, () => {
+      if (dialog.value) {
+        clear();
+        confirmationPhrase.value = randomPhrase();
+      } else {
+        emit('closed');
+      }
+    });
+
+    return {
+      dialog,
+      confirmationPhrase,
+      confirmation,
+      plural,
+      detail,
+      execute,
+    };
   },
 });
 </script>

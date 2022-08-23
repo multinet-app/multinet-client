@@ -323,14 +323,17 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from 'vue';
+import {
+  computed,
+  defineComponent, PropType, Ref, ref, watch,
+} from 'vue';
 import { EdgesSpec, TableRow } from 'multinet';
 import WorkspaceOptionMenu from '@/components/WorkspaceOptionMenu.vue';
 
 import api from '@/api';
 import { App } from '@/types';
 
-export default Vue.extend({
+export default defineComponent({
   name: 'NetworkDetail',
 
   components: {
@@ -351,116 +354,100 @@ export default Vue.extend({
       required: true,
     },
   },
-  data() {
-    const visItems = ['Network Overview'];
-    return {
-      nodeTypes: [] as string[],
-      edgeTypes: [] as string[],
-      nodes: [] as string[],
-      offset: 0,
-      limit: 10,
-      loading: true,
-      totalNodes: 0,
-      totalEdges: 0,
-      visItems: [...visItems],
-      selectedVis: visItems[0],
-      panelOpen: true,
-    };
-  },
-  computed: {
-    highestOffset(): number {
-      return (
-        this.totalNodes % this.limit
-          ? Math.floor(this.totalNodes / this.limit)
-          : this.totalNodes / this.limit - 1
-      ) * this.limit;
-    },
-    next(): boolean {
-      return this.highestOffset !== this.offset;
-    },
-    prev(): boolean {
-      return this.offset !== 0;
-    },
-    nodeColsClasses(): string {
-      const {
-        panelOpen,
-      } = this;
+  setup(props) {
+    const nodeTypes: Ref<string[]> = ref([]);
+    const edgeTypes: Ref<string[]> = ref([]);
+    const nodes: Ref<string[]> = ref([]);
+    const offset = ref(0);
+    const limit = ref(10);
+    const loading = ref(true);
+    const totalNodes = ref(0);
+    const totalEdges = ref(0);
+    const visItems = ref(['Network Overview']);
+    const selectedVis = ref(visItems.value[0]);
+    const panelOpen = ref(true);
 
-      return `d-flex flex-row node-cols${panelOpen ? '' : ' node-cols-closed'}`;
-    },
-    networkVisClasses(): string {
-      const {
-        panelOpen,
-      } = this;
+    const highestOffset = computed(() => (totalNodes.value % limit.value
+      ? Math.floor(totalNodes.value / limit.value)
+      : totalNodes.value / limit.value - 1
+    ) * limit.value);
+    const next = computed(() => highestOffset.value !== offset.value);
+    const prev = computed(() => offset.value !== 0);
+    const nodeColsClasses = computed(() => `d-flex flex-row node-cols${panelOpen.value ? '' : ' node-cols-closed'}`);
+    const networkVisClasses = computed(() => `network-vis${panelOpen.value ? '' : ' network-vis-closed'}`);
+    const drawerIcon = computed(() => (panelOpen.value ? 'expand_more' : 'expand_less'));
 
-      return `network-vis${panelOpen ? '' : ' network-vis-closed'}`;
-    },
-    drawerIcon(): string {
-      return this.panelOpen ? 'expand_more' : 'expand_less';
-    },
-  },
-  watch: {
-    offset() {
-      this.update();
-    },
-    limit() {
-      this.update();
-    },
-    workspace() {
-      this.update();
-    },
-    network() {
-      this.update();
-    },
-  },
-  created() {
-    this.update();
-  },
-  methods: {
-    toggle() {
-      this.panelOpen = !this.panelOpen;
-    },
-    async update() {
+    function toggle() {
+      panelOpen.value = !panelOpen.value;
+    }
+    async function update() {
       function tableName(tableRow: TableRow | EdgesSpec) {
         // eslint-disable-next-line no-underscore-dangle
         return tableRow._id.split('/')[0];
       }
-      this.loading = true;
-      const network = await api.network(this.workspace, this.network);
-      const nodes = await api.nodes(this.workspace, this.network, {
-        offset: this.offset,
-        limit: this.limit,
+      loading.value = true;
+      const network = await api.network(props.workspace, props.network);
+      const newNodes = await api.nodes(props.workspace, props.network, {
+        offset: offset.value,
+        limit: limit.value,
       });
-      const edges = await api.edges(this.workspace, this.network, {
-        offset: this.offset,
-        limit: this.limit,
+      const newEdges = await api.edges(props.workspace, props.network, {
+        offset: offset.value,
+        limit: limit.value,
       });
-      this.totalNodes = network.node_count;
-      this.totalEdges = network.edge_count;
+      totalNodes.value = network.node_count;
+      totalEdges.value = network.edge_count;
 
-      const prelimNodes = nodes.results.map((node) => tableName(node));
+      const prelimNodes = newNodes.results.map((node) => tableName(node));
       prelimNodes.forEach((nodeType) => {
-        if (!this.nodeTypes.includes(nodeType)) {
-          this.nodeTypes.push(nodeType);
+        if (!nodeTypes.value.includes(nodeType)) {
+          nodeTypes.value.push(nodeType);
         }
       });
-      this.edgeTypes = edges.results.length > 0 ? [tableName(edges.results[0])] : [];
-      this.nodeTypes = this.nodeTypes.sort();
-      this.edgeTypes = this.edgeTypes.sort();
+      edgeTypes.value = newEdges.results.length > 0 ? [tableName(newEdges.results[0])] : [];
+      nodeTypes.value = nodeTypes.value.sort();
+      edgeTypes.value = edgeTypes.value.sort();
 
       // eslint-disable-next-line no-underscore-dangle
-      this.nodes = nodes.results.map((node) => node._id);
-      this.loading = false;
-    },
-    turnPage(forward: number) {
-      this.offset += forward ? this.limit : -this.limit;
-    },
-    lastPage() {
-      this.offset = this.highestOffset;
-    },
-    firstPage() {
-      this.offset = 0;
-    },
+      nodes.value = newNodes.results.map((node) => node._id);
+      loading.value = false;
+    }
+    function turnPage(forward: number) {
+      offset.value += forward ? limit.value : -limit.value;
+    }
+    function lastPage() {
+      offset.value = highestOffset.value;
+    }
+    function firstPage() {
+      offset.value = 0;
+    }
+
+    watch([offset, limit, () => props.workspace, () => props.network], () => update());
+
+    update();
+
+    return {
+      nodeTypes,
+      edgeTypes,
+      nodes,
+      offset,
+      limit,
+      loading,
+      totalNodes,
+      totalEdges,
+      visItems,
+      selectedVis,
+      panelOpen,
+      toggle,
+      drawerIcon,
+      next,
+      prev,
+      nodeColsClasses,
+      networkVisClasses,
+      turnPage,
+      lastPage,
+      firstPage,
+    };
   },
 });
 </script>

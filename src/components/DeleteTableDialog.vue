@@ -112,13 +112,15 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from 'vue';
+import {
+  computed, defineComponent, PropType, Ref, ref, watch,
+} from 'vue';
 import { TableRow } from 'multinet';
 
 import api from '@/api';
 import { randomPhrase } from '@/utils/randomPhrase';
 
-export default Vue.extend({
+export default defineComponent({
   props: {
     selection: {
       type: Array as PropType<string[]>,
@@ -131,81 +133,32 @@ export default Vue.extend({
     },
   },
 
-  data() {
-    return {
-      dialog: false,
-      confirmationPhrase: '',
-      confirmation: '',
-      using: [] as Array<{network: string; tables: string[]}>,
-    };
-  },
+  setup(props, { emit }) {
+    const dialog = ref(false);
+    const confirmationPhrase = ref('');
+    const confirmation = ref('');
+    const using: Ref<Array<{network: string; tables: string[]}>> = ref([]);
 
-  computed: {
-    // This workaround is necessary because of https://github.com/vuejs/vue/issues/10455
-    //
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    plural(this: any) {
-      return this.selection.length > 1 ? 's' : '';
-    },
+    const plural = computed(() => (props.selection.length > 1 ? 's' : ''));
+    const nonZeroSelection = computed(() => props.selection.length > 0);
+    const dependentNetworks = computed(() => using.value.length > 0);
 
-    nonZeroSelection(): boolean {
-      return this.selection.length > 0;
-    },
+    async function execute() {
+      await Promise.all(props.selection.map((table) => api.deleteTable(props.workspace, table)));
+      dialog.value = false;
+    }
 
-    dependentNetworks(): boolean {
-      return this.using.length > 0;
-    },
-  },
-
-  watch: {
-    async dialog() {
-      if (this.dialog) {
-        this.using = [];
-        const using = await this.findDependentNetworks();
-        if (using.length > 0) {
-          this.using = using;
-        } else {
-          this.clear();
-          this.confirmationPhrase = randomPhrase();
-        }
-      } else {
-        this.$emit('closed');
-      }
-    },
-  },
-
-  methods: {
-    async execute() {
-      const {
-        selection,
-        workspace,
-      } = this;
-
-      await Promise.all(selection.map((table) => api.deleteTable(workspace, table)));
-      this.dialog = false;
-    },
-
-    clear() {
-      this.confirmationPhrase = '';
-      this.confirmation = '';
-    },
-
-    async findDependentNetworks() {
-      const {
-        selection,
-        workspace,
-      } = this;
-
+    async function findDependentNetworks() {
       function tableName(tableRow: TableRow) {
         // eslint-disable-next-line no-underscore-dangle
         return tableRow._id.split('/')[0];
       }
 
-      const networkNames = (await api.networks(workspace)).results.map((network) => network.name);
-      const using = [] as Array<{network: string; tables: string[]}>;
+      const networkNames = (await api.networks(props.workspace)).results.map((network) => network.name);
+      const dependents = [] as Array<{network: string; tables: string[]}>;
       networkNames.forEach(async (network) => {
-        const nodes = await api.nodes(workspace, network, {});
-        const edges = await api.edges(workspace, network, {
+        const nodes = await api.nodes(props.workspace, network, {});
+        const edges = await api.edges(props.workspace, network, {
           direction: 'all',
         });
 
@@ -218,22 +171,53 @@ export default Vue.extend({
         });
         const edgeTable = edges.results.length > 0 ? tableName(edges.results[0]) : '';
         const tables: string[] = [];
-        selection.forEach((table) => {
+        props.selection.forEach((table) => {
           if (table === edgeTable || nodeTables.includes(table)) {
             tables.push(table);
           }
         });
 
         if (tables.length > 0) {
-          using.push({
+          dependents.push({
             network,
             tables,
           });
         }
       });
 
-      return using;
-    },
+      return dependents;
+    }
+
+    function clear() {
+      confirmationPhrase.value = '';
+      confirmation.value = '';
+    }
+
+    watch(dialog, async () => {
+      if (dialog.value) {
+        using.value = [];
+        const dependents = await findDependentNetworks();
+        if (dependents.length > 0) {
+          using.value = dependents;
+        } else {
+          clear();
+          confirmationPhrase.value = randomPhrase();
+        }
+      } else {
+        emit('closed');
+      }
+    });
+
+    return {
+      dialog,
+      confirmationPhrase,
+      confirmation,
+      using,
+      plural,
+      nonZeroSelection,
+      dependentNetworks,
+      execute,
+    };
   },
 });
 </script>
