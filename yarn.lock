@@ -6058,10 +6058,10 @@ multimatch@^2.1.0:
     arrify "^1.0.0"
     minimatch "^3.0.0"
 
-multinet@0.21.5:
-  version "0.21.5"
-  resolved "https://registry.yarnpkg.com/multinet/-/multinet-0.21.5.tgz#417253d5dd91682c1efc076296261894432daeba"
-  integrity sha512-K76wN//AF/0ueCSB4eL/7pcf8mfmDmaa5lM8V+LL6E1kkrf1ucjBeFVhSrqcQ0HrtACawOmk7DEz6XZ6W4Na7w==
+multinet@0.21.7:
+  version "0.21.7"
+  resolved "https://registry.yarnpkg.com/multinet/-/multinet-0.21.7.tgz#657d1f42eff6b628b5472a3845b142644387f1cc"
+  integrity sha512-0wvK9kaYbvQsARQ6uAqmuF1Y+JZchMGyTUGW0nfSSVE2THacD356gEzyz6zr25Rurh49QufrljJHDe7tVP8EAA==
   dependencies:
     axios "^0.21.1"
     django-s3-file-field "^0.1.2"
@@ -8584,7 +8584,7 @@ vue-hot-reload-api@^2.3.0:
   resolved "https://registry.yarnpkg.com/vue-hot-reload-api/-/vue-hot-reload-api-2.3.4.tgz#532955cc1eb208a3d990b3a9f9a70574657e08f2"
   integrity sha512-BXq3jwIagosjgNVae6tkHzzIk6a8MHFtzAdwhnV5VlvPTFxDCvIttgSiHWjdGoTJvXtmRu5HacExfdarRcFhog==
 
-vue-json-pretty@^1.6.4:
+vue-json-pretty@^1.9.1:
   version "1.9.1"
   resolved "https://registry.yarnpkg.com/vue-json-pretty/-/vue-json-pretty-1.9.1.tgz#98eaafc41cb7fa21190245f48eddcc51c225ddfd"
   integrity sha512-j9xpIyfJ+thmfTE/XOCT2jdhW3O9ZDvl6tpsQckH40QxmDe47m+uezsFb4KxLsc8ud0wQDCS+uFhOK8LsGxq2g==
