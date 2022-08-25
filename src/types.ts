@@ -41,6 +41,10 @@ export interface FileTypeTable {
   [key: string]: FileType;
 }
 
+export interface CheckboxTable {
+  [index: string]: boolean;
+}
+
 export interface Upload {
   blob: string;
   status: 'PENDING' | 'STARTED' | 'FAILED' | 'FINISHED';

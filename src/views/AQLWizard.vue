@@ -43,26 +43,68 @@
           </v-card-text>
         </v-card>
       </v-navigation-drawer>
-      <v-card flat>
+      <v-card
+        flat
+        outlined
+      >
         <v-card-title>Run AQL Query</v-card-title>
         <!-- TODO: Replace with tiptap -->
-        <v-textarea
-          v-model="query"
-          height="500px"
-          no-resize
-          label="Enter AQL Query"
-          solo
-          :loading="loading"
-          :error-messages="queryErrorMessage"
-          style="font-family: monospace; font-size: 0.9em;"
-        />
+        <v-divider />
+        <v-row no-gutters>
+          <v-col cols="8">
+            <v-textarea
+              v-model="query"
+              height="500px"
+              no-resize
+              label="Enter AQL Query"
+              solo
+              :loading="loading"
+              :error-messages="queryErrorMessage"
+              style="font-family: monospace; font-size: 0.9em;"
+            />
+          </v-col>
+          <v-col cols="4">
+            <v-card
+              height="500px"
+              class="ml-2 overflow-y-auto"
+            >
+              <v-card-title>Bind Variables</v-card-title>
+              <v-card-subtitle>Any values that must be bound can be input here (values must be strings)</v-card-subtitle>
+              <v-list>
+                <v-list-item
+                  v-for="(key, index) in bind_var_keys"
+                  :key="key"
+                >
+                  <v-row no-gutters>
+                    <v-col cols="6">
+                      <v-text-field
+                        class="mx-1"
+                        readonly
+                        flat
+                        solo
+                        :value="key"
+                      />
+                    </v-col>
+                    <v-col cols="6">
+                      <v-text-field
+                        v-model="bind_var_values[index]"
+                        class="mx-1"
+                        outlined
+                      />
+                    </v-col>
+                  </v-row>
+                </v-list-item>
+              </v-list>
+            </v-card>
+          </v-col>
+        </v-row>
         <v-card-actions>
           <v-btn
             color="error"
             text
-            @click="query=''"
+            @click="lastQueryResults = null"
           >
-            Clear
+            Clear Results
           </v-btn>
           <v-spacer />
           <v-btn
@@ -71,36 +113,6 @@
           >
             Run Query
           </v-btn>
-
-          <v-menu
-            v-model="createTableMenu"
-            offset-y
-            :close-on-content-click="false"
-          >
-            <template #activator="{ on }">
-              <v-btn
-                class="ml-2"
-                color="secondary"
-                v-on="on"
-              >
-                Create Table
-              </v-btn>
-            </template>
-            <v-card class="px-2 pt-2">
-              <v-text-field
-                v-model="createTableName"
-                solo
-                flat
-                label="Table Name"
-                append-icon="publish"
-                :error-messages="createTableErrorMessage"
-                :hide-details="!createTableErrorMessage"
-                @input="createTableErrorMessage = null"
-                @click:append="createTable"
-                @keydown.enter="createTable"
-              />
-            </v-card>
-          </v-menu>
         </v-card-actions>
       </v-card>
       <v-card
@@ -111,6 +123,8 @@
         <vue-json-pretty
           :data="lastQueryResults"
           highlight-mouseover-node
+          collapsed-on-click-brackets
+          virtual
         />
       </v-card>
     </v-main>
@@ -121,19 +135,53 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import VueJsonPretty from 'vue-json-pretty';
+import 'vue-json-pretty/lib/styles.css';
+
 import {
   computed,
   defineComponent, PropType, Ref, ref, watch,
 } from 'vue';
+
 import api from '@/api';
 import store from '@/store';
-import { Location } from 'vue-router';
-import { useCurrentInstance } from '@/utils/use';
 
 // eslint-disable-next-line no-use-before-define
 type AnyJson = boolean | number | string | null | JsonArray | JsonMap;
 interface JsonMap { [key: string]: AnyJson }
 type JsonArray = Array<AnyJson>
+
+const BIND_VAR_PATTERN = /@(@?[a-zA-Z0-9]+)/g;
+
+/**
+ * Returns the first index at which these arrays differ.
+ * Assumes the length of the arrays differ by exactly one.
+ */
+function findDifferenceIndex<T = unknown>(arr1: T[], arr2: T[]) {
+  if (arr1.length === arr2.length) {
+    throw new Error('Arrays have the same length!');
+  }
+
+  let smaller: T[];
+  let larger: T[];
+  if (arr1.length < arr2.length) {
+    smaller = arr1;
+    larger = arr2;
+  } else {
+    smaller = arr2;
+    larger = arr1;
+  }
+
+  // Iterate, return first differing
+  let i = 0;
+  while (i < smaller.length) {
+    if (smaller[i] !== larger[i]) {
+      break;
+    }
+    i += 1;
+  }
+
+  return i;
+}
 
 export default defineComponent({
   name: 'AQLWizard',
@@ -154,38 +202,46 @@ export default defineComponent({
     const createTableErrorMessage: Ref<null | string> = ref(null);
     const createTableName: Ref<null | string> = ref(null);
 
-    const router = useCurrentInstance().proxy.$router;
-    const route = router !== null ? router.currentRoute : null;
-
-    const query = ref(route === null ? '' : route.query.query as string);
+    const query = ref('FOR doc IN @@TABLE LIMIT 10 RETURN doc');
+    const default_query_finished = ref(false);
     watch(query, () => {
       if (queryErrorMessage.value) { queryErrorMessage.value = ''; }
+    });
 
-      if (route !== null && query.value !== route.query.query) {
-        const newRoute: Location = {
-          ...route,
-          name: route.name === null ? undefined : route.name,
-          query: {
-            ...route.query,
-            query: query.value || undefined,
-          },
-        };
+    const bind_var_values = ref([] as string[]);
+    const bind_var_keys = computed(() => {
+      const matches = [...query.value.matchAll(BIND_VAR_PATTERN)] as [string, string][];
 
-        if (router !== null) {
-          router.replace(newRoute);
+      // Convert to obj then array to make unique
+      return Object.keys(
+        matches.reduce((obj, key) => ({ ...obj, [key[1]]: '' }), {}),
+      );
+    });
+    watch(bind_var_keys, (val: string[], oldVal: string[]) => {
+      if (val.length !== oldVal.length) {
+        // Find differing index
+        const index = findDifferenceIndex(val, oldVal);
+
+        // New key was added
+        if (val.length > oldVal.length) {
+          bind_var_values.value.splice(index, 0, '');
+        } else { // Key was removed
+          bind_var_values.value.splice(index, 1);
         }
       }
     });
 
-    const nodeTables = computed(() => store.getters.nodeTables);
+    const nodeTables = computed(() => store.getters.nodeTables.map((table) => table.name));
     watch(nodeTables, () => {
-      if (nodeTables.value.length && !query.value) {
-        query.value = `FOR doc in ${nodeTables.value[0]} RETURN doc`;
+      if (nodeTables.value.length && !default_query_finished.value) {
+        // eslint-disable-next-line prefer-destructuring
+        bind_var_values.value[0] = nodeTables.value[0];
+        default_query_finished.value = true;
       }
     });
 
-    const edgeTables = computed(() => store.getters.edgeTables);
-    const networks = computed(() => store.getters.networks);
+    const edgeTables = computed(() => store.getters.edgeTables.map((table) => table.name));
+    const networks = computed(() => store.getters.networks.map((network) => network.name));
     const workspaceInfo = computed(() => [
       { title: 'Node Tables', data: nodeTables.value },
       { title: 'Edge Tables', data: edgeTables.value },
@@ -197,27 +253,7 @@ export default defineComponent({
 
       return { name: routeName, params: { workspace: props.workspace, table: name, network: name } };
     }
-    async function createTable() {
-      if (createTableName.value === null) {
-        return;
-      }
-      try {
-        await api.createAQLTable(props.workspace, createTableName.value, query.value);
-        createTableMenu.value = false;
-        store.dispatch.fetchWorkspace(props.workspace);
 
-        if (router !== null) {
-          router.push({ name: 'tableDetail', params: { workspace: props.workspace, table: createTableName.value } });
-        }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (error: any) {
-        if (error.status === 409) {
-          createTableErrorMessage.value = 'Table Already Exists';
-        } else {
-          createTableErrorMessage.value = error.data;
-        }
-      }
-    }
     async function runQuery() {
       if (!query.value) {
         queryErrorMessage.value = 'Query cannot be empty.';
@@ -226,13 +262,16 @@ export default defineComponent({
 
       loading.value = true;
 
+      // Create bind vars object
+      const bind_vars = (bind_var_keys.value).reduce((obj, key, index) => ({ ...obj, [key]: bind_var_values.value[index] }), {});
+
       try {
-        const resp = await api.aql(props.workspace, query.value);
+        const resp = await api.aql(props.workspace, { query: query.value, bind_vars });
         lastQueryResults.value = resp;
         queryErrorMessage.value = '';
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
-        queryErrorMessage.value = error.data;
+        queryErrorMessage.value = error.response.data;
         lastQueryResults.value = null;
       }
 
@@ -243,6 +282,8 @@ export default defineComponent({
 
     return {
       query,
+      bind_var_keys,
+      bind_var_values,
       lastQueryResults,
       loading,
       queryErrorMessage,
@@ -251,7 +292,6 @@ export default defineComponent({
       createTableName,
       workspaceInfo,
       detailLink,
-      createTable,
       runQuery,
     };
   },
