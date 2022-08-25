@@ -115,7 +115,7 @@ import TableDialog from '@/components/TableDialog.vue';
 import DownloadDialog from '@/components/DownloadDialog.vue';
 
 import store from '@/store';
-import { App } from '@/types';
+import { App, CheckboxTable } from '@/types';
 
 export default defineComponent({
   name: 'TablePanel',
@@ -149,10 +149,6 @@ export default defineComponent({
   },
 
   setup(props) {
-    interface CheckboxTable {
-      [index: string]: boolean;
-    }
-
     const checkbox: Ref<CheckboxTable> = ref({});
     const singleSelected: Ref<string | null> = ref(null);
 
