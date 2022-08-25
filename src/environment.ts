@@ -3,3 +3,4 @@ export const gaTag: string = process.env.VUE_APP_GA_TAG || '';
 export const gitSha: string = process.env.VUE_APP_GIT_SHA || '';
 export const oauthApiRoot: string = process.env.VUE_APP_OAUTH_API_ROOT || `${host}/oauth/`;
 export const oauthClientId: string = process.env.VUE_APP_OAUTH_CLIENT_ID || '';
+export const sentryDsn: string = process.env.VUE_APP_SENTRY_DSN || '';
