@@ -31,6 +31,8 @@ import { defineComponent } from 'vue';
 import Sidebar from '@/components/Sidebar.vue';
 import apps from '@/assets/appregistry.json';
 
+import 'multinet-components/dist/style.css';
+
 export default defineComponent({
   name: 'App',
 
