@@ -48,7 +48,7 @@
       class="ws-detail-empty-list"
     >
       <v-icon color="blue lighten-1">
-        info
+        mdi-information
       </v-icon> There's nothing here yet...
     </div>
 
@@ -70,7 +70,7 @@
                 v-if="!hover && !checkbox[item.name]"
                 class="item-icon"
               >
-                table_chart
+                mdi-table
               </v-icon>
 
               <v-checkbox

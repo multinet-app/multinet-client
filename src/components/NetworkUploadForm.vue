@@ -11,7 +11,7 @@
             label="Select network file"
             outlined
             prepend-icon=""
-            prepend-inner-icon="attach_file"
+            prepend-inner-icon="mdi-paperclip"
             single-line
             @change="handleFileInput"
           />

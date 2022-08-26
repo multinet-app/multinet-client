@@ -11,7 +11,7 @@
         icon
         v-on="on"
       >
-        <v-icon>more_vert</v-icon>
+        <v-icon>mdi-dots-vertical</v-icon>
       </v-btn>
     </template>
     <v-card>
@@ -23,7 +23,7 @@
         <PermissionsDialog :workspace="workspace" />
         <v-list-item :to="{ name: 'aqlWizard' }">
           <v-list-item-icon class="mr-3">
-            <v-icon>search</v-icon>
+            <v-icon>mdi-magnify</v-icon>
           </v-list-item-icon>
           <v-list-item-content>
             AQL Wizard

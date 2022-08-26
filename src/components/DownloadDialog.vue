@@ -18,7 +18,7 @@
                 color="primary"
                 size="20px"
               >
-                save_alt
+                mdi-tray-arrow-down
               </v-icon>
             </v-btn>
           </v-scroll-x-transition>
@@ -51,7 +51,7 @@
                   color="green accent-4"
                   size="18"
                 >
-                  check
+                  mdi-check
                 </v-icon>
               </v-list-item-icon>
               {{ item }}

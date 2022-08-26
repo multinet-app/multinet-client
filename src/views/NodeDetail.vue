@@ -10,7 +10,7 @@
             class="ml-4 mr-5"
             color="grey lighten-1"
           >
-            library_books
+            mdi-text-box-multiple
           </v-icon>
 
           <span class="breadcrumbs">
@@ -24,13 +24,13 @@
               class="mx-4"
               color="grey lighten-2"
             >
-              chevron_right
+              mdi-chevron-right
             </v-icon>
             <v-icon
               class="mr-3"
               color="grey lighten-1"
             >
-              timeline
+              mdi-chart-timeline-variant
             </v-icon>
             <router-link
               :to="{
@@ -44,7 +44,7 @@
               class="mx-4"
               color="grey lighten-2"
             >
-              chevron_right
+              mdi-chevron-right
             </v-icon>
             {{ type }}/{{ node }}
           </span>
@@ -129,14 +129,14 @@
                     :disabled="!prevIncoming"
                     @click="firstPage('incoming')"
                   >
-                    <v-icon>skip_previous</v-icon>
+                    <v-icon>mdi-skip-previous</v-icon>
                   </v-btn>
                   <v-btn
                     icon
                     :disabled="!prevIncoming"
                     @click="turnPage('incoming', false)"
                   >
-                    <v-icon>chevron_left</v-icon>
+                    <v-icon>mdi-chevron-left</v-icon>
                   </v-btn>
 
                   <span
@@ -151,14 +151,14 @@
                     :disabled="!nextIncoming"
                     @click="turnPage('incoming', true)"
                   >
-                    <v-icon>chevron_right</v-icon>
+                    <v-icon>mdi-chevron-right</v-icon>
                   </v-btn>
                   <v-btn
                     icon
                     :disabled="!nextIncoming"
                     @click="lastPage('incoming')"
                   >
-                    <v-icon>skip_next</v-icon>
+                    <v-icon>mdi-skip-next</v-icon>
                   </v-btn>
                 </div>
               </v-card-title>
@@ -194,14 +194,14 @@
                     :disabled="!prevOutgoing"
                     @click="firstPage('outgoing')"
                   >
-                    <v-icon>skip_previous</v-icon>
+                    <v-icon>mdi-skip-previous</v-icon>
                   </v-btn>
                   <v-btn
                     icon
                     :disabled="!prevOutgoing"
                     @click="turnPage('outgoing', false)"
                   >
-                    <v-icon>chevron_left</v-icon>
+                    <v-icon>mdi-chevron-left</v-icon>
                   </v-btn>
 
                   <span
@@ -216,14 +216,14 @@
                     :disabled="!nextOutgoing"
                     @click="turnPage('outgoing', true)"
                   >
-                    <v-icon>chevron_right</v-icon>
+                    <v-icon>mdi-chevron-right</v-icon>
                   </v-btn>
                   <v-btn
                     icon
                     :disabled="!nextOutgoing"
                     @click="lastPage('outgoing')"
                   >
-                    <v-icon>skip_next</v-icon>
+                    <v-icon>mdi-skip-next</v-icon>
                   </v-btn>
                 </div>
               </v-card-title>

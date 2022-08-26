@@ -12,7 +12,7 @@
           v-on="on"
         >
           <v-icon dark>
-            library_add
+            mdi-plus-box-multiple
           </v-icon>
         </v-btn>
       </template>
@@ -37,7 +37,7 @@
           v-on="on"
         >
           <v-icon dark>
-            add_circle
+            mdi-plus-circle
           </v-icon>
         </v-btn>
       </template>

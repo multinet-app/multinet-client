@@ -87,7 +87,7 @@
                       v-if="!hover && !checkbox[space.name]"
                       class="workspace-icon"
                     >
-                      library_books
+                      mdi-text-box-multiple
                     </v-icon>
 
                     <v-checkbox
