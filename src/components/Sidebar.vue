@@ -209,6 +209,7 @@ export default defineComponent({
       workspaceDeleted,
       deleteWorkspace,
       oauthClient,
+      store,
     };
   },
 });
