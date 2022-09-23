@@ -28,7 +28,7 @@
           dark
           size="20px"
         >
-          add_circle
+          mdi-plus-circle
         </v-icon>
       </v-btn>
     </template>

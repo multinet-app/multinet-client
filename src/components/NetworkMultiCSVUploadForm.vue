@@ -2,7 +2,7 @@
   <v-card>
     <v-card-title>Create from Existing Tables</v-card-title>
     <v-card-subtitle>
-      Link edge tables with node tables by clicking the <v-icon>link</v-icon> icon on
+      Link edge tables with node tables by clicking the <v-icon>mdi-link</v-icon> icon on
       the desired edge table, and selecting the node table column that you'd like to link it to.
     </v-card-subtitle>
     <v-progress-linear
@@ -124,7 +124,7 @@
                           dark
                           @click="excludedMap[sample.table.name][col] = true"
                         >
-                          check_box
+                          mdi-checkbox-marked
                         </v-icon>
                         <v-icon
                           v-else
@@ -132,7 +132,7 @@
                           :disabled="checkboxDisabled(sample.table, col)"
                           @click="excludedMap[sample.table.name][col] = false"
                         >
-                          check_box_outline_blank
+                          mdi-checkbox-blank-outline
                         </v-icon>
 
                         <!-- Column name -->
@@ -151,7 +151,7 @@
                               :class="{'disable-events': linkDisabled(sample.table)}"
                               v-on="on"
                             >
-                              link
+                              mdi-link
                             </v-icon>
                           </template>
                           <v-card max-height="30vh">
@@ -200,7 +200,7 @@
                                       right
                                       @click.stop="removeColumnLink(sample.table, col)"
                                     >
-                                      <v-icon>close</v-icon>
+                                      <v-icon>mdi-close</v-icon>
                                     </v-btn>
                                   </v-list-item>
                                 </template>
@@ -230,7 +230,7 @@
                               dark
                               v-on="on"
                             >
-                              call_merge
+                              mdi-call-merge
                             </v-icon>
                           </template>
                           <v-card max-height="30vh">
@@ -256,7 +256,7 @@
                                     right
                                     @click.stop="removeColumnLink(sample.table, col, true)"
                                   >
-                                    <v-icon>close</v-icon>
+                                    <v-icon>mdi-close</v-icon>
                                   </v-btn>
                                 </v-list-item>
                               </template>

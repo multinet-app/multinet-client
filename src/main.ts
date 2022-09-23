@@ -1,4 +1,3 @@
-import 'material-design-icons-iconfont/dist/material-design-icons.css';
 import * as Sentry from '@sentry/vue';
 import Vue from 'vue';
 import App from './App.vue';

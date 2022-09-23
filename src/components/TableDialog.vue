@@ -13,7 +13,7 @@
         v-on="on"
       >
         <v-icon dark>
-          add_circle
+          mdi-plus-circle
         </v-icon>
       </v-btn>
     </template>
@@ -49,7 +49,7 @@
                     <v-file-input
                       v-model="selectedFile"
                       label="Upload File"
-                      prepend-inner-icon="attach_file"
+                      prepend-inner-icon="mdi-paperclip"
                       prepend-icon=""
                       single-line
                       clearable

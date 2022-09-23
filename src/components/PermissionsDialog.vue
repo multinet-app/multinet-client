@@ -10,7 +10,7 @@
         v-on="on"
       >
         <v-list-item-icon class="mr-3">
-          <v-icon>vpn_key</v-icon>
+          <v-icon>mdi-key</v-icon>
         </v-list-item-icon>
         <v-list-item-content>
           Permissions
@@ -72,7 +72,7 @@
                   v-on="on"
                   @click="addSelectedUsers"
                 >
-                  <v-icon>add</v-icon>
+                  <v-icon>mdi-plus</v-icon>
                 </v-btn>
               </template>
               <span>Add selected</span>
@@ -101,7 +101,7 @@
                   hide-details
                   dense
                   placeholder="change all to"
-                  prepend-icon="more_horiz"
+                  prepend-icon="mdi-dots-horizontal"
                   @input="setRoleForAllUsers(singularRoleToPlural($event))"
                 />
               </v-col>
@@ -114,7 +114,7 @@
             class="px-0"
           >
             <v-list-item-avatar>
-              <v-icon>account_circle</v-icon>
+              <v-icon>mdi-account-circle</v-icon>
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title class="blue--text text--darken-2">
@@ -129,7 +129,7 @@
                 dense
                 :value="pluralRoleToSingular(role)"
                 :disabled="role === 'owner'"
-                prepend-icon="lock"
+                prepend-icon="mdi-lock"
                 @input="setRoleForUser(user, role, singularRoleToPlural($event))"
               />
             </v-list-item-action>
@@ -139,7 +139,7 @@
                 :disabled="role === 'owner'"
                 @click="removeUserPermissions(user, role)"
               >
-                <v-icon>close</v-icon>
+                <v-icon>mdi-close</v-icon>
               </v-btn>
             </v-list-item-action>
           </v-list-item>
@@ -165,7 +165,7 @@
                 class="ml-2 mb-1"
                 v-on="on"
               >
-                help
+                mdi-help-circle
               </v-icon>
             </template>
             <v-card width="20vw">

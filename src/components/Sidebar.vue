@@ -35,7 +35,11 @@
         </router-link>
       </v-toolbar-title>
       <v-spacer />
-      <login-menu />
+      <login-menu
+        :store="store"
+        :oauth-client="oauthClient"
+        :user-info="userInfo"
+      />
     </v-toolbar>
 
     <WorkspaceDialog />
@@ -83,7 +87,7 @@
                       v-if="!hover && !checkbox[space.name]"
                       class="workspace-icon"
                     >
-                      library_books
+                      mdi-text-box-multiple
                     </v-icon>
 
                     <v-checkbox
@@ -130,9 +134,10 @@ import store from '@/store';
 import WorkspaceDialog from '@/components/WorkspaceDialog.vue';
 import DeleteWorkspaceDialog from '@/components/DeleteWorkspaceDialog.vue';
 import AboutDialog from '@/components/AboutDialog.vue';
-import LoginMenu from '@/components/LoginMenu.vue';
+import { LoginMenu } from 'multinet-components';
 import { CheckboxTable } from '@/types';
 import { useCurrentInstance } from '@/utils/use';
+import oauthClient from '@/oauth';
 
 export default defineComponent({
   components: {
@@ -203,6 +208,8 @@ export default defineComponent({
       route,
       workspaceDeleted,
       deleteWorkspace,
+      oauthClient,
+      store,
     };
   },
 });
