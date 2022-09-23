@@ -645,8 +645,7 @@ export default defineComponent({
 
     function getOtherTableColumns(tableName: string) {
       const otherTables = visibleTableSamples.value.filter(
-        // (sample) => !mainTables.value.includes(sample.table.name) && sample.table.name !== tableName,
-        (sample) => !mainTables.value.some((t) => t?.name === sample.table.name) && sample.table.name !== tableName,
+        (sample) => sample.table.name !== tableName,
       );
 
       return otherTables.reduce((prev, cur) => ([

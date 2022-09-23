@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@girder/oauth-client": "^0.7.6",
+    "@sentry/vue": "^7.11.1",
     "core-js": "^3.8.3",
     "dayjs": "^1.9.1",
     "direct-vuex": "^0.10.4",
