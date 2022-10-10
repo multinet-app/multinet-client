@@ -138,6 +138,7 @@ import { LoginMenu } from 'multinet-components';
 import { CheckboxTable } from '@/types';
 import { useCurrentInstance } from '@/utils/use';
 import oauthClient from '@/oauth';
+import { useRouter } from 'vue-router/composables';
 
 export default defineComponent({
   components: {
@@ -172,7 +173,7 @@ export default defineComponent({
 
     store.dispatch.fetchWorkspaces().then(() => { loading.value = false; });
 
-    const router = currentInstance.proxy.$router;
+    const router = useRouter();
     function route(workspace: string) {
       if (router !== null) {
         router.push(`/workspaces/${workspace}`);

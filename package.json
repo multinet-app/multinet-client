@@ -32,7 +32,7 @@
     "vue": "^2.7.0",
     "vue-gtag": "^1.2.1",
     "vue-json-pretty": "^1.9.1",
-    "vue-router": "^3.0.2",
+    "vue-router": "^3.6.0",
     "vuetify": "^2.6.10",
     "vuex": "^3.1.3"
   },
