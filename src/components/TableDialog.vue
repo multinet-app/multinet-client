@@ -152,6 +152,13 @@
           </v-data-table>
 
           <v-footer class="py-3">
+            <v-select
+              v-model="delimiter"
+              :items="delimiterOptions"
+              persistent-hint
+              hint="Delimiter"
+              style="max-width: 100px"
+            />
             <v-spacer />
             <v-btn
               color="primary"
@@ -218,6 +225,9 @@ export default defineComponent({
       }));
     });
 
+    const delimiter = ref('');
+    const delimiterOptions = [',', ';', '|', '\\t'];
+
     const edgeTable = computed(() => {
       const sample = sampleRows.value[0] || {};
       const hasFrom = Object.prototype.hasOwnProperty.call(sample, '_from');
@@ -248,6 +258,7 @@ export default defineComponent({
       columnType.value = Array.from(analysis.typeRecs.keys()).reduce((acc, key) => ({ ...acc, [key]: analysis.typeRecs.get(key) }), {});
 
       sampleRows.value = [...analysis.sampleRows];
+      delimiter.value = analysis.delimiter;
     });
 
     // Upload options
@@ -295,6 +306,7 @@ export default defineComponent({
           data: selectedFile.value,
           edgeTable: edgeTable.value,
           columnTypes: columnType.value,
+          delimiter: delimiter.value,
         });
 
         tableCreationError.value = null;
@@ -319,6 +331,8 @@ export default defineComponent({
       dialogWidth,
       headers,
       sampleRows,
+      delimiter,
+      delimiterOptions,
       columnType,
       multinetTypes,
       selectedFile,

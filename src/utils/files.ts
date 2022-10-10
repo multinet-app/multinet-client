@@ -40,6 +40,7 @@ interface TypeScore {
 interface CSVAnalysis {
   typeRecs: Map<string, CSVColumnType>;
   sampleRows: Array<Record<string, unknown>>;
+  delimiter: string;
 }
 
 async function analyzeCSV(file: File): Promise<CSVAnalysis> {
@@ -47,12 +48,16 @@ async function analyzeCSV(file: File): Promise<CSVAnalysis> {
     const columnTypes = new Map<string, TypeScore>();
     const typeRecs = new Map<string, CSVColumnType>();
     const sampleRows = [] as Array<Record<string, unknown>>;
+    let delimiter = '';
     let rowsParsed = 0;
 
     Papa.parse(file, {
       header: true,
       skipEmptyLines: true,
       step(row: ParseResult<Record<string, unknown>>, parser) {
+        // Set the delimiter
+        delimiter = row.meta.delimiter;
+
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const data = row.data as { [key: string]: any };
 
@@ -94,7 +99,7 @@ async function analyzeCSV(file: File): Promise<CSVAnalysis> {
           // convert to 0, so those are excluded specifically. Trim the string
           // here and not above to preserve its literal string value in case
           // it's not a number.
-          if (value.trim() !== '' && !Number.isNaN(Number(value.trim()))) {
+          if (typeof value === 'string' && value.trim() !== '' && !Number.isNaN(Number(value.trim()))) {
             entry.number += 1;
           }
 
@@ -132,6 +137,7 @@ async function analyzeCSV(file: File): Promise<CSVAnalysis> {
         resolve({
           typeRecs,
           sampleRows,
+          delimiter,
         });
       },
     });
