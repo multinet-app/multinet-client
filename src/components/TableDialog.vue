@@ -158,6 +158,7 @@
               persistent-hint
               hint="Delimiter"
               style="max-width: 100px"
+              @change="delimiterChanged"
             />
             <v-spacer />
             <v-btn
@@ -238,6 +239,14 @@ export default defineComponent({
     // Type recommendation
     const columnType: Ref<{[key: string]: CSVColumnType}> = ref({});
 
+    async function runCSVAnalysis(newFile: File, userDelim?: string) {
+      const analysis = await analyzeCSV(newFile, userDelim === undefined ? '' : userDelim);
+      columnType.value = Array.from(analysis.typeRecs.keys()).reduce((acc, key) => ({ ...acc, [key]: analysis.typeRecs.get(key) }), {});
+
+      sampleRows.value = [...analysis.sampleRows];
+      delimiter.value = analysis.delimiter;
+    }
+
     const tableCreationError = ref<string | null>(null);
 
     // File selection
@@ -254,12 +263,15 @@ export default defineComponent({
       }
       fileName.value = newFile.name.replace('.csv', '');
 
-      const analysis = await analyzeCSV(newFile);
-      columnType.value = Array.from(analysis.typeRecs.keys()).reduce((acc, key) => ({ ...acc, [key]: analysis.typeRecs.get(key) }), {});
-
-      sampleRows.value = [...analysis.sampleRows];
-      delimiter.value = analysis.delimiter;
+      await runCSVAnalysis(newFile);
     });
+
+    async function delimiterChanged() {
+      // Re-run the analysis with the user-specified delimiter
+      if (selectedFile.value !== null) {
+        await runCSVAnalysis(selectedFile.value, delimiter.value);
+      }
+    }
 
     // Upload options
     const overwrite = ref(false);
@@ -333,6 +345,7 @@ export default defineComponent({
       sampleRows,
       delimiter,
       delimiterOptions,
+      delimiterChanged,
       columnType,
       multinetTypes,
       selectedFile,

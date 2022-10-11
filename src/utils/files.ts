@@ -43,7 +43,7 @@ interface CSVAnalysis {
   delimiter: string;
 }
 
-async function analyzeCSV(file: File): Promise<CSVAnalysis> {
+async function analyzeCSV(file: File, userDelim?: string): Promise<CSVAnalysis> {
   const parsePromise: Promise<CSVAnalysis> = new Promise((resolve) => {
     const columnTypes = new Map<string, TypeScore>();
     const typeRecs = new Map<string, CSVColumnType>();
@@ -54,6 +54,7 @@ async function analyzeCSV(file: File): Promise<CSVAnalysis> {
     Papa.parse(file, {
       header: true,
       skipEmptyLines: true,
+      delimiter: userDelim === undefined ? '' : userDelim,
       step(row: ParseResult<Record<string, unknown>>, parser) {
         // Set the delimiter
         delimiter = row.meta.delimiter;
