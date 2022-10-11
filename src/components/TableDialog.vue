@@ -158,8 +158,18 @@
               persistent-hint
               hint="Delimiter"
               style="max-width: 100px"
-              @change="delimiterChanged"
+              @change="delimiterQuoteChanged"
             />
+
+            <v-select
+              v-model="quoteChar"
+              :items="quoteCharOptions"
+              persistent-hint
+              hint="Quote Character"
+              style="max-width: 100px"
+              @change="delimiterQuoteChanged"
+            />
+
             <v-spacer />
             <v-btn
               color="primary"
@@ -229,6 +239,9 @@ export default defineComponent({
     const delimiter = ref('');
     const delimiterOptions = [',', ';', '|'];
 
+    const quoteChar = ref('"');
+    const quoteCharOptions = ['"', '\''];
+
     const edgeTable = computed(() => {
       const sample = sampleRows.value[0] || {};
       const hasFrom = Object.prototype.hasOwnProperty.call(sample, '_from');
@@ -239,8 +252,8 @@ export default defineComponent({
     // Type recommendation
     const columnType: Ref<{[key: string]: CSVColumnType}> = ref({});
 
-    async function runCSVAnalysis(newFile: File, userDelim?: string) {
-      const analysis = await analyzeCSV(newFile, userDelim === undefined ? '' : userDelim);
+    async function runCSVAnalysis(newFile: File, userDelim?: string, userQuote?: string) {
+      const analysis = await analyzeCSV(newFile, userDelim, userQuote);
       columnType.value = Array.from(analysis.typeRecs.keys()).reduce((acc, key) => ({ ...acc, [key]: analysis.typeRecs.get(key) }), {});
 
       sampleRows.value = [...analysis.sampleRows];
@@ -266,10 +279,10 @@ export default defineComponent({
       await runCSVAnalysis(newFile);
     });
 
-    async function delimiterChanged() {
-      // Re-run the analysis with the user-specified delimiter
+    async function delimiterQuoteChanged() {
+      // Re-run the analysis with the user-specified delimiter and quote character
       if (selectedFile.value !== null) {
-        await runCSVAnalysis(selectedFile.value, delimiter.value);
+        await runCSVAnalysis(selectedFile.value, delimiter.value, quoteChar.value);
       }
     }
 
@@ -319,6 +332,7 @@ export default defineComponent({
           edgeTable: edgeTable.value,
           columnTypes: columnType.value,
           delimiter: delimiter.value,
+          quoteChar: quoteChar.value,
         });
 
         tableCreationError.value = null;
@@ -345,7 +359,9 @@ export default defineComponent({
       sampleRows,
       delimiter,
       delimiterOptions,
-      delimiterChanged,
+      quoteChar,
+      quoteCharOptions,
+      delimiterQuoteChanged,
       columnType,
       multinetTypes,
       selectedFile,
