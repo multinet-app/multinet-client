@@ -227,7 +227,7 @@ export default defineComponent({
     });
 
     const delimiter = ref('');
-    const delimiterOptions = [',', ';', '|', '\\t'];
+    const delimiterOptions = [',', ';', '|'];
 
     const edgeTable = computed(() => {
       const sample = sampleRows.value[0] || {};
