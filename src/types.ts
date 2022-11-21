@@ -49,4 +49,5 @@ export interface Upload {
   blob: string;
   status: 'PENDING' | 'STARTED' | 'FAILED' | 'FINISHED';
   data_type: string;
+  created: string;
 }

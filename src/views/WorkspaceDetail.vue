@@ -92,6 +92,16 @@
           class="ma-0"
         >
           <v-alert
+            v-if="upload.status === 'FAILED'"
+            border="left"
+            color="red"
+            type="error"
+            class="mb-0"
+          >
+            Failed to upload {{ upload.blob.substring(upload.blob.indexOf('/') + 1) }} at {{ new Date(upload.created).toLocaleString() }} because: {{ upload.error_messages.join('. ') }}
+          </v-alert>
+          <v-alert
+            v-else
             border="left"
             color="blue"
             type="info"
@@ -207,7 +217,8 @@ export default defineComponent({
     const tables = computed(() => store.getters.tables);
     const networks = computed(() => store.getters.networks);
     const uploads = computed(() => store.state.uploads.filter(
-      (upload) => upload.status === 'PENDING' || upload.status === 'STARTED',
+      // Find uploads with PENDING, STARTED, or FAILED status and that are less than 15 minutes old
+      (upload) => (upload.status === 'PENDING' || upload.status === 'STARTED' || upload.status === 'FAILED') && (new Date().getTime() - new Date(upload.created).getTime() < 15 * 60 * 1000),
     ));
     const nameErrorMessages = computed(() => {
       const errors = [
