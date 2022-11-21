@@ -28,7 +28,7 @@
           dark
           size="20px"
         >
-          add_circle
+          mdi-plus-circle
         </v-icon>
       </v-btn>
     </template>
@@ -79,7 +79,7 @@ import {
 
 import api from '@/api';
 import store from '@/store';
-import { useCurrentInstance } from '@/utils/use';
+import { useRouter } from 'vue-router/composables';
 
 export default defineComponent({
   setup() {
@@ -95,7 +95,7 @@ export default defineComponent({
       }
     });
 
-    const router = useCurrentInstance().proxy.$router;
+    const router = useRouter();
     async function create() {
       if (newWorkspace.value) {
         try {

@@ -19,7 +19,7 @@
                 color="red accent-3"
                 size="20px"
               >
-                delete_sweep
+                mdi-delete-sweep
               </v-icon>
             </v-btn>
           </v-scroll-x-transition>

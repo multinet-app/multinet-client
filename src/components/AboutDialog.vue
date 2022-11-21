@@ -12,7 +12,7 @@
         v-on="on"
       >
         <v-icon size="18">
-          help
+          mdi-help-circle
         </v-icon>
       </v-btn>
     </template>

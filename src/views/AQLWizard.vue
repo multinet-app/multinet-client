@@ -34,7 +34,7 @@
               >
                 <v-list-item-icon class="ma-0 mt-1">
                   <v-icon small>
-                    {{ network ? "timeline" : "table_chart" }}
+                    {{ network ? "mdi-chart-timeline-variant" : "mdi-table" }}
                   </v-icon>
                 </v-list-item-icon>
                 {{ name }}

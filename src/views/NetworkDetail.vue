@@ -16,7 +16,7 @@
           class="ml-4 mr-5"
           color="grey lighten-1"
         >
-          library_books
+          mdi-text-box-multiple
         </v-icon>
 
         <span class="breadcrumbs">
@@ -29,11 +29,11 @@
           <v-icon
             class="mx-4"
             color="grey lighten-2"
-          >chevron_right</v-icon>
+          >mdi-chevron-right</v-icon>
           <v-icon
             class="mr-3"
             color="grey lighten-1"
-          >timeline</v-icon>
+          >mdi-chart-timeline-variant</v-icon>
           {{ network }}
         </span>
       </v-toolbar-title>
@@ -96,7 +96,7 @@
               >
                 <v-list-item-avatar class="mr-3">
                   <v-icon color="blue lighten-3">
-                    exit_to_app
+                    mdi-exit-to-app
                   </v-icon>
                 </v-list-item-avatar>
                 <v-list-item-title>
@@ -104,7 +104,7 @@
                 </v-list-item-title>
                 <v-list-item-icon>
                   <v-icon color="blue lighten-3">
-                    chevron_right
+                    mdi-chevron-right
                   </v-icon>
                 </v-list-item-icon>
               </v-list-item>
@@ -150,7 +150,7 @@
                         color="grey lighten-1"
                         size="18"
                       >
-                        scatter_plot
+                        mdi-scatter-plot
                       </v-icon>
                     </v-list-item-avatar>
                     <v-list-item-title>
@@ -158,7 +158,7 @@
                     </v-list-item-title>
                     <v-list-item-icon>
                       <v-icon color="grey lighten-1">
-                        chevron_right
+                        mdi-chevron-right
                       </v-icon>
                     </v-list-item-icon>
                   </v-list-item>
@@ -205,7 +205,7 @@
                         color="grey lighten-1"
                         size="18"
                       >
-                        device_hub
+                        mdi-merge
                       </v-icon>
                     </v-list-item-avatar>
                     <v-list-item-title>
@@ -213,7 +213,7 @@
                     </v-list-item-title>
                     <v-list-item-icon>
                       <v-icon color="grey lighten-1">
-                        chevron_right
+                        mdi-chevron-right
                       </v-icon>
                     </v-list-item-icon>
                   </v-list-item>
@@ -245,7 +245,7 @@
                     :disabled="!prev"
                     @click="firstPage()"
                   >
-                    <v-icon>skip_previous</v-icon>
+                    <v-icon>mdi-skip-previous</v-icon>
                   </v-btn>
                   <v-btn
                     class="mx-1"
@@ -254,7 +254,7 @@
                     :disabled="!prev"
                     @click="turnPage(false)"
                   >
-                    <v-icon>chevron_left</v-icon>
+                    <v-icon>mdi-chevron-left</v-icon>
                   </v-btn>
                   <v-btn
                     class="mx-1"
@@ -263,7 +263,7 @@
                     :disabled="!next"
                     @click="turnPage(true)"
                   >
-                    <v-icon>chevron_right</v-icon>
+                    <v-icon>mdi-chevron-right</v-icon>
                   </v-btn>
                   <v-btn
                     class="mx-1"
@@ -272,7 +272,7 @@
                     :disabled="!next"
                     @click="lastPage()"
                   >
-                    <v-icon>skip_next</v-icon>
+                    <v-icon>mdi-skip-next</v-icon>
                   </v-btn>
                 </div>
               </v-toolbar>
@@ -375,7 +375,7 @@ export default defineComponent({
     const prev = computed(() => offset.value !== 0);
     const nodeColsClasses = computed(() => `d-flex flex-row node-cols${panelOpen.value ? '' : ' node-cols-closed'}`);
     const networkVisClasses = computed(() => `network-vis${panelOpen.value ? '' : ' network-vis-closed'}`);
-    const drawerIcon = computed(() => (panelOpen.value ? 'expand_more' : 'expand_less'));
+    const drawerIcon = computed(() => (panelOpen.value ? 'mdi-chevron-down' : 'mdi-chevron-up'));
 
     function toggle() {
       panelOpen.value = !panelOpen.value;

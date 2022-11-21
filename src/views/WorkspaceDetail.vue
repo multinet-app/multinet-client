@@ -12,7 +12,7 @@
               class="ml-4 mr-5"
               color="grey lighten-1"
             >
-              library_books
+              mdi-text-box-multiple
             </v-icon>
 
             <v-tooltip
@@ -31,7 +31,7 @@
                       color="grey darken-3"
                       size="20px"
                     >
-                      edit
+                      mdi-pencil
                     </v-icon>
                   </v-btn>
                 </div>
@@ -49,7 +49,7 @@
                 size="20px"
                 @click="cancelRename"
               >
-                close
+                mdi-close
               </v-icon>
             </v-btn>
 
@@ -176,7 +176,7 @@ import NetworkPanel from '@/components/NetworkPanel.vue';
 import store from '@/store';
 import WorkspaceOptionMenu from '@/components/WorkspaceOptionMenu.vue';
 import { App } from '@/types';
-import { useCurrentInstance } from '@/utils/use';
+import { useRouter } from 'vue-router/composables';
 
 const surroundingWhitespace = /^\s+|\s+$/;
 const workspaceNameRules: Array<(x: string) => string|boolean> = [
@@ -205,7 +205,7 @@ export default defineComponent({
   },
 
   setup(props) {
-    const router = useCurrentInstance().proxy.$router;
+    const router = useRouter();
 
     const localWorkspace = ref<string | null>(null);
     const editing = ref(false);

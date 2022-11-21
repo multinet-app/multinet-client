@@ -62,7 +62,7 @@
               @click="login"
             >
               <v-icon x-large>
-                file_upload
+                mdi-upload
               </v-icon>
             </v-btn>
             Sign up and upload your own data
@@ -76,7 +76,7 @@
               x-large
               class="pr-1"
             >
-              videogame_asset
+              mdi-gamepad-square
             </v-icon>
             Try a demo below or explore the public workspaces
           </v-col>
@@ -98,7 +98,7 @@
                   v-on="on"
                 >
                   <v-icon x-large>
-                    info
+                    mdi-information
                   </v-icon>
                 </v-btn>
               </template>

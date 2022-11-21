@@ -21,7 +21,7 @@
               <v-icon
                 right
               >
-                delete_sweep
+                mdi-delete-sweep
               </v-icon>
             </v-btn>
           </v-fade-transition>

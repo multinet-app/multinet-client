@@ -25,7 +25,7 @@
           >
             <v-list-item-avatar class="mr-3">
               <v-icon color="blue lighten-3">
-                exit_to_app
+                mdi-exit-to-app
               </v-icon>
             </v-list-item-avatar>
             <v-list-item-title>
@@ -33,7 +33,7 @@
             </v-list-item-title>
             <v-list-item-icon>
               <v-icon color="blue lighten-3">
-                chevron_right
+                mdi-chevron-right
               </v-icon>
             </v-list-item-icon>
           </v-list-item>
@@ -58,7 +58,7 @@
           >
             <v-list-item-action>
               <v-icon color="primary">
-                table_chart
+                mdi-table
               </v-icon>
             </v-list-item-action>
 
@@ -81,7 +81,7 @@
             class="ml-4 mr-5"
             color="grey lighten-1"
           >
-            library_books
+            mdi-text-box-multiple
           </v-icon>
 
           <span class="breadcrumbs">
@@ -96,11 +96,11 @@
             <v-icon
               class="mx-4"
               color="grey lighten-2"
-            >chevron_right</v-icon>
+            >mdi-chevron-right</v-icon>
             <v-icon
               class="mr-3"
               color="grey lighten-1"
-            >table_chart</v-icon>
+            >mdi-table</v-icon>
             {{ table }}
           </span>
         </v-toolbar-title>
