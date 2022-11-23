@@ -152,6 +152,25 @@
           </v-data-table>
 
           <v-footer class="py-3">
+            <v-select
+              v-model="delimiter"
+              :items="delimiterOptions"
+              persistent-hint
+              hint="Delimiter"
+              style="max-width: 100px"
+              class="mr-2"
+              @change="delimiterQuoteChanged"
+            />
+
+            <v-select
+              v-model="quoteChar"
+              :items="quoteCharOptions"
+              persistent-hint
+              hint="Quote Character"
+              style="max-width: 100px"
+              @change="delimiterQuoteChanged"
+            />
+
             <v-spacer />
             <v-btn
               color="primary"
@@ -218,6 +237,12 @@ export default defineComponent({
       }));
     });
 
+    const delimiter = ref('');
+    const delimiterOptions = [',', ';', '|'];
+
+    const quoteChar = ref('"');
+    const quoteCharOptions = ['"', '\''];
+
     const edgeTable = computed(() => {
       const sample = sampleRows.value[0] || {};
       const hasFrom = Object.prototype.hasOwnProperty.call(sample, '_from');
@@ -227,6 +252,14 @@ export default defineComponent({
 
     // Type recommendation
     const columnType: Ref<{[key: string]: CSVColumnType}> = ref({});
+
+    async function runCSVAnalysis(newFile: File, userDelim?: string, userQuote?: string) {
+      const analysis = await analyzeCSV(newFile, userDelim, userQuote);
+      columnType.value = Array.from(analysis.typeRecs.keys()).reduce((acc, key) => ({ ...acc, [key]: analysis.typeRecs.get(key) }), {});
+
+      sampleRows.value = [...analysis.sampleRows];
+      delimiter.value = analysis.delimiter;
+    }
 
     const tableCreationError = ref<string | null>(null);
 
@@ -244,11 +277,15 @@ export default defineComponent({
       }
       fileName.value = newFile.name.replace('.csv', '');
 
-      const analysis = await analyzeCSV(newFile);
-      columnType.value = Array.from(analysis.typeRecs.keys()).reduce((acc, key) => ({ ...acc, [key]: analysis.typeRecs.get(key) }), {});
-
-      sampleRows.value = [...analysis.sampleRows];
+      await runCSVAnalysis(newFile);
     });
+
+    async function delimiterQuoteChanged() {
+      // Re-run the analysis with the user-specified delimiter and quote character
+      if (selectedFile.value !== null) {
+        await runCSVAnalysis(selectedFile.value, delimiter.value, quoteChar.value);
+      }
+    }
 
     // Upload options
     const overwrite = ref(false);
@@ -295,6 +332,8 @@ export default defineComponent({
           data: selectedFile.value,
           edgeTable: edgeTable.value,
           columnTypes: columnType.value,
+          delimiter: delimiter.value,
+          quoteChar: quoteChar.value,
         });
 
         tableCreationError.value = null;
@@ -319,6 +358,11 @@ export default defineComponent({
       dialogWidth,
       headers,
       sampleRows,
+      delimiter,
+      delimiterOptions,
+      quoteChar,
+      quoteCharOptions,
+      delimiterQuoteChanged,
       columnType,
       multinetTypes,
       selectedFile,
