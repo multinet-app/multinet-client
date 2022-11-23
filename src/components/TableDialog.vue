@@ -158,6 +158,7 @@
               persistent-hint
               hint="Delimiter"
               style="max-width: 100px"
+              class="mr-2"
               @change="delimiterQuoteChanged"
             />
 
