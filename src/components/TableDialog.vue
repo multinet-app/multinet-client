@@ -238,7 +238,7 @@ export default defineComponent({
     });
 
     const delimiter = ref('');
-    const delimiterOptions = [',', ';', '|'];
+    const delimiterOptions = [{ text: ',', value: ',' }, { text: ';', value: ';' }, { text: '|', value: '|' }, { text: 'tab', value: '\t' }];
 
     const quoteChar = ref('"');
     const quoteCharOptions = ['"', '\''];
