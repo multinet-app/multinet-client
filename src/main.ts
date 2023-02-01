@@ -1,5 +1,6 @@
 import * as Sentry from '@sentry/vue';
 import Vue from 'vue';
+import { writeSharedLoginCookie, invalidateSharedLoginCookie } from 'multinet';
 import App from './App.vue';
 import api from './api';
 import oauthClient from './oauth';
@@ -10,14 +11,6 @@ import store from './store';
 import './vuegtag';
 
 Vue.config.productionTip = false;
-
-function writeSharedLoginCookie(token: string) {
-  document.cookie = `sharedLogin=${token}; Domain=${window.location.hostname}`;
-}
-
-function invalidateSharedLoginCookie() {
-  document.cookie = `sharedLogin=; Domain=${window.location.hostname}; Max-Age=0`;
-}
 
 oauthClient.maybeRestoreLogin().then(() => {
   Object.assign(api.axios.defaults.headers.common, oauthClient.authHeaders);
