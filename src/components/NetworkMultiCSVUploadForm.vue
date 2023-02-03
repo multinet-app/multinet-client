@@ -148,7 +148,7 @@
                             <v-icon
                               :color="linkColor(sample.table, col)"
                               dark
-                              :class="{'disable-events': linkDisabled(sample.table)}"
+                              :class="{ 'disable-events': linkDisabled(sample.table) }"
                               v-on="on"
                             >
                               mdi-link
@@ -226,7 +226,7 @@
                           <template #activator="{ on }">
                             <v-icon
                               :color="linkColor(sample.table, col, true)"
-                              :class="{'disable-events': joinDisabled(sample.table, col)}"
+                              :class="{ 'disable-events': joinDisabled(sample.table, col) }"
                               dark
                               v-on="on"
                             >

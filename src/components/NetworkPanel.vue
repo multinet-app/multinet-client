@@ -93,6 +93,7 @@
                 color="primary"
                 :href="`${app.url}/?workspace=${workspace}&network=${item.name}`"
                 target="_blank"
+                rel="noopener noreferrer"
                 depressed
                 small
                 style="height: 22px; margin-top: 2px; margin-bottom: 2px;"

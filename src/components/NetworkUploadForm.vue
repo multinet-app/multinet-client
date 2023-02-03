@@ -1,8 +1,8 @@
 <template>
   <v-card>
     <v-card-text class="px-4 pt-4 pb-1">
-      <v-layout wrap>
-        <v-flex>
+      <v-row>
+        <v-col>
           <v-file-input
             id="file-selector"
             clearable
@@ -15,9 +15,9 @@
             single-line
             @change="handleFileInput"
           />
-        </v-flex>
-        <v-flex
-          xs6
+        </v-col>
+        <v-col
+          cols="6"
           class="pl-2"
         >
           <v-select
@@ -35,10 +35,10 @@
             persistent-hint
             return-object
           />
-        </v-flex>
-      </v-layout>
-      <v-layout wrap>
-        <v-flex>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
           <v-text-field
             id="table-name"
             v-model="fileName"
@@ -47,8 +47,8 @@
             label="Network name"
             outlined
           />
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-card-text>
 
     <v-divider />

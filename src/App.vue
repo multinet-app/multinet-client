@@ -16,8 +16,8 @@
             class="logo mx-auto"
             contain
             max-height="50"
-            :max-width="index==1 ? 100 : 200"
-            :style="index==1 ? 'margin-top: 10px;' : ''"
+            :max-width="index == 1 ? 100 : 200"
+            :style="index == 1 ? 'margin-top: 10px;' : ''"
           />
         </v-col>
       </v-row>

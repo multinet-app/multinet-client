@@ -17,7 +17,7 @@
       </v-btn>
     </template>
 
-    <about-text @toggle="dialog=false" />
+    <about-text @toggle="dialog = false" />
   </v-dialog>
 </template>
 

@@ -22,6 +22,7 @@
             class="pl-2"
             :href="`${app.url}/?workspace=${workspace}&table=${table}`"
             target="_blank"
+            rel="noopener noreferrer"
           >
             <v-list-item-avatar class="mr-3">
               <v-icon color="blue lighten-3">
@@ -88,7 +89,7 @@
             <router-link
               :to="{
                 name: 'workspaceDetail',
-                params: { workspace }
+                params: { workspace },
               }"
             >
               {{ workspace }}

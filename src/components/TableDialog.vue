@@ -44,8 +44,8 @@
           <v-card>
             <v-card>
               <v-card-text class="px-4 pt-4 pb-1">
-                <v-layout wrap>
-                  <v-flex>
+                <v-row>
+                  <v-col>
                     <v-file-input
                       v-model="selectedFile"
                       label="Upload File"
@@ -58,18 +58,18 @@
                       show-size
                       accept=".csv"
                     />
-                  </v-flex>
-                </v-layout>
-                <v-layout wrap>
-                  <v-flex>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col>
                     <v-text-field
                       v-model="fileName"
                       label="Table Name"
                       outlined
                       dense
                     />
-                  </v-flex>
-                </v-layout>
+                  </v-col>
+                </v-row>
                 <!-- TODO: Fix after https://github.com/multinet-app/multinetjs/issues/46 -->
                 <!-- <v-row no-gutters>
                   <v-col cols="4">

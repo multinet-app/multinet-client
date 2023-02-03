@@ -91,6 +91,7 @@
                 color="primary"
                 :href="`${upsetUrl}/?workspace=${workspace}&table=${item.name}`"
                 target="_blank"
+                rel="noopener noreferrer"
                 depressed
                 small
                 class="mt-3"

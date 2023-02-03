@@ -103,7 +103,7 @@
                 </v-btn>
               </template>
 
-              <about-text @toggle="dialog=false" />
+              <about-text @toggle="dialog = false" />
             </v-dialog>
             Learn more about MultiNet
           </v-col>
@@ -142,6 +142,7 @@
                             color="primary"
                             :href="sample.href"
                             target="_blank"
+                            rel="noopener noreferrer"
                           >
                             Open in New Window
                           </v-btn>

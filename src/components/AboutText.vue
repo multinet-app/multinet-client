@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-title
-      class="headline pb-0 pt-3"
+      class="text-h5 pb-0 pt-3"
       primary-title
     >
       About Multinet

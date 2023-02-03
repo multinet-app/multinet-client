@@ -30,7 +30,7 @@
 
     <v-card v-if="!dependentNetworks">
       <v-card-title
-        class="headline pb-0 pt-3 px-5"
+        class="text-h5 pb-0 pt-3 px-5"
         primary-title
       >
         Delete Tables
@@ -73,7 +73,7 @@
     </v-card>
     <v-card v-else>
       <v-card-title
-        class="headline pb-0 pt-3 px-5"
+        class="text-h5 pb-0 pt-3 px-5"
         primary-title
       >
         Delete Tables
