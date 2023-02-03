@@ -33,6 +33,11 @@ import apps from '@/assets/appregistry.json';
 
 import 'multinet-components/dist/style.css';
 
+import utah from './assets/logo/utah_logo.png';
+import kitware from './assets/logo/Kitware_Logo.png';
+import vdl from './assets/logo/vdl_logo.png';
+import nsf from './assets/logo/nsf_logo.png';
+
 export default defineComponent({
   name: 'App',
 
@@ -42,22 +47,10 @@ export default defineComponent({
 
   setup() {
     const collabs = [
-      {
-        // eslint-disable-next-line global-require
-        logo: require('./assets/logo/utah_logo.png'),
-      },
-      {
-        // eslint-disable-next-line global-require
-        logo: require('./assets/logo/Kitware_Logo.png'),
-      },
-      {
-        // eslint-disable-next-line global-require
-        logo: require('./assets/logo/vdl_logo.png'),
-      },
-      {
-        // eslint-disable-next-line global-require
-        logo: require('./assets/logo/nsf_logo.png'),
-      },
+      { logo: utah },
+      { logo: kitware },
+      { logo: vdl },
+      { logo: nsf },
     ];
 
     return {
