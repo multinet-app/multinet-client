@@ -3,15 +3,15 @@ publish = "dist"
 command = "yarn build"
 
   [build.environment]
-  VUE_APP_GA_TAG = "UA-157426670-1"
+  VITE_GA_TAG = "UA-157426670-1"
 
 [context.deploy-preview.environment]
-VUE_APP_MULTINET_HOST = "https://api.multinet.app"
-VUE_APP_OAUTH_API_ROOT = "https://api.multinet.app/oauth/"
-VUE_APP_OAUTH_CLIENT_ID = "FKSbPC4GNN31E3a6s6f4Uo96gfNfKcGGcEH3K4vq"
+VITE_MULTINET_HOST = "https://api.multinet.app"
+VITE_OAUTH_API_ROOT = "https://api.multinet.app/oauth/"
+VITE_OAUTH_CLIENT_ID = "FKSbPC4GNN31E3a6s6f4Uo96gfNfKcGGcEH3K4vq"
 
 [context.production.environment]
-VUE_APP_MULTINET_HOST = "https://api.multinet.app"
-VUE_APP_OAUTH_API_ROOT = "https://api.multinet.app/oauth/"
-VUE_APP_OAUTH_CLIENT_ID = "FKSbPC4GNN31E3a6s6f4Uo96gfNfKcGGcEH3K4vq"
-VUE_APP_SENTRY_DSN = "https://ba68e31d5a4341fe949f36012c0a3fd8@o267860.ingest.sentry.io/2103083"
+VITE_MULTINET_HOST = "https://api.multinet.app"
+VITE_OAUTH_API_ROOT = "https://api.multinet.app/oauth/"
+VITE_OAUTH_CLIENT_ID = "FKSbPC4GNN31E3a6s6f4Uo96gfNfKcGGcEH3K4vq"
+VITE_SENTRY_DSN = "https://ba68e31d5a4341fe949f36012c0a3fd8@o267860.ingest.sentry.io/2103083"

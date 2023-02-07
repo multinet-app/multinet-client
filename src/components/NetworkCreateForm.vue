@@ -1,8 +1,8 @@
 <template>
   <v-card>
     <v-card-text class="px-4 pt-4 pb-1">
-      <v-layout wrap>
-        <v-flex>
+      <v-row>
+        <v-col>
           <v-select
             v-model="networkEdgeTable"
             dense
@@ -10,11 +10,11 @@
             label="Choose edge table"
             outlined
           />
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
 
-      <v-layout wrap>
-        <v-flex>
+      <v-row>
+        <v-col>
           <v-text-field
             v-model="newNetwork"
             dense
@@ -22,8 +22,8 @@
             label="Network name"
             outlined
           />
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-card-text>
 
     <v-divider />

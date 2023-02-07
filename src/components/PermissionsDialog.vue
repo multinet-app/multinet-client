@@ -87,7 +87,7 @@
       >
         <v-list>
           <v-subheader class="pa-3">
-            <v-row align-items="center">
+            <v-row class="align-items">
               <v-col
                 class="user-list-heading pa-1"
                 cols="8"

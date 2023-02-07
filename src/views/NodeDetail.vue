@@ -17,7 +17,7 @@
             <router-link
               :to="{
                 name: 'workspaceDetail',
-                params: { workspace }
+                params: { workspace },
               }"
             >{{ workspace }}</router-link>
             <v-icon
@@ -35,7 +35,7 @@
             <router-link
               :to="{
                 name: 'networkDetail',
-                params: { network }
+                params: { network },
               }"
             >
               {{ network }}
@@ -61,8 +61,8 @@
       >
         <v-row>
           <v-col
+            class="pa-4"
             cols="12"
-            pa-4
           >
             <v-skeleton-loader
               v-if="loading"
@@ -80,16 +80,16 @@
               <v-divider />
               <v-card-text pa-0>
                 <v-container
+                  class="pa-0"
                   fluid
-                  pa-0
                 >
                   <v-list
                     class="pt-0"
                     color="transparent"
                   >
                     <v-container
+                      class="pa-0"
                       fluid
-                      pa-0
                     >
                       <v-row>
                         <v-col
@@ -119,7 +119,7 @@
             </v-card>
           </v-col>
 
-          <v-col pa-4>
+          <v-col class="pa-4">
             <v-card height="100%">
               <v-card-title class="pag-title">
                 Incoming Edges
@@ -140,7 +140,7 @@
                   </v-btn>
 
                   <span
-                    class="overline"
+                    class="text-overline"
                     style="vertical-align: middle;"
                   >
                     {{ currentIncomingPageNumber }} of {{ lastIncomingPageNumber }}
@@ -184,7 +184,7 @@
             </v-card>
           </v-col>
 
-          <v-col pa-4>
+          <v-col class="pa-4">
             <v-card height="100%">
               <v-card-title class="pag-title">
                 Outgoing Edges
@@ -205,7 +205,7 @@
                   </v-btn>
 
                   <span
-                    class="overline"
+                    class="text-overline"
                     style="vertical-align: middle;"
                   >
                     {{ currentOutgoingPageNumber }} of {{ lastOutgoingPageNumber }}

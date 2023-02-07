@@ -1,9 +1,7 @@
 <template>
   <v-container
-    class="network-container"
-    fill-height
+    class="network-container fill-height pa-0"
     fluid
-    pa-0
   >
     <v-app-bar
       app
@@ -23,7 +21,7 @@
           <router-link
             :to="{
               name: 'workspaceDetail',
-              params: { workspace }
+              params: { workspace },
             }"
           >{{ workspace }}</router-link>
           <v-icon
@@ -44,12 +42,8 @@
     </v-app-bar>
     <v-main class="fill-height">
       <v-container
-        align-stretch
-        d-flex
-        fill-height
-        flex-column
+        class="align-stretch d-flex fill-height flex-column pa-0"
         fluid
-        pa-0
       >
         <div :class="networkVisClasses">
           <v-list>
@@ -93,6 +87,7 @@
                 class="pl-2"
                 :href="`${app.url}/?workspace=${workspace}&network=${network}`"
                 target="_blank"
+                rel="noopener noreferrer"
               >
                 <v-list-item-avatar class="mr-3">
                   <v-icon color="blue lighten-3">
