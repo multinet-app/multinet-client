@@ -1,4 +1,4 @@
-import { UploadType, TableUploadType, NetworkUploadType } from 'multinet';
+import type { UploadType, TableUploadType, NetworkUploadType } from 'multinet';
 
 export type CSVColumnType = 'label' | 'boolean' | 'category' | 'number' | 'date';
 

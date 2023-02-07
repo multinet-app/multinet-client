@@ -149,14 +149,14 @@
 </template>
 
 <script lang="ts">
+import type { PropType, Ref } from 'vue';
 import {
-  computed,
-  defineComponent, PropType, Ref, ref, watch,
+  computed, defineComponent, ref, watch,
 } from 'vue';
-import { DataPagination } from 'vuetify';
+import type { DataPagination } from 'vuetify';
 
 import api from '@/api';
-import { App, KeyValue, TableRow } from '@/types';
+import type { App, KeyValue, TableRow } from '@/types';
 import store from '@/store';
 import WorkspaceOptionMenu from '@/components/WorkspaceOptionMenu.vue';
 

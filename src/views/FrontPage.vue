@@ -161,10 +161,11 @@
 </template>
 
 <script lang="ts">
+import type { PropType } from 'vue';
 import {
-  computed, defineComponent, PropType, ref,
+  computed, defineComponent, ref,
 } from 'vue';
-import { App } from '@/types';
+import type { App } from '@/types';
 import AboutText from '@/components/AboutText.vue';
 import oauthClient from '@/oauth';
 

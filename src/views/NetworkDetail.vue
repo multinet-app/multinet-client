@@ -318,15 +318,16 @@
 </template>
 
 <script lang="ts">
+import type { PropType, Ref } from 'vue';
 import {
   computed,
-  defineComponent, PropType, Ref, ref, watch,
+  defineComponent, ref, watch,
 } from 'vue';
-import { EdgesSpec, TableRow } from 'multinet';
+import type { EdgesSpec, TableRow } from 'multinet';
 import WorkspaceOptionMenu from '@/components/WorkspaceOptionMenu.vue';
 
 import api from '@/api';
-import { App } from '@/types';
+import type { App } from '@/types';
 
 export default defineComponent({
   name: 'NetworkDetail',

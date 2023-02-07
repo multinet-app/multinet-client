@@ -35,7 +35,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref } from 'vue';
+import type { PropType } from 'vue';
+import { defineComponent, ref } from 'vue';
 import PermissionsDialog from '@/components/PermissionsDialog.vue';
 
 export default defineComponent({

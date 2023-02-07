@@ -110,16 +110,17 @@
 </template>
 
 <script lang="ts">
+import type { PropType, Ref } from 'vue';
 import {
-  computed, defineComponent, PropType, Ref, ref, watch,
+  computed, defineComponent, ref, watch,
 } from 'vue';
-import { Network } from 'multinet';
+import type { Network } from 'multinet';
 import DeleteNetworkDialog from '@/components/DeleteNetworkDialog.vue';
 import NetworkDialog from '@/components/NetworkDialog.vue';
 import DownloadDialog from '@/components/DownloadDialog.vue';
 
 import store from '@/store';
-import { App, CheckboxTable } from '@/types';
+import type { App, CheckboxTable } from '@/types';
 
 export default defineComponent({
   name: 'NetworkPanel',

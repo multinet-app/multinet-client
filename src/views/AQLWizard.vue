@@ -137,9 +137,10 @@
 import VueJsonPretty from 'vue-json-pretty';
 import 'vue-json-pretty/lib/styles.css';
 
+import type { PropType, Ref } from 'vue';
 import {
   computed,
-  defineComponent, PropType, Ref, ref, watch,
+  defineComponent, ref, watch,
 } from 'vue';
 
 import api from '@/api';

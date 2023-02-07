@@ -125,8 +125,9 @@
 </template>
 
 <script lang="ts">
+import type { Ref } from 'vue';
 import {
-  computed, defineComponent, Ref, ref, watch,
+  computed, defineComponent, ref, watch,
 } from 'vue';
 
 import store from '@/store';
@@ -135,7 +136,7 @@ import WorkspaceDialog from '@/components/WorkspaceDialog.vue';
 import DeleteWorkspaceDialog from '@/components/DeleteWorkspaceDialog.vue';
 import AboutDialog from '@/components/AboutDialog.vue';
 import { LoginMenu } from 'multinet-components';
-import { CheckboxTable } from '@/types';
+import type { CheckboxTable } from '@/types';
 import { useCurrentInstance } from '@/utils/use';
 import oauthClient from '@/oauth';
 import { useRouter } from 'vue-router/composables';

@@ -89,9 +89,9 @@
 </template>
 
 <script lang="ts">
+import type { PropType, Ref } from 'vue';
 import {
-  computed,
-  defineComponent, PropType, Ref, ref, watch,
+  computed, defineComponent, ref, watch,
 } from 'vue';
 
 import api from '@/api';

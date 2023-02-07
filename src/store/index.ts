@@ -1,14 +1,14 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import { createDirectStore } from 'direct-vuex';
-import {
+import type {
   Network, SingleUserWorkspacePermissionSpec, Table, UserSpec, Workspace,
 } from 'multinet';
 
 import api from '@/api';
 import oauthClient from '@/oauth';
 import { RoleLevel } from '@/utils/permissions';
-import { Upload } from '@/types';
+import type { Upload } from '@/types';
 
 Vue.use(Vuex);
 

@@ -255,14 +255,15 @@
 </template>
 
 <script lang="ts">
+import type { PropType, Ref } from 'vue';
 import {
   computed,
-  defineComponent, PropType, Ref, ref, watch,
+  defineComponent, ref, watch,
 } from 'vue';
-import { EdgesSpec } from 'multinet';
+import type { EdgesSpec } from 'multinet';
 
 import api from '@/api';
-import { KeyValue } from '@/types';
+import type { KeyValue } from '@/types';
 import WorkspaceOptionMenu from '@/components/WorkspaceOptionMenu.vue';
 
 // interface EdgeRecord {
