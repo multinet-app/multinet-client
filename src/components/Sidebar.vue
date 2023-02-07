@@ -66,7 +66,7 @@
       <v-tabs-items v-model="tabSelected">
         <div
           v-for="publicSpace of [false, true]"
-          :key="publicSpace"
+          :key="`${publicSpace}`"
         >
           <v-tab-item
             v-show="userInfo !== null || publicSpace"

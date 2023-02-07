@@ -159,6 +159,7 @@ import api from '@/api';
 import type { App, KeyValue, TableRow } from '@/types';
 import store from '@/store';
 import WorkspaceOptionMenu from '@/components/WorkspaceOptionMenu.vue';
+import type { ColumnTypes } from 'multinet';
 
 export default defineComponent({
   name: 'TableDetail',
@@ -191,7 +192,7 @@ export default defineComponent({
     const pagination: Ref<DataPagination> = ref({} as DataPagination);
     const loading = ref(true);
     const loadingTables = ref(true);
-    const columnTypes = ref({});
+    const columnTypes = ref<ColumnTypes>({});
 
     api.columnTypes(props.workspace, props.table).then((data) => { columnTypes.value = data; });
 

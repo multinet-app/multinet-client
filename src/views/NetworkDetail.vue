@@ -136,7 +136,7 @@
 
                   <v-list-item
                     v-for="table in nodeTypes"
-                    :key="table.name"
+                    :key="table"
                     class="pl-2"
                     :to="`/workspaces/${workspace}/table/${table}`"
                   >
@@ -191,7 +191,7 @@
 
                   <v-list-item
                     v-for="table in edgeTypes"
-                    :key="table.name"
+                    :key="table"
                     class="pl-2"
                     :to="`/workspaces/${workspace}/table/${table}`"
                   >
@@ -408,7 +408,7 @@ export default defineComponent({
       nodes.value = newNodes.results.map((node) => node._id);
       loading.value = false;
     }
-    function turnPage(forward: number) {
+    function turnPage(forward: boolean) {
       offset.value += forward ? limit.value : -limit.value;
     }
     function lastPage() {

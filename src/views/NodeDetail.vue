@@ -377,7 +377,7 @@ export default defineComponent({
 
       loading.value = false;
     }
-    function turnPage(edgeType: EdgeType, forward: number) {
+    function turnPage(edgeType: EdgeType, forward: boolean) {
       if (edgeType === 'incoming') {
         offsetIncoming.value += forward ? pageCount.value : -pageCount.value;
       } else if (edgeType === 'outgoing') {

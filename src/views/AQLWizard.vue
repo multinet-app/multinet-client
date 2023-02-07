@@ -244,8 +244,8 @@ export default defineComponent({
     const edgeTables = computed(() => store.getters.edgeTables.map((table) => table.name));
     const networks = computed(() => store.getters.networks.map((network) => network.name));
     const workspaceInfo = computed(() => [
-      { title: 'Node Tables', data: nodeTables.value },
-      { title: 'Edge Tables', data: edgeTables.value },
+      { title: 'Node Tables', data: nodeTables.value, network: false },
+      { title: 'Edge Tables', data: edgeTables.value, network: false },
       { title: 'Networks', data: networks.value, network: true },
     ]);
 

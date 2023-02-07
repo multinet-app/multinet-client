@@ -118,6 +118,7 @@ import DownloadDialog from '@/components/DownloadDialog.vue';
 
 import store from '@/store';
 import type { App, CheckboxTable } from '@/types';
+import type { Table } from 'multinet';
 
 export default defineComponent({
   name: 'TablePanel',
@@ -135,7 +136,7 @@ export default defineComponent({
     },
 
     items: {
-      type: Array as PropType<string[]>,
+      type: Array as PropType<Table[]>,
       required: true,
     },
 

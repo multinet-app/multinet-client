@@ -46,8 +46,10 @@ export interface CheckboxTable {
 }
 
 export interface Upload {
+  id: number;
   blob: string;
   status: 'PENDING' | 'STARTED' | 'FAILED' | 'FINISHED';
   data_type: string;
   created: string;
+  error_messages: string[];
 }
