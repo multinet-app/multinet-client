@@ -3,7 +3,7 @@ publish = "dist"
 command = "yarn build"
 
   [build.environment]
-  VITE_GA_TAG = "UA-157426670-1"
+  VITE_GA_TAG = "G-RL3875SQTJ"
 
 [context.deploy-preview.environment]
 VITE_MULTINET_HOST = "https://api.multinet.app"
