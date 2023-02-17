@@ -95,6 +95,7 @@ import {
 } from 'vue';
 
 import api from '@/api';
+import { EdgesSpec, TableRow } from 'multinet';
 
 export default defineComponent({
   props: {
@@ -109,7 +110,7 @@ export default defineComponent({
     },
 
     downloadType: {
-      type: String as PropType<string>,
+      type: String as PropType<'table' | 'network'>,
       required: true,
     },
   },
@@ -122,15 +123,6 @@ export default defineComponent({
 
     const plural = computed(() => (props.selection.length > 1 ? 's' : ''));
     const nonZeroSelection = computed(() => props.selection.length > 0);
-    const downloadEndpoint = computed(() => {
-      switch (props.downloadType) {
-        case 'table':
-          return api.downloadTable.bind(api);
-        case 'network':
-        default:
-          return api.downloadNetwork.bind(api);
-      }
-    });
 
     watch(dialog, () => {
       if (!dialog.value) {
@@ -142,12 +134,55 @@ export default defineComponent({
       loading.value = true;
 
       const downloads = await Promise.all(props.selection.map(async (name) => {
-        const { data, headers: { 'content-type': contentType } } = await downloadEndpoint.value(props.workspace, name);
-        const blobData = data instanceof Object ? JSON.stringify(data, null, 2) : data;
-        const blob = new Blob([blobData], { type: contentType });
+        let data;
+        const offsetLimit = { offset: 0, limit: 10000 };
 
-        const extension = contentType.split('/')[1];
-        const filename = `${name}.${extension}`;
+        if (props.downloadType === 'table') {
+          // Make first request for data
+          const rows = [];
+          const download = await api.table(props.workspace, name, offsetLimit);
+          rows.push(...download.results);
+
+          // Async request all other data if there is more to grab
+          if (download.next !== null) {
+            const additionalRequests = Math.ceil(download.count / offsetLimit.limit) - 1;
+            const downloadPromises = Array(additionalRequests).fill(null).map((value, index) => api.table(props.workspace, name, { offset: (index + 1) * offsetLimit.limit, limit: offsetLimit.limit }));
+            const finishedRequests = await Promise.all(downloadPromises);
+            finishedRequests.forEach((request) => rows.push(...request.results));
+          }
+
+          data = rows;
+        } else {
+          const nodes: TableRow[] = [];
+          const edges: EdgesSpec[] = [];
+          const nodeRequest = await api.nodes(props.workspace, name, offsetLimit);
+          nodes.push(...nodeRequest.results);
+          const edgeRequest = await api.edges(props.workspace, name, offsetLimit);
+          edges.push(...edgeRequest.results);
+
+          // Async request all other data if there is more to grab
+
+          if (nodeRequest.next !== null) {
+            const additionalRequests = Math.ceil(nodeRequest.count / offsetLimit.limit) - 1;
+            const downloadPromises = Array(additionalRequests).fill(null).map((value, index) => api.nodes(props.workspace, name, { offset: (index + 1) * offsetLimit.limit, limit: offsetLimit.limit }));
+            const finishedRequests = await Promise.all(downloadPromises);
+            finishedRequests.forEach((request) => nodes.push(...request.results));
+          }
+
+          if (edgeRequest.next !== null) {
+            const additionalRequests = Math.ceil(edgeRequest.count / offsetLimit.limit) - 1;
+            const downloadPromises = Array(additionalRequests).fill(null).map((value, index) => api.edges(props.workspace, name, { offset: (index + 1) * offsetLimit.limit, limit: offsetLimit.limit }));
+            const finishedRequests = await Promise.all(downloadPromises);
+            finishedRequests.forEach((request) => edges.push(...request.results));
+          }
+
+          data = { nodes, edges };
+        }
+
+        const blobData = JSON.stringify(data, null, 2);
+        const blob = new Blob([blobData], { type: 'application/json' });
+
+        const filename = `${name}.json`;
         const link = document.createElement('a');
 
         link.href = URL.createObjectURL(blob);
