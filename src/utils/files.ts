@@ -148,7 +148,7 @@ export async function analyzeCSV(file: File, userDelim?: string, userQuote?: str
   return parsePromise;
 }
 
-export function guessJSONColumnTypes(sampleRows: any[]) {
+export function guessJSONColumnTypes(sampleRows: { [key:string]: string }[]) {
   // Using the sample rows, guess a column type
   let numNumbers = 0;
   let numDates = 0;
