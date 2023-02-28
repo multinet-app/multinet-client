@@ -43,7 +43,7 @@ interface CSVAnalysis {
   delimiter: string;
 }
 
-async function analyzeCSV(file: File, userDelim?: string, userQuote?: string): Promise<CSVAnalysis> {
+export async function analyzeCSV(file: File, userDelim?: string, userQuote?: string): Promise<CSVAnalysis> {
   const parsePromise: Promise<CSVAnalysis> = new Promise((resolve) => {
     const columnTypes = new Map<string, TypeScore>();
     const typeRecs = new Map<string, CSVColumnType>();
@@ -148,6 +148,43 @@ async function analyzeCSV(file: File, userDelim?: string, userQuote?: string): P
   return parsePromise;
 }
 
-export {
-  analyzeCSV,
-};
+export function guessJSONColumnTypes(sampleRows: { [key:string]: string }[]) {
+  // Using the sample rows, guess a column type
+  let numNumbers = 0;
+  let numDates = 0;
+
+  return Object.keys(sampleRows[0]).map((field) => {
+    const valuesInSample = sampleRows.map((row) => {
+      if (typeof field === 'string' && field.trim() !== '' && !Number.isNaN(Number(field.trim()))) {
+        numNumbers += 1;
+      }
+
+      // See if the value looks like a date.
+      if (dayjs(field).isValid()) {
+        numDates += 1;
+      }
+      return row[field];
+    });
+    const uniqueValuesInSample = new Set(valuesInSample);
+
+    const isKey = field === '_key' || field === '_from' || field === '_to';
+    const boolean = isBoolean(uniqueValuesInSample);
+    const category = uniqueValuesInSample.size <= 10;
+    const number = numNumbers === valuesInSample.length;
+    const date = numDates === valuesInSample.length;
+
+    let rec: CSVColumnType = 'label';
+    if (isKey) {
+      rec = 'label';
+    } else if (boolean) {
+      rec = 'boolean';
+    } else if (category && !number && !date) {
+      rec = 'category';
+    } else if (number) {
+      rec = 'number';
+    } else if (date) {
+      rec = 'date';
+    }
+    return { [field]: rec };
+  }).reduce((accumulator, currentVal) => ({ ...accumulator, ...currentVal }), {});
+}

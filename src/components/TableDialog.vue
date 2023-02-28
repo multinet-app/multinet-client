@@ -56,7 +56,7 @@
                       dense
                       outlined
                       show-size
-                      accept=".csv"
+                      accept=".csv,.json"
                     />
                   </v-col>
                 </v-row>
@@ -159,6 +159,7 @@
               hint="Delimiter"
               style="max-width: 100px"
               class="mr-2"
+              :disabled="!fileIsCSV"
               @change="delimiterQuoteChanged"
             />
 
@@ -168,6 +169,7 @@
               persistent-hint
               hint="Quote Character"
               style="max-width: 100px"
+              :disabled="!fileIsCSV"
               @change="delimiterQuoteChanged"
             />
 
@@ -203,7 +205,7 @@ import {
 
 import api from '@/api';
 import { CSVColumnType } from '@/types';
-import { analyzeCSV } from '@/utils/files';
+import { analyzeCSV, guessJSONColumnTypes } from '@/utils/files';
 import store from '@/store';
 
 const defaultKeyField = '_key';
@@ -261,10 +263,17 @@ export default defineComponent({
       delimiter.value = analysis.delimiter;
     }
 
+    async function runJSONAnalysis(newFile: File) {
+      // Get the sample rows
+      sampleRows.value = (JSON.parse(await newFile.text()) as object[]).slice(0, 30);
+      columnType.value = guessJSONColumnTypes(sampleRows.value);
+    }
+
     const tableCreationError = ref<string | null>(null);
 
     // File selection
     const selectedFile = ref<File | null>(null);
+    const fileIsCSV = computed(() => selectedFile.value !== null && selectedFile.value.name.substring(selectedFile.value.name.length - 4, selectedFile.value.name.length) === '.csv');
     const fileName = ref<string | null>(null);
     watch(selectedFile, async (newFile) => {
       tableCreationError.value = null;
@@ -275,9 +284,18 @@ export default defineComponent({
 
         return;
       }
-      fileName.value = newFile.name.replace('.csv', '');
 
-      await runCSVAnalysis(newFile);
+      const newName = newFile.name;
+
+      if (fileIsCSV.value) {
+        fileName.value = newName.replace('.csv', '');
+        await runCSVAnalysis(newFile);
+      }
+
+      if (newName.substring(newName.length - 5, newName.length) === '.json') {
+        fileName.value = newName.replace('.json', '');
+        await runJSONAnalysis(newFile);
+      }
     });
 
     async function delimiterQuoteChanged() {
@@ -332,6 +350,7 @@ export default defineComponent({
           data: selectedFile.value,
           edgeTable: edgeTable.value,
           columnTypes: columnType.value,
+          fileType: fileIsCSV.value ? 'csv' : 'json',
           delimiter: delimiter.value,
           quoteChar: quoteChar.value,
         });
@@ -378,6 +397,7 @@ export default defineComponent({
       keyField,
       overwrite,
       userCanEdit,
+      fileIsCSV,
     };
   },
 });
