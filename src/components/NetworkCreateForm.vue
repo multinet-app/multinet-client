@@ -19,6 +19,7 @@
             v-model="newNetwork"
             dense
             :error-messages="networkCreationErrors"
+            :rules="[() => objectNameIsValid(newNetwork) || 'File name must contain only alphanumeric characters or \'-\' or \'_\'. First character must be a letter. Max length 250 characters.']"
             label="Network name"
             outlined
           />
@@ -104,6 +105,7 @@ export default defineComponent({
       loading,
       networkCreateDisabled,
       createNetwork,
+      objectNameIsValid,
     };
   },
 });

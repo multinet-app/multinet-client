@@ -20,6 +20,7 @@
       >
         <v-text-field
           v-model="networkName"
+          :rules="[() => objectNameIsValid(networkName) || 'File name must contain only alphanumeric characters or \'-\' or \'_\'. First character must be a letter. Max length 250 characters.']"
           label="Network Name"
           solo
         />
@@ -964,6 +965,7 @@ export default defineComponent({
       valid,
       createNetwork,
       networkCreating,
+      objectNameIsValid,
     };
   },
 });

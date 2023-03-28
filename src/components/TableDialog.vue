@@ -65,6 +65,7 @@
                     <v-text-field
                       v-model="fileName"
                       label="Table Name"
+                      :rules="[() => objectNameIsValid(fileName) || 'File name must contain only alphanumeric characters or \'-\' or \'_\'. First character must be a letter. Max length 250 characters.']"
                       outlined
                       dense
                     />
@@ -400,6 +401,7 @@ export default defineComponent({
       overwrite,
       userCanEdit,
       fileIsCSV,
+      objectNameIsValid,
     };
   },
 });

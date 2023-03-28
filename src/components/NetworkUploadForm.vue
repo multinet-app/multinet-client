@@ -43,6 +43,7 @@
             id="table-name"
             v-model="fileName"
             dense
+            :rules="[() => objectNameIsValid(fileName) || 'File name must contain only alphanumeric characters or \'-\' or \'_\'. First character must be a letter. Max length 250 characters.']"
             :error-messages="tableCreationError"
             label="Network name"
             outlined
@@ -214,6 +215,7 @@ export default defineComponent({
       handleUploadProgress,
       handleFileInput,
       createNetwork,
+      objectNameIsValid,
     };
   },
 });
