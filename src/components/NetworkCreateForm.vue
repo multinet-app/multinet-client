@@ -49,6 +49,7 @@ import {
 } from 'vue';
 
 import api from '@/api';
+import { objectNameIsValid } from '@/utils/validation';
 
 export default defineComponent({
   name: 'NetworkCreateForm',
@@ -69,7 +70,7 @@ export default defineComponent({
     const newNetwork = ref('');
     const loading = ref(false);
 
-    const networkCreateDisabled = computed(() => !networkEdgeTable.value || !newNetwork.value);
+    const networkCreateDisabled = computed(() => !networkEdgeTable.value || !objectNameIsValid(newNetwork.value));
 
     function clear() {
       networkEdgeTable.value = null;

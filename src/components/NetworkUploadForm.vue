@@ -57,6 +57,7 @@
       <v-spacer />
       <v-btn
         id="create-table"
+        color="primary"
         :disabled="createDisabled"
         @click="createNetwork"
       >
@@ -78,6 +79,7 @@ import {
 
 import api from '@/api';
 import { NetworkFileType } from '@/types';
+import { objectNameIsValid } from '@/utils/validation';
 
 const fileTypes: NetworkFileType[] = [
   {
@@ -121,7 +123,7 @@ export default defineComponent({
 
     const createDisabled = computed(() => (
       !file.value
-      || !fileName.value
+      || !objectNameIsValid(fileName.value)
       || !selectedType.value
       || !!fileUploadError.value
     ));

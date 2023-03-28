@@ -207,6 +207,7 @@ import api from '@/api';
 import { CSVColumnType } from '@/types';
 import { analyzeCSV, guessJSONColumnTypes } from '@/utils/files';
 import store from '@/store';
+import { objectNameIsValid } from '@/utils/validation';
 
 const defaultKeyField = '_key';
 const multinetTypes: readonly CSVColumnType[] = ['label', 'boolean', 'category', 'number', 'date'];
@@ -332,9 +333,10 @@ export default defineComponent({
       uploadProgress.value = null;
     }
 
+    const createDisabled = computed(() => selectedFile.value === null || !objectNameIsValid(fileName.value));
+
     // Table creation state
     const tableDialog = ref(false);
-    const createDisabled = computed(() => selectedFile.value === null || !fileName.value);
     const loading = ref(false);
     async function createTable() {
       if (selectedFile.value === null || fileName.value === null) {

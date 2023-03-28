@@ -309,6 +309,7 @@ import { DataTableHeader } from 'vuetify';
 
 import api from '@/api';
 import store from '@/store';
+import { objectNameIsValid } from '@/utils/validation';
 
 const LinkColors = [
   'amber',
@@ -877,7 +878,7 @@ export default defineComponent({
 
     // Denotes whether the dialog is in a submittable state
     const valid = computed(() => !!(
-      networkName.value
+      objectNameIsValid(networkName.value)
       && edgeTable.value?.table
       && sourceTable.value
       && targetTable.value
