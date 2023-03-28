@@ -65,6 +65,7 @@
                     <v-text-field
                       v-model="fileName"
                       label="Table Name"
+                      :rules="[() => objectNameIsValid(fileName) || 'File name must contain only alphanumeric characters or \'-\' or \'_\'. First character must be a letter. Max length 250 characters.']"
                       outlined
                       dense
                     />
@@ -207,6 +208,7 @@ import api from '@/api';
 import { CSVColumnType } from '@/types';
 import { analyzeCSV, guessJSONColumnTypes } from '@/utils/files';
 import store from '@/store';
+import { objectNameIsValid } from '@/utils/validation';
 
 const defaultKeyField = '_key';
 const multinetTypes: readonly CSVColumnType[] = ['label', 'boolean', 'category', 'number', 'date'];
@@ -332,9 +334,10 @@ export default defineComponent({
       uploadProgress.value = null;
     }
 
+    const createDisabled = computed(() => selectedFile.value === null || !objectNameIsValid(fileName.value));
+
     // Table creation state
     const tableDialog = ref(false);
-    const createDisabled = computed(() => selectedFile.value === null || !fileName.value);
     const loading = ref(false);
     async function createTable() {
       if (selectedFile.value === null || fileName.value === null) {
@@ -398,6 +401,7 @@ export default defineComponent({
       overwrite,
       userCanEdit,
       fileIsCSV,
+      objectNameIsValid,
     };
   },
 });
