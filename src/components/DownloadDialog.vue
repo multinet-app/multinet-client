@@ -95,7 +95,7 @@ import {
 } from 'vue';
 
 import api from '@/api';
-import { EdgesSpec, TableRow } from 'multinet';
+import type { EdgesSpec, TableRow } from 'multinet';
 
 export default defineComponent({
   props: {
