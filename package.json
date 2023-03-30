@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "serve": "vite --host 0.0.0.0 --port 8080",
-    "build": "yarn init-appregistry && vue-tsc --noEmit && vite build",
+    "build": "yarn type-check && vite build",
     "init-appregistry": "cp -n src/assets/prod.appregistry.json src/assets/appregistry.json",
     "lint": "eslint --ext .ts,.vue --ignore-path .gitignore --no-fix src",
     "lint:fix": "eslint --ext .ts,.vue --ignore-path .gitignore --fix src",
@@ -17,7 +17,8 @@
     "test:server:clean": "cd .. && PIPENV_DONT_LOAD_ENV=1 pipenv run test-server-clean",
     "test:server:down": "cd .. && PIPENV_DONT_LOAD_ENV=1 pipenv run test-server-down",
     "test:server:restart": "yarn test:server:down; yarn test:server:clean && yarn test:server:up",
-    "test:server:up": "cd .. && PIPENV_DONT_LOAD_ENV=1 pipenv run test-server-up"
+    "test:server:up": "cd .. && PIPENV_DONT_LOAD_ENV=1 pipenv run test-server-up",
+    "type-check": "yarn init-appregistry && vue-tsc --noEmit"
   },
   "dependencies": {
     "@girder/oauth-client": "^0.7.6",
@@ -28,7 +29,7 @@
     "direct-vuex": "^0.10.4",
     "eslint-import-resolver-alias": "^1.1.2",
     "lodash": "^4.17.21",
-    "multinet": "0.21.10",
+    "multinet": "0.21.12",
     "multinet-components": "^0.0.4",
     "papaparse": "^5.3.0",
     "unplugin-vue-components": "^0.23.0",
