@@ -20,6 +20,7 @@
       >
         <v-text-field
           v-model="networkName"
+          :rules="[() => objectNameIsValid(networkName) || 'File name must contain only alphanumeric characters or \'-\' or \'_\'. First character must be a letter. Max length 250 characters.']"
           label="Network Name"
           solo
         />
@@ -309,6 +310,7 @@ import type { DataTableHeader } from 'vuetify';
 
 import api from '@/api';
 import store from '@/store';
+import { objectNameIsValid } from '@/utils/validation';
 
 const LinkColors = [
   'amber',
@@ -877,7 +879,7 @@ export default defineComponent({
 
     // Denotes whether the dialog is in a submittable state
     const valid = computed(() => !!(
-      networkName.value
+      objectNameIsValid(networkName.value)
       && edgeTable.value?.table
       && sourceTable.value
       && targetTable.value
@@ -963,6 +965,7 @@ export default defineComponent({
       valid,
       createNetwork,
       networkCreating,
+      objectNameIsValid,
     };
   },
 });

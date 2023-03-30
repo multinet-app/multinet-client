@@ -19,6 +19,7 @@
             v-model="newNetwork"
             dense
             :error-messages="networkCreationErrors"
+            :rules="[() => objectNameIsValid(newNetwork) || 'File name must contain only alphanumeric characters or \'-\' or \'_\'. First character must be a letter. Max length 250 characters.']"
             label="Network name"
             outlined
           />
@@ -50,6 +51,7 @@ import {
 } from 'vue';
 
 import api from '@/api';
+import { objectNameIsValid } from '@/utils/validation';
 
 export default defineComponent({
   name: 'NetworkCreateForm',
@@ -70,7 +72,7 @@ export default defineComponent({
     const newNetwork = ref('');
     const loading = ref(false);
 
-    const networkCreateDisabled = computed(() => !networkEdgeTable.value || !newNetwork.value);
+    const networkCreateDisabled = computed(() => !networkEdgeTable.value || !objectNameIsValid(newNetwork.value));
 
     function clear() {
       networkEdgeTable.value = null;
@@ -104,6 +106,7 @@ export default defineComponent({
       loading,
       networkCreateDisabled,
       createNetwork,
+      objectNameIsValid,
     };
   },
 });

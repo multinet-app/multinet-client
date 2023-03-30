@@ -43,6 +43,7 @@
             id="table-name"
             v-model="fileName"
             dense
+            :rules="[() => objectNameIsValid(fileName) || 'File name must contain only alphanumeric characters or \'-\' or \'_\'. First character must be a letter. Max length 250 characters.']"
             :error-messages="tableCreationError"
             label="Network name"
             outlined
@@ -57,6 +58,7 @@
       <v-spacer />
       <v-btn
         id="create-table"
+        color="primary"
         :disabled="createDisabled"
         @click="createNetwork"
       >
@@ -80,6 +82,7 @@ import {
 
 import api from '@/api';
 import type { NetworkFileType } from '@/types';
+import { objectNameIsValid } from '@/utils/validation';
 
 const fileTypes: NetworkFileType[] = [
   {
@@ -123,7 +126,7 @@ export default defineComponent({
 
     const createDisabled = computed(() => (
       !file.value
-      || !fileName.value
+      || !objectNameIsValid(fileName.value)
       || !selectedType.value
       || !!fileUploadError.value
     ));
@@ -214,6 +217,7 @@ export default defineComponent({
       handleUploadProgress,
       handleFileInput,
       createNetwork,
+      objectNameIsValid,
     };
   },
 });
