@@ -108,15 +108,17 @@
 </template>
 
 <script lang="ts">
+import type { PropType, Ref } from 'vue';
 import {
-  computed, defineComponent, PropType, ref, Ref, watch,
+  computed, defineComponent, ref, watch,
 } from 'vue';
 import DeleteTableDialog from '@/components/DeleteTableDialog.vue';
 import TableDialog from '@/components/TableDialog.vue';
 import DownloadDialog from '@/components/DownloadDialog.vue';
 
 import store from '@/store';
-import { App, CheckboxTable } from '@/types';
+import type { App, CheckboxTable } from '@/types';
+import type { Table } from 'multinet';
 
 export default defineComponent({
   name: 'TablePanel',
@@ -134,7 +136,7 @@ export default defineComponent({
     },
 
     items: {
-      type: Array as PropType<string[]>,
+      type: Array as PropType<Table[]>,
       required: true,
     },
 

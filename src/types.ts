@@ -1,4 +1,4 @@
-import { UploadType, TableUploadType, NetworkUploadType } from 'multinet';
+import type { UploadType, TableUploadType, NetworkUploadType } from 'multinet';
 
 export type CSVColumnType = 'label' | 'boolean' | 'category' | 'number' | 'date';
 
@@ -46,8 +46,10 @@ export interface CheckboxTable {
 }
 
 export interface Upload {
+  id: number;
   blob: string;
   status: 'PENDING' | 'STARTED' | 'FAILED' | 'FINISHED';
   data_type: string;
   created: string;
+  error_messages: string[];
 }

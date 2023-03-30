@@ -306,7 +306,7 @@
 import {
   computed, defineComponent, onMounted, reactive, ref, watch, watchEffect,
 } from 'vue';
-import { DataTableHeader } from 'vuetify';
+import type { DataTableHeader } from 'vuetify';
 
 import api from '@/api';
 import store from '@/store';

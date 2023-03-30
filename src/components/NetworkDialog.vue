@@ -71,8 +71,9 @@
 </template>
 
 <script lang="ts">
+import type { PropType } from 'vue';
 import {
-  computed, defineComponent, PropType, ref,
+  computed, defineComponent, ref,
 } from 'vue';
 
 import NetworkCreateForm from '@/components/NetworkCreateForm.vue';

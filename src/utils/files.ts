@@ -1,6 +1,7 @@
-import Papa, { ParseResult } from 'papaparse';
+import type { ParseResult } from 'papaparse';
+import Papa from 'papaparse';
 import dayjs from 'dayjs';
-import { CSVColumnType } from '@/types';
+import type { CSVColumnType } from '@/types';
 
 function isBoolean(strings: Set<string>) {
   // This function tests whether both elements of an array belong to the string

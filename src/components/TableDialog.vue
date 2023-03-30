@@ -200,12 +200,13 @@
 </template>
 
 <script lang="ts">
+import type { Ref } from 'vue';
 import {
-  defineComponent, ref, Ref, computed, watch,
+  defineComponent, ref, computed, watch,
 } from 'vue';
 
 import api from '@/api';
-import { CSVColumnType } from '@/types';
+import type { CSVColumnType } from '@/types';
 import { analyzeCSV, guessJSONColumnTypes } from '@/utils/files';
 import store from '@/store';
 import { objectNameIsValid } from '@/utils/validation';

@@ -79,8 +79,9 @@
 </template>
 
 <script lang="ts">
+import type { PropType } from 'vue';
 import {
-  computed, defineComponent, PropType, ref, watch,
+  computed, defineComponent, ref, watch,
 } from 'vue';
 
 import api from '@/api';

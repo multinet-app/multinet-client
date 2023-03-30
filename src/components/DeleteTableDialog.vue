@@ -112,10 +112,11 @@
 </template>
 
 <script lang="ts">
+import type { PropType, Ref } from 'vue';
 import {
-  computed, defineComponent, PropType, Ref, ref, watch,
+  computed, defineComponent, ref, watch,
 } from 'vue';
-import { TableRow } from 'multinet';
+import type { TableRow } from 'multinet';
 
 import api from '@/api';
 import { randomPhrase } from '@/utils/randomPhrase';

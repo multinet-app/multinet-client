@@ -136,7 +136,7 @@
 
                   <v-list-item
                     v-for="table in nodeTypes"
-                    :key="table.name"
+                    :key="table"
                     class="pl-2"
                     :to="`/workspaces/${workspace}/table/${table}`"
                   >
@@ -191,7 +191,7 @@
 
                   <v-list-item
                     v-for="table in edgeTypes"
-                    :key="table.name"
+                    :key="table"
                     class="pl-2"
                     :to="`/workspaces/${workspace}/table/${table}`"
                   >
@@ -318,15 +318,16 @@
 </template>
 
 <script lang="ts">
+import type { PropType, Ref } from 'vue';
 import {
   computed,
-  defineComponent, PropType, Ref, ref, watch,
+  defineComponent, ref, watch,
 } from 'vue';
-import { EdgesSpec, TableRow } from 'multinet';
+import type { EdgesSpec, TableRow } from 'multinet';
 import WorkspaceOptionMenu from '@/components/WorkspaceOptionMenu.vue';
 
 import api from '@/api';
-import { App } from '@/types';
+import type { App } from '@/types';
 
 export default defineComponent({
   name: 'NetworkDetail',
@@ -407,7 +408,7 @@ export default defineComponent({
       nodes.value = newNodes.results.map((node) => node._id);
       loading.value = false;
     }
-    function turnPage(forward: number) {
+    function turnPage(forward: boolean) {
       offset.value += forward ? limit.value : -limit.value;
     }
     function lastPage() {

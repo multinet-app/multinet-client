@@ -73,13 +73,15 @@
 </template>
 
 <script lang="ts">
-import { NetworkUploadType, validNetworkUploadType } from 'multinet';
+import type { NetworkUploadType } from 'multinet';
+import { validNetworkUploadType } from 'multinet';
+import type { Ref } from 'vue';
 import {
-  computed, defineComponent, Ref, ref,
+  computed, defineComponent, ref,
 } from 'vue';
 
 import api from '@/api';
-import { NetworkFileType } from '@/types';
+import type { NetworkFileType } from '@/types';
 import { objectNameIsValid } from '@/utils/validation';
 
 const fileTypes: NetworkFileType[] = [

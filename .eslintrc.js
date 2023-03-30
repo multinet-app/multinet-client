@@ -31,6 +31,7 @@ module.exports = {
       ignores: ['Sidebar'],
     }],
     'import/extensions': ['error', { ts: 'never', vue: 'always' }],
+    '@typescript-eslint/consistent-type-imports': 'error',
   },
 
   settings: {

@@ -166,8 +166,9 @@
 </template>
 
 <script lang="ts">
+import type { PropType } from 'vue';
 import {
-  defineComponent, ref, PropType, computed, watch,
+  defineComponent, ref, computed, watch,
 } from 'vue';
 
 import api from '@/api';
@@ -175,7 +176,7 @@ import TablePanel from '@/components/TablePanel.vue';
 import NetworkPanel from '@/components/NetworkPanel.vue';
 import store from '@/store';
 import WorkspaceOptionMenu from '@/components/WorkspaceOptionMenu.vue';
-import { App } from '@/types';
+import type { App } from '@/types';
 import { useRouter } from 'vue-router/composables';
 
 const surroundingWhitespace = /^\s+|\s+$/;
