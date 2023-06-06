@@ -87,17 +87,17 @@
 
             <v-list-item-action>
               <v-btn
+                v-for="app in apps.table_visualizations"
+                :key="app.name"
                 :disabled="!hover"
                 color="primary"
-                :href="`${upsetUrl}/?workspace=${workspace}&table=${item.name}`"
-                target="_blank"
-                rel="noopener noreferrer"
                 depressed
                 small
                 class="mt-3"
-                @click.stop
+                @click="visualizeWithNewSession(item, app, 'table', workspace)"
+                @click.prevent
               >
-                Visualize in Upset
+                Visualize in {{ app.name }}
               </v-btn>
             </v-list-item-action>
           </v-list-item>
@@ -119,6 +119,7 @@ import DownloadDialog from '@/components/DownloadDialog.vue';
 import store from '@/store';
 import type { App, CheckboxTable } from '@/types';
 import type { Table } from 'multinet';
+import { visualizeWithNewSession } from '@/utils/sessionHelpers';
 
 export default defineComponent({
   name: 'TablePanel',
@@ -183,6 +184,7 @@ export default defineComponent({
       selection,
       upsetUrl,
       cleanup,
+      visualizeWithNewSession,
     };
   },
 });
