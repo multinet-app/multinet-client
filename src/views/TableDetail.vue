@@ -20,9 +20,7 @@
             v-for="app in apps.table_visualizations"
             :key="app.name"
             class="pl-2"
-            :href="`${app.url}/?workspace=${workspace}&table=${table}`"
-            target="_blank"
-            rel="noopener noreferrer"
+            @click="tableItem !== undefined ? visualizeWithNewSession(tableItem, app, 'table', workspace) : () => {}"
           >
             <v-list-item-avatar class="mr-3">
               <v-icon color="blue lighten-3">
@@ -160,6 +158,7 @@ import type { App, KeyValue, TableRow } from '@/types';
 import store from '@/store';
 import WorkspaceOptionMenu from '@/components/WorkspaceOptionMenu.vue';
 import type { ColumnTypes } from 'multinet';
+import { visualizeWithNewSession } from '@/utils/sessionHelpers';
 
 export default defineComponent({
   name: 'TableDetail',
@@ -197,6 +196,8 @@ export default defineComponent({
     api.columnTypes(props.workspace, props.table).then((data) => { columnTypes.value = data; });
 
     const tables = computed(() => store.getters.tables);
+    const tableItem = computed(() => tables.value.find((t) => t.name === props.table));
+
     const dataTableHeaders = computed(() => headers.value.map((header) => ({
       text: header,
       value: header,
@@ -274,6 +275,8 @@ export default defineComponent({
       dataTableRows,
       columnTypes,
       tables,
+      visualizeWithNewSession,
+      tableItem,
     };
   },
 });
