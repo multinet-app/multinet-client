@@ -18,11 +18,11 @@
           tag="button"
         >
           <v-row class="mx-0 align-center">
-            <v-col class="app-logo pb-0 pt-2 px-0">
+            <v-col class="pb-1 px-0 ">
               <img
+                id="multinet-logo"
                 src="../assets/logo/app_logo.svg"
-                alt="Multinet"
-                width="100%"
+                alt="Multinet Logo"
               >
             </v-col>
             <v-col class="text-left">
@@ -219,8 +219,9 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.app-logo {
-  width: 48px;
+#multinet-logo {
+  height: 32px;
+  width: 32px;
 }
 
 .workspace-icon {
