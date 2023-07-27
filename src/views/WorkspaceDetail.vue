@@ -122,6 +122,7 @@
           </v-alert>
         </v-col>
       </v-row>
+
       <v-row class="ma-0">
         <v-col
           cols="6"
@@ -135,8 +136,6 @@
             <network-panel
               :workspace="workspace"
               :items="networks"
-              :node-tables="nodeTables.map((table) => table.name)"
-              :edge-tables="edgeTables.map((table) => table.name)"
               :loading="loading"
               :apps="apps"
             />
@@ -165,10 +164,9 @@
   </v-container>
 </template>
 
-<script lang="ts">
-import type { PropType } from 'vue';
+<script setup lang="ts">
 import {
-  defineComponent, ref, computed, watch,
+  ref, computed, watch,
 } from 'vue';
 
 import api from '@/api';
@@ -185,117 +183,82 @@ const workspaceNameRules: Array<(x: string) => string|boolean> = [
   (x: string) => !surroundingWhitespace.test(x) || 'Workspace name cannot begin or end with whitespace',
 ];
 
-export default defineComponent({
-  name: 'WorkspaceDetail',
+const props = defineProps<{
+    workspace: string
+    apps: { network_visualizations: App[]; table_visualizations: App[] }
+  }>();
 
-  components: {
-    TablePanel,
-    NetworkPanel,
-    WorkspaceOptionMenu,
-  },
+const router = useRouter();
 
-  props: {
-    workspace: {
-      type: String as PropType<string>,
-      required: true,
-    },
-    apps: {
-      type: Object as PropType<{ network_visualizations: App[]; table_visualizations: App[] }>,
-      required: true,
-    },
-  },
+const localWorkspace = ref<string | null>(null);
+const editing = ref(false);
+const requestError = ref<string | null>(null);
+const loading = ref(false);
+const tables = computed(() => store.getters.tables);
+const networks = computed(() => store.getters.networks);
+const uploads = computed(() => store.state.uploads.filter(
+  // Find uploads with PENDING, STARTED, or FAILED status and that are less than 15 minutes old
+  (upload) => (upload.status === 'PENDING' || upload.status === 'STARTED' || upload.status === 'FAILED') && (new Date().getTime() - new Date(upload.created).getTime() < 15 * 60 * 1000),
+));
+const nameErrorMessages = computed(() => {
+  const errors = [
+    ...workspaceNameRules.map((rule) => rule(localWorkspace.value as string)),
+    requestError,
+  ];
 
-  setup(props) {
-    const router = useRouter();
-
-    const localWorkspace = ref<string | null>(null);
-    const editing = ref(false);
-    const requestError = ref<string | null>(null);
-    const loading = ref(false);
-
-    const nodeTables = computed(() => store.getters.nodeTables);
-    const edgeTables = computed(() => store.getters.edgeTables);
-    const tables = computed(() => store.getters.tables);
-    const networks = computed(() => store.getters.networks);
-    const uploads = computed(() => store.state.uploads.filter(
-      // Find uploads with PENDING, STARTED, or FAILED status and that are less than 15 minutes old
-      (upload) => (upload.status === 'PENDING' || upload.status === 'STARTED' || upload.status === 'FAILED') && (new Date().getTime() - new Date(upload.created).getTime() < 15 * 60 * 1000),
-    ));
-    const nameErrorMessages = computed(() => {
-      const errors = [
-        ...workspaceNameRules.map((rule) => rule(localWorkspace.value as string)),
-        requestError,
-      ];
-
-      return errors.filter((res): res is string => typeof res === 'string');
-    });
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    function cancelRename() {
-      requestError.value = null;
-      localWorkspace.value = props.workspace;
-      editing.value = false;
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async function renameWorkspace() {
-      if (nameErrorMessages.value.length) {
-        return;
-      }
-
-      if (localWorkspace.value === props.workspace) {
-        editing.value = false;
-        return;
-      }
-
-      if (localWorkspace.value !== null) {
-        try {
-          const { name } = await api.renameWorkspace(props.workspace, localWorkspace.value);
-          router.push(`/workspaces/${name}`);
-          editing.value = false;
-          requestError.value = null;
-
-          store.dispatch.fetchWorkspaces();
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } catch (err: any) {
-          if (err.response.status === 409) {
-            requestError.value = 'A workspace by that name already exists';
-          } else {
-            requestError.value = `${Object.values(err.response.data).flat()[0]}`;
-          }
-        }
-      }
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async function update(this: any) {
-      loading.value = true;
-
-      localWorkspace.value = props.workspace;
-      await store.dispatch.fetchWorkspace(props.workspace);
-      loading.value = false;
-    }
-
-    watch(() => props.workspace, () => update());
-    watch(localWorkspace, () => { requestError.value = null; });
-
-    update();
-
-    return {
-      editing,
-      loading,
-      networks,
-      nodeTables,
-      edgeTables,
-      tables,
-      cancelRename,
-      renameWorkspace,
-      nameErrorMessages,
-      localWorkspace,
-      uploads,
-    };
-  },
+  return errors.filter((res): res is string => typeof res === 'string');
 });
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function cancelRename() {
+  requestError.value = null;
+  localWorkspace.value = props.workspace;
+  editing.value = false;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function renameWorkspace() {
+  if (nameErrorMessages.value.length) {
+    return;
+  }
+
+  if (localWorkspace.value === props.workspace) {
+    editing.value = false;
+    return;
+  }
+
+  if (localWorkspace.value !== null) {
+    try {
+      const { name } = await api.renameWorkspace(props.workspace, localWorkspace.value);
+      router.push(`/workspaces/${name}`);
+      editing.value = false;
+      requestError.value = null;
+
+      store.dispatch.fetchWorkspaces();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      if (err.response.status === 409) {
+        requestError.value = 'A workspace by that name already exists';
+      } else {
+        requestError.value = `${Object.values(err.response.data).flat()[0]}`;
+      }
+    }
+  }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function update(this: any) {
+  loading.value = true;
+
+  localWorkspace.value = props.workspace;
+  await store.dispatch.fetchWorkspace(props.workspace);
+  loading.value = false;
+}
+
+watch(() => props.workspace, () => update());
+watch(localWorkspace, () => { requestError.value = null; });
+
+update();
 </script>
 
 <style scoped>

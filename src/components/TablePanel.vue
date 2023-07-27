@@ -102,10 +102,9 @@
   </v-list>
 </template>
 
-<script lang="ts">
-import type { PropType, Ref } from 'vue';
+<script setup lang="ts">
 import {
-  computed, defineComponent, ref, watch,
+  computed, ref, watch,
 } from 'vue';
 import DeleteTableDialog from '@/components/DeleteTableDialog.vue';
 import DownloadDialog from '@/components/DownloadDialog.vue';
@@ -114,71 +113,38 @@ import store from '@/store';
 import type { App, CheckboxTable } from '@/types';
 import type { Table } from 'multinet';
 
-export default defineComponent({
-  name: 'TablePanel',
+const props = defineProps<{
+  workspace: string
+  items: Table[]
+  loading: boolean
+  apps: { network_visualizations: App[]; table_visualizations: App[] }
+}>();
 
-  components: {
-    DeleteTableDialog,
-    DownloadDialog,
-  },
+const checkbox = ref<CheckboxTable>({});
+const singleSelected = ref<string | null>(null);
 
-  props: {
-    workspace: {
-      type: String as PropType<string>,
-      required: true,
-    },
+const checked = computed(() => Object.keys(checkbox.value).filter((d) => !!checkbox.value[d]));
+const selection = computed(() => (singleSelected.value !== null ? [singleSelected.value] : [...checked.value]));
+const upsetUrl = computed(() => {
+  const foundApp = props.apps.table_visualizations.find((vis: App) => vis.name === 'Upset');
 
-    items: {
-      type: Array as PropType<Table[]>,
-      required: true,
-    },
-
-    loading: {
-      type: Boolean as PropType<boolean>,
-      required: true,
-    },
-
-    apps: {
-      type: Object as PropType<{ network_visualizations: App[]; table_visualizations: App[] }>,
-      required: true,
-    },
-  },
-
-  setup(props) {
-    const checkbox: Ref<CheckboxTable> = ref({});
-    const singleSelected: Ref<string | null> = ref(null);
-
-    const checked = computed(() => Object.keys(checkbox.value).filter((d) => !!checkbox.value[d]));
-    const selection = computed(() => (singleSelected.value !== null ? [singleSelected.value] : [...checked.value]));
-    const upsetUrl = computed(() => {
-      const foundApp = props.apps.table_visualizations.find((vis: App) => vis.name === 'Upset');
-
-      return foundApp !== undefined ? foundApp.url : '';
-    });
-
-    function clearCheckboxes() {
-      Object.keys(checkbox.value).forEach((key) => {
-        checkbox.value[key] = false;
-      });
-    }
-
-    async function cleanup() {
-      singleSelected.value = null;
-      await store.dispatch.fetchWorkspace(props.workspace);
-      clearCheckboxes();
-    }
-
-    watch(() => props.workspace, () => clearCheckboxes());
-
-    return {
-      checkbox,
-      singleSelected,
-      selection,
-      upsetUrl,
-      cleanup,
-    };
-  },
+  return foundApp !== undefined ? foundApp.url : '';
 });
+
+function clearCheckboxes() {
+  Object.keys(checkbox.value).forEach((key) => {
+    checkbox.value[key] = false;
+  });
+}
+
+async function cleanup() {
+  singleSelected.value = null;
+  await store.dispatch.fetchWorkspace(props.workspace);
+  clearCheckboxes();
+}
+
+watch(() => props.workspace, () => clearCheckboxes());
+
 </script>
 
 <style scoped>
