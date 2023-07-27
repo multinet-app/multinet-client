@@ -27,13 +27,6 @@
           @closed="cleanup"
         />
       </div>
-
-      <network-dialog
-        :workspace="workspace"
-        :node-tables="nodeTables"
-        :edge-tables="edgeTables"
-        @success="cleanup"
-      />
     </v-subheader>
 
     <v-divider />
@@ -116,7 +109,6 @@ import {
 } from 'vue';
 import type { Network } from 'multinet';
 import DeleteNetworkDialog from '@/components/DeleteNetworkDialog.vue';
-import NetworkDialog from '@/components/NetworkDialog.vue';
 import DownloadDialog from '@/components/DownloadDialog.vue';
 
 import store from '@/store';
@@ -127,7 +119,6 @@ export default defineComponent({
 
   components: {
     DeleteNetworkDialog,
-    NetworkDialog,
     DownloadDialog,
   },
 

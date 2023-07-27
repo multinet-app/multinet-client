@@ -27,11 +27,6 @@
           @closed="cleanup"
         />
       </div>
-
-      <table-dialog
-        :workspace="workspace"
-        @success="cleanup"
-      />
     </v-subheader>
 
     <v-divider />
@@ -113,7 +108,6 @@ import {
   computed, defineComponent, ref, watch,
 } from 'vue';
 import DeleteTableDialog from '@/components/DeleteTableDialog.vue';
-import TableDialog from '@/components/TableDialog.vue';
 import DownloadDialog from '@/components/DownloadDialog.vue';
 
 import store from '@/store';
@@ -125,7 +119,6 @@ export default defineComponent({
 
   components: {
     DeleteTableDialog,
-    TableDialog,
     DownloadDialog,
   },
 
