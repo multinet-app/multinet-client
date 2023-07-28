@@ -102,7 +102,7 @@
             outlined
             dense
             clearable
-            :rules="[v => !!v || 'Name is required']"
+            :rules="[() => !!newSessionName || 'Name is required']"
           />
         </v-card-text>
         <v-card-actions>
