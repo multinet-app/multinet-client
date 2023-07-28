@@ -27,8 +27,6 @@
           @closed="cleanup"
         />
       </div>
-
-      <create-modify-dialog :workspace="workspace" />
     </v-subheader>
 
     <v-divider />

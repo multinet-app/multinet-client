@@ -80,6 +80,7 @@
         />
         <v-spacer />
 
+        <create-modify-dialog :workspace="workspace" />
         <workspace-option-menu :workspace="workspace" />
       </v-app-bar>
 
