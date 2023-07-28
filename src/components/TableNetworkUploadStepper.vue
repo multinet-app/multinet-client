@@ -242,7 +242,6 @@ function resetForm() {
   selectedFileType.value = null;
   fileUploadError.value = null;
 }
-watch(uploadType, resetForm);
 const isNetwork = computed(() => uploadType.value === 0);
 
 function fileInfo(fileInput: File): [string, FileType] | null {
@@ -322,7 +321,7 @@ async function handleFileInput() {
   const fileInfoResult = fileInfo(file.value);
   if (fileInfoResult !== null) {
     const [fileNameResult, selectedTypeResult] = fileInfoResult;
-    uploadName.value = uploadName.value || fileNameResult;
+    uploadName.value = fileNameResult;
     selectedFileType.value = selectedTypeResult;
     fileUploadError.value = null;
   } else {
@@ -348,10 +347,18 @@ const buttonDisabled = computed(() => (
   || (step.value === 2
     && (!(Object.entries(columnTypes.value[0]).length > 0)
       || (
-        !Object.values(columnTypes.value[0]).includes('primary key')
+        // If we have a network, first table must have a primary key
+        !(isNetwork.value && Object.values(columnTypes.value[0]).includes('primary key'))
         && !(
-          Object.values(columnTypes.value[0]).includes('edge source')
-          && Object.values(columnTypes.value[0]).includes('edge target')
+          // If we don't have a network, table may or may not have a primary key.
+          // If it's an edge table, must have source and target
+          !isNetwork.value
+          && (
+            Object.values(columnTypes.value[0]).find((type) => type.includes('edge'))
+              ? (Object.values(columnTypes.value[0]).includes('edge source')
+              && Object.values(columnTypes.value[0]).includes('edge target'))
+              : true
+          )
         )
       )
     )
