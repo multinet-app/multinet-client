@@ -186,8 +186,8 @@ function openRenamingDialog() {
 function renameSession() {
   if (contextMenu.value.session !== null) {
     contextMenu.value.session.name = newSessionName.value;
-    // TODO: When renaming sessions is available, uncomment this
-    // api.updateSession();
+    const type = contextMenu.value.session.network !== undefined ? 'network' : 'table';
+    api.renameSession(props.workspace, contextMenu.value.session.id, type, newSessionName.value);
   }
   showRenamingDialog.value = false;
 }
