@@ -158,7 +158,7 @@ function openSession(session: Session) {
 async function deleteClicked(session: Session) {
   const type = session.network !== undefined ? 'network' : 'table';
   store.commit.deleteSessionFromStore(session.id);
-  await deleteSession(session.id, type);
+  await deleteSession(props.workspace, session.id, type);
 }
 
 const contextMenu = ref({
@@ -186,7 +186,8 @@ function openRenamingDialog() {
 function renameSession() {
   if (contextMenu.value.session !== null) {
     contextMenu.value.session.name = newSessionName.value;
-    api.updateSession();
+    // TODO: When renaming sessions is available, uncomment this
+    // api.updateSession();
   }
   showRenamingDialog.value = false;
 }

@@ -147,11 +147,10 @@ const {
       const permissionsInfo = await api.getCurrentUserWorkspacePermissions(workspace);
       commit.setPermissionInfo(permissionsInfo);
 
-      const networkSessions = api.listSessions('network');
-      const tableSessions = api.listSessions('table');
+      const networkSessions = api.listSessions(workspace, 'network');
+      const tableSessions = api.listSessions(workspace, 'table');
       const sessionsResolved = await Promise.all([networkSessions, tableSessions]);
-      const sessions = sessionsResolved.map((response) => response.results).flat()
-        .filter((session) => networks.map((network) => network.id).includes(session.network) || tables.map((table) => table.id).includes(session.table));
+      const sessions = sessionsResolved.map((response) => response.results).flat();
 
       commit.setCurrentWorkspace({
         name: workspace,
