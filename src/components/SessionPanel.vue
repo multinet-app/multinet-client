@@ -8,7 +8,7 @@
 
     <v-divider />
 
-    <v-row v-if="sessions.length > 0" class="px-16 mx-16 mt-2" :style="{ height: '160px', maxHeight: '160px', overflow: 'scroll' }">
+    <v-row v-if="sessions.length > 0" class="px-16 mx-16 mt-2" :style="{ height: '160px', maxHeight: '160px', overflowY: 'scroll' }">
       <v-col v-for="session, idx in sessions" :key="`session-${session.visapp}-${idx}-${session.id}`" cols="4">
         <v-skeleton-loader v-if="session.id === '_skeleton'" type="card" height="120" />
         <v-card
