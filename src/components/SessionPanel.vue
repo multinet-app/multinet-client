@@ -75,7 +75,7 @@
     <div v-else class="my-4 text-center">
       <v-icon color="blue lighten-1">
         mdi-information
-      </v-icon> Click on the <strong>Visualize</strong> button in the <strong>Network</strong> or <strong>Table</strong> panel to create a new session.
+      </v-icon> Click on the <strong>Visualize in &lt;vis app&gt;</strong> button in the <strong>Network</strong> or <strong>Table</strong> panel to create a new session.
     </div>
 
     <v-menu
@@ -135,10 +135,10 @@ const props = defineProps<{
 
 const sessions = computed(() => {
   const storeSessions = store.getters.sessions;
-  if (storeSessions.length > 0) {
-    return storeSessions;
+  if (props.loading) {
+    return Array(3).fill({ id: '_skeleton' });
   }
-  return Array(3).fill({ id: '_skeleton' });
+  return storeSessions;
 });
 const networks = computed(() => store.getters.networks);
 const tables = computed(() => store.getters.tables);
