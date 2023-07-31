@@ -118,7 +118,7 @@ const {
       state.uploads = uploads;
     },
 
-    deleteSessionFromStore(state, sessionId: string) {
+    deleteSessionFromStore(state, sessionId: number) {
       if (state.currentWorkspace !== null && state.currentWorkspace.sessions) {
         state.currentWorkspace.sessions = state.currentWorkspace.sessions.filter((session) => session.id !== sessionId);
       }

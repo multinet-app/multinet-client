@@ -30,6 +30,7 @@ declare module 'vue' {
     VAppBar: typeof import('vuetify/lib')['VAppBar']
     VAutocomplete: typeof import('vuetify/lib')['VAutocomplete']
     VBtn: typeof import('vuetify/lib')['VBtn']
+    VBtnToggle: typeof import('vuetify/lib')['VBtnToggle']
     VCard: typeof import('vuetify/lib')['VCard']
     VCardActions: typeof import('vuetify/lib')['VCardActions']
     VCardSubtitle: typeof import('vuetify/lib')['VCardSubtitle']

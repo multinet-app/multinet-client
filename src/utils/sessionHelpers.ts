@@ -9,10 +9,10 @@ export async function visualizeWithNewSession(item: Network | Table, app: App, t
   await store.dispatch.fetchWorkspace(workspace);
 }
 
-export async function visualizeWithExistingSession(item: Network | Table, app: App, type: 'network' | 'table', workspace: string, sessionId: string) {
+export async function visualizeWithExistingSession(item: Network | Table, app: App, type: 'network' | 'table', workspace: string, sessionId: number) {
   window.open(`${app.url}/?workspace=${workspace}&${type}=${item.name}&sessionId=${sessionId}`, '_blank');
 }
 
-export async function deleteSession(workspace: string, sessionId: string, type: 'network' | 'table') {
+export async function deleteSession(workspace: string, sessionId: number, type: 'network' | 'table') {
   await api.deleteSession(workspace, sessionId, type);
 }
