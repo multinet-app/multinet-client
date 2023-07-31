@@ -91,13 +91,11 @@
                 :key="app.name"
                 :disabled="!hover"
                 color="primary"
-                :href="`${app.url}/?workspace=${workspace}&network=${item.name}`"
-                target="_blank"
-                rel="noopener noreferrer"
                 depressed
                 small
                 style="height: 22px; margin-top: 2px; margin-bottom: 2px;"
-                @click.stop
+                @click="visualizeWithNewSession(item, app, 'network', workspace)"
+                @click.prevent
               >
                 Visualize in {{ app.name }}
               </v-btn>
@@ -121,6 +119,7 @@ import DownloadDialog from '@/components/DownloadDialog.vue';
 
 import store from '@/store';
 import type { App, CheckboxTable } from '@/types';
+import { visualizeWithNewSession } from '@/utils/sessionHelpers';
 
 export default defineComponent({
   name: 'NetworkPanel',
@@ -191,6 +190,7 @@ export default defineComponent({
       selectedVisApps,
       selection,
       cleanup,
+      visualizeWithNewSession,
     };
   },
 });

@@ -2,7 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import { createDirectStore } from 'direct-vuex';
 import type {
-  Network, SingleUserWorkspacePermissionSpec, Table, UserSpec, Workspace,
+  Network, Session, SingleUserWorkspacePermissionSpec, Table, UserSpec, Workspace,
 } from 'multinet';
 
 import api from '@/api';
@@ -17,6 +17,7 @@ export interface WorkspaceState {
   nodeTables: Table[];
   edgeTables: Table[];
   networks: Network[];
+  sessions: Session[];
 }
 
 export interface State {
@@ -42,7 +43,7 @@ const {
     uploads: [],
   } as State,
   getters: {
-    tables(state: State, getters) {
+    tables(state: State, getters): Table[] {
       if (state.currentWorkspace !== null && state.currentWorkspace.nodeTables && state.currentWorkspace.edgeTables) {
         return getters.nodeTables.concat(getters.edgeTables).sort();
       }
@@ -66,6 +67,13 @@ const {
     networks(state: State) {
       if (state.currentWorkspace !== null && state.currentWorkspace.networks) {
         return state.currentWorkspace.networks.sort((a, b) => a.name.localeCompare(b.name));
+      }
+      return [];
+    },
+
+    sessions(state: State) {
+      if (state.currentWorkspace !== null && state.currentWorkspace.sessions) {
+        return state.currentWorkspace.sessions.sort((a, b) => new Date(a.modified).getTime() - new Date(b.modified).getTime());
       }
       return [];
     },
@@ -109,6 +117,12 @@ const {
     setUploads(state, uploads: Upload[]) {
       state.uploads = uploads;
     },
+
+    deleteSessionFromStore(state, sessionId: number) {
+      if (state.currentWorkspace !== null && state.currentWorkspace.sessions) {
+        state.currentWorkspace.sessions = state.currentWorkspace.sessions.filter((session) => session.id !== sessionId);
+      }
+    },
   },
   actions: {
     async fetchWorkspaces(context) {
@@ -122,7 +136,7 @@ const {
 
       commit.unsetCurrentWorkspace();
 
-      const networks = await api.networks(workspace);
+      const networks = (await api.networks(workspace)).results;
       const tables = (await api.tables(workspace)).results;
       const nodeTables = tables.filter((table) => table.edge === false);
       const edgeTables = tables.filter((table) => table.edge === true);
@@ -133,11 +147,17 @@ const {
       const permissionsInfo = await api.getCurrentUserWorkspacePermissions(workspace);
       commit.setPermissionInfo(permissionsInfo);
 
+      const networkSessions = api.listSessions(workspace, 'network');
+      const tableSessions = api.listSessions(workspace, 'table');
+      const sessionsResolved = await Promise.all([networkSessions, tableSessions]);
+      const sessions = sessionsResolved.map((response) => response.results).flat();
+
       commit.setCurrentWorkspace({
         name: workspace,
         nodeTables,
         edgeTables,
-        networks: networks.results,
+        networks,
+        sessions,
       });
     },
 

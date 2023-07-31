@@ -85,9 +85,7 @@
                 v-for="app in apps.network_visualizations"
                 :key="app.name"
                 class="pl-2"
-                :href="`${app.url}/?workspace=${workspace}&network=${network}`"
-                target="_blank"
-                rel="noopener noreferrer"
+                @click="networkItem !== undefined ? visualizeWithNewSession(networkItem, app, 'network', workspace) : () => {}"
               >
                 <v-list-item-avatar class="mr-3">
                   <v-icon color="blue lighten-3">
@@ -328,6 +326,8 @@ import WorkspaceOptionMenu from '@/components/WorkspaceOptionMenu.vue';
 
 import api from '@/api';
 import type { App } from '@/types';
+import { visualizeWithNewSession } from '@/utils/sessionHelpers';
+import store from '@/store';
 
 export default defineComponent({
   name: 'NetworkDetail',
@@ -362,6 +362,9 @@ export default defineComponent({
     const visItems = ref(['Network Overview']);
     const selectedVis = ref(visItems.value[0]);
     const panelOpen = ref(true);
+
+    const networks = computed(() => store.getters.networks);
+    const networkItem = computed(() => networks.value.find((n) => n.name === props.network));
 
     const highestOffset = computed(() => (totalNodes.value % limit.value
       ? Math.floor(totalNodes.value / limit.value)
@@ -443,6 +446,8 @@ export default defineComponent({
       turnPage,
       lastPage,
       firstPage,
+      visualizeWithNewSession,
+      networkItem,
     };
   },
 });
