@@ -57,12 +57,13 @@ function generateColumnTypes(sampleRows: Record<string, unknown>[]) {
     const isKey = field === '_key' || field === 'id';
     const isSource = field === '_from' || field === 'source';
     const isTarget = field === '_to' || field === 'target';
+    const isLabel = field.toLocaleLowerCase().includes('name') || field === 'label';
     const boolean = isBoolean(uniqueValuesInSample);
     const category = uniqueValuesInSample.size <= 10;
     const number = valuesInSample.every((value) => !Number.isNaN(Number(value)));
     const date = valuesInSample.every((value) => dayjs(value).isValid());
 
-    let rec: ColumnType = 'label';
+    let rec: ColumnType = 'string';
     if (isKey) {
       rec = 'primary key';
     } else if (isSource) {
@@ -77,6 +78,8 @@ function generateColumnTypes(sampleRows: Record<string, unknown>[]) {
       rec = 'date';
     } else if (number) {
       rec = 'number';
+    } else if (isLabel) {
+      rec = 'label';
     }
 
     columnTypes[field] = rec;
