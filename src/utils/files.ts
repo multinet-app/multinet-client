@@ -59,7 +59,7 @@ function generateColumnTypes(sampleRows: Record<string, unknown>[]) {
     const isTarget = field === '_to' || field === 'target';
     const isLabel = field.toLocaleLowerCase().includes('name') || field === 'label';
     const boolean = isBoolean(uniqueValuesInSample);
-    const category = uniqueValuesInSample.size <= 10;
+    const category = uniqueValuesInSample.size <= 10 && !(uniqueValuesInSample.size === sampleRows.length);
     const number = valuesInSample.every((value) => !Number.isNaN(Number(value)));
     const date = valuesInSample.every((value) => dayjs(value).isValid());
 
