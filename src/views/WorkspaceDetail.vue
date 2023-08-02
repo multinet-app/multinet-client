@@ -124,6 +124,8 @@
         </v-col>
       </v-row>
 
+      <session-panel :apps="apps" :workspace="workspace" :loading="loading" />
+
       <v-row class="ma-0">
         <v-col
           cols="6"
@@ -173,6 +175,7 @@ import {
 import api from '@/api';
 import TablePanel from '@/components/TablePanel.vue';
 import NetworkPanel from '@/components/NetworkPanel.vue';
+import SessionPanel from '@/components/SessionPanel.vue';
 import store from '@/store';
 import WorkspaceOptionMenu from '@/components/WorkspaceOptionMenu.vue';
 import type { App } from '@/types';
