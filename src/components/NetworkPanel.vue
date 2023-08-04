@@ -27,13 +27,6 @@
           @closed="cleanup"
         />
       </div>
-
-      <network-dialog
-        :workspace="workspace"
-        :node-tables="nodeTables"
-        :edge-tables="edgeTables"
-        @success="cleanup"
-      />
     </v-subheader>
 
     <v-divider />
@@ -107,93 +100,44 @@
   </v-list>
 </template>
 
-<script lang="ts">
-import type { PropType, Ref } from 'vue';
+<script setup lang="ts">
 import {
-  computed, defineComponent, ref, watch,
+  computed, ref, watch,
 } from 'vue';
 import type { Network } from 'multinet';
 import DeleteNetworkDialog from '@/components/DeleteNetworkDialog.vue';
-import NetworkDialog from '@/components/NetworkDialog.vue';
 import DownloadDialog from '@/components/DownloadDialog.vue';
 
 import store from '@/store';
 import type { App, CheckboxTable } from '@/types';
 import { visualizeWithNewSession } from '@/utils/sessionHelpers';
 
-export default defineComponent({
-  name: 'NetworkPanel',
+const props = defineProps<{
+  workspace: string,
+  items: Network[],
+  loading: boolean,
+  apps: { network_visualizations: App[]; table_visualizations: App[] },
+}>();
 
-  components: {
-    DeleteNetworkDialog,
-    NetworkDialog,
-    DownloadDialog,
-  },
+const checkbox = ref<CheckboxTable>({});
+const singleSelected = ref<string | null>(null);
 
-  props: {
-    workspace: {
-      type: String as PropType<string>,
-      required: true,
-    },
+const checked = computed(() => Object.keys(checkbox.value).filter((d) => !!checkbox.value[d]));
+const selection = computed(() => (singleSelected.value !== null ? [singleSelected.value] : [...checked.value]));
 
-    items: {
-      type: Array as PropType<Network[]>,
-      required: true,
-    },
+function clearCheckboxes() {
+  Object.keys(checkbox.value).forEach((key) => {
+    checkbox.value[key] = false;
+  });
+}
 
-    nodeTables: {
-      type: Array as PropType<string[]>,
-      required: true,
-    },
+async function cleanup() {
+  singleSelected.value = null;
+  await store.dispatch.fetchWorkspace(props.workspace);
+  clearCheckboxes();
+}
 
-    edgeTables: {
-      type: Array as PropType<string[]>,
-      required: true,
-    },
-
-    loading: {
-      type: Boolean as PropType<boolean>,
-      required: true,
-    },
-
-    apps: {
-      type: Object as PropType<{ network_visualizations: App[]; table_visualizations: App[] }>,
-      required: true,
-    },
-  },
-
-  setup(props) {
-    const checkbox: Ref<CheckboxTable> = ref({});
-    const singleSelected: Ref<string | null> = ref(null);
-    const selectedVisApps = ref(new Array(props.items.length));
-
-    const checked = computed(() => Object.keys(checkbox.value).filter((d) => !!checkbox.value[d]));
-    const selection = computed(() => (singleSelected.value !== null ? [singleSelected.value] : [...checked.value]));
-
-    function clearCheckboxes() {
-      Object.keys(checkbox.value).forEach((key) => {
-        checkbox.value[key] = false;
-      });
-    }
-
-    async function cleanup() {
-      singleSelected.value = null;
-      await store.dispatch.fetchWorkspace(props.workspace);
-      clearCheckboxes();
-    }
-
-    watch(() => props.workspace, () => clearCheckboxes());
-
-    return {
-      checkbox,
-      singleSelected,
-      selectedVisApps,
-      selection,
-      cleanup,
-      visualizeWithNewSession,
-    };
-  },
-});
+watch(() => props.workspace, () => clearCheckboxes());
 </script>
 
 <style scoped>
