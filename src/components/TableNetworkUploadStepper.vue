@@ -277,7 +277,7 @@ const quoteCharOptions = ['"', '\''];
 
 // Type recommendation
 const columnTypes = ref<Record<string, ColumnType>[]>([]);
-const multinetTypes: readonly ColumnType[] = ['primary key', 'edge source', 'edge target', 'label', 'string', 'boolean', 'category', 'number', 'date'];
+const multinetTypes: readonly ColumnType[] = ['primary key', 'edge source', 'edge target', 'label', 'string', 'boolean', 'category', 'number', 'date', 'ignored'];
 const fileIsCSV = computed(() => file.value !== null && file.value.name.substring(file.value.name.length - 4, file.value.name.length) === '.csv');
 
 async function runCSVAnalysis(newFile: File, userDelim?: string, userQuote?: string) {
