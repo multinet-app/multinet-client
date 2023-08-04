@@ -243,6 +243,7 @@ function resetForm() {
   fileUploadError.value = null;
 }
 const isNetwork = computed(() => uploadType.value === 0);
+watch(uploadType, resetForm);
 
 function fileInfo(fileInput: File): [string, FileType] | null {
   if (!fileInput) {
@@ -250,11 +251,12 @@ function fileInfo(fileInput: File): [string, FileType] | null {
   }
 
   const [fileNameSplit, ...extensions] = fileInput.name.split('.');
+  const cleanedFileName = fileNameSplit.trim().replaceAll(' ', '-');
   const extension = extensions[extensions.length - 1];
 
   const found = fileTypes.find((type) => type.extension.includes(extension) && (isNetwork.value ? type.type === 'network' : type.type === 'table'));
 
-  return found === undefined ? null : [fileNameSplit, found];
+  return found === undefined ? null : [cleanedFileName, found];
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
