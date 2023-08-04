@@ -166,6 +166,13 @@
       <v-divider />
 
       <v-card-actions class="px-4 py-3">
+        <v-btn
+          color="grey lighten-3"
+          depressed
+          @click="openHelpDocs"
+        >
+          Help
+        </v-btn>
         <v-spacer />
         <v-btn
           color="blue darken-2"
@@ -416,6 +423,16 @@ async function upload() {
     tableCreationError.value = `${[Object.values(err.response.data).flat()][0]}`;
   } finally {
     uploading.value = false;
+  }
+}
+
+function openHelpDocs() {
+  if (uploadType.value === undefined) {
+    window.open('https://docs.multinet.app/en/latest/user_documentation.html#upload-data');
+  } else if (isNetwork.value) {
+    window.open('https://docs.multinet.app/en/latest/user_documentation.html#upload-network');
+  } else {
+    window.open('https://docs.multinet.app/en/latest/user_documentation.html#upload-table');
   }
 }
 </script>
