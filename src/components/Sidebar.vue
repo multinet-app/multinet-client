@@ -72,13 +72,19 @@
           <v-tab-item
             v-show="userInfo !== null || publicSpace"
           >
-            <v-list-item-group color="primary">
+            <!-- Starred workspaces section of public -->
+            <v-list-item-group v-if="publicSpace" color="primary">
+              <v-subheader>
+                <v-icon class="mr-2">
+                  mdi-star
+                </v-icon>
+                Starred Workspaces
+              </v-subheader>
               <v-hover
-                v-for="space in workspaces"
+                v-for="space in publicWorkspaces.filter((w) => w.starred)"
                 :key="space.name"
               >
                 <v-list-item
-                  v-if="space.public === publicSpace"
                   slot-scope="{ hover }"
                   ripple
                   :to="`/workspaces/${space.name}/`"
@@ -88,7 +94,45 @@
                       v-if="!hover && !checkbox[space.name]"
                       class="workspace-icon"
                     >
-                      mdi-text-box-multiple
+                      mdi-star-box
+                    </v-icon>
+
+                    <v-checkbox
+                      v-else
+                      v-model="checkbox[space.name]"
+                      class="ws-checkbox"
+                    />
+                  </v-list-item-action>
+
+                  <v-list-item-content>
+                    <v-list-item-title>{{ space.name }}</v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-hover>
+              <v-divider class="mt-4" />
+            </v-list-item-group>
+            <v-list-item-group color="primary">
+              <v-subheader v-if="publicSpace">
+                <v-icon class="mr-2">
+                  mdi-text-box-multiple
+                </v-icon>
+                Other Workspaces
+              </v-subheader>
+              <v-hover
+                v-for="space in (publicSpace ? publicWorkspaces.filter((w) => !w.starred) : personalWorkspaces)"
+                :key="space.name"
+              >
+                <v-list-item
+                  slot-scope="{ hover }"
+                  ripple
+                  :to="`/workspaces/${space.name}/`"
+                >
+                  <v-list-item-action @click.prevent>
+                    <v-icon
+                      v-if="!hover && !checkbox[space.name]"
+                      class="workspace-icon"
+                    >
+                      mdi-text-box
                     </v-icon>
 
                     <v-checkbox
@@ -146,6 +190,8 @@ const singleSelected: Ref<string | null> = ref(null);
 const tabSelected = ref(1);
 
 const workspaces = computed(() => store.state.workspaces);
+const publicWorkspaces = computed(() => workspaces.value.filter((d) => d.public));
+const personalWorkspaces = computed(() => workspaces.value.filter((d) => !d.public));
 const userInfo = computed(() => store.state.userInfo);
 const somethingChecked = computed(() => Object.values(checkbox.value).some(Boolean));
 const checked = computed(() => Object.keys(checkbox.value).filter((d) => !!checkbox.value[d]));
