@@ -76,7 +76,7 @@
             <v-list-item-group v-if="publicSpace" color="primary">
               <v-subheader>
                 <v-icon class="mr-2">
-                  mdi-star
+                  mdi-star-box-multiple
                 </v-icon>
                 Starred Workspaces
               </v-subheader>
