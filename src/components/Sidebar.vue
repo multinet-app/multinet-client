@@ -125,11 +125,9 @@
   </v-navigation-drawer>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import type { Ref } from 'vue';
-import {
-  computed, defineComponent, ref, watch,
-} from 'vue';
+import { computed, ref, watch } from 'vue';
 
 import store from '@/store';
 
@@ -142,80 +140,39 @@ import { useCurrentInstance } from '@/utils/use';
 import oauthClient from '@/oauth';
 import { useRouter } from 'vue-router/composables';
 
-export default defineComponent({
-  components: {
-    DeleteWorkspaceDialog,
-    WorkspaceDialog,
-    AboutDialog,
-    LoginMenu,
-  },
+const checkbox: Ref<CheckboxTable> = ref({});
+const loading = ref(true);
+const singleSelected: Ref<string | null> = ref(null);
+const tabSelected = ref(1);
 
-  setup() {
-    const newWorkspace = ref('');
-    const checkbox: Ref<CheckboxTable> = ref({});
-    const loading = ref(true);
-    const singleSelected: Ref<string | null> = ref(null);
-    const tabSelected = ref(1);
+const workspaces = computed(() => store.state.workspaces);
+const userInfo = computed(() => store.state.userInfo);
+const somethingChecked = computed(() => Object.values(checkbox.value).some(Boolean));
+const checked = computed(() => Object.keys(checkbox.value).filter((d) => !!checkbox.value[d]));
+const currentInstance = useCurrentInstance();
+const navHeight = computed(() => (currentInstance.proxy.$vuetify.breakpoint.height - 62));
+const selection = computed(() => (singleSelected.value ? [singleSelected.value] : checked.value));
 
-    const workspaces = computed(() => store.state.workspaces);
-    const userInfo = computed(() => store.state.userInfo);
-    const somethingChecked = computed(() => Object.values(checkbox.value).some(Boolean));
-    const checked = computed(() => Object.keys(checkbox.value).filter((d) => !!checkbox.value[d]));
-    const currentInstance = useCurrentInstance();
-    const navHeight = computed(() => (currentInstance.proxy.$vuetify.breakpoint.height - 62));
-    const selection = computed(() => (singleSelected.value ? [singleSelected.value] : checked.value));
-
-    watch(userInfo, (newUserInfo) => {
-      if (newUserInfo !== null) {
-        tabSelected.value = 0;
-      } else {
-        tabSelected.value = 1;
-      }
-    });
-
-    store.dispatch.fetchWorkspaces().then(() => { loading.value = false; });
-
-    const router = useRouter();
-    function route(workspace: string) {
-      if (router !== null) {
-        router.push(`/workspaces/${workspace}`);
-      }
-    }
-
-    function workspaceDeleted() {
-      checkbox.value = {};
-      if (router !== null) {
-        router.replace({ name: 'home' });
-      }
-    }
-
-    const dws = ref(null);
-    function deleteWorkspace(ws: string) {
-      singleSelected.value = ws;
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (dws as any).dialog = true;
-    }
-
-    return {
-      newWorkspace,
-      checkbox,
-      loading,
-      singleSelected,
-      tabSelected,
-      workspaces,
-      somethingChecked,
-      navHeight,
-      selection,
-      userInfo,
-      route,
-      workspaceDeleted,
-      deleteWorkspace,
-      oauthClient,
-      store,
-    };
-  },
+watch(userInfo, (newUserInfo) => {
+  if (newUserInfo !== null) {
+    tabSelected.value = 0;
+  } else {
+    tabSelected.value = 1;
+  }
 });
+
+store.dispatch.fetchWorkspaces().then(() => { loading.value = false; });
+
+const router = useRouter();
+
+function workspaceDeleted() {
+  checkbox.value = {};
+  if (router !== null) {
+    router.replace({ name: 'home' });
+  }
+}
+
+const dws = ref(null);
 </script>
 
 <style scoped>
