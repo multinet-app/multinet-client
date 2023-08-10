@@ -95,7 +95,7 @@ const {
   },
   mutations: {
     setWorkspaces(state, workspaces: Workspace[]) {
-      state.workspaces = workspaces.sort((a, b) => (a.name < b.name ? -1 : 1));
+      state.workspaces = workspaces.sort((a, b) => a.name.localeCompare(b.name));
     },
 
     setCurrentWorkspace(state, workspace: WorkspaceState) {
