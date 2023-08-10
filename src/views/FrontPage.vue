@@ -16,11 +16,11 @@
           <v-row class="align-center justify-center">
             <v-col cols="1" />
             <v-col cols="2">
-              <v-img
+              <img
                 src="../assets/logo/app_logo.svg"
                 class="mx-auto"
-                max-height="100px"
-                max-width="100px"
+                :style="{ maxHeight: '100px', maxWidth: '100px' }"
+                alt="Multinet Logo"
               />
             </v-col>
             <v-col>
@@ -32,14 +32,20 @@
             </v-col>
             <v-col cols="3" />
           </v-row>
-          <v-card-text>
-            <v-img
-              style="margin-left: 50px; margin-right: 50px;"
+          <v-card-text :style="{ maxHeight: '500px', overflow: 'hidden' }">
+            <img
+              style="width: 100%;"
               src="../assets/multilink-overview.webp"
-              max-height="500px"
+              alt="Multinet overview"
             />
           </v-card-text>
         </v-card>
+        <v-card
+          color="grey lighten-2"
+          flat
+          tile
+          class="py-2"
+        />
       </v-responsive>
 
       <v-container id="lower-half">

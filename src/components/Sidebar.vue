@@ -72,13 +72,19 @@
           <v-tab-item
             v-show="userInfo !== null || publicSpace"
           >
-            <v-list-item-group color="primary">
+            <!-- Starred workspaces section of public -->
+            <v-list-item-group v-if="publicSpace" color="primary">
+              <v-subheader>
+                <v-icon class="mr-2">
+                  mdi-star-box-multiple
+                </v-icon>
+                Starred Workspaces
+              </v-subheader>
               <v-hover
-                v-for="space in workspaces"
+                v-for="space in publicWorkspaces.filter((w) => w.starred)"
                 :key="space.name"
               >
                 <v-list-item
-                  v-if="space.public === publicSpace"
                   slot-scope="{ hover }"
                   ripple
                   :to="`/workspaces/${space.name}/`"
@@ -88,7 +94,45 @@
                       v-if="!hover && !checkbox[space.name]"
                       class="workspace-icon"
                     >
-                      mdi-text-box-multiple
+                      mdi-star-box
+                    </v-icon>
+
+                    <v-checkbox
+                      v-else
+                      v-model="checkbox[space.name]"
+                      class="ws-checkbox"
+                    />
+                  </v-list-item-action>
+
+                  <v-list-item-content>
+                    <v-list-item-title>{{ space.name }}</v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-hover>
+              <v-divider class="mt-4" />
+            </v-list-item-group>
+            <v-list-item-group color="primary">
+              <v-subheader v-if="publicSpace">
+                <v-icon class="mr-2">
+                  mdi-text-box-multiple
+                </v-icon>
+                Other Workspaces
+              </v-subheader>
+              <v-hover
+                v-for="space in (publicSpace ? publicWorkspaces.filter((w) => !w.starred) : personalWorkspaces)"
+                :key="space.name"
+              >
+                <v-list-item
+                  slot-scope="{ hover }"
+                  ripple
+                  :to="`/workspaces/${space.name}/`"
+                >
+                  <v-list-item-action @click.prevent>
+                    <v-icon
+                      v-if="!hover && !checkbox[space.name]"
+                      class="workspace-icon"
+                    >
+                      mdi-text-box
                     </v-icon>
 
                     <v-checkbox
@@ -125,11 +169,9 @@
   </v-navigation-drawer>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import type { Ref } from 'vue';
-import {
-  computed, defineComponent, ref, watch,
-} from 'vue';
+import { computed, ref, watch } from 'vue';
 
 import store from '@/store';
 
@@ -142,80 +184,41 @@ import { useCurrentInstance } from '@/utils/use';
 import oauthClient from '@/oauth';
 import { useRouter } from 'vue-router/composables';
 
-export default defineComponent({
-  components: {
-    DeleteWorkspaceDialog,
-    WorkspaceDialog,
-    AboutDialog,
-    LoginMenu,
-  },
+const checkbox: Ref<CheckboxTable> = ref({});
+const loading = ref(true);
+const singleSelected: Ref<string | null> = ref(null);
+const tabSelected = ref(1);
 
-  setup() {
-    const newWorkspace = ref('');
-    const checkbox: Ref<CheckboxTable> = ref({});
-    const loading = ref(true);
-    const singleSelected: Ref<string | null> = ref(null);
-    const tabSelected = ref(1);
+const workspaces = computed(() => store.state.workspaces);
+const publicWorkspaces = computed(() => workspaces.value.filter((d) => d.public));
+const personalWorkspaces = computed(() => workspaces.value.filter((d) => !d.public));
+const userInfo = computed(() => store.state.userInfo);
+const somethingChecked = computed(() => Object.values(checkbox.value).some(Boolean));
+const checked = computed(() => Object.keys(checkbox.value).filter((d) => !!checkbox.value[d]));
+const currentInstance = useCurrentInstance();
+const navHeight = computed(() => (currentInstance.proxy.$vuetify.breakpoint.height - 62));
+const selection = computed(() => (singleSelected.value ? [singleSelected.value] : checked.value));
 
-    const workspaces = computed(() => store.state.workspaces);
-    const userInfo = computed(() => store.state.userInfo);
-    const somethingChecked = computed(() => Object.values(checkbox.value).some(Boolean));
-    const checked = computed(() => Object.keys(checkbox.value).filter((d) => !!checkbox.value[d]));
-    const currentInstance = useCurrentInstance();
-    const navHeight = computed(() => (currentInstance.proxy.$vuetify.breakpoint.height - 62));
-    const selection = computed(() => (singleSelected.value ? [singleSelected.value] : checked.value));
-
-    watch(userInfo, (newUserInfo) => {
-      if (newUserInfo !== null) {
-        tabSelected.value = 0;
-      } else {
-        tabSelected.value = 1;
-      }
-    });
-
-    store.dispatch.fetchWorkspaces().then(() => { loading.value = false; });
-
-    const router = useRouter();
-    function route(workspace: string) {
-      if (router !== null) {
-        router.push(`/workspaces/${workspace}`);
-      }
-    }
-
-    function workspaceDeleted() {
-      checkbox.value = {};
-      if (router !== null) {
-        router.replace({ name: 'home' });
-      }
-    }
-
-    const dws = ref(null);
-    function deleteWorkspace(ws: string) {
-      singleSelected.value = ws;
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (dws as any).dialog = true;
-    }
-
-    return {
-      newWorkspace,
-      checkbox,
-      loading,
-      singleSelected,
-      tabSelected,
-      workspaces,
-      somethingChecked,
-      navHeight,
-      selection,
-      userInfo,
-      route,
-      workspaceDeleted,
-      deleteWorkspace,
-      oauthClient,
-      store,
-    };
-  },
+watch(userInfo, (newUserInfo) => {
+  if (newUserInfo !== null) {
+    tabSelected.value = 0;
+  } else {
+    tabSelected.value = 1;
+  }
 });
+
+store.dispatch.fetchWorkspaces().then(() => { loading.value = false; });
+
+const router = useRouter();
+
+function workspaceDeleted() {
+  checkbox.value = {};
+  if (router !== null) {
+    router.replace({ name: 'home' });
+  }
+}
+
+const dws = ref(null);
 </script>
 
 <style scoped>

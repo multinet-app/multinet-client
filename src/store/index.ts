@@ -73,7 +73,16 @@ const {
 
     sessions(state: State) {
       if (state.currentWorkspace !== null && state.currentWorkspace.sessions) {
-        return state.currentWorkspace.sessions.sort((a, b) => new Date(a.modified).getTime() - new Date(b.modified).getTime());
+        return state.currentWorkspace.sessions.sort((a, b) => {
+          // Sort first by session starred, then by session modified time.
+          if (a.starred && !b.starred) {
+            return -1;
+          }
+          if (!a.starred && b.starred) {
+            return 1;
+          }
+          return new Date(a.modified).getTime() - new Date(b.modified).getTime();
+        });
       }
       return [];
     },
@@ -95,7 +104,7 @@ const {
   },
   mutations: {
     setWorkspaces(state, workspaces: Workspace[]) {
-      state.workspaces = workspaces.sort((a, b) => (a.name < b.name ? -1 : 1));
+      state.workspaces = workspaces.sort((a, b) => a.name.localeCompare(b.name));
     },
 
     setCurrentWorkspace(state, workspace: WorkspaceState) {

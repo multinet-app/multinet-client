@@ -126,11 +126,6 @@ const singleSelected = ref<string | null>(null);
 
 const checked = computed(() => Object.keys(checkbox.value).filter((d) => !!checkbox.value[d]));
 const selection = computed(() => (singleSelected.value !== null ? [singleSelected.value] : [...checked.value]));
-const upsetUrl = computed(() => {
-  const foundApp = props.apps.table_visualizations.find((vis: App) => vis.name === 'Upset');
-
-  return foundApp !== undefined ? foundApp.url : '';
-});
 
 function clearCheckboxes() {
   Object.keys(checkbox.value).forEach((key) => {

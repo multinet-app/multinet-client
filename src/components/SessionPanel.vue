@@ -45,14 +45,35 @@
               </template>
               <span>{{ networks.find((network) => network.id === session.network)?.name || tables.find((table) => table.id === session.table)?.name }}</span>
             </v-tooltip>
+
+            <v-btn
+              v-if="session.starred"
+              fab
+              tile
+              color="grey lighten-3"
+              top
+              left
+              absolute
+              x-small
+              depressed
+              :style="{
+                top: '0px', left: '0px', pointerEvents: 'none', backgroundColor: 'transparent !important',
+              }"
+              v-bind="attrs"
+              v-on="on"
+              @click.prevent
+            >
+              <v-icon>mdi-star</v-icon>
+            </v-btn>
+
             <v-tooltip top color="error">
               <template #activator="{ on, attrs }">
                 <v-btn
                   fab
                   tile
-                  color="grey lighten-3"
                   top
                   right
+                  z
                   absolute
                   x-small
                   elevation="0"
@@ -133,13 +154,7 @@ const props = defineProps<{
   loading: boolean;
 }>();
 
-const sessions = computed(() => {
-  const storeSessions = store.getters.sessions;
-  if (props.loading) {
-    return Array(3).fill({ id: '_skeleton' });
-  }
-  return storeSessions;
-});
+const sessions = computed(() => (props.loading ? Array(3).fill({ id: '_skeleton' }) : store.getters.sessions));
 const networks = computed(() => store.getters.networks);
 const tables = computed(() => store.getters.tables);
 
