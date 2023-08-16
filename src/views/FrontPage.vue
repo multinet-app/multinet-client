@@ -175,10 +175,12 @@ import type { App } from '@/types';
 import AboutText from '@/components/AboutText.vue';
 import oauthClient from '@/oauth';
 
-import boston from '../assets/placard/boston.jpg';
-import boston2 from '../assets/placard/boston2.jpg';
-import miserables from '../assets/placard/miserables.jpg';
-import miserables2 from '../assets/placard/miserables2.jpg';
+import bostonLink from '../assets/placard/boston.png';
+import bostonMatrix from '../assets/placard/boston2.png';
+import miserablesMatrix from '../assets/placard/miserables.png';
+import miserablesLink from '../assets/placard/miserables2.png';
+import upsetMovies from '../assets/placard/movies.png';
+import upsetSimpsons from '../assets/placard/simpsons.png';
 
 export default defineComponent({
   components: { AboutText },
@@ -194,34 +196,49 @@ export default defineComponent({
 
     const multiMatrixURL = computed(() => `${props.apps.network_visualizations.filter((d) => d.name === 'MultiMatrix')[0].url}`);
     const multiLinkURL = computed(() => `${props.apps.network_visualizations.filter((d) => d.name === 'MultiLink')[0].url}`);
+    const upsetURL = computed(() => `${props.apps.table_visualizations.filter((d) => d.name === 'Upset')[0].url}`);
     const samples = computed(() => [
-      {
-        title: 'Paul Revere - MultiLink',
-        // eslint-disable-next-line global-require
-        image: boston,
-        text: 'Explore the Paul Revere dataset using an interactive and beautiful node-link diagram. Discover the figures coordinating a pivotal event in history!',
-        href: `${multiLinkURL.value}/?workspace=boston&network=boston`,
-      },
-      {
-        title: 'Les Miserables - MultiMatrix',
-        // eslint-disable-next-line global-require
-        image: miserables,
-        text: 'Explore the Les Miserables dataset using an interactive adjacency matrix. See the factions and relationships for yourself!',
-        href: `${multiMatrixURL.value}/?workspace=miserables&network=miserables`,
-      },
       {
         title: 'Les Miserables - MultiLink',
         // eslint-disable-next-line global-require
-        image: miserables2,
+        image: miserablesLink,
         text: 'The characters of Les Miserables, laid out in a colorful and interactive node-link diagram.',
-        href: `${multiLinkURL.value}/?workspace=miserables&network=miserables`,
+        href: `${multiLinkURL.value}/?workspace=miserables&network=miserables&sessionId=12`,
       },
       {
         title: 'Paul Revere - MultiMatrix',
         // eslint-disable-next-line global-require
-        image: boston2,
+        image: bostonMatrix,
         text: 'See the relationships between Paul Revere and his contemporaries through an adjacency matrix layout.',
-        href: `${multiMatrixURL.value}/?workspace=boston&network=boston`,
+        href: `${multiMatrixURL.value}/?workspace=boston&network=boston&sessionId=15`,
+      },
+      {
+        title: 'Movies - Upset',
+        // eslint-disable-next-line global-require
+        image: upsetMovies,
+        text: 'Explore the relationships between movies and their genres using an interactive UpSet plot.',
+        href: `${upsetURL.value}/?workspace=Upset+Examples&table=movies&sessionId=118`,
+      },
+      {
+        title: 'Les Miserables - MultiMatrix',
+        // eslint-disable-next-line global-require
+        image: miserablesMatrix,
+        text: 'Explore the Les Miserables dataset using an interactive adjacency matrix. See the factions and relationships for yourself!',
+        href: `${multiMatrixURL.value}/?workspace=miserables&network=miserables&sessionId=13`,
+      },
+      {
+        title: 'Paul Revere - MultiLink',
+        // eslint-disable-next-line global-require
+        image: bostonLink,
+        text: 'Explore the Paul Revere dataset using an interactive and beautiful node-link diagram. Discover the figures coordinating a pivotal event in history!',
+        href: `${multiLinkURL.value}/?workspace=boston&network=boston&sessionId=14`,
+      },
+      {
+        title: 'Simpsons - Upset',
+        // eslint-disable-next-line global-require
+        image: upsetSimpsons,
+        text: 'Explore the relationships between Simpsons characters and their occupations using an interactive UpSet plot.',
+        href: `${upsetURL.value}/?workspace=Upset+Examples&table=simpsons&sessionId=119`,
       },
     ]);
 
