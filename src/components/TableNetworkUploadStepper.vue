@@ -397,8 +397,10 @@ async function upload() {
 
     uploading.value = true;
 
+    let uploadObj;
+
     if (isNetwork.value) {
-      api.uploadNetwork(
+      uploadObj = await api.uploadNetwork(
         props.workspace,
         uploadName.value,
         file.value,
@@ -407,7 +409,7 @@ async function upload() {
       );
     } else {
       const isEdgeTable = Object.values(columnTypes.value[0]).includes('edge source') && Object.values(columnTypes.value[0]).includes('edge target');
-      api.uploadTable(props.workspace, uploadName.value, {
+      uploadObj = await api.uploadTable(props.workspace, uploadName.value, {
         data: file.value,
         edgeTable: isEdgeTable,
         columnTypes: columnTypes.value[0],
@@ -417,7 +419,7 @@ async function upload() {
       });
     }
 
-    emit('success');
+    emit('success', uploadObj);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     tableCreationError.value = `${[Object.values(err.response.data).flat()][0]}`;
