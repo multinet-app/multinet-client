@@ -262,29 +262,32 @@ async function update(this: any) {
 watch(() => props.workspace, () => update());
 watch(localWorkspace, () => { requestError.value = null; });
 
-async function updateUploads() {
+async function checkUpload(upload: { id: number }) {
   const newUploadStatus = await api.uploads(props.workspace);
   store.commit.setUploads(newUploadStatus.results);
+
+  const relevantUpload = uploads.value.find((u) => u.id === upload.id);
+  if (relevantUpload === undefined || relevantUpload.status === 'FAILED') {
+    update();
+    return true;
+  }
+  return false;
 }
 
 async function startCheckingUpload(upload: { id: number }) {
-  await updateUploads();
+  if (await checkUpload(upload)) {
+    return;
+  }
 
   let timeout = 30 * 1000;
   const interval = 3 * 1000;
 
-  const checkUpload = setInterval(async () => {
-    // Get the upload from the store and check its status
-    // If it's not there (success) or it's failed, stop checking and refresh the workspace
-    const relevantUpload = uploads.value.find((u) => u.id === upload.id);
-    if (relevantUpload === undefined || relevantUpload.status === 'FAILED' || timeout <= 0) {
-      clearInterval(checkUpload);
-      update();
+  const checkUploadInterval = setInterval(async () => {
+    if ((await checkUpload(upload)) || timeout <= 0) {
+      clearInterval(checkUploadInterval);
     }
 
-    // Otherwise, keep checking
     timeout -= interval;
-    await updateUploads();
   }, interval);
 }
 
