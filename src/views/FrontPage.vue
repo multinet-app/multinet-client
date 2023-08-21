@@ -4,164 +4,144 @@
     fluid
   >
     <v-main>
-      <!-- BANNER -->
-      <v-responsive
-        class="mb-5"
+      <v-card
+        color="grey lighten-2"
+        flat
+        tile
       >
-        <v-card
-          color="grey lighten-2"
-          flat
-          tile
-        >
-          <v-row class="align-center justify-center">
-            <v-col cols="1" />
-            <v-col cols="2">
-              <img
-                src="../assets/logo/app_logo.svg"
-                class="mx-auto"
-                :style="{ maxHeight: '100px', maxWidth: '100px' }"
-                alt="Multinet Logo"
-              />
-            </v-col>
-            <v-col>
-              <v-card-text
-                class="grey--text text--darken-3 text-center text-h4 pt-10"
-              >
-                <strong class="black--text">Multinet</strong> is visualization tool for networks with attributes associated with the nodes and links.
-              </v-card-text>
-            </v-col>
-            <v-col cols="3" />
-          </v-row>
-          <v-card-text :style="{ maxHeight: '500px', overflow: 'hidden' }">
+        <v-row class="align-center justify-center">
+          <v-col cols="1" />
+          <v-col cols="2">
             <img
-              style="width: 100%;"
-              src="../assets/multilink-overview.webp"
-              alt="Multinet overview"
+              src="../assets/logo/app_logo.svg"
+              class="mx-auto"
+              :style="{ maxHeight: '100px', maxWidth: '100px' }"
+              alt="Multinet Logo"
             />
-          </v-card-text>
-        </v-card>
-        <v-card
-          color="grey lighten-2"
-          flat
-          tile
-          class="py-2"
-        />
-      </v-responsive>
-
-      <v-container id="lower-half">
-        <v-row class="text-center">
-          <v-spacer />
-          <v-col class="text-h4 grey--text text--darken-4">
-            Getting Started
           </v-col>
-          <v-spacer />
+          <v-col>
+            <v-card-text
+              class="grey--text text--darken-3 text-center text-h4 pt-10"
+            >
+              <strong class="black--text">Multinet</strong> is visualization tool for networks with attributes associated with the nodes and links.
+            </v-card-text>
+          </v-col>
+          <v-col cols="3" />
         </v-row>
-        <v-row class="text-center pb-12">
-          <v-spacer />
-          <v-col
-            cols="3"
-            class="text-h6 grey--text text--darken-4"
+      </v-card>
+
+      <v-row class="text-center mt-6">
+        <v-spacer />
+        <v-col class="text-h4 grey--text text--darken-4">
+          Getting Started
+        </v-col>
+        <v-spacer />
+      </v-row>
+      <v-row class="text-center pb-12">
+        <v-spacer />
+        <v-col
+          cols="3"
+          class="text-h6 grey--text text--darken-4"
+        >
+          <v-btn
+            icon
+            x-large
+            @click="login"
           >
-            <v-btn
-              icon
-              x-large
-              @click="login"
-            >
-              <v-icon x-large>
-                mdi-upload
-              </v-icon>
-            </v-btn>
-            Sign up and upload your own data
-          </v-col>
-          <v-spacer />
-          <v-col
-            cols="3"
-            class="text-h6 grey--text text--darken-4"
-          >
-            <v-icon
-              x-large
-              class="pr-1"
-            >
-              mdi-gamepad-square
+            <v-icon x-large>
+              mdi-upload
             </v-icon>
-            Try a demo below or explore the public workspaces
-          </v-col>
-          <v-spacer />
-          <v-col
-            cols="3"
-            class="text-h6 grey--text text--darken-4"
+          </v-btn>
+          Sign up and upload your own data
+        </v-col>
+        <v-spacer />
+        <v-col
+          cols="3"
+          class="text-h6 grey--text text--darken-4"
+        >
+          <v-icon
+            x-large
+            class="pr-1"
           >
-            <v-dialog
-              v-model="dialog"
-              width="500"
-            >
-              <template #activator="{ on }">
-                <v-btn
-                  class="px-0"
-                  icon
-                  x-large
-                  min-width="40px"
-                  v-on="on"
-                >
-                  <v-icon x-large>
-                    mdi-information
-                  </v-icon>
-                </v-btn>
-              </template>
+            mdi-gamepad-square
+          </v-icon>
+          Try a demo below or explore the public workspaces
+        </v-col>
+        <v-spacer />
+        <v-col
+          cols="3"
+          class="text-h6 grey--text text--darken-4"
+        >
+          <v-dialog
+            v-model="dialog"
+            width="500"
+          >
+            <template #activator="{ on }">
+              <v-btn
+                class="px-0"
+                icon
+                x-large
+                min-width="40px"
+                v-on="on"
+              >
+                <v-icon x-large>
+                  mdi-information
+                </v-icon>
+              </v-btn>
+            </template>
 
-              <about-text @toggle="dialog = false" />
-            </v-dialog>
-            Learn more about MultiNet
-          </v-col>
-          <v-spacer />
-        </v-row>
+            <about-text @toggle="dialog = false" />
+          </v-dialog>
+          Learn more about MultiNet
+        </v-col>
+        <v-spacer />
+      </v-row>
 
-        <!-- COLUMNS -->
-        <div class="px-6 py-2">
-          <v-row class="px-5 pb-6">
-            <v-col
-              v-for="sample in samples"
-              :key="sample.title"
-              cols="4"
-            >
-              <v-hover>
-                <template #default="{ hover }">
-                  <v-card>
-                    <v-img
-                      class="align-end"
-                      height="250px"
-                      :src="sample.image"
+      <!-- COLUMNS -->
+      <div class="px-6 py-2">
+        <v-row class="px-5 pb-6">
+          <v-col
+            v-for="sample in samples"
+            :key="sample.title"
+            cols="4"
+          >
+            <v-hover>
+              <template #default="{ hover }">
+                <v-card>
+                  <v-img
+                    class="align-end"
+                    height="250px"
+                    :src="sample.image"
+                  >
+                    <v-card-title class="box-shadow-title">
+                      {{ sample.title }}
+                    </v-card-title>
+                  </v-img>
+                  <v-fade-transition>
+                    <v-overlay
+                      v-if="hover"
+                      absolute
+                      opacity=".85"
                     >
-                      <v-card-title class="box-shadow-title">
-                        {{ sample.title }}
-                      </v-card-title>
-                    </v-img>
-                    <v-fade-transition>
-                      <v-overlay
-                        v-if="hover"
-                        absolute
-                        opacity=".85"
-                      >
-                        <div class="overlay-text">
-                          <p>{{ sample.text }}</p>
-                          <v-btn
-                            color="primary"
-                            :href="sample.href"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            Open in New Window
-                          </v-btn>
-                        </div>
-                      </v-overlay>
-                    </v-fade-transition>
-                  </v-card>
-                </template>
-              </v-hover>
-            </v-col>
-          </v-row>
-        </div>
-      </v-container>
+                      <div class="overlay-text">
+                        <p>{{ sample.text }}</p>
+                        <v-btn
+                          color="primary"
+                          :href="sample.href"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Open in New Window
+                        </v-btn>
+                      </div>
+                    </v-overlay>
+                  </v-fade-transition>
+                </v-card>
+              </template>
+            </v-hover>
+          </v-col>
+        </v-row>
+      </div>
     </v-main>
   </v-container>
 </template>

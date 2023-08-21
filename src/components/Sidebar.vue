@@ -118,6 +118,20 @@
                 </v-icon>
                 Other Workspaces
               </v-subheader>
+              <v-autocomplete
+                v-model="singleSelected"
+                :class="publicSpace ? 'px-4' : 'px-4 mt-4'"
+                :items="(publicSpace ? publicWorkspaces.filter((w) => !w.starred) : personalWorkspaces).map((w) => w.name)"
+                dense
+                hide-no-data
+                item-text="name"
+                label="Search for a workspace"
+                placeholder="Search for a workspace"
+                return-object
+                single-line
+                auto-select-first
+                @input="openWorkspace"
+              />
               <v-hover
                 v-for="space in (publicSpace ? publicWorkspaces.filter((w) => !w.starred) : personalWorkspaces)"
                 :key="space.name"
@@ -219,6 +233,12 @@ function workspaceDeleted() {
 }
 
 const dws = ref(null);
+
+function openWorkspace() {
+  if (singleSelected.value !== null) {
+    router.push(`/workspaces/${singleSelected.value}`);
+  }
+}
 </script>
 
 <style scoped>

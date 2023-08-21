@@ -80,7 +80,7 @@
         />
         <v-spacer />
 
-        <create-modify-dialog :workspace="workspace" />
+        <create-modify-dialog :workspace="workspace" @success="startCheckingUpload" />
         <workspace-option-menu :workspace="workspace" />
       </v-app-bar>
 
@@ -261,6 +261,35 @@ async function update(this: any) {
 
 watch(() => props.workspace, () => update());
 watch(localWorkspace, () => { requestError.value = null; });
+
+async function checkUpload(upload: { id: number }) {
+  const newUploadStatus = await api.uploads(props.workspace);
+  store.commit.setUploads(newUploadStatus.results);
+
+  const relevantUpload = uploads.value.find((u) => u.id === upload.id);
+  if (relevantUpload === undefined || relevantUpload.status === 'FAILED') {
+    update();
+    return true;
+  }
+  return false;
+}
+
+async function startCheckingUpload(upload: { id: number }) {
+  if (await checkUpload(upload)) {
+    return;
+  }
+
+  let timeout = 30 * 1000;
+  const interval = 3 * 1000;
+
+  const checkUploadInterval = setInterval(async () => {
+    if ((await checkUpload(upload)) || timeout <= 0) {
+      clearInterval(checkUploadInterval);
+    }
+
+    timeout -= interval;
+  }, interval);
+}
 
 update();
 </script>

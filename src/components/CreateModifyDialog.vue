@@ -45,7 +45,7 @@
       <TableNetworkUploadStepper
         v-else-if="firstChosen === 1"
         :workspace="props.workspace"
-        @success="dialog = false"
+        @success="(upload) => { dialog = false; emit('success', upload) }"
         @back="firstChosen = undefined; dialogStep -= 1"
       />
     </v-card>
@@ -61,6 +61,7 @@ import TableNetworkUploadStepper from './TableNetworkUploadStepper.vue';
 const props = defineProps<{
   workspace: string;
 }>();
+const emit = defineEmits(['success']);
 
 const userCanEdit = computed(() => store.getters.userCanEdit);
 
