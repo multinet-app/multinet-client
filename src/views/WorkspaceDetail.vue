@@ -80,7 +80,7 @@
         />
         <v-spacer />
 
-        <create-modify-dialog :workspace="workspace" @success="(upload) => startCheckingUpload(upload)" />
+        <create-modify-dialog :workspace="workspace" @success="startCheckingUpload" />
         <workspace-option-menu :workspace="workspace" />
       </v-app-bar>
 
