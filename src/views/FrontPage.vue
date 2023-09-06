@@ -197,7 +197,7 @@ export default defineComponent({
         // eslint-disable-next-line global-require
         image: upsetMovies,
         text: 'Explore the relationships between movies and their genres using an interactive UpSet plot.',
-        href: `${upsetURL.value}/?workspace=Upset+Examples&table=movies&sessionId=118`,
+        href: `${upsetURL.value}/?workspace=Upset+Examples&table=movies&sessionId=192`,
       },
       {
         title: 'Les Miserables - MultiMatrix',
@@ -218,7 +218,7 @@ export default defineComponent({
         // eslint-disable-next-line global-require
         image: upsetSimpsons,
         text: 'Explore the relationships between Simpsons characters and their occupations using an interactive UpSet plot.',
-        href: `${upsetURL.value}/?workspace=Upset+Examples&table=simpsons&sessionId=119`,
+        href: `${upsetURL.value}/?workspace=Upset+Examples&table=simpsons&sessionId=193`,
       },
     ]);
 
