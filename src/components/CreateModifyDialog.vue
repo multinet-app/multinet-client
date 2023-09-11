@@ -36,7 +36,7 @@
       </div>
     </v-card>
     <v-card v-else-if="dialogStep === 1">
-      <NetworkCreationTool
+      <NetworkBuilder
         v-if="firstChosen === 0"
         :workspace="workspace"
         @success="dialog = false"
@@ -55,7 +55,7 @@
 <script setup lang="ts">
 import store from '@/store';
 import { computed, ref, watch } from 'vue';
-import NetworkCreationTool from './NetworkCreationTool.vue';
+import NetworkBuilder from './NetworkBuilder.vue';
 import TableNetworkUploadStepper from './TableNetworkUploadStepper.vue';
 
 const props = defineProps<{
