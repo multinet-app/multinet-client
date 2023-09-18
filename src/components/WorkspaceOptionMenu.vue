@@ -29,6 +29,14 @@
             AQL Wizard
           </v-list-item-content>
         </v-list-item>
+        <v-list-item :to="{ name: 'networkAlgorithms' }">
+          <v-list-item-icon class="mr-3">
+            <v-icon>mdi-magnify</v-icon>
+          </v-list-item-icon>
+          <v-list-item-content>
+            Network Algorithms
+          </v-list-item-content>
+        </v-list-item>
       </v-list>
     </v-card>
   </v-menu>

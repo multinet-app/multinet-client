@@ -7,6 +7,7 @@ import TableDetail from '@/views/TableDetail.vue';
 import NetworkDetail from '@/views/NetworkDetail.vue';
 import NodeDetail from '@/views/NodeDetail.vue';
 import AQLWizard from '@/views/AQLWizard.vue';
+import NetworkAlgorithms from '@/views/NetworkAlgorithms.vue';
 
 Vue.use(VueRouter);
 
@@ -44,6 +45,12 @@ const routes = [
     path: '/workspaces/:workspace/network/:network/node/:type/:node',
     name: 'nodeDetail',
     component: NodeDetail,
+    props: true,
+  },
+  {
+    path: '/workspaces/:workspace/algorithm',
+    name: 'networkAlgorithms',
+    component: NetworkAlgorithms,
     props: true,
   },
   {
