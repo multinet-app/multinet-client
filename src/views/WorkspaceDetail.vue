@@ -285,7 +285,7 @@ async function update(this: any) {
 watch(() => props.workspace, () => update());
 watch(localWorkspace, () => { requestError.value = null; });
 
-const networkBuildRequests = ref<string[]>([]);
+const networkBuildRequests = ref<number[]>([]);
 async function checkNetworkBuilds() {
   networkBuildRequests.value = await api.networkBuildRequests(props.workspace);
 
