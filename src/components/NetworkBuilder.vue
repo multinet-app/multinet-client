@@ -23,7 +23,7 @@
       <v-divider />
 
       <!-- Data tables -->
-      <template v-if="tableSamples.length">
+      <div>
         <v-row no-gutters>
           <v-col cols="2">
             <v-list class="px-4">
@@ -64,24 +64,26 @@
             </v-list>
           </v-col>
           <v-divider vertical />
-          <v-col cols="10" class="px-4">
-            <v-row
-              no-gutters
-              justify="start"
-            >
+          <v-col cols="10" class="px-4 mt-2">
+            <v-row justify="start">
+              <p v-if="visibleTableSamples.length === 0" class="pa-4 mt-2">
+                {{ tableSamples.length > 0
+                  ? 'Please select some tables on the left that you\'d like to include in your network.'
+                  : "You haven't uploaded any tables. This view only works when you have some tables uploaded. Return to the previous step to upload data tables."
+                }}
+              </p>
               <v-card
                 v-for="sample in visibleTableSamples"
                 :key="sample.table.name"
                 raised
                 outlined
-                class="mt-4"
+                class="mt-4 ma-2"
               >
-                <v-card-title class="primary white--text">
+                <v-card-title class="grey lighten-3">
                   <v-row class="ma-0">
                     {{ sample.table.name }}
                     <v-spacer />
                     <v-switch
-                      dark
                       hide-details
                       class="ma-0"
                       :disabled="edgeTable !== undefined && edgeTable.table.name !== sample.table.name"
@@ -89,7 +91,7 @@
                       @change="setEdgeTable(sample.table, $event)"
                     >
                       <template #label>
-                        <span class="white--text">Edge Table</span>
+                        Edge Table
                       </template>
                     </v-switch>
                   </v-row>
@@ -104,25 +106,24 @@
                     disable-sort
                   >
                     <template #header="{ props: { headers } }">
-                      <thead dark>
+                      <thead>
                         <tr>
                           <th
                             v-for="{ value: col } in headers"
                             :key="`${sample.table.name}:${col}`"
                             style="width: 1px; white-space: nowrap;"
+                            class="pt-2 pb-4 grey lighten-3"
                           >
                             <!-- Include/Exclude Column -->
                             <v-icon
                               v-if="!excludedMap[sample.table.name][col]"
                               :disabled="checkboxDisabled(sample.table, col)"
-                              dark
                               @click="excludedMap[sample.table.name][col] = true"
                             >
                               mdi-checkbox-marked
                             </v-icon>
                             <v-icon
                               v-else
-                              dark
                               :disabled="checkboxDisabled(sample.table, col)"
                               @click="excludedMap[sample.table.name][col] = false"
                             >
@@ -139,14 +140,15 @@
                               @input="menuOpen = $event"
                             >
                               <template #activator="{ on }">
-                                <v-icon
-                                  :color="linkColor(sample.table, col)"
-                                  dark
-                                  :class="{ 'disable-events': linkDisabled(sample.table) }"
-                                  v-on="on"
-                                >
-                                  mdi-link
-                                </v-icon>
+                                <v-btn icon>
+                                  <v-icon
+                                    :color="linkColor(sample.table, col)"
+                                    :class="{ 'disable-events': linkDisabled(sample.table) }"
+                                    v-on="on"
+                                  >
+                                    mdi-link
+                                  </v-icon>
+                                </v-btn>
                               </template>
                               <v-card max-height="30vh">
                                 <!-- Edge Table -->
@@ -221,7 +223,6 @@
                                 <v-icon
                                   :color="linkColor(sample.table, col, true)"
                                   :class="{ 'disable-events': joinDisabled(sample.table, col) }"
-                                  dark
                                   v-on="on"
                                 >
                                   mdi-call-merge
@@ -288,7 +289,7 @@
             </v-row>
           </v-col>
         </v-row>
-      </template>
+      </div>
     </v-card-text>
 
     <v-card-actions class="px-4 py-3">
@@ -304,6 +305,7 @@
         id="create-table"
         color="primary"
         :disabled="!valid"
+        :loading="networkCreating"
         @click="createNetwork"
       >
         Create
@@ -408,11 +410,11 @@ const inNetworkTables = computed(() => [
   targetTable.value?.joined?.table,
 ]);
 
-    interface ExclusionMap {
-      [key: string]: {
-        [innerKey: string]: boolean
-      }
-    }
+interface ExclusionMap {
+  [key: string]: {
+    [innerKey: string]: boolean
+  }
+}
 
 // Remove any no longer visible links
 watch(tablesVisible, (visible) => {
@@ -603,7 +605,7 @@ async function init() {
 
     const rows = res.data.results;
     const headers: DataTableHeader[] = rows.length > 0 ? Object.keys(rows[0])
-      .filter((header) => !['_id', '_key', '_rev'].includes(header))
+      .filter((header) => !['_id', '_rev'].includes(header))
       .map((header) => ({ text: header, value: header }))
       : [];
 
@@ -619,7 +621,7 @@ async function init() {
 
   // Store value in tableSamples
   tableSamples.value = sortedSamples;
-  tablesVisible.value = reactive(sortedSamples.reduce((obj, cur) => ({ ...obj, [cur.table.name]: true }), {}));
+  tablesVisible.value = reactive(sortedSamples.reduce((obj, cur) => ({ ...obj, [cur.table.name]: false }), {}));
 }
 
 // Load table from workspace and store in tableSamples
@@ -812,7 +814,6 @@ function columnItemText(item: CSVRow, key: string) {
   return `${truncated}...`;
 }
 
-/* eslint-disable prefer-destructuring */
 function linkColor(table: BaseTable, col: string, join = false) {
   // There's at most 5 links
   // Edge -> Source
@@ -874,7 +875,6 @@ function linkColor(table: BaseTable, col: string, join = false) {
 
   return undefined;
 }
-/* eslint-enable prefer-destructuring */
 
 // Denotes whether the dialog is in a submittable state
 const valid = computed(() => !!(
@@ -882,6 +882,7 @@ const valid = computed(() => !!(
       && edgeTable.value?.table
       && sourceTable.value
       && targetTable.value
+      && !tableSamples.value.map((sample) => sample.table.name).includes(networkName.value)
 ));
 
 const networkCreating = ref(false);
@@ -932,11 +933,6 @@ async function createNetwork() {
 </script>
 
 <style scoped>
-.upload-preview table th, .table-title {
-  background-color: #1976d2 !important;
-  color: #fff !important;
-}
-
 .disable-events {
   pointer-events: none
 }
