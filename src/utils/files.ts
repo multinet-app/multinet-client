@@ -55,8 +55,8 @@ function generateColumnTypes(sampleRows: Record<string, unknown>[]) {
     const uniqueValuesInSample = new Set(valuesInSample);
 
     const isKey = field === '_key' || field === 'id';
-    const isSource = field === '_from' || field === 'source';
-    const isTarget = field === '_to' || field === 'target';
+    const isSource = (field === '_from' || field === 'source') && valuesInSample.every((value) => value.split('/').length === 2);
+    const isTarget = (field === '_to' || field === 'target') && valuesInSample.every((value) => value.split('/').length === 2);
     const isLabel = field.toLocaleLowerCase().includes('name') || field === 'label';
     const boolean = isBoolean(uniqueValuesInSample);
     const category = uniqueValuesInSample.size <= 10 && !(uniqueValuesInSample.size === sampleRows.length);
