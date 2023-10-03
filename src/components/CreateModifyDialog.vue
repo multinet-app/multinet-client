@@ -39,7 +39,7 @@
       <NetworkBuilder
         v-if="firstChosen === 0"
         :workspace="workspace"
-        @success="dialog = false"
+        @success="() => { dialog = false; emit('success') }"
         @back="firstChosen = undefined; dialogStep -= 1"
       />
       <TableNetworkUploadStepper

@@ -80,10 +80,11 @@
         />
         <v-spacer />
 
-        <create-modify-dialog :workspace="workspace" @success="startCheckingUpload" />
+        <create-modify-dialog :workspace="workspace" @success="startChecking" />
         <workspace-option-menu :workspace="workspace" />
       </v-app-bar>
 
+      <!-- Display upload status -->
       <v-row
         v-for="upload in uploads"
         :key="upload.id"
@@ -123,6 +124,28 @@
           </v-alert>
         </v-col>
       </v-row>
+
+      <!-- Display network building status -->
+      <v-alert
+        v-if="networkBuildRequests.length > 0"
+        border="left"
+        color="blue"
+        type="info"
+        class="mb-0"
+      >
+        <v-row align="center">
+          <v-col class="grow">
+            Your network is being built
+          </v-col>
+          <v-col class="shrink">
+            <v-progress-circular
+              indeterminate
+              color="white"
+              size="26"
+            />
+          </v-col>
+        </v-row>
+      </v-alert>
 
       <session-panel :apps="apps" :workspace="workspace" :loading="loading" />
 
@@ -262,6 +285,30 @@ async function update(this: any) {
 watch(() => props.workspace, () => update());
 watch(localWorkspace, () => { requestError.value = null; });
 
+const networkBuildRequests = ref<string[]>([]);
+async function checkNetworkBuilds() {
+  networkBuildRequests.value = await api.networkBuildRequests(props.workspace);
+
+  if (networkBuildRequests.value.length === 0) {
+    update();
+    return true;
+  }
+  return false;
+}
+
+async function startCheckingNetworkBuilds() {
+  let timeout = 30 * 1000;
+  const interval = 3 * 1000;
+
+  const checkUploadInterval = setInterval(async () => {
+    if ((await checkNetworkBuilds()) || timeout <= 0) {
+      clearInterval(checkUploadInterval);
+    }
+
+    timeout -= interval;
+  }, interval);
+}
+
 async function checkUpload(upload: { id: number }) {
   const newUploadStatus = await api.uploads(props.workspace);
   store.commit.setUploads(newUploadStatus.results);
@@ -289,6 +336,13 @@ async function startCheckingUpload(upload: { id: number }) {
 
     timeout -= interval;
   }, interval);
+}
+
+function startChecking(upload: { id: number } | undefined) {
+  if (upload !== undefined) {
+    startCheckingUpload(upload);
+  }
+  startCheckingNetworkBuilds();
 }
 
 update();
