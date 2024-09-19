@@ -171,6 +171,10 @@ function openSession(session: Session) {
 }
 
 async function deleteClicked(session: Session) {
+  if (session.starred) {
+    return;
+  }
+
   const type = session.network !== undefined ? 'network' : 'table';
   store.commit.deleteSessionFromStore(session.id);
   await deleteSession(props.workspace, session.id, type);
