@@ -81,7 +81,7 @@
         <v-spacer />
 
         <create-modify-dialog :workspace="workspace" @success="startChecking" />
-        <workspace-option-menu :workspace="workspace" />
+        <workspace-option-menu :workspace="workspace" @loading="handleLoading" />
       </v-app-bar>
 
       <!-- Display upload status -->
@@ -195,6 +195,7 @@ import {
   ref, computed, watch,
 } from 'vue';
 
+import { useRouter } from 'vue-router/composables';
 import api from '@/api';
 import TablePanel from '@/components/TablePanel.vue';
 import NetworkPanel from '@/components/NetworkPanel.vue';
@@ -202,7 +203,6 @@ import SessionPanel from '@/components/SessionPanel.vue';
 import store from '@/store';
 import WorkspaceOptionMenu from '@/components/WorkspaceOptionMenu.vue';
 import type { App } from '@/types';
-import { useRouter } from 'vue-router/composables';
 
 const surroundingWhitespace = /^\s+|\s+$/;
 const workspaceNameRules: Array<(x: string) => string|boolean> = [
@@ -280,6 +280,11 @@ async function update(this: any) {
   localWorkspace.value = props.workspace;
   await store.dispatch.fetchWorkspace(props.workspace);
   loading.value = false;
+}
+
+// handle the loading state from child emits function
+function handleLoading(newLoading: boolean) {
+  loading.value = newLoading;
 }
 
 watch(() => props.workspace, () => update());
