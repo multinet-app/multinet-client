@@ -73,7 +73,7 @@
           </v-toolbar-title>
         </v-hover>
         <v-progress-linear
-          v-if="loading"
+          v-if="loading || childLoading"
           indeterminate
           absolute
           bottom
@@ -147,7 +147,7 @@
         </v-row>
       </v-alert>
 
-      <session-panel :apps="apps" :workspace="workspace" :loading="loading" />
+      <session-panel :apps="apps" :workspace="workspace" :loading="loading || childLoading" />
 
       <v-row class="ma-0">
         <v-col
@@ -162,7 +162,7 @@
             <network-panel
               :workspace="workspace"
               :items="networks"
-              :loading="loading"
+              :loading="loading || childLoading"
               :apps="apps"
             />
           </v-card>
@@ -180,7 +180,7 @@
             <table-panel
               :workspace="workspace"
               :items="tables"
-              :loading="loading"
+              :loading="loading || childLoading"
               :apps="apps"
             />
           </v-card>
@@ -221,6 +221,7 @@ const localWorkspace = ref<string | null>(null);
 const editing = ref(false);
 const requestError = ref<string | null>(null);
 const loading = ref(false);
+const childLoading = ref(false);
 const tables = computed(() => store.getters.tables);
 const networks = computed(() => store.getters.networks);
 const uploads = computed(() => store.state.uploads.filter(
@@ -284,7 +285,7 @@ async function update(this: any) {
 
 // handle the loading state from child emits function
 function handleLoading(newLoading: boolean) {
-  loading.value = newLoading;
+  childLoading.value = newLoading;
 }
 
 watch(() => props.workspace, () => update());
