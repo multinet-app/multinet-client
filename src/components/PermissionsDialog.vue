@@ -241,7 +241,7 @@ export default defineComponent({
     const workspacePermissionsEditable = computed(() => store.getters.permissionLevel >= RoleLevel.maintainer);
 
     const route = useRoute();
-    const permDialog = ref(workspacePermissionsEditable && route.query.permissions === 'true');
+    const permDialog = ref(workspacePermissionsEditable.value && route.query.permissions === 'true');
     const mutablePermissions: Ref<WorkspacePermissionsSpec | null> = ref(null);
     const userSearchString: Ref<string | null> = ref(null);
     const userSearchResults: Ref<UserSearchResult[]> = ref([]);
