@@ -215,6 +215,7 @@ import type {
 import {
   RoleLevel,
 } from '@/utils/permissions';
+import { useRoute } from 'vue-router/composables';
 
 export interface UserPermissionSpec {
   role: Role;
@@ -237,7 +238,10 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const permDialog = ref(false);
+    const workspacePermissionsEditable = computed(() => store.getters.permissionLevel >= RoleLevel.maintainer);
+
+    const route = useRoute();
+    const permDialog = ref(workspacePermissionsEditable.value && route.query.permissions === 'true');
     const mutablePermissions: Ref<WorkspacePermissionsSpec | null> = ref(null);
     const userSearchString: Ref<string | null> = ref(null);
     const userSearchResults: Ref<UserSearchResult[]> = ref([]);
@@ -307,8 +311,6 @@ export default defineComponent({
       userSearchResults.value = mappedResults;
     }
     const throttledUserSearch = debounce(searchUsers, 200);
-
-    const workspacePermissionsEditable = computed(() => store.getters.permissionLevel >= RoleLevel.maintainer);
 
     function initMutableData(permissions: WorkspacePermissionsSpec) {
       mutablePermissions.value = cloneDeep(permissions);

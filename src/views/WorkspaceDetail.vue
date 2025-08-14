@@ -73,7 +73,7 @@
           </v-toolbar-title>
         </v-hover>
         <v-progress-linear
-          v-if="loading"
+          v-if="loading || childLoading"
           indeterminate
           absolute
           bottom
@@ -81,7 +81,7 @@
         <v-spacer />
 
         <create-modify-dialog :workspace="workspace" @success="startChecking" />
-        <workspace-option-menu :workspace="workspace" />
+        <workspace-option-menu :workspace="workspace" @loading="handleLoading" />
       </v-app-bar>
 
       <!-- Display upload status -->
@@ -147,7 +147,7 @@
         </v-row>
       </v-alert>
 
-      <session-panel :apps="apps" :workspace="workspace" :loading="loading" />
+      <session-panel :apps="apps" :workspace="workspace" :loading="loading || childLoading" />
 
       <v-row class="ma-0">
         <v-col
@@ -162,7 +162,7 @@
             <network-panel
               :workspace="workspace"
               :items="networks"
-              :loading="loading"
+              :loading="loading || childLoading"
               :apps="apps"
             />
           </v-card>
@@ -180,7 +180,7 @@
             <table-panel
               :workspace="workspace"
               :items="tables"
-              :loading="loading"
+              :loading="loading || childLoading"
               :apps="apps"
             />
           </v-card>
@@ -195,6 +195,7 @@ import {
   ref, computed, watch,
 } from 'vue';
 
+import { useRouter } from 'vue-router/composables';
 import api from '@/api';
 import TablePanel from '@/components/TablePanel.vue';
 import NetworkPanel from '@/components/NetworkPanel.vue';
@@ -202,7 +203,6 @@ import SessionPanel from '@/components/SessionPanel.vue';
 import store from '@/store';
 import WorkspaceOptionMenu from '@/components/WorkspaceOptionMenu.vue';
 import type { App } from '@/types';
-import { useRouter } from 'vue-router/composables';
 
 const surroundingWhitespace = /^\s+|\s+$/;
 const workspaceNameRules: Array<(x: string) => string|boolean> = [
@@ -221,6 +221,7 @@ const localWorkspace = ref<string | null>(null);
 const editing = ref(false);
 const requestError = ref<string | null>(null);
 const loading = ref(false);
+const childLoading = ref(false);
 const tables = computed(() => store.getters.tables);
 const networks = computed(() => store.getters.networks);
 const uploads = computed(() => store.state.uploads.filter(
@@ -280,6 +281,11 @@ async function update(this: any) {
   localWorkspace.value = props.workspace;
   await store.dispatch.fetchWorkspace(props.workspace);
   loading.value = false;
+}
+
+// handle the loading state from child emits function
+function handleLoading(newLoading: boolean) {
+  childLoading.value = newLoading;
 }
 
 watch(() => props.workspace, () => update());
