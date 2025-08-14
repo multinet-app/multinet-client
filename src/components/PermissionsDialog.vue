@@ -215,6 +215,7 @@ import type {
 import {
   RoleLevel,
 } from '@/utils/permissions';
+import { useRoute } from 'vue-router/composables';
 
 export interface UserPermissionSpec {
   role: Role;
@@ -237,7 +238,8 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const permDialog = ref(false);
+    const route = useRoute();
+    const permDialog = ref(route.query.permissions === 'true');
     const mutablePermissions: Ref<WorkspacePermissionsSpec | null> = ref(null);
     const userSearchString: Ref<string | null> = ref(null);
     const userSearchResults: Ref<UserSearchResult[]> = ref([]);

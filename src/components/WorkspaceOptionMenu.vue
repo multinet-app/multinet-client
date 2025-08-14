@@ -5,6 +5,7 @@
     offset-y
     origin="center center"
     transition="scale-transition"
+    eager
   >
     <template #activator="{ on }">
       <v-btn
