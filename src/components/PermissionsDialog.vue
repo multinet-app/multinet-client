@@ -242,6 +242,12 @@ export default defineComponent({
 
     const route = useRoute();
     const permDialog = ref(workspacePermissionsEditable.value && route.query.permissions === 'true');
+
+    // Watch for changes in workspacePermissionsEditable (async) and update the dialog visibility accordingly
+    watch(workspacePermissionsEditable, () => {
+      permDialog.value = workspacePermissionsEditable.value && route.query.permissions === 'true';
+    });
+
     const mutablePermissions: Ref<WorkspacePermissionsSpec | null> = ref(null);
     const userSearchString: Ref<string | null> = ref(null);
     const userSearchResults: Ref<UserSearchResult[]> = ref([]);
