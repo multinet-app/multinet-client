@@ -28,7 +28,7 @@
     "dayjs": "^1.9.1",
     "direct-vuex": "^0.10.4",
     "eslint-import-resolver-alias": "^1.1.2",
-    "lodash": "^4.17.21",
+    "lodash": "^4.17.23",
     "multinet": "0.24.0",
     "multinet-components": "^0.0.4",
     "papaparse": "^5.3.0",
